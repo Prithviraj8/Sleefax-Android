@@ -1,0 +1,41 @@
+<resources>
+    <string name="app_Name">Copy Cat(Android)</string>
+    <string name="Email_TV">Email</string>
+    <string name="Password_TV">Password</string>
+    <string name="Sign_In">SIGN IN</string>
+    <string name="SignInButton">Sign In</string>
+    <string name="Continue">Continue</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_username">Username</string>
+    <string name="prompt_password">Password</string>
+    <string name="prompt_password_again">Confirm Password</string>
+    <string name="prompt_msg">Type a message</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_register">Register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="action_sign_up">Sign up</string>
+    <string name="action_send">Send</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">Password too short or does not match</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email
+        completions."
+    </string>
+    <string name="sample_message">Hello!</string>
+    <string name="Copies">Copies</string>
+    <string name="PageBtn">Next Page</string>
+    <string name="DonePageBtn">Done</string>
+    <string name="SameForAll">Same for all</string>
+    <string name="ColorsTV">Colors</string>
+    <string name="Black_WhiteTV">Black/White</string>
+
+    <string name="ShopName">Shop Name</string>
+    <string name="Location">Location</string>
+    <string name="Files">Files</string>
+    <string name="Price">Price</string>
+    <string name="LVButon">LVButton</string>
+    <string name="Distance">Distance</string>
+    <string name="title_activity_shop_map">Map</string>
+    <string name="OrderStatus">Order Status</string>
+</resources>
