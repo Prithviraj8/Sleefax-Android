@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_Name">Copy Cat(Android)</string>
+    <string name="app_Name">Sleefax</string>
     <string name="Email_TV">Email</string>
     <string name="Password_TV">Password</string>
     <string name="Sign_In">SIGN IN</string>
@@ -38,4 +38,20 @@
     <string name="Distance">Distance</string>
     <string name="title_activity_shop_map">Map</string>
     <string name="OrderStatus">Order Status</string>
+    <string name="Channel_ID">Notify</string>
+    <string name="Toggle_On">YES</string>
+    <string name="Toggle_Off">NO</string>
+    <string name="password">Password</string>
+    <string name="email">Email</string>
+    <string name="sign_in_with">Sign in with</string>
+    <string name="or">OR</string>
+    <string name="done">Done</string>
+    <string name="enter_your_personal_details">ENTER YOUR PERSONAL DETAILS</string>
+    <string name="your_name">Your Name</string>
+    <string name="your_number">Your Number</string>
+    <string name="select_your_preferred_store">Select your preferred store</string>
+    <string name="submit">Submit</string>
+    <string name="your_feedback_here">Your Feedback here.</string>
+    <string name="provide_your_feedback_about_the_app">Provide your feedback about the app.</string>
+    <string name="uh_oh_so_sorry_to_hear_you_have_issue_with_our_app_please_tell_us_what_they_are_and_we_will_try_to_fix_it_as_soon_as_possible">Uh oh😢. So sorry to hear you have issue with our app. Please tell us what they are and we will try to fix it as soon as possible.</string>
 </resources>

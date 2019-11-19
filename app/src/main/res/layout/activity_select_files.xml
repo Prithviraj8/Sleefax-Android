@@ -4,104 +4,93 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/selectfiles"
     android:outlineAmbientShadowColor="#FCE30A"
     android:outlineSpotShadowColor="#E7C714"
     tools:context=".Select">
 
-    <ImageButton
-        android:id="@+id/AddFilesButton"
-        android:layout_width="130dp"
-        android:layout_height="130dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
-        android:background="@drawable/add_files_rounded_buttons"
-        android:outlineAmbientShadowColor="#EBD41A"
-        android:outlineSpotShadowColor="#F5DD0D"
-        android:src="@drawable/icons8add"
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/selecfiles"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.499" />
+        <com.github.ybq.android.spinkit.SpinKitView
+            android:id="@+id/progress"
+            style="@style/SpinKitView.Large.Circle"
+            android:layout_width="184dp"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/AddFilesButton"
+            android:layout_alignTop="@+id/AddFilesButton"
+            android:layout_alignEnd="@+id/AddFilesButton"
+            android:layout_alignBottom="@+id/AddFilesButton"
+            android:layout_gravity="center"
+            android:layout_marginStart="19dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="25dp"
+            android:layout_marginBottom="31dp"
+            android:visibility="invisible"
+            app:SpinKit_Color="#31B82A" />
 
-    <View
-        android:id="@+id/Menu_View"
-        android:layout_width="411dp"
-        android:layout_height="226dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="180dp"
-        android:background="#686666"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/AddFilesButton" />
+        <Button
+            android:id="@+id/AddFilesButton"
+            android:layout_width="228dp"
+            android:layout_height="220dp"
+            android:layout_above="@+id/YourOrders"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginStart="8dp"
 
-    <ImageButton
-        android:id="@+id/ToggleMenuButton"
-        android:layout_width="85dp"
-        android:layout_height="85dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:background="@drawable/toggle_menu_rounded_button"
-        android:src="@drawable/up_arrow"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/Menu_View" />
+            android:layout_marginTop="200dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="226dp"
+            android:background="#00FFFFFF" />
 
-    <ImageButton
-        android:id="@+id/Home"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="12dp"
-        app:layout_constraintBottom_toBottomOf="@+id/Menu_View"
-        app:layout_constraintEnd_toStartOf="@+id/About"
-        app:layout_constraintHorizontal_bias="0.135"
-        app:layout_constraintStart_toStartOf="parent" />
+        <ImageButton
+            android:id="@+id/settings"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignTop="@+id/YourOrders"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="30dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="25dp"
+            android:background="#00FFFFFF"
+            android:src="@drawable/actsettings"
+            android:contentDescription="TODO" />
 
-    <ImageButton
-        android:id="@+id/About"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_marginEnd="44dp"
-        android:layout_marginRight="44dp"
-        android:layout_marginBottom="12dp"
-        app:layout_constraintBottom_toBottomOf="@+id/Menu_View"
-        app:layout_constraintEnd_toStartOf="@+id/YourOrders" />
+        <Button
+            android:id="@+id/YourOrders"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="25dp"
+            android:background="@drawable/yourordersimg" />
 
-    <ImageButton
-        android:id="@+id/YourOrders"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_marginEnd="48dp"
-        android:layout_marginRight="48dp"
-        android:layout_marginBottom="12dp"
-        android:background="#00968A8A"
-        android:src="@drawable/your_oders"
-        app:layout_constraintBottom_toBottomOf="@+id/Menu_View"
-        app:layout_constraintEnd_toStartOf="@+id/Settings" />
-
-    <ImageButton
-        android:id="@+id/Settings"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginBottom="12dp"
-        android:background="#535151"
-        android:src="@drawable/settings"
-        app:layout_constraintBottom_toBottomOf="@+id/Menu_View"
-        app:layout_constraintEnd_toEndOf="parent" />
+        <ImageButton
+            android:id="@+id/help"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignTop="@+id/YourOrders"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="52dp"
+            android:layout_marginLeft="52dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="30dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="25dp"
+            android:background="#00FFFFFF"
+            android:src="@drawable/helpbtnimg" />
+    </RelativeLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

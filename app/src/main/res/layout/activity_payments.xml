@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/payments"
+    tools:context=".Payments">
+
+    <Button
+        android:id="@+id/paytm"
+        android:layout_width="319dp"
+        android:layout_height="54dp"
+        android:layout_marginTop="104dp"
+        android:background="#4A161414"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.532"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/amount"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <Button
+        android:id="@+id/upi"
+        android:layout_width="320dp"
+        android:layout_height="57dp"
+        android:layout_marginTop="24dp"
+        android:background="#4A161414"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.505"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/paytm"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <Button
+        android:id="@+id/card"
+        android:layout_width="316dp"
+        android:layout_height="58dp"
+        android:layout_marginTop="28dp"
+        android:background="#4A161414"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.547"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/upi"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <Button
+        android:id="@+id/pickup"
+        android:layout_width="322dp"
+        android:layout_height="51dp"
+        android:layout_marginTop="32dp"
+        android:background="#4A9E9C9C"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.55"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/card"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <TextView
+        android:id="@+id/amount"
+        android:layout_width="99dp"
+        android:layout_height="40dp"
+        android:text="200"
+        android:textColor="#000000"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.439"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.301" />
+</androidx.constraintlayout.widget.ConstraintLayout>

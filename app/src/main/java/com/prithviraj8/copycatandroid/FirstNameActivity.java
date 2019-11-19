@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -22,19 +24,25 @@ import com.google.firebase.database.ValueEventListener;
 public class FirstNameActivity extends AppCompatActivity {
 
 
-    private TextView firstNameTV;
+    private TextView firstNameTV,numberTV;
     private FirebaseAuth mAuth;
+
 
     final FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference ref = database.getReference();
     String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
+    String name;
+    long num;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_first_name);
+//        getSupportActionBar().hide();
 
         firstNameTV = findViewById(R.id.FirstNameTV);
+        numberTV = findViewById(R.id.numberTV);
         Button continueButton = findViewById(R.id.FirstNameButton);
 
         continueButton.setOnClickListener(new View.OnClickListener() {
@@ -42,32 +50,44 @@ public class FirstNameActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = getIntent();
                 String email = intent.getStringExtra("Email");
-                String name = intent.getStringExtra("Name");
-                if(name != null){
-                    firstNameTV.setText(name);
-                }
-                final UserInfo info = new UserInfo(firstNameTV.getText().toString(),email);
+//                String name = intent.getStringExtra("Name");
 
-                ref.addValueEventListener(new ValueEventListener() {
+
+                 num = Long.parseLong(numberTV.getText().toString());
+                 name = firstNameTV.getText().toString();
+                Log.d("NAME ",name);
+                Log.d("NUM", String.valueOf(num));
+                final UserInfo info = new UserInfo(firstNameTV.getText().toString(),email,num,"android");
+
+                new Handler().postDelayed(new Runnable() {
                     @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if (!dataSnapshot.child("users").hasChild(userId)) {
-                            ref.child("users").child(userId).setValue(info);
+                    public void run() {
+                        ref.addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                if (!dataSnapshot.child("users").hasChild(userId)) {
+                                    ref.child("users").child(userId).setValue(info);
 
-                        }
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                            }
+
+
+                        });
+
                     }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
-
-
-
+                },300);
 
                 Intent goToMainPage = new Intent(FirstNameActivity.this, Select.class);
                 startActivity(goToMainPage);
+                finish();
+
+
+
             }
         });
 

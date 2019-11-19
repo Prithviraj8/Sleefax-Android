@@ -1,102 +1,146 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/ShopsName"
-        android:layout_width="178dp"
-        android:layout_height="45dp"
+    <View
+        android:id="@+id/YourOrderView"
+        android:layout_width="wrap_content"
+        android:layout_height="223dp"
         android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginStart="1dp"
-        android:layout_marginLeft="1dp"
-        android:layout_marginTop="1dp"
-        android:layout_marginEnd="232dp"
-        android:layout_marginRight="232dp"
-        android:text="@string/ShopName" />
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="23dp"
+        android:layout_marginEnd="17dp"
+        android:background="@drawable/orderdetailsview" />
+
+    <TextView
+        android:id="@+id/ShopsName"
+        android:layout_width="255dp"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/YourOrderView"
+        android:layout_alignTop="@+id/YourOrderView"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="80dp"
+        android:text="ShopName :"
+        android:textColor="#000000"
+        android:textSize="20sp"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/Location"
-        android:layout_width="177dp"
-        android:layout_height="46dp"
+        android:layout_width="252dp"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/ShopsName"
+        android:layout_alignStart="@+id/YourOrderView"
         android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginStart="3dp"
-        android:layout_marginLeft="3dp"
+        android:layout_marginStart="21dp"
         android:layout_marginTop="1dp"
-        android:layout_marginEnd="229dp"
-        android:layout_marginRight="229dp"
-        android:text="@string/Location" />
+        android:text="@string/Location"
+        android:textColor="#542B2A2A"
+        android:textSize="12sp"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/Files"
-        android:layout_width="178dp"
-        android:layout_height="45dp"
-        android:layout_below="@+id/Location"
+        android:layout_width="247dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/view5"
+        android:layout_alignStart="@+id/YourOrderView"
         android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginStart="4dp"
-        android:layout_marginLeft="4dp"
-        android:layout_marginTop="1dp"
-        android:layout_marginEnd="228dp"
-        android:layout_marginRight="228dp"
-        android:text="@string/Files" />
+        android:layout_marginStart="22dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="86dp"
+        android:text="Total Files :"
+        android:textColor="#99333333"
+        android:textSize="16sp"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/Price"
-        android:layout_width="178dp"
-        android:layout_height="45dp"
+        android:layout_width="192dp"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/Files"
+        android:layout_alignStart="@+id/YourOrderView"
         android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginStart="4dp"
-        android:layout_marginLeft="4dp"
-        android:layout_marginTop="0dp"
-        android:layout_marginEnd="228dp"
-        android:layout_marginRight="228dp"
-        android:text="@string/Price" />
+        android:layout_marginStart="22dp"
+        android:layout_marginTop="1dp"
+        android:layout_marginEnd="79dp"
+        android:text="@string/Price"
+        android:textColor="#99333333"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
 
     <TextView
         android:id="@+id/OrderStatus"
-        android:layout_width="178dp"
-        android:layout_height="45dp"
+        android:layout_width="193dp"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/Price"
+        android:layout_alignStart="@+id/YourOrderView"
         android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginStart="4dp"
-        android:layout_marginLeft="4dp"
+        android:layout_marginStart="22dp"
         android:layout_marginTop="1dp"
-        android:layout_marginEnd="228dp"
-        android:layout_marginRight="228dp"
-        android:text="@string/OrderStatus" />
+        android:layout_marginEnd="78dp"
+        android:text="@string/OrderStatus"
+        android:textColor="#99333333"
+        android:textSize="16sp"
+        android:textStyle="bold" />
 
     <ImageButton
         android:id="@+id/YourOrdersLVBtn"
-        android:layout_width="66dp"
-        android:layout_height="66dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/YourOrderView"
+        android:layout_alignEnd="@+id/YourOrderView"
+        android:layout_marginTop="11dp"
+        android:layout_marginEnd="24dp"
+        android:background="#00FFFFFF"
+        android:contentDescription="TODO"
+        android:src="@drawable/rightbtn" />
+
+    <com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar
+        android:id="@+id/ProgressBar"
+        android:layout_width="323dp"
+        android:layout_height="33dp"
+
+        android:layout_below="@+id/OrderStatus"
+        android:layout_alignStart="@+id/YourOrderView"
+        android:layout_alignEnd="@+id/YourOrderView"
+        android:layout_alignBottom="@+id/YourOrderView"
+        android:layout_marginStart="34dp"
+        android:layout_marginLeft="25dp"
+        android:layout_marginTop="26dp"
+        android:layout_marginEnd="21dp"
+        android:layout_marginRight="26dp"
+        android:layout_marginBottom="20dp"
+        android:foregroundGravity="center_horizontal" />
+
+    <View
+        android:id="@+id/view5"
+        android:layout_width="wrap_content"
+        android:layout_height="2dp"
+        android:layout_below="@+id/Location"
+        android:layout_alignStart="@+id/YourOrderView"
+        android:layout_alignEnd="@+id/YourOrderView"
+        android:layout_marginStart="19dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginEnd="27dp"
+        android:background="#88818080" />
+
+    <View
+        android:id="@+id/animateView"
+        android:layout_width="wrap_content"
+        android:layout_height="228dp"
         android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginStart="303dp"
-        android:layout_marginLeft="303dp"
-        android:layout_marginTop="83dp"
-        android:layout_marginEnd="42dp"
-        android:layout_marginRight="42dp"
-        android:background="#00685555"
-        android:src="@drawable/double_right" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="11dp"
+        android:layout_marginTop="21dp"
+        android:layout_marginEnd="12dp" />
 
 </RelativeLayout>

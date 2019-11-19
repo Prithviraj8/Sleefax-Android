@@ -10,19 +10,24 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Spinner;
+import android.widget.ToggleButton;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -31,6 +36,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
@@ -54,66 +60,145 @@ public class PageInfo extends AppCompatActivity {
     DatabaseReference ref = database.getReference();
     String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
     int ShopsCnt=0;
+    String username,email;
+    long num;
 
     AllPagesInfo[] allInfo = new AllPagesInfo[1000000];
 //    ArrayList<String> allInfo = new ArrayList<String>() ;
     ImageView Page;
-    ArrayList<String> pageURL = new ArrayList<String>();
+    ArrayList<String> pageURL = new ArrayList<>();
+    ArrayList<Bitmap> images = new ArrayList<>();
 
-    View black_white,colors;
+
+    View black_white,colors,h,v;
     Button sameForAll, pageBtn;
     ImageButton crop;
+    ToggleButton colorType;
+    Spinner pageSizeSpinner;
 
-//    ArrayList<Bitmap> images = new ArrayList<Bitmap>();
+    //    ArrayList<Bitmap> images = new ArrayList<Bitmap>();
     EditText copies;
     Page_Info info = new Page_Info();
 
     ArrayList<Integer> pageCopies = new ArrayList<Integer>();
     ArrayList<String> colorTypes = new ArrayList<String>();
+    int copy;
+    String colour;
+    String fileType, pagesize,orientation;
+
     String[] uri = new String[1000];
     int cnt = 0;
+    ArrayList<String> storeID = new ArrayList<>();
+    final boolean[] color = new boolean[1];
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_page_info);
-
-
-        Page = (ImageView) findViewById(R.id.imageView);
-        black_white = findViewById(R.id.Black_White);
-        colors = findViewById(R.id.Colors);
-        sameForAll = findViewById(R.id.SameForAll);
-        pageBtn = findViewById(R.id.Page);
-        copies = findViewById(R.id.CopiesText);
-        crop = findViewById(R.id.Crop);
+//        getSupportActionBar().hide();
 
 
         final Intent intent = getIntent();
         Bundle extras = intent.getExtras();
         pageURL = extras.getStringArrayList("URLS");
-        uri = (extras.getStringArray("URI"));
-        Log.d("URIIII", String.valueOf(uri));
-//        images = intent.getParcelableArrayListExtra("Pages");
+//        pageURL = extras.getParcelableArrayList("URLS");
+
+        username = extras.getString("username");
+        email = extras.getString("email");
+        num = extras.getLong("num");
+        fileType = extras.getString("FileType");
+        images = extras.getParcelableArrayList("Images");
+
+
+        colors = findViewById(R.id.colors);
+        black_white = findViewById(R.id.black_white);
+        Page = (ImageView) findViewById(R.id.imageView);
+        pageBtn = findViewById(R.id.Page);
+        copies = findViewById(R.id.CopiesText);
+//        crop = findViewById(R.id.Crop);
+        h = findViewById(R.id.h);
+        v = findViewById(R.id.v);
+        pageSizeSpinner = findViewById(R.id.pageSizesDropDown);
+        final String[] items = new String[]{"A4", "A3", "A2"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, items);
+        pageSizeSpinner.setAdapter(adapter);
+        pagesize = items[pageSizeSpinner.getSelectedItemPosition()];
+
+
+
+
+        colors.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+
+                colour = ("Colors");
+                colors.setBackgroundResource(R.drawable.colors_border);
+                black_white.setBackgroundResource(R.drawable.black_white_view_backgroud);
+//                colors.setBackgroundColor(Color.parseColor("#FA9A0A"));
+//                bwTV.setBackgroundColor(Color.parseColor("#10000000"));
+                return false;
+            }
+        });
+
+        black_white.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                GradientDrawable gd = new GradientDrawable(
+                        GradientDrawable.Orientation.LEFT_RIGHT,
+                        new int[] {0x000000,0x616061});
+                Log.d("Black/White","Pressed");
+
+                colour = ("Black/White");
+                black_white.setBackgroundResource(R.drawable.b_w_border);
+                colors.setBackgroundResource(R.drawable.colors_view_background);
+//                bwTV.setBackgroundColor(Color.parseColor("#616061"));
+//                colorsTV.setBackgroundColor(Color.parseColor("#10000000"));
+                return false;
+            }
+        });
+
+
+
 
         //Crop button
         crop.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                cropImage(uri[cnt]);
+                String image = String.valueOf(Uri.parse(pageURL.get(0)));
+                cropImage(image);
             }
         });
 
-        Log.d("URLS are ", String.valueOf(pageURL));
+//      Log.d("URLS are ", String.valueOf(pageURL));
 
         if(pageURL.size() == 1){
             pageBtn.setText("Done");
+            new DownloadImage().execute(pageURL.get(0));
+//            try {
+//                Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), (pageURL.get(0)));
+//                Page.setImageBitmap(bitmap);
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+
+
         }else{
             pageBtn.setText("Next page");
+            new DownloadImage().execute(pageURL.get(0));
+//            try {
+////                Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), Uri.parse(pageURL.get(0)));
+//                Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), (pageURL.get(0)));
+//                Page.setImageBitmap(bitmap);
+//
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
 
         }
-        if(info.cnt == 0){
-        new DownloadImage().execute(pageURL.get(0));
-        }
+
 
         copies.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -121,96 +206,108 @@ public class PageInfo extends AppCompatActivity {
                 info.cnt+=1;
 //                Log.d("COPIES FILLED ","YAYYY");
                 Log.d("COPIES ARE",copies.getText().toString());
+//                copy = (Integer.parseInt(copies.getText().toString()));
                 return false;
             }
         });
+
+        h.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+
+                h.setBackgroundResource(R.drawable.orientation_after_clicked);
+                v.setBackgroundResource(R.drawable.orientation);
+                orientation = "h";
+
+                return false;
+            }
+        });
+
+        v.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+
+                v.setBackgroundResource(R.drawable.orientation_after_clicked);
+                h.setBackgroundResource(R.drawable.orientation);
+                orientation = "v";
+                return false;
+            }
+        });
+
 
         pageBtn.setOnClickListener(new View.OnClickListener() {
            @Override
            public void onClick(View v) {
-               if(info.page_cnt==pageURL.size()){
-                   Intent intent = new Intent(PageInfo.this,ShopsActivity.class);
-//                   intent.putParcelableArrayListExtra("FilesInfo",allInfo);
-                   intent.putExtra("URLS",pageURL);
-                   intent.putExtra("Copies",pageCopies);
-                   intent.putExtra("ColorTypes",colorTypes);
-                   getShopsCount();
-                   intent.putExtra("ShopCount",ShopsCnt);
-                   startActivity(intent);
-               }else{
+         if(info.page_cnt==pageURL.size()){
+                getShopsCount();
+//                 Intent intent = new Intent(PageInfo.this,ShopsActivity.class);
+//                 Bundle extras = new Bundle();
+//                 extras.putStringArrayList("URLS",pageURL);
+//                 extras.putInt("Copies",copy);
+//                 extras.putString("ColorTypes",colour);
+//                 extras.putInt("ShopCount",ShopsCnt);
+//                 extras.putString("FileType",fileType);
+//                 extras.putStringArrayList("StoreID",storeID);
+//                 intent.putExtras(extras);
+//                 startActivity(intent);
+
+         }else {
                    cnt++;
 
-            if(info.cnt>2){
-                pageCopies.add(Integer.parseInt(copies.getText().toString()));
+             if (info.cnt > 1) {
+                 copy = (Integer.parseInt(copies.getText().toString()));
 
-               if(info.colorType == true){
-                   allInfo[info.page_cnt] = new AllPagesInfo("Colors",Integer.parseInt(copies.getText().toString()), pageURL.get(info.page_cnt));
-                   colorTypes.add(info.page_cnt,"Colors");
-               }else {
-                   allInfo[info.page_cnt] = new AllPagesInfo("Black/White", Integer.parseInt(copies.getText().toString()), pageURL.get(info.page_cnt));
-                   colorTypes.add(info.page_cnt,"Black/White");
+                 if (info.black == false) {
+                     colour = "Colors";
+                 } else {
+                     colour = "Black/White";
+                 }
+                   info.page_cnt++;
+//                 Log.d("FIRSTIMG", String.valueOf(images.get(info.page_cnt)));
 
-               }
+                 if(pageURL.size()>1 && info.page_cnt < pageURL.size()){
+                       new DownloadImage().execute(pageURL.get(info.page_cnt));
+//                         Uri uri = MediaStore.Images.Media.getContentUri(String.valueOf(pageURL.get(info.page_cnt)));
+//                         Page.setImageURI(uri);
 
-               info.page_cnt++;
+                   }else{
+                     getShopsCount();
+//                     Intent intent = new Intent(PageInfo.this, ShopsActivity.class);
+//                     Bundle extras = new Bundle();
+//                     extras.putStringArrayList("URLS", pageURL);
+//                     extras.putInt("Copies", copy);
+//                     extras.putString("ColorTypes", colour);
+//                     extras.putInt("ShopCount", ShopsCnt);
+//                     extras.putString("FileType",fileType);
+//                     intent.putExtras(extras);
+//                     startActivity(intent);
+                   }
 
-               if(pageURL.size()>1 && info.page_cnt < pageURL.size()){
-                   new DownloadImage().execute(pageURL.get(info.page_cnt));
-               }else{
-                   Intent intent = new Intent(PageInfo.this,ShopsActivity.class);
-//                   intent.putParcelableArrayListExtra("FilesInfo",allInfo);
-                   intent.putExtra("URLS",pageURL);
-                   intent.putExtra("Copies",pageCopies);
-                   intent.putExtra("ColorTypes",colorTypes);
-                   getShopsCount();
-                   intent.putExtra("ShopCount",ShopsCnt);
-                   startActivity(intent);
-               }
-               if(info.page_cnt==pageURL.size()-1){
-                   pageBtn.setText("Done");
-               }
 
-            }else {
-                showErrorDialog("Please select all fields");
-            }
+                 if(info.page_cnt==pageURL.size()-1){
+                     pageBtn.setText("Done");
+                 }
+             } else {
+                 showErrorDialog("Please select all fields");
+             }
+         }
 
-               colors.setBackgroundColor(0x10FFFFFF);
-               black_white.setBackgroundColor(0x10FFFFFF);
-            }
            }
 
        });
 
-        colors.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                GradientDrawable gd = new GradientDrawable(
-                        GradientDrawable.Orientation.LEFT_RIGHT,
-                        new int[] {0xFA9A0A,0xD15DF8});
-                Log.d("Colors","Pressed");
-                info.colorType = true;
-                info.cnt++;
-                colors.setBackgroundColor(Color.parseColor("#FA9A0A"));
-                black_white.setBackgroundColor(Color.parseColor("#10000000"));
-                return false;
-            }
-        });
-        black_white.setOnTouchListener(new View.OnTouchListener() {
+    }
 
-            @Override
-            public boolean onTouch(View v,MotionEvent event) {
-                GradientDrawable gd = new GradientDrawable(
-                        GradientDrawable.Orientation.LEFT_RIGHT,
-                        new int[] {0x000000,0x616061});
-                Log.d("Black/White","Pressed");
-                info.colorType = false;
-                info.cnt++;
-                black_white.setBackgroundColor(Color.parseColor("#616061"));
-                colors.setBackgroundColor(Color.parseColor("#10000000"));
-                return false;
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
 
-            }
-        });
+        Intent intent = new Intent(PageInfo.this,Select.class);
+        intent.putExtra("StopAnimation",true);
+        startActivity(intent);
+        finish();
+
+
     }
 
     private void cropImage(String uri){
@@ -220,11 +317,10 @@ public class PageInfo extends AppCompatActivity {
         Intent editIntent = new Intent(Intent.ACTION_EDIT);
         editIntent.setDataAndType(Uri.parse(uri), "image/*");
         editIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        Log.d("URIIS",uri);
         startActivity(Intent.createChooser(editIntent, null));
 
-        Page.setImageURI(null);
-        Page.setImageURI(Uri.parse(uri));
+//        Page.setImageURI(null);
+//        Page.setImageURI(Uri.parse(uri));
 
 //        cropIntent.putExtra("crop",true);
 //        cropIntent.putExtra("outputX",180);
@@ -241,8 +337,40 @@ public class PageInfo extends AppCompatActivity {
         ref.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                ShopsCnt = (int) dataSnapshot.getChildrenCount();
-                Log.d("Shops cnt ", String.valueOf(ShopsCnt));
+                if(dataSnapshot.getKey().equals("Stores")){
+                    ShopsCnt = (int) dataSnapshot.getChildrenCount();
+                    for(DataSnapshot ids: dataSnapshot.getChildren()){
+                        storeID.add(ids.getKey());
+                    }
+
+                }
+
+             new Handler().postDelayed(new Runnable() {
+                 @Override
+                 public void run() {
+                     Intent intent = new Intent(PageInfo.this, ShopsActivity.class);
+                     Bundle extras = new Bundle();
+                     extras.putStringArrayList("URLS", pageURL);
+//                     extras.putParcelableArrayList("URLS", pageURL);
+
+                     extras.putInt("Copies", copy);
+                     extras.putString("ColorTypes", colour);
+                     extras.putInt("ShopCount", ShopsCnt);
+                     extras.putString("FileType",fileType);
+//                     extras.putString("username",username);
+//                     extras.putString("email",email);
+//                     extras.putLong("num", (num));
+                     extras.putString("PageSize",pagesize);
+                     extras.putStringArrayList("StoreID",storeID);
+                     extras.putString("Orientation",orientation);
+
+                     intent.putExtras(extras);
+                     startActivity(intent);
+
+
+                 }
+             },200);
+
 
             }
 
@@ -307,6 +435,8 @@ public class PageInfo extends AppCompatActivity {
                 InputStream input = new java.net.URL(imageURL).openStream();
                 // Decode Bitmap
                 bitmap = BitmapFactory.decodeStream(input);
+//                Page.setImageBitmap(bitmap);
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -316,7 +446,10 @@ public class PageInfo extends AppCompatActivity {
         @Override
         protected void onPostExecute(Bitmap result) {
             // Set the bitmap into ImageView
+//            if(result!=null){
             Page.setImageBitmap(result);
+//            }else{
+//            }
             // Close progressdialog
             mProgressDialog.dismiss();
         }

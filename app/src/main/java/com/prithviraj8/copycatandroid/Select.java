@@ -2,29 +2,34 @@ package com.prithviraj8.copycatandroid;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
+import androidx.core.app.NotificationManagerCompat;
 
-import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
-import android.provider.Settings;
-import android.provider.SyncStateContract;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.github.ybq.android.spinkit.sprite.Sprite;
+import com.github.ybq.android.spinkit.style.ChasingDots;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -36,301 +41,626 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.kaopiz.kprogresshud.KProgressHUD;
-import com.prithviraj8.copycatandroid.StorageUpload.Upload;
+import com.paytm.pgsdk.PaytmPGService;
+//import com.spire.presentation.Presentation;
+//import com.spire.presentation.FileFormat;
+
+import org.apache.poi.xwpf.converter.pdf.PdfConverter;
+import org.apache.poi.xwpf.converter.pdf.PdfOptions;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URL;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 public class Select extends AppCompatActivity {
+    NotificationManagerCompat notificationManager;
+    String CHANNEL_ID = "UsersChannel";
 
-    String uniqueID = UUID.randomUUID().toString();
     ArrayList<String> pageURL = new ArrayList<String>();
     ArrayList<Bitmap> images = new ArrayList<Bitmap>();
 
     FirebaseStorage storage = FirebaseStorage.getInstance();
     StorageReference storageRef = storage.getReference();
-    StorageReference filesRef = storageRef.child(uniqueID);
 
     final FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference ref = database.getReference();
     String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-    ImageButton selectFilesBtn, toggleMenuBtn, setting,orders;
+    String username,email;
+    long num;
+
+
+    Button selectFilesBtn,orders;
+    ImageButton help, setting;
     View menu;
+
     int PICK_IMAGE_MULTIPLE = 1;
     final static int PICK_PDF_CODE = 2342;
+    final static int PICK_IMAGE_CODE = 100;
 
     String imageEncoded;
     List<String> imagesEncodedList;
-    private boolean isMenuShown;
+    private boolean isMenuShown = false;
+    ProgressBar progressBar;
 
+    PaytmPGService Service = PaytmPGService.getProductionService();
+
+//    @SuppressLint("ClickableViewAccessibility")
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_files);
-        getSupportActionBar().hide();
+//        getSupportActionBar().hide();
 
+        progressBar = findViewById(R.id.progress);
+//        notificationManager = NotificationManagerCompat.from(this);
 
         selectFilesBtn = findViewById(R.id.AddFilesButton);
-        toggleMenuBtn = findViewById(R.id.ToggleMenuButton);
-        menu = findViewById(R.id.Menu_View);
-        setting = findViewById(R.id.Settings);
+        setting = findViewById(R.id.settings);
         orders = findViewById(R.id.YourOrders);
+        help = findViewById(R.id.help);
 
         selectFilesBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Intent intent = new Intent();
-////                intent.setType("image/*");
-//                intent.setType("*/*");
-//                intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-//                intent.setAction(Intent.ACTION_GET_CONTENT);
-//                startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_MULTIPLE);
-////                startActivityForResult(intent, 7);
+                selectFiles();
 
-                getPDF();
+                Log.d("SELECTing", String.valueOf(true));
+//                Intent popChoice = new Intent(Select.this, Pop.class);
+//                startActivity(popChoice);
+//                finish();
+//
+//
+//                Intent get = getIntent();
+//                Bundle extras = get.getExtras();
+//
+//
+//                if (extras != null) {
+//                    int selectPhotos = extras.getInt("Photos");
+//                    Log.d("ATTACHMENT", String.valueOf(selectPhotos));
+//
+//                    if (selectPhotos != 2) {
+////                        selectFiles(selectPhotos);
+//                    }
+//                }
             }
         });
 
-        final int TRANSLATION_Y = menu.getHeight();
-//        final int menuHeight = menu.getHeight();
-        final int settingHeight = setting.getHeight();
-        final int ordersHeight = orders.getHeight();
+//        selectFilesBtn.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//                Log.d("MOTION", String.valueOf(event));
+//                if((MotionEvent.ACTION_DOWN == 0) || (MotionEvent.ACTION_UP == 1)){
+//                    selectFiles();
+//                }
+//                return true;
+//            }
+//        });
 
-        toggleMenuBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(!isMenuShown){
-                    Animation menuUp = (Animation) AnimationUtils.loadAnimation(Select.this,R.anim.bottom_up);
-//                    menu.startAnimation(menuUp);
-                    menu.animate()
-                            .translationYBy(-(TRANSLATION_Y/2))
-                            .translationY(0)
-                            .setDuration(getResources().getInteger(android.R.integer.config_mediumAnimTime));
-                    orders.animate()
-                            .translationYBy(-(60))
-                            .translationY(0)
-                            .setDuration(getResources().getInteger(android.R.integer.config_mediumAnimTime));
-                    setting.animate()
-                            .translationYBy(-(60))
-                            .translationY(0)
-                            .setDuration(getResources().getInteger(android.R.integer.config_mediumAnimTime));
-                    toggleMenuBtn.animate()
-                            .translationYBy(-(60))
-                            .translationY(0)
-                            .setDuration(getResources().getInteger(android.R.integer.config_mediumAnimTime));
-                    isMenuShown = true;
+//        selectFilesBtn.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//                selectFiles();
+//                return true;
+//            }
+//        });
+//        getCurrentUserInfo();
 
-                }else{
 
-                    Animation menuDown = AnimationUtils.loadAnimation(Select.this,
-                            R.anim.bottom_down);
-//                    menu.startAnimation(menuDown);
-                    menu.animate()
-                            .translationYBy(0)
-                            .translationY(-242)
-                            .setDuration(getResources().getInteger(android.R.integer.config_mediumAnimTime));
-                    orders.animate()
-                            .translationYBy(0)
-                            .translationY(-400)
-                            .setDuration(getResources().getInteger(android.R.integer.config_mediumAnimTime));
-                    setting.animate()
-                            .translationYBy(0)
-                            .translationY(-400)
-                            .setDuration(getResources().getInteger(android.R.integer.config_mediumAnimTime));
-                    toggleMenuBtn.animate()
-                            .translationYBy(0)
-                            .translationY(-222)
-                            .setDuration(getResources().getInteger(android.R.integer.config_mediumAnimTime));
-                    isMenuShown = false;
-                }
-            }
-        });
-
-        final int[] orderCnt = new int[1];
+        final long[] orderCnt = new long[1];
         orders.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                final Intent intent = new Intent(Select.this,YourOrders.class);
-                final Bundle extras = new Bundle();
+            public void onClick(View view) {
 
-                ref.child("users").child(userId).addChildEventListener(new ChildEventListener() {
+//                if(MotionEvent.ACTION_DOWN == 0 || MotionEvent.ACTION_UP == 1) {
+                    final Intent intent = new Intent(Select.this, YourOrders.class);
+                    final Bundle extras = new Bundle();
 
-                    @Override
-                    public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                        if(dataSnapshot.getKey().equals("Orders")){
-                            orderCnt[0] = (int) dataSnapshot.getChildrenCount();
-                            extras.putInt("Orders Count",orderCnt[0]);
-                            Log.d("ORDER COUNT IS ", String.valueOf(orderCnt[0]));
-                            intent.putExtras(extras);
-                            startActivity(intent);
+                    final ArrayList<String> orderkey = new ArrayList<>();
+                    final ArrayList<String> shopKey = new ArrayList<>();
+
+                    ref.child("users").child(userId).child("Orders").addChildEventListener(new ChildEventListener() {
+
+                        @Override
+                        public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+//                            shopKey.add(dataSnapshot.getKey());
+
+                            Log.d("ORDERCOUNT ", String.valueOf(dataSnapshot.getChildrenCount()));
+
+                            for (DataSnapshot order_Key : dataSnapshot.getChildren()) {
+                                orderkey.add(order_Key.getKey());
+                            }
+
+
+//                            new Handler().postDelayed(new Runnable() {
+//                                @Override
+//                                public void run() {
+
+                                    if (orderkey.size() == 0) {
+
+                                        Context context = getApplicationContext();
+                                        CharSequence text = "No Orders to show";
+                                        int duration = Toast.LENGTH_SHORT;
+                                        Toast toast = Toast.makeText(context, text, duration);
+                                        toast.show();
+
+                                    } else {
+
+                                        orderCnt[0] =  orderkey.size();
+                                        extras.putLong("Orders Count", orderkey.size());
+                                        intent.putExtras(extras);
+                                        startActivity(intent);
+//                                        finish();
+                                    }
+//                                }
+//                            }, 300);
+
                         }
 
-                    }
+                        @Override
+                        public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
-                    @Override
-                    public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                        }
 
-                    }
+                        @Override
+                        public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
 
-                    @Override
-                    public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+                        }
 
-                    }
+                        @Override
+                        public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
-                    @Override
-                    public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                        }
 
-                    }
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
+                        }
+                    });
+//                }
+            }
 
-                    }
-                });
-              
+        });
+
+
+        setting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Select.this,settings.class);
+                startActivity(intent);
+            }
+        });
+        //Checking for internet connection
+        Boolean isNetwork = isNetworkAvailable();
+
+//        setProgressForOrder();
+//        help.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//                help.performClick();
+//                Log.d("HELP","PRESSED");
+//                Intent intent = new Intent(Select.this,HelpActivity.class);
+//                startActivity(intent);
+//                return true;
+//            }
+//        });
+        help.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("HELP","PRESSED");
+                Intent intent = new Intent(Select.this,HelpActivity.class);
+                startActivity(intent);
+
             }
         });
 
+
+
+
     }
-    //this function will get the pdf from the storage
-    private void getPDF() {
-        //for greater than lolipop versions we need the permissions asked on runtime
-        //so if the permission is not available user will go to the screen to allow storage permission
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && ContextCompat.checkSelfPermission(this,
-                Manifest.permission.READ_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED) {
-            Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-                    Uri.parse("package:" + getPackageName()));
-            startActivity(intent);
-            return;
+
+
+
+    private boolean isNetworkAvailable() {
+        boolean haveConnectedWifi = false;
+        try {
+
+            ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo networkInfo = cm.getActiveNetworkInfo();
+            haveConnectedWifi = networkInfo != null && networkInfo.isAvailable() &&
+                    networkInfo.isConnected();
+            return haveConnectedWifi;
+
+
+        } catch (Exception e) {
+            System.out.println("CheckConnectivity Exception: " + e.getMessage());
+            Log.v("connectivity", e.toString());
         }
+        return haveConnectedWifi;
+    }
+
+
+    //this function will get the pdf from the storage
+    private void selectFiles() {
 
         //creating an intent for file chooser
+
+//        finish();
+//        Intent get = getIntent();
+//        Boolean selectPhotos = get.getBooleanExtra("Photos",false);
+//        Log.d("SELECTFILES", String.valueOf(selectPhotos));
+//
+//        if(selectPhotos == 1){
+//            Intent intent = new Intent();
+//            intent.setType("image/*");
+//            intent.setAction(Intent.ACTION_GET_CONTENT);
+//            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+//            startActivityForResult(Intent.createChooser(intent, "Select Images"), 1);
+//
+//        }else{
+//            Intent intent = new Intent();
+//            intent.setType("application/pdf");
+//            intent.setAction(Intent.ACTION_GET_CONTENT);
+//            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+//            startActivityForResult(Intent.createChooser(intent, "Select files"), 1);
+//        }
+
         Intent intent = new Intent();
 //        intent.setType("application/pdf");
         intent.setType("*/*");
-        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
         intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_PDF_CODE);
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+//         startActivityForResult(Intent.createChooser(intent, "Select files"), 1);
+
+        startActivityForResult(Intent.createChooser(intent, "select Picture"), PICK_PDF_CODE);
+
     }
+
+    ArrayList<Uri> uri = new ArrayList<Uri>();
+    String fileType;
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        uri.clear();
         super.onActivityResult(requestCode, resultCode, data);
         //when the user choses the file
-        if (requestCode == PICK_PDF_CODE && resultCode == RESULT_OK && data != null && data.getData() != null) {
+        if (requestCode == PICK_PDF_CODE && resultCode == RESULT_OK && data != null ) {
             //if a file is selected
             if (data.getData() != null) {
-                Log.d("DATAAA", String.valueOf(data.getData()));
                 //uploading the file
-//                uploadFile(data.getData());
+
                 Uri returnUri = data.getData();
+                uri.add(returnUri);
+
+                Log.d("URIID", String.valueOf(returnUri));
                 String mimeType = getContentResolver().getType(returnUri);
-                Log.d("MIME",mimeType);
+                Log.d("MIME", mimeType);
 
-                if(mimeType.contains("application")){
-                    Log.d("FILE","PDF");
 
-                    uploadFile(returnUri);
-                }else{
-                    Log.d("FILE","Image");
-                    uploadImg(requestCode,resultCode,data);
+                if (mimeType.contains("application")) {
+
+                    Log.d("FILE", mimeType);
+                    fileType = mimeType;
+                    uploadFile(requestCode, resultCode,returnUri);
+//                    uploadFile(returnUri);
+
+                } else {
+
+                    Log.d("FILE", "Image");
+                    fileType = mimeType;
+                    uploadImg(requestCode, resultCode, data, uri);
+
                 }
-            }else{
+            } else {
                 Toast.makeText(this, "No file chosen", Toast.LENGTH_SHORT).show();
             }
         }
     }
-    Uri[] uri = new Uri[1000];
-
-    private void uploadFile(Uri file){
-
-        final Uri uri;
-        uri = file;
-        final KProgressHUD hud = KProgressHUD.create(Select.this)
-                .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
-                .setLabel("Please wait")
-                .setMaxProgress(100)
-                .show();
-        final UploadTask uploadTask = filesRef.putFile(file);
-        uploadTask.addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                // Handle unsuccessful uploads
-                Log.d("UPLOAD", "Not successfull");
-            }
-        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
-                Log.d("UPLOAD", "SUCCESSFULL");
-
-                Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-                    @Override
-                    public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-                        if (!task.isSuccessful()) {
-                            throw task.getException();
-                        }
-
-                        // Continue with the task to get the download URL
-                        return filesRef.getDownloadUrl();
-                    }
-                }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-
-                    @Override
-                    public void onComplete(@NonNull Task<Uri> task) {
-                        if (task.isSuccessful()) {
-                            String url;
-                            Uri downloadUri = task.getResult();
-                            url = String.valueOf(downloadUri);
-                            hud.dismiss();
-
-                            Intent goToPdfInfo = new Intent(Select.this,PdfInfo.class);
-//                                            finish();
-                            //goToPageInfo.putExtra("Pages",images);
-                            Bundle extras = new Bundle();
-                            extras.putString("PdfURL",url);
-                            extras.putString("URI", String.valueOf(uri));
-                            goToPdfInfo.putExtras(extras);
-                            startActivity(goToPdfInfo);
 
 
-                        } else {
-                            // Handle failures
-                            // ...
-                        }
-                    }
-                });
-                // ...
-            }
-        });
+    public void uploadFile(int requestCode, int resultCode, Uri file){
+        Intent goToPdfInfo = new Intent(Select.this, PdfInfo.class);
+        //goToPageInfo.putExtra("Pages",images);
+        Bundle extras = new Bundle();
+//        extras.putParcelable("PdfURL", file);
+        Log.d("URIPASSED",file.toString());
+        extras.putString("PdfURL", file.toString());
+        extras.putString("FileType", fileType);
+        extras.putInt("RequestCode",requestCode);
+        extras.putInt("ResultCode",resultCode);
+        goToPdfInfo.putExtras(extras);
+        startActivity(goToPdfInfo);
+
 
     }
-    private void uploadImg(int requestCode, int resultCode, Intent data) {
+
+
+    public File changeExtension(File file, String extension) {
+        String filename = file.getName();
+
+        if (filename.contains(".")) {
+            filename = filename.substring(0, filename.lastIndexOf('.'));
+        }
+        filename += "." + extension;
+
+        file.renameTo(new File(file.getParentFile(), filename));
+        return file;
+    }
+
+
+//    private void uploadFile(Uri file) {
+//        final String uniqueID = UUID.randomUUID().toString();
+//
+//        final StorageReference filesRef = storageRef.child(uniqueID);
+//
+////        Log.d("FILEPDF", String.valueOf(changeExtension(new File(file.getPath()),"pdf")));
+//
+//
+//        final Uri uri;
+//        uri = file;
+//
+//        Log.d("PATHIS",uri.toString());
+////        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://cloudconvert.com/anything-to-pdf")));
+////        ConvertToPDF(file.toString(),file.getLastPathSegment()+"/"+uniqueID);
+//
+//        final KProgressHUD hud = KProgressHUD.create(Select.this)
+//                .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
+//                .setLabel("Please wait")
+//                .setMaxProgress(100);
+////                .show();
+//
+//
+//        Sprite chasingDots = new ChasingDots();
+//        progressBar.setVisibility(View.VISIBLE);
+//        progressBar.setIndeterminateDrawable(chasingDots);
+//
+//
+//        //Checking for internet connection
+//        Boolean isNetwork = isNetworkAvailable();
+//        if (!isNetwork) {
+//            showErrorDialog("No internet connection detected");
+//            hud.dismiss();
+//        }
+//        final UploadTask uploadTask = filesRef.putFile(file);
+//        uploadTask.addOnFailureListener(new OnFailureListener() {
+//            @Override
+//            public void onFailure(@NonNull Exception exception) {
+//                // Handle unsuccessful uploads
+//                Log.d("UPLOAD", "Not successfull");
+//            }
+//        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+//            @Override
+//            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+//                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
+//                Log.d("UPLOAD", "SUCCESSFULL");
+//                Log.d("UNIQUE",uniqueID);
+//                Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+//                    @Override
+//                    public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+//                        if (!task.isSuccessful()) {
+//                            throw task.getException();
+//                        }
+//
+//                        // Continue with the task to get the download URL
+//                        return filesRef.getDownloadUrl();
+//                    }
+//                }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+//
+//                    @Override
+//                    public void onComplete(@NonNull Task<Uri> task) {
+//                        if (task.isSuccessful()) {
+//                            String url;
+//                            Uri downloadUri = task.getResult();
+//                            url = String.valueOf(downloadUri);
+//                            hud.dismiss();
+//
+//                            Intent goToPdfInfo = new Intent(Select.this, PdfInfo.class);
+////                                            finish();
+//                            //goToPageInfo.putExtra("Pages",images);
+//                            Bundle extras = new Bundle();
+//                            extras.putString("PdfURL", url);
+//                            extras.putString("URI", String.valueOf(uri));
+//                            extras.putString("FileType", fileType);
+//
+//                            goToPdfInfo.putExtras(extras);
+//
+//                            progressBar.setVisibility(View.INVISIBLE);
+//
+//                            startActivity(goToPdfInfo);
+//                            finish();
+//
+//                        } else {
+//                            // Handle failures
+//                            // ...
+//                        }
+//                    }
+//                });
+//                // ...
+//            }
+//        });
+//    }
+
+
+
+    public void ConvertToPDF(String docPath, String pdfPath) {
+        final String uniqueID = UUID.randomUUID().toString();
+
+//        File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        String path = Environment.getExternalStorageDirectory().toString();
+        File folder = new File(path, uniqueID);
+
+//        File file = new File(folder, uniqueID);
+        folder.mkdir();
+        File pdfFile = new File(folder, "File");
+
+        try {
+            pdfFile.createNewFile();
+            InputStream doc = new FileInputStream(new File(docPath));
+            XWPFDocument document = new XWPFDocument(doc);
+            PdfOptions options = PdfOptions.create();
+//            OutputStream out = new FileOutputStream(new File(String.valueOf(path)));
+            OutputStream out = new FileOutputStream(pdfFile);
+            PdfConverter.getInstance().convert(document, out, options);
+            Log.d("DoneConvert", String.valueOf(out));
+        } catch (FileNotFoundException ex) {
+            System.out.println(ex.getMessage());
+            Log.d("FILENOTFOUND", String.valueOf(ex));
+        } catch (IOException ex) {
+            Log.d("IOEXCEPTION",ex.getMessage());
+        }
+    }
+
+
+
+
+    private void uploadImg(int requestCode, int resultCode, Intent data, final ArrayList<Uri> uri) {
+//        Uri returnUri = data.getData();
+//        uri.add(returnUri);
+//        final String uniqueID = UUID.randomUUID().toString();
+//        final StorageReference filesRef = storageRef.child(uniqueID);
+
         final KProgressHUD hud = KProgressHUD.create(Select.this)
                 .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
                 .setLabel("Please wait")
-                .setMaxProgress(100)
-                .show();
-        Log.d("RQ", String.valueOf(requestCode));
+                .setMaxProgress(100);
+//                .show();
+
+        Sprite chasingDots = new ChasingDots();
+        progressBar.setVisibility(View.VISIBLE);
+        progressBar.setIndeterminateDrawable(chasingDots);
+
+        //Checking for internet connection
+        Boolean isNetwork = isNetworkAvailable();
+        if (!isNetwork) {
+            showErrorDialog("No internet connection detected");
+            hud.dismiss();
+        }
+
+        final int[] uploadCnt = {0};
+
         if (requestCode == PICK_PDF_CODE) {
             if (resultCode == Activity.RESULT_OK) {
-                if (data.getClipData() != null) {
-                    int count = data.getClipData().getItemCount(); //evaluate the count before the for loop --- otherwise, the count is evaluated every loop.
-                    for (int i = 0; i < count; i++) {
-                        Uri imageUri = data.getClipData().getItemAt(i).getUri();
-                        Log.d("IMAGE URI ", String.valueOf(imageUri));
-                        uri[i]=(imageUri);
+                if (uri.size() > 0) {
+                    if (data.getClipData()!=null ) {
+
+                        int count = data.getClipData().getItemCount(); //evaluate the count before the for loop --- otherwise, the count is evaluated every loop.
+                        for (int i = 0; i < count; i++) {
+
+                            final String uniqueID = UUID.randomUUID().toString();
+                            final StorageReference filesRef = storageRef.child(uniqueID);
+
+                            Uri imageUri = data.getClipData().getItemAt(i).getUri();
+                            uri.add(imageUri);
+
+                            //do something with the image (save it to some directory or whatever you need to do with it here)
+                            Bitmap bitmap = null;
+                            try {
+                                bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                            images.add(bitmap);
+                            byte[] DATA = baos.toByteArray();
+                            final UploadTask uploadTask = filesRef.putBytes(DATA);
+
+
+                            uploadTask.addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception exception) {
+                                    // Handle unsuccessful uploads
+                                    Log.d("UPLOAD", "Not successfull");
+                                }
+                            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                @Override
+                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                    // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
+                                    Log.d("UPLOAD", "SUCCESSFULL");
+                                    Log.d("UNIQUE",uniqueID);
+
+                                    uploadCnt[0]++;
+                                    uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                                        @Override
+                                        public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                                            if (!task.isSuccessful()) {
+                                                throw task.getException();
+                                            }
+
+                                            // Continue with the task to get the download URL
+                                            return filesRef.getDownloadUrl();
+                                        }
+                                    }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+
+                                        @Override
+                                        public void onComplete(@NonNull Task<Uri> task) {
+                                            if (task.isSuccessful()) {
+                                                Uri downloadUri = task.getResult();
+                                                pageURL.add(String.valueOf(downloadUri));
+
+
+                                                Log.d("Pages ", String.valueOf(images));
+                                                Log.d("URLS ", String.valueOf(pageURL));
+                                                hud.dismiss();
+                                            if(uploadCnt[0] == pageURL.size()) {
+                                                Intent goToPageInfo = new Intent(Select.this, PageInfo.class);
+                                                Bundle extras = new Bundle();
+                                                extras.putStringArrayList("URLS", pageURL);
+                                                extras.putString("FileType", fileType);
+//                                                Log.d("USERNAME", username);
+//                                                extras.putString("username", username);
+//                                                extras.putString("email", email);
+//                                                extras.putLong("num", (num));
+
+                                                //extras.putParcelableArrayList("Images",images);
+                                                extras.putStringArray("URI", new String[]{String.valueOf(uri)});
+                                                goToPageInfo.putExtras(extras);
+
+                                                progressBar.setVisibility(View.INVISIBLE);
+
+                                                startActivity(goToPageInfo);
+
+                                            }
+
+                                            } else {
+                                                // Handle failures
+                                                // ...
+                                            }
+                                        }
+                                    });
+                                    // ...
+                                }
+                            });
+                        }
+
+
+
+                } else {
+
+//                    int count = data.getClipData().getItemCount(); //evaluate the count before the for loop --- otherwise, the count is evaluated every loop.
+                        String uniqueID = UUID.randomUUID().toString();
+                        final StorageReference filesRef = storageRef.child(uniqueID);
+
+                    for (int i = 0; i < uri.size(); i++) {
+                        Uri imageUri = uri.get(i);
+
+//                        ClipData.Item data1 = data.getClipData().getItemAt(i);
+
+//                        uri.add(imageUri);
 
                         //do something with the image (save it to some directory or whatever you need to do with it here)
                         Bitmap bitmap = null;
@@ -346,7 +676,6 @@ public class Select extends AppCompatActivity {
                         final UploadTask uploadTask = filesRef.putBytes(DATA);
 
 
-//                    Uri uri = Uri.fromFile(mImageUri);
                         uploadTask.addOnFailureListener(new OnFailureListener() {
                             @Override
                             public void onFailure(@NonNull Exception exception) {
@@ -367,6 +696,7 @@ public class Select extends AppCompatActivity {
                                         }
 
                                         // Continue with the task to get the download URL
+                                        uploadCnt[0]++;
                                         return filesRef.getDownloadUrl();
                                     }
                                 }).addOnCompleteListener(new OnCompleteListener<Uri>() {
@@ -375,25 +705,25 @@ public class Select extends AppCompatActivity {
                                     public void onComplete(@NonNull Task<Uri> task) {
                                         if (task.isSuccessful()) {
                                             Uri downloadUri = task.getResult();
+
                                             pageURL.add(String.valueOf(downloadUri));
-
-
-                                            Log.d("Pages ", String.valueOf(images));
-                                            Log.d("URLS ", String.valueOf(pageURL));
                                             hud.dismiss();
-                                            Intent goToPageInfo = new Intent(Select.this,PageInfo.class);
-//                                            finish();
-                                            //goToPageInfo.putExtra("Pages",images);
-                                            Bundle extras = new Bundle();
-                                            extras.putStringArrayList("URLS",pageURL);
-                                            Log.d("URIII", String.valueOf(uri));
-                                            extras.putStringArray("URI", new String[]{String.valueOf(uri)});
-                                            goToPageInfo.putExtras(extras);
-                                            startActivity(goToPageInfo);
+                                            if(uploadCnt[0] == pageURL.size()){
+                                                Intent goToPageInfo = new Intent(Select.this, PageInfo.class);
+                                                Bundle extras = new Bundle();
+                                                extras.putStringArrayList("URLS", pageURL);
+                                                extras.putString("FileType", fileType);
+//                                                Log.d("USERNAME",username);
+//                                                extras.putString("username",username);
+//                                                extras.putString("email",email);
+//                                                extras.putLong("num", (num));
 
-
+                                                goToPageInfo.putExtras(extras);
+                                                startActivity(goToPageInfo);
+                                            }
                                         } else {
                                             // Handle failures
+                                            Log.d("IMAGE", "NOT RECIEVED");
                                             // ...
                                         }
                                     }
@@ -404,17 +734,34 @@ public class Select extends AppCompatActivity {
                     }
 
                 }
-            } else if (data.getData() != null) {
-                String imagePath = data.getData().getPath();
-                Log.d("IMAGE PATH ", String.valueOf(imagePath));
-                Log.d("IMAGE is ", String.valueOf(data.getData()));
-                //do something with the image (save it to some directory or whatever you need to do with it here)
-                hud.dismiss();
+
+              }
             }
-        }else{
-            Log.d("Failed","To choose files");
+        } else if (data.getData() != null) {
+            String imagePath = data.getData().getPath();
+            Log.d("IMAGE PATH ", String.valueOf(imagePath));
+            Log.d("IMAGE is ", String.valueOf(data.getData()));
+            //do something with the image (save it to some directory or whatever you need to do with it here)
+            hud.dismiss();
         }
     }
+
+
+//    public void uploadImg(int requestCode, int resultCode, Intent data, final ArrayList<Uri> uri){
+//        Intent goToPageInfo = new Intent(Select.this, PageInfo.class);
+//        Bundle extras = new Bundle();
+//        extras.putString("FileType", fileType);
+//        Log.d("URISIZE", String.valueOf(uri.size()));
+////        extras.putString("URLS", String.valueOf(uri));
+//        extras.putParcelableArrayList("URLS",uri);
+//        goToPageInfo.putExtras(extras);
+//        startActivity(goToPageInfo);
+//
+//    }
+
+
+
+
 //    @Override
 //    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 //        // TODO Auto-generated method stub
@@ -423,7 +770,7 @@ public class Select extends AppCompatActivity {
 //            case 7:
 //                if (resultCode == RESULT_OK) {
 //                    String PathHolder = data.getData().getPath();
-//                    Toast.makeText(Select.this, PathHolder, Toast.LENGTH_LONG).show();
+//                    Toast.makeText(select.this, PathHolder, Toast.LENGTH_LONG).show();
 //                }
 //                break;
 //        }
@@ -432,7 +779,7 @@ public class Select extends AppCompatActivity {
 
 //    @Override
 //    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        final KProgressHUD hud = KProgressHUD.create(Select.this)
+//        final KProgressHUD hud = KProgressHUD.create(select.this)
 //                .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
 //                .setLabel("Please wait")
 //                .setMaxProgress(100)
@@ -495,7 +842,7 @@ public class Select extends AppCompatActivity {
 //                                            Log.d("Pages ", String.valueOf(images));
 //                                            Log.d("URLS ", String.valueOf(pageURL));
 //                                            hud.dismiss();
-//                                            Intent goToPageInfo = new Intent(Select.this,PageInfo.class);
+//                                            Intent goToPageInfo = new Intent(select.this,PageInfo.class);
 ////                                            finish();
 //                                            //goToPageInfo.putExtra("Pages",images);
 //                                            goToPageInfo.putExtra("URLS",pageURL);
@@ -525,15 +872,8 @@ public class Select extends AppCompatActivity {
 //            Log.d("Failed","To choose files");
 //        }
 //    }
-private void showErrorDialog(String message){
-    new AlertDialog.Builder(this)
-            .setTitle("What would you like to choose? " +
-                    "An image or a file ?")
-            .setMessage(message)
-            .setPositiveButton(android.R.string.ok,null)
-            .setIcon(android.R.drawable.ic_dialog_alert)
-            .show();
-}
+
+
 //    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 //        Log.d("we are in","YAYYYY");
 //        Log.d("Data is : ", String.valueOf(data));
@@ -593,7 +933,7 @@ private void showErrorDialog(String message){
 //                                        Uri downloadUri = task.getResult();
 //                                        pageURL.add(String.valueOf(downloadUri));
 //
-////                                        Intent goToPageInfo = new Intent(Select.this,PageInfo.class);
+////                                        Intent goToPageInfo = new Intent(select.this,PageInfo.class);
 ////                                        finish();
 //////                                        goToPageInfo.putExtra("Pages",images);
 ////                                        goToPageInfo.putExtra("URLS",pageURL);
@@ -658,4 +998,16 @@ private void showErrorDialog(String message){
 //
 //        super.onActivityResult(requestCode, resultCode, data);
 //    }
+
+
+
+    private void showErrorDialog(String message){
+        new AlertDialog.Builder(this)
+                .setTitle("Oops")
+                .setMessage(message)
+                .setPositiveButton(android.R.string.ok,null)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
+    }
+
 }
