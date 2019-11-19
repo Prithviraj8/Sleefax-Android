@@ -4,6 +4,18 @@
     android:layout_width="match_parent" android:layout_height="match_parent">
 
     <View
+        android:id="@+id/animateView"
+        android:layout_width="wrap_content"
+        android:layout_height="228dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginStart="11dp"
+        android:layout_marginTop="21dp"
+        android:layout_marginEnd="12dp" />
+
+    <View
         android:id="@+id/YourOrderView"
         android:layout_width="wrap_content"
         android:layout_height="223dp"
@@ -130,17 +142,5 @@
         android:layout_marginTop="6dp"
         android:layout_marginEnd="27dp"
         android:background="#88818080" />
-
-    <View
-        android:id="@+id/animateView"
-        android:layout_width="wrap_content"
-        android:layout_height="228dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginStart="11dp"
-        android:layout_marginTop="21dp"
-        android:layout_marginEnd="12dp" />
 
 </RelativeLayout>

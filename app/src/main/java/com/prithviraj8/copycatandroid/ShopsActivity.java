@@ -556,24 +556,26 @@ public class ShopsActivity extends AppCompatActivity {
 //                .setIcon(android.R.drawable.ic_input_add)
 //                .show();
         String uniqueID = UUID.randomUUID().toString();
-        DatabaseReference db = FirebaseDatabase.getInstance().getReference();
+                 String orderKey = "";
 
-         shopinfo orderInfo = new shopinfo(loc,ShopName,"Placed",shopLat,shopLong,num,files,fileType,pagesize,orientation,price,false,false,false,false);
-         UserInfo userinfo = new UserInfo(username,email,num,"android");
-
-
-         storeDb = storeDb.child(storeID).child("Orders").child(userID).child(uniqueID);
-         storeDb.setValue(userinfo);
-         db = db.child("users").child(userID).child("Orders").child(storeID).child(uniqueID);
-         db.setValue(orderInfo);
-         String orderKey = "";
-
-        for(int i =0;i<pageURL.size();i++){
-            singlePageInfo single = new singlePageInfo(pageURL.get(i),color,copy,fileType,pagesize,orientation);
-            db.push().setValue(single);
-            storeDb.push().setValue(single);
+//        DatabaseReference db = FirebaseDatabase.getInstance().getReference();
+//
+//         shopinfo orderInfo = new shopinfo(loc,ShopName,"Placed",shopLat,shopLong,num,files,fileType,pagesize,orientation,price,false,false,false,false);
+//         UserInfo userinfo = new UserInfo(username,email,num,"android");
+//
+//
+//         storeDb = storeDb.child(storeID).child("Orders").child(userID).child(uniqueID);
+//         storeDb.setValue(userinfo);
+//         db = db.child("users").child(userID).child("Orders").child(storeID).child(uniqueID);
+//         db.setValue(orderInfo);
+//
+//        for(int i =0;i<pageURL.size();i++){
+//            singlePageInfo single = new singlePageInfo(pageURL.get(i),color,copy,fileType,pagesize,orientation);
+//            db.push().setValue(single);
+//            storeDb.push().setValue(single);
+//            orderKey = uniqueID;
+//        }
             orderKey = uniqueID;
-        }
 
         Intent intent = new Intent(ShopsActivity.this, OrderPlaced.class);
         Bundle extras = new Bundle();

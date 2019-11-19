@@ -52,6 +52,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.kaopiz.kprogresshud.KProgressHUD;
+import com.mikhaellopez.circularprogressbar.CircularProgressBar;
 import com.prithviraj8.copycatandroid.Services.MyFirebaseMessagingService;
 
 import java.io.BufferedReader;
@@ -77,9 +78,10 @@ public class OrderPlaced extends AppCompatActivity {
 
     final String TAG = "PathGoogleMapActivity";
     ImageButton getDirection;
-    TextView Files, shopName,Loc,Price,status1,status2,status3,status4;
-    ProgressBar orderProgress;
+    TextView Files, shopName,Loc,Price,status1,status2,status3,status4,statusPercent;
+//    ProgressBar orderProgress;
     ImageButton back;
+    CircularProgressBar orderProgress;
 
     String name,loc,orderKey,orderStatus,shopKey,fileType,pagesize,orientation,username,email;
     LatLng shopLoc, userLoc;
@@ -92,7 +94,6 @@ public class OrderPlaced extends AppCompatActivity {
     String CHANNEL_ID = "UsersChannel";
     boolean FromYourOrders =false;
     long num;
-
 //    ShopInfo info = new ShopInfo();
     private static final int LOCATION_REQUEST = 500;
     private static final String MAPVIEW_BUNDLE_KEY = "MapViewBundleKey";
@@ -122,7 +123,7 @@ public class OrderPlaced extends AppCompatActivity {
         FirebaseApp app = FirebaseApp.getInstance("Stores");
         FirebaseDatabase DB = FirebaseDatabase.getInstance(app);
         storeDb = DB.getReferenceFromUrl("https://storeowner-9c355.firebaseio.com/").child("users");
-        ArrayList<Uri> pdfs = new ArrayList<>();
+        ArrayList<String> pdfs = new ArrayList<>();
 
         back = findViewById(R.id.backBtn);
         back.setOnClickListener(new View.OnClickListener() {
@@ -151,12 +152,14 @@ public class OrderPlaced extends AppCompatActivity {
         Loc = findViewById(R.id.OrderLoc);
         Price = findViewById(R.id.OrderPrice);
         Files = findViewById(R.id.OrderFiles);
-        orderProgress = findViewById(R.id.OrderProgressBar);
+//        orderProgress = findViewById(R.id.OrderProgressBar);
         status1 = findViewById(R.id.status1);
         status2 = findViewById(R.id.status2);
         status3 = findViewById(R.id.status3);
         status4 = findViewById(R.id.status4);
         getDirection = findViewById(R.id.Directions);
+        orderProgress = findViewById(R.id.circularProgressBar);
+        statusPercent = findViewById(R.id.statusPercent);
 
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
@@ -178,7 +181,7 @@ public class OrderPlaced extends AppCompatActivity {
         username = extras.getString("Username");
         email = extras.getString("email");
         num = extras.getLong("Number");
-        pdfs = extras.getParcelableArrayList("URLS");
+        pdfs = extras.getStringArrayList("URLS");
         copy = extras.getInt("Copies");
         color = extras.getString("ColorTypes");
         requestCode = extras.getInt("RequestCode");
@@ -206,9 +209,11 @@ public class OrderPlaced extends AppCompatActivity {
             }
         });
 
-        uploadFile(pdfs);
-        setProgressForOrder();
-
+        if(pdfs != null){
+            uploadFile(pdfs);
+        }else {
+            setProgressForOrder(orderKey);
+        }
 //        createNotificationChannel();
     }
 
@@ -220,7 +225,7 @@ public class OrderPlaced extends AppCompatActivity {
     }
 
 
-    public void uploadFile(ArrayList<Uri> pdfs){
+    public void uploadFile(ArrayList<String> pdfs){
 
 
         final String uniqueID = UUID.randomUUID().toString();
@@ -234,11 +239,15 @@ public class OrderPlaced extends AppCompatActivity {
 
 
         final Uri uri;
-        uri = pdfs.get(0);
+        String file = pdfs.get(0);
+        uri = Uri.parse(file);
 
                 Log.d("URIID", String.valueOf(pdfs.get(0)));
 
-                final UploadTask uploadTask = filesRef.putFile(pdfs.get(0));
+                orderProgress.setProgress(15);
+                statusPercent.setText("15%");
+
+                final UploadTask uploadTask = filesRef.putFile(uri);
 //        final UploadTask uploadTask = filesRef.putFile(changeExtension(new File(file.getPath()),"pdf"));
                 uploadTask.addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -264,6 +273,7 @@ public class OrderPlaced extends AppCompatActivity {
                             }
                         }).addOnCompleteListener(new OnCompleteListener<Uri>() {
 
+                            @RequiresApi(api = Build.VERSION_CODES.N)
                             @Override
                             public void onComplete(@NonNull Task<Uri> task) {
                                 if (task.isSuccessful()) {
@@ -288,6 +298,8 @@ public class OrderPlaced extends AppCompatActivity {
                                     storeDb.push().setValue(single);
                                     orderKey = uniqueID;
 
+                                    setProgressForOrder(orderKey);
+
 
                                 } else {
                                     // Handle failures
@@ -305,7 +317,7 @@ public class OrderPlaced extends AppCompatActivity {
 
 
     @RequiresApi(api = Build.VERSION_CODES.N)
-    private void setProgressForOrder() {
+    private void setProgressForOrder(final String orderKey) {
 
         // Create an Intent for the activity you want to start
         Intent resultIntent = new Intent(this, Select.class);
@@ -339,11 +351,16 @@ public class OrderPlaced extends AppCompatActivity {
                     if(orderStatus != null){
                         if(orderStatus.equals("Placed")){
                             obj.progress = 25;
+                            statusPercent.setText("25%");
+
                         }else if(orderStatus.equals("Retrieved")){
+                            statusPercent.setText("50%");
                             obj.progress = 50;
                         }else if(orderStatus.equals("In Process")){
+                            statusPercent.setText("75%");
                             obj.progress = 75;
                         }else{
+                            statusPercent.setText("100%");
                             obj.progress = 100;
                         }
 
@@ -355,8 +372,9 @@ public class OrderPlaced extends AppCompatActivity {
 
                             while (obj.progress <= 25) {
                                 obj.progress++;
-                                orderProgress.setProgress(obj.progress, true);
+                                orderProgress.setProgress(obj.progress);
 //                                orderProgress.setBackgroundColor(Color.RED);
+//                                orderProgress.
                             }
 //                            notified.put("P_Notified", true);
 //                            orderDb.child("users").child(userId).child("Orders").child(shopKey).child(orderKey).updateChildren(notified);
@@ -370,8 +388,9 @@ public class OrderPlaced extends AppCompatActivity {
                             while (obj.progress > 25 && obj.progress <= 50) {
 
                                 obj.progress++;
-                                orderProgress.setProgress(obj.progress, true);
-                                orderProgress.setBackgroundResource(R.drawable.colorprogressblue);
+                                orderProgress.setProgress(obj.progress);
+
+//                                orderProgress.setBackgroundResource(R.drawable.colorprogressblue);
 
                             }
 //                            notified.put("RT_Notified", false);
@@ -384,8 +403,8 @@ public class OrderPlaced extends AppCompatActivity {
                             while (obj.progress > 50 && obj.progress <= 75) {
 
                                 obj.progress++;
-                                orderProgress.setProgress(obj.progress, true);
-                                orderProgress.setBackgroundResource(R.drawable.colorprogressyellow);
+                                orderProgress.setProgress(obj.progress);
+//                                orderProgress.setBackgroundResource(R.drawable.colorprogressyellow);
 
                             }
 //                            notified.put("IP_Notified", false);
@@ -398,8 +417,8 @@ public class OrderPlaced extends AppCompatActivity {
                             while (obj.progress > 75 && obj.progress <= 100) {
 
                                 obj.progress++;
-                                orderProgress.setProgress(obj.progress, true);
-                                orderProgress.setBackgroundResource(R.drawable.colorprogressgreen);
+                                orderProgress.setProgress(obj.progress);
+//                                orderProgress.setBackgroundResource(R.drawable.colorprogressgreen);
 
                             }
 //                            notified.put("R_Notified", false);
@@ -440,8 +459,8 @@ public class OrderPlaced extends AppCompatActivity {
 
                                     while (obj.progress <= 25) {
                                         obj.progress++;
-                                        orderProgress.setProgress(obj.progress, true);
-                                        orderProgress.setBackgroundResource(R.drawable.colorprogressred);
+                                        orderProgress.setProgress(obj.progress);
+//                                        orderProgress.setBackgroundResource(R.drawable.colorprogressred);
 
                                     }
 
@@ -460,8 +479,8 @@ public class OrderPlaced extends AppCompatActivity {
                                     while (obj.progress > 25 && obj.progress <= 50) {
 
                                         obj.progress++;
-                                        orderProgress.setProgress(obj.progress, true);
-                                        orderProgress.setBackgroundResource(R.drawable.colorprogressblue);
+                                        orderProgress.setProgress(obj.progress);
+//                                        orderProgress.setBackgroundResource(R.drawable.colorprogressblue);
 
                                     }
                                 }else
@@ -478,8 +497,8 @@ public class OrderPlaced extends AppCompatActivity {
                                     while (obj.progress > 50 && obj.progress <= 75) {
 
                                         obj.progress++;
-                                        orderProgress.setProgress(obj.progress, true);
-                                        orderProgress.setBackgroundResource(R.drawable.colorprogressyellow);
+                                        orderProgress.setProgress(obj.progress);
+//                                        orderProgress.setBackgroundResource(R.drawable.colorprogressyellow);
 
                                     }
                                 }else
@@ -496,8 +515,8 @@ public class OrderPlaced extends AppCompatActivity {
                                     while (obj.progress > 75 && obj.progress <= 100) {
 
                                         obj.progress++;
-                                        orderProgress.setProgress(obj.progress, true);
-                                        orderProgress.setBackgroundResource(R.drawable.colorprogressgreen);
+                                        orderProgress.setProgress(obj.progress);
+//                                        orderProgress.setBackgroundResource(R.drawable.colorprogressgreen);
 
                                     }
                                 }
@@ -512,26 +531,29 @@ public class OrderPlaced extends AppCompatActivity {
 
                                 notificationManager.notify(1, builder.build());
                             }
-//                        Log.d("ORDERPROG", String.valueOf(orderProgress.getProgress()));
 
                         }
                         if (obj.progress >= 25) {
-                            //                        Animation fadeIn = new AlphaAnimation(0, 1);
-                            //                        fadeIn.setInterpolator(new DecelerateInterpolator());
-                            //                        fadeIn.setDuration(1000);
+                            // Animation fadeIn = new AlphaAnimation(0, 1);
+                            //fadeIn.setInterpolator(new DecelerateInterpolator());
+                            // fadeIn.setDuration(1000);
 
                             status1.setVisibility(View.VISIBLE);
+                            status1.setText("Order in progress");
                         }
                         if(obj.progress >= 50){
                             status2.setVisibility(View.VISIBLE);
+                            status1.setText("Order Placed");
 
                         }
                         if(obj.progress >= 75){
                             status3.setVisibility(View.VISIBLE);
+                            status1.setText("Order in Progress");
 
                         }
                         if(obj.progress >= 100){
                             status4.setVisibility(View.VISIBLE);
+                            status1.setText("Order Ready");
 
                         }
                    }

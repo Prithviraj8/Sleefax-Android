@@ -83,8 +83,8 @@ public class Select extends AppCompatActivity {
     long num;
 
 
-    Button selectFilesBtn,orders;
-    ImageButton help, setting;
+    Button selectFilesBtn;
+    ImageButton help, orders,setting;
     View menu;
 
     int PICK_IMAGE_MULTIPLE = 1;
@@ -355,6 +355,8 @@ public class Select extends AppCompatActivity {
 
                     Log.d("FILE", mimeType);
                     fileType = mimeType;
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://cloudconvert.com/anything-to-pdf")));
+
                     uploadFile(requestCode, resultCode,returnUri);
 //                    uploadFile(returnUri);
 
@@ -402,6 +404,7 @@ public class Select extends AppCompatActivity {
     }
 
 
+
 //    private void uploadFile(Uri file) {
 //        final String uniqueID = UUID.randomUUID().toString();
 //
@@ -414,7 +417,6 @@ public class Select extends AppCompatActivity {
 //        uri = file;
 //
 //        Log.d("PATHIS",uri.toString());
-////        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://cloudconvert.com/anything-to-pdf")));
 ////        ConvertToPDF(file.toString(),file.getLastPathSegment()+"/"+uniqueID);
 //
 //        final KProgressHUD hud = KProgressHUD.create(Select.this)

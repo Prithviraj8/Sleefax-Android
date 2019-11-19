@@ -163,16 +163,16 @@ public class PageInfo extends AppCompatActivity {
 
 
 
-        //Crop button
-        crop.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String image = String.valueOf(Uri.parse(pageURL.get(0)));
-                cropImage(image);
-            }
-        });
+         //Crop button
+//        crop.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                String image = String.valueOf(Uri.parse(pageURL.get(0)));
+//                cropImage(image);
+//            }
+//        });
 
-//      Log.d("URLS are ", String.valueOf(pageURL));
+
 
         if(pageURL.size() == 1){
             pageBtn.setText("Done");
@@ -240,17 +240,6 @@ public class PageInfo extends AppCompatActivity {
            public void onClick(View v) {
          if(info.page_cnt==pageURL.size()){
                 getShopsCount();
-//                 Intent intent = new Intent(PageInfo.this,ShopsActivity.class);
-//                 Bundle extras = new Bundle();
-//                 extras.putStringArrayList("URLS",pageURL);
-//                 extras.putInt("Copies",copy);
-//                 extras.putString("ColorTypes",colour);
-//                 extras.putInt("ShopCount",ShopsCnt);
-//                 extras.putString("FileType",fileType);
-//                 extras.putStringArrayList("StoreID",storeID);
-//                 intent.putExtras(extras);
-//                 startActivity(intent);
-
          }else {
                    cnt++;
 
