@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.prithviraj8.copycatandroid">
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
@@ -16,6 +17,10 @@
     <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" /> <!-- <uses-permission android:name="android.permission.SEND_SMS" /> -->
     <uses-permission android:name="android.permission.READ_SMS" />
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
+<!--    <uses-permission android:name="android.permission.MANAGE_DOCUMENTS" />-->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+
+<!--        tools:ignore="ProtectedPermissions" />-->
 
     <application
         android:allowBackup="true"
@@ -61,7 +66,7 @@
         <activity android:name=".Select" />
         <activity android:name=".FirstNameActivity" />
         <activity android:name=".SignInActivity" />
-        <activity android:name=".MainPage">
+        <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

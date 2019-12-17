@@ -31,7 +31,7 @@ public class changeInfoPopUp extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_change_info_pop_up);
 
-        getSupportActionBar().hide();
+//        getSupportActionBar().hide();
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
 
@@ -70,7 +70,7 @@ public class changeInfoPopUp extends AppCompatActivity {
                 toast.show();
 
                 FirebaseAuth.getInstance().signOut();
-                Intent intent = new Intent(changeInfoPopUp.this, MainPage.class);
+                Intent intent = new Intent(changeInfoPopUp.this, MainActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);//makesure user cant go back
                 startActivity(intent);
                 finish();

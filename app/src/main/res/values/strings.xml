@@ -54,4 +54,8 @@
     <string name="your_feedback_here">Your Feedback here.</string>
     <string name="provide_your_feedback_about_the_app">Provide your feedback about the app.</string>
     <string name="uh_oh_so_sorry_to_hear_you_have_issue_with_our_app_please_tell_us_what_they_are_and_we_will_try_to_fix_it_as_soon_as_possible">Uh oh😢. So sorry to hear you have issue with our app. Please tell us what they are and we will try to fix it as soon as possible.</string>
+    <string name="select_color_format">Select Color format</string>
+    <string name="file_settings">File Settings</string>
+    <string name="copies">Copies</string>
+    <string name="_12">12%</string>
 </resources>

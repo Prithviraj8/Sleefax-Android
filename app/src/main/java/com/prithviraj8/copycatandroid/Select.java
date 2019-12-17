@@ -5,46 +5,44 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
+import android.Manifest;
+import android.app.PendingIntent;
+import android.app.ProgressDialog;
+import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.provider.MediaStore;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.github.ybq.android.spinkit.sprite.Sprite;
-import com.github.ybq.android.spinkit.style.ChasingDots;
-import com.google.android.gms.tasks.Continuation;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
-import com.kaopiz.kprogresshud.KProgressHUD;
 import com.paytm.pgsdk.PaytmPGService;
 //import com.spire.presentation.Presentation;
 //import com.spire.presentation.FileFormat;
@@ -53,7 +51,6 @@ import org.apache.poi.xwpf.converter.pdf.PdfConverter;
 import org.apache.poi.xwpf.converter.pdf.PdfOptions;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -62,12 +59,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
 public class Select extends AppCompatActivity {
+
     NotificationManagerCompat notificationManager;
     String CHANNEL_ID = "UsersChannel";
+    ProgressDialog mProgressDialog;
 
     ArrayList<String> pageURL = new ArrayList<String>();
     ArrayList<Bitmap> images = new ArrayList<Bitmap>();
@@ -82,7 +83,6 @@ public class Select extends AppCompatActivity {
     String username,email;
     long num;
 
-
     Button selectFilesBtn;
     ImageButton help, orders,setting;
     View menu;
@@ -90,12 +90,14 @@ public class Select extends AppCompatActivity {
     int PICK_IMAGE_MULTIPLE = 1;
     final static int PICK_PDF_CODE = 2342;
     final static int PICK_IMAGE_CODE = 100;
+    final long[] orderCnt = new long[1];
 
     String imageEncoded;
     List<String> imagesEncodedList;
     private boolean isMenuShown = false;
     ProgressBar progressBar;
-
+    long cnt;
+    boolean network;
     PaytmPGService Service = PaytmPGService.getProductionService();
 
 //    @SuppressLint("ClickableViewAccessibility")
@@ -104,138 +106,56 @@ public class Select extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_files);
-//        getSupportActionBar().hide();
 
-        progressBar = findViewById(R.id.progress);
-//        notificationManager = NotificationManagerCompat.from(this);
+//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.MANAGE_DOCUMENTS) != PackageManager.PERMISSION_GRANTED) {
+//            // Permission is not granted
+//            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.MANAGE_DOCUMENTS}, 1);
+//            Log.d("MANAGEPERMISSION", "PERMISSION");
+//        }
+//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_NETWORK_STATE) != PackageManager.PERMISSION_GRANTED) {
+//            // Permission is not granted
+//            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_NETWORK_STATE}, 1);
+//            Log.d("MANAGEPERMISSION", "PERMISSION");
+//        }
+//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//            // Permission is not granted
+//            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+//            Log.d("MANAGEPERMISSION", "PERMISSION");
+//        }
 
-        selectFilesBtn = findViewById(R.id.AddFilesButton);
+        notificationManager = NotificationManagerCompat.from(this);
+//        setProgressForOrder();
+        createNotification();
+
+        network = haveNetworkConnection();
+        Log.d("NETWORK", String.valueOf(network));
+        selectFilesBtn =(Button) findViewById(R.id.AddFilesButton);
         setting = findViewById(R.id.settings);
         orders = findViewById(R.id.YourOrders);
         help = findViewById(R.id.help);
+//        new getCurrentOrderCnt().execute();
+//        selectFilesBtn.setOnClickListener(fileBtnListener);
 
+        getOrders();
         selectFilesBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Log.d("SELECTing", String.valueOf(true));
+//                selectFiles();
                 selectFiles();
 
-                Log.d("SELECTing", String.valueOf(true));
-//                Intent popChoice = new Intent(Select.this, Pop.class);
-//                startActivity(popChoice);
-//                finish();
-//
-//
-//                Intent get = getIntent();
-//                Bundle extras = get.getExtras();
-//
-//
-//                if (extras != null) {
-//                    int selectPhotos = extras.getInt("Photos");
-//                    Log.d("ATTACHMENT", String.valueOf(selectPhotos));
-//
-//                    if (selectPhotos != 2) {
-////                        selectFiles(selectPhotos);
-//                    }
-//                }
             }
         });
 
-//        selectFilesBtn.setOnTouchListener(new View.OnTouchListener() {
+        orders.setOnClickListener(Listener);
+//        orders.setOnClickListener(new View.OnClickListener() {
 //            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//                Log.d("MOTION", String.valueOf(event));
-//                if((MotionEvent.ACTION_DOWN == 0) || (MotionEvent.ACTION_UP == 1)){
-//                    selectFiles();
-//                }
-//                return true;
+//            public void onClick(View view) {
+//                Log.d("GETTING", "ORDERS");
+////                new getCurrentOrderCnt().execute();
 //            }
+//
 //        });
-
-//        selectFilesBtn.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//                selectFiles();
-//                return true;
-//            }
-//        });
-//        getCurrentUserInfo();
-
-
-        final long[] orderCnt = new long[1];
-        orders.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-//                if(MotionEvent.ACTION_DOWN == 0 || MotionEvent.ACTION_UP == 1) {
-                    final Intent intent = new Intent(Select.this, YourOrders.class);
-                    final Bundle extras = new Bundle();
-
-                    final ArrayList<String> orderkey = new ArrayList<>();
-                    final ArrayList<String> shopKey = new ArrayList<>();
-
-                    ref.child("users").child(userId).child("Orders").addChildEventListener(new ChildEventListener() {
-
-                        @Override
-                        public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-//                            shopKey.add(dataSnapshot.getKey());
-
-                            Log.d("ORDERCOUNT ", String.valueOf(dataSnapshot.getChildrenCount()));
-
-                            for (DataSnapshot order_Key : dataSnapshot.getChildren()) {
-                                orderkey.add(order_Key.getKey());
-                            }
-
-
-//                            new Handler().postDelayed(new Runnable() {
-//                                @Override
-//                                public void run() {
-
-                                    if (orderkey.size() == 0) {
-
-                                        Context context = getApplicationContext();
-                                        CharSequence text = "No Orders to show";
-                                        int duration = Toast.LENGTH_SHORT;
-                                        Toast toast = Toast.makeText(context, text, duration);
-                                        toast.show();
-
-                                    } else {
-
-                                        orderCnt[0] =  orderkey.size();
-                                        extras.putLong("Orders Count", orderkey.size());
-                                        intent.putExtras(extras);
-                                        startActivity(intent);
-//                                        finish();
-                                    }
-//                                }
-//                            }, 300);
-
-                        }
-
-                        @Override
-                        public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-                        }
-
-                        @Override
-                        public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-                        }
-
-                        @Override
-                        public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                        }
-                    });
-//                }
-            }
-
-        });
-
 
         setting.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -244,20 +164,7 @@ public class Select extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        //Checking for internet connection
-        Boolean isNetwork = isNetworkAvailable();
 
-//        setProgressForOrder();
-//        help.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//                help.performClick();
-//                Log.d("HELP","PRESSED");
-//                Intent intent = new Intent(Select.this,HelpActivity.class);
-//                startActivity(intent);
-//                return true;
-//            }
-//        });
         help.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -268,29 +175,100 @@ public class Select extends AppCompatActivity {
             }
         });
 
-
-
-
     }
 
+//     Create an anonymous implementation of OnClickListener
+    private View.OnClickListener Listener = new View.OnClickListener() {
+        public void onClick(View v) {
+            // do something when the button is clicked
+             Log.d("GETTING", "ORDERS");
 
+            mProgressDialog = new ProgressDialog(Select.this);
+            // Set progressdialog title
+            mProgressDialog.setTitle("Retreiving Orders");
+            // Set progressdialog message
+            mProgressDialog.setMessage("Loading...");
+            mProgressDialog.setIndeterminate(false);
+            // Show progressdialog
+            mProgressDialog.show();
+            Context context = getApplicationContext();
+            CharSequence text = "No Orders to show";
+            int duration = Toast.LENGTH_SHORT;
+            Toast toast = Toast.makeText(context, text, duration);
+            if (cnt == 0) {
+                toast.show();
+                mProgressDialog.dismiss();
+            } else {
 
-    private boolean isNetworkAvailable() {
-        boolean haveConnectedWifi = false;
-        try {
+                Intent intent = new Intent(Select.this, YourOrders.class);
+                Bundle extras = new Bundle();
+                extras.putLong("Orders Count", cnt);
+                intent.putExtras(extras);
+                startActivity(intent);
+                mProgressDialog.dismiss();
+                finish();
 
-            ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo networkInfo = cm.getActiveNetworkInfo();
-            haveConnectedWifi = networkInfo != null && networkInfo.isAvailable() &&
-                    networkInfo.isConnected();
-            return haveConnectedWifi;
+            }
 
-
-        } catch (Exception e) {
-            System.out.println("CheckConnectivity Exception: " + e.getMessage());
-            Log.v("connectivity", e.toString());
         }
-        return haveConnectedWifi;
+    };
+
+
+//    long cnt;
+    public void getOrders(){
+        final ArrayList<String> orderkey = new ArrayList<>();
+        final ArrayList<String> shopKey = new ArrayList<>();
+
+        ref.child("users").child(userId).addChildEventListener(new ChildEventListener() {
+
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+//                            shopKey.add(dataSnapshot.getKey());
+
+
+                if(dataSnapshot.getKey().equals("Orders")) {
+                    Log.d("ORDERCOUNT ", String.valueOf(dataSnapshot.getChildrenCount()));
+                    cnt = dataSnapshot.getChildrenCount();
+                }
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    private boolean haveNetworkConnection() {
+        boolean haveConnectedWifi = false;
+        boolean haveConnectedMobile = false;
+
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo[] netInfo = cm.getAllNetworkInfo();
+        for (NetworkInfo ni : netInfo) {
+            if (ni.getTypeName().equalsIgnoreCase("WIFI"))
+                if (ni.isConnected())
+                    haveConnectedWifi = true;
+            if (ni.getTypeName().equalsIgnoreCase("MOBILE"))
+                if (ni.isConnected())
+                    haveConnectedMobile = true;
+        }
+        return haveConnectedWifi || haveConnectedMobile;
     }
 
 
@@ -300,11 +278,16 @@ public class Select extends AppCompatActivity {
         //creating an intent for file chooser
 
 //        finish();
+
+        Intent pop = new Intent(Select.this,Pop.class);
+        startActivity(pop);
+//        finish();
+
 //        Intent get = getIntent();
 //        Boolean selectPhotos = get.getBooleanExtra("Photos",false);
-//        Log.d("SELECTFILES", String.valueOf(selectPhotos));
-//
-//        if(selectPhotos == 1){
+//        Log.d("TYPEOFFILE", String.valueOf(selectPhotos));
+
+//        if(selectPhotos){
 //            Intent intent = new Intent();
 //            intent.setType("image/*");
 //            intent.setAction(Intent.ACTION_GET_CONTENT);
@@ -314,81 +297,28 @@ public class Select extends AppCompatActivity {
 //        }else{
 //            Intent intent = new Intent();
 //            intent.setType("application/pdf");
-//            intent.setAction(Intent.ACTION_GET_CONTENT);
+//            intent.setAction(Intent.ACTION_OPEN_DOCUMENT);
 //            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
 //            startActivityForResult(Intent.createChooser(intent, "Select files"), 1);
 //        }
 
-        Intent intent = new Intent();
+//        Intent intent = new Intent();
 //        intent.setType("application/pdf");
-        intent.setType("*/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+//        intent.setType("*/*");
+//        intent.setType("image/*");
+        // For error "Permission to manage documents"
+//        intent.setAction(Intent.ACTION_OPEN_DOCUMENT);
+//        intent.setAction(Intent.ACTION_GET_CONTENT);
+//        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
 //         startActivityForResult(Intent.createChooser(intent, "Select files"), 1);
-
-        startActivityForResult(Intent.createChooser(intent, "select Picture"), PICK_PDF_CODE);
-
-    }
-
-    ArrayList<Uri> uri = new ArrayList<Uri>();
-    String fileType;
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        uri.clear();
-        super.onActivityResult(requestCode, resultCode, data);
-        //when the user choses the file
-        if (requestCode == PICK_PDF_CODE && resultCode == RESULT_OK && data != null ) {
-            //if a file is selected
-            if (data.getData() != null) {
-                //uploading the file
-
-                Uri returnUri = data.getData();
-                uri.add(returnUri);
-
-                Log.d("URIID", String.valueOf(returnUri));
-                String mimeType = getContentResolver().getType(returnUri);
-                Log.d("MIME", mimeType);
-
-
-                if (mimeType.contains("application")) {
-
-                    Log.d("FILE", mimeType);
-                    fileType = mimeType;
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://cloudconvert.com/anything-to-pdf")));
-
-                    uploadFile(requestCode, resultCode,returnUri);
-//                    uploadFile(returnUri);
-
-                } else {
-
-                    Log.d("FILE", "Image");
-                    fileType = mimeType;
-                    uploadImg(requestCode, resultCode, data, uri);
-
-                }
-            } else {
-                Toast.makeText(this, "No file chosen", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
-
-    public void uploadFile(int requestCode, int resultCode, Uri file){
-        Intent goToPdfInfo = new Intent(Select.this, PdfInfo.class);
-        //goToPageInfo.putExtra("Pages",images);
-        Bundle extras = new Bundle();
-//        extras.putParcelable("PdfURL", file);
-        Log.d("URIPASSED",file.toString());
-        extras.putString("PdfURL", file.toString());
-        extras.putString("FileType", fileType);
-        extras.putInt("RequestCode",requestCode);
-        extras.putInt("ResultCode",resultCode);
-        goToPdfInfo.putExtras(extras);
-        startActivity(goToPdfInfo);
-
+//        startActivityForResult(Intent.createChooser(intent, "select Picture"), PICK_PDF_CODE);
 
     }
+
+
+
+
+
 
 
     public File changeExtension(File file, String extension) {
@@ -529,271 +459,136 @@ public class Select extends AppCompatActivity {
 
 
 
-    private void uploadImg(int requestCode, int resultCode, Intent data, final ArrayList<Uri> uri) {
-//        Uri returnUri = data.getData();
-//        uri.add(returnUri);
-//        final String uniqueID = UUID.randomUUID().toString();
-//        final StorageReference filesRef = storageRef.child(uniqueID);
-
-        final KProgressHUD hud = KProgressHUD.create(Select.this)
-                .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
-                .setLabel("Please wait")
-                .setMaxProgress(100);
-//                .show();
-
-        Sprite chasingDots = new ChasingDots();
-        progressBar.setVisibility(View.VISIBLE);
-        progressBar.setIndeterminateDrawable(chasingDots);
-
-        //Checking for internet connection
-        Boolean isNetwork = isNetworkAvailable();
-        if (!isNetwork) {
-            showErrorDialog("No internet connection detected");
-            hud.dismiss();
-        }
-
-        final int[] uploadCnt = {0};
-
-        if (requestCode == PICK_PDF_CODE) {
-            if (resultCode == Activity.RESULT_OK) {
-                if (uri.size() > 0) {
-                    if (data.getClipData()!=null ) {
-
-                        int count = data.getClipData().getItemCount(); //evaluate the count before the for loop --- otherwise, the count is evaluated every loop.
-                        for (int i = 0; i < count; i++) {
-
-                            final String uniqueID = UUID.randomUUID().toString();
-                            final StorageReference filesRef = storageRef.child(uniqueID);
-
-                            Uri imageUri = data.getClipData().getItemAt(i).getUri();
-                            uri.add(imageUri);
-
-                            //do something with the image (save it to some directory or whatever you need to do with it here)
-                            Bitmap bitmap = null;
-                            try {
-                                bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-                            images.add(bitmap);
-                            byte[] DATA = baos.toByteArray();
-                            final UploadTask uploadTask = filesRef.putBytes(DATA);
-
-
-                            uploadTask.addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception exception) {
-                                    // Handle unsuccessful uploads
-                                    Log.d("UPLOAD", "Not successfull");
-                                }
-                            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                                @Override
-                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                    // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
-                                    Log.d("UPLOAD", "SUCCESSFULL");
-                                    Log.d("UNIQUE",uniqueID);
-
-                                    uploadCnt[0]++;
-                                    uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-                                        @Override
-                                        public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-                                            if (!task.isSuccessful()) {
-                                                throw task.getException();
-                                            }
-
-                                            // Continue with the task to get the download URL
-                                            return filesRef.getDownloadUrl();
-                                        }
-                                    }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-
-                                        @Override
-                                        public void onComplete(@NonNull Task<Uri> task) {
-                                            if (task.isSuccessful()) {
-                                                Uri downloadUri = task.getResult();
-                                                pageURL.add(String.valueOf(downloadUri));
-
-
-                                                Log.d("Pages ", String.valueOf(images));
-                                                Log.d("URLS ", String.valueOf(pageURL));
-                                                hud.dismiss();
-                                            if(uploadCnt[0] == pageURL.size()) {
-                                                Intent goToPageInfo = new Intent(Select.this, PageInfo.class);
-                                                Bundle extras = new Bundle();
-                                                extras.putStringArrayList("URLS", pageURL);
-                                                extras.putString("FileType", fileType);
-//                                                Log.d("USERNAME", username);
-//                                                extras.putString("username", username);
-//                                                extras.putString("email", email);
-//                                                extras.putLong("num", (num));
-
-                                                //extras.putParcelableArrayList("Images",images);
-                                                extras.putStringArray("URI", new String[]{String.valueOf(uri)});
-                                                goToPageInfo.putExtras(extras);
-
-                                                progressBar.setVisibility(View.INVISIBLE);
-
-                                                startActivity(goToPageInfo);
-
-                                            }
-
-                                            } else {
-                                                // Handle failures
-                                                // ...
-                                            }
-                                        }
-                                    });
-                                    // ...
-                                }
-                            });
-                        }
-
-
-
-                } else {
-
-//                    int count = data.getClipData().getItemCount(); //evaluate the count before the for loop --- otherwise, the count is evaluated every loop.
-                        String uniqueID = UUID.randomUUID().toString();
-                        final StorageReference filesRef = storageRef.child(uniqueID);
-
-                    for (int i = 0; i < uri.size(); i++) {
-                        Uri imageUri = uri.get(i);
-
-//                        ClipData.Item data1 = data.getClipData().getItemAt(i);
-
-//                        uri.add(imageUri);
-
-                        //do something with the image (save it to some directory or whatever you need to do with it here)
-                        Bitmap bitmap = null;
-                        try {
-                            bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-                        images.add(bitmap);
-                        byte[] DATA = baos.toByteArray();
-                        final UploadTask uploadTask = filesRef.putBytes(DATA);
-
-
-                        uploadTask.addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception exception) {
-                                // Handle unsuccessful uploads
-                                Log.d("UPLOAD", "Not successfull");
-                            }
-                        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                            @Override
-                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
-                                Log.d("UPLOAD", "SUCCESSFULL");
-
-                                Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-                                    @Override
-                                    public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-                                        if (!task.isSuccessful()) {
-                                            throw task.getException();
-                                        }
-
-                                        // Continue with the task to get the download URL
-                                        uploadCnt[0]++;
-                                        return filesRef.getDownloadUrl();
-                                    }
-                                }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-
-                                    @Override
-                                    public void onComplete(@NonNull Task<Uri> task) {
-                                        if (task.isSuccessful()) {
-                                            Uri downloadUri = task.getResult();
-
-                                            pageURL.add(String.valueOf(downloadUri));
-                                            hud.dismiss();
-                                            if(uploadCnt[0] == pageURL.size()){
-                                                Intent goToPageInfo = new Intent(Select.this, PageInfo.class);
-                                                Bundle extras = new Bundle();
-                                                extras.putStringArrayList("URLS", pageURL);
-                                                extras.putString("FileType", fileType);
-//                                                Log.d("USERNAME",username);
-//                                                extras.putString("username",username);
-//                                                extras.putString("email",email);
-//                                                extras.putLong("num", (num));
-
-                                                goToPageInfo.putExtras(extras);
-                                                startActivity(goToPageInfo);
-                                            }
-                                        } else {
-                                            // Handle failures
-                                            Log.d("IMAGE", "NOT RECIEVED");
-                                            // ...
-                                        }
-                                    }
-                                });
-                                // ...
-                            }
-                        });
-                    }
-
-                }
-
-              }
-            }
-        } else if (data.getData() != null) {
-            String imagePath = data.getData().getPath();
-            Log.d("IMAGE PATH ", String.valueOf(imagePath));
-            Log.d("IMAGE is ", String.valueOf(data.getData()));
-            //do something with the image (save it to some directory or whatever you need to do with it here)
-            hud.dismiss();
-        }
-    }
-
-
-//    public void uploadImg(int requestCode, int resultCode, Intent data, final ArrayList<Uri> uri){
-//        Intent goToPageInfo = new Intent(Select.this, PageInfo.class);
-//        Bundle extras = new Bundle();
-//        extras.putString("FileType", fileType);
-//        Log.d("URISIZE", String.valueOf(uri.size()));
-////        extras.putString("URLS", String.valueOf(uri));
-//        extras.putParcelableArrayList("URLS",uri);
-//        goToPageInfo.putExtras(extras);
-//        startActivity(goToPageInfo);
+//    private void uploadImg(int requestCode, int resultCode, Intent data, final ArrayList<Uri> uri) {
 //
-//    }
-
-
-
-
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        // TODO Auto-generated method stub
-//
-//        switch (requestCode) {
-//            case 7:
-//                if (resultCode == RESULT_OK) {
-//                    String PathHolder = data.getData().getPath();
-//                    Toast.makeText(select.this, PathHolder, Toast.LENGTH_LONG).show();
-//                }
-//                break;
-//        }
-//    }
-
-
-//    @Override
-//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        final KProgressHUD hud = KProgressHUD.create(select.this)
+//        final KProgressHUD hud = KProgressHUD.create(Select.this)
 //                .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
 //                .setLabel("Please wait")
-//                .setMaxProgress(100)
-//                .show();
-//        super.onActivityResult(requestCode, resultCode, data);
-//        if (requestCode == PICK_IMAGE_MULTIPLE) {
+//                .setMaxProgress(100);
+////                .show();
+//
+////        Sprite chasingDots = new ChasingDots();
+////        progressBar.setVisibility(View.VISIBLE);
+////        progressBar.setIndeterminateDrawable(chasingDots);
+//
+//        //Checking for internet connection
+//        Boolean isNetwork = isNetworkAvailable();
+//        if (!isNetwork) {
+//            showErrorDialog("No internet connection detected");
+//            hud.dismiss();
+//        }
+//
+//        final int[] uploadCnt = {0};
+//
+//        if (requestCode == PICK_PDF_CODE) {
 //            if (resultCode == Activity.RESULT_OK) {
-//                if (data.getClipData() != null) {
-//                    int count = data.getClipData().getItemCount(); //evaluate the count before the for loop --- otherwise, the count is evaluated every loop.
-//                    for (int i = 0; i < count; i++) {
-//                        Uri imageUri = data.getClipData().getItemAt(i).getUri();
-//                        Log.d("IMAGE URI ", String.valueOf(imageUri));
+//                if (uri.size() > 0) {
+//                    if (data.getClipData()!=null ) {
+//
+//                        int count = data.getClipData().getItemCount(); //evaluate the count before the for loop --- otherwise, the count is evaluated every loop.
+//                        for (int i = 0; i < count; i++) {
+//
+//                            final String uniqueID = UUID.randomUUID().toString();
+//                            final StorageReference filesRef = storageRef.child(uniqueID);
+//
+//                            Uri imageUri = data.getClipData().getItemAt(i).getUri();
+//                            uri.add(imageUri);
+//
+//                            //do something with the image (save it to some directory or whatever you need to do with it here)
+//                            Bitmap bitmap = null;
+//                            try {
+//                                bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+//                            } catch (IOException e) {
+//                                e.printStackTrace();
+//                            }
+//                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+//                            images.add(bitmap);
+//                            byte[] DATA = baos.toByteArray();
+//                            final UploadTask uploadTask = filesRef.putBytes(DATA);
+//
+//
+//                            uploadTask.addOnFailureListener(new OnFailureListener() {
+//                                @Override
+//                                public void onFailure(@NonNull Exception exception) {
+//                                    // Handle unsuccessful uploads
+//                                    Log.d("UPLOAD", "Not successfull");
+//                                }
+//                            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+//                                @Override
+//                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+//                                    // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
+//                                    Log.d("UPLOAD", "SUCCESSFULL");
+//                                    Log.d("UNIQUE",uniqueID);
+//
+//                                    uploadCnt[0]++;
+//                                    uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+//                                        @Override
+//                                        public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+//                                            if (!task.isSuccessful()) {
+//                                                throw task.getException();
+//                                            }
+//
+//                                            // Continue with the task to get the download URL
+//                                            return filesRef.getDownloadUrl();
+//                                        }
+//                                    }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+//
+//                                        @Override
+//                                        public void onComplete(@NonNull Task<Uri> task) {
+//                                            if (task.isSuccessful()) {
+//                                                Uri downloadUri = task.getResult();
+//                                                pageURL.add(String.valueOf(downloadUri));
+//
+//
+//                                                Log.d("Pages ", String.valueOf(images));
+//                                                Log.d("URLS ", String.valueOf(pageURL));
+//                                                hud.dismiss();
+//                                            if(uploadCnt[0] == pageURL.size()) {
+//                                                Intent goToPageInfo = new Intent(Select.this, PageInfo.class);
+//                                                Bundle extras = new Bundle();
+//                                                extras.putStringArrayList("URLS", pageURL);
+//                                                extras.putString("FileType", fileType);
+////                                                Log.d("USERNAME", username);
+////                                                extras.putString("username", username);
+////                                                extras.putString("email", email);
+////                                                extras.putLong("num", (num));
+//
+//                                                //extras.putParcelableArrayList("Images",images);
+//                                                extras.putStringArray("URI", new String[]{String.valueOf(uri)});
+//                                                goToPageInfo.putExtras(extras);
+//
+////                                                progressBar.setVisibility(View.INVISIBLE);
+//
+//                                                startActivity(goToPageInfo);
+//
+//                                            }
+//
+//                                            } else {
+//                                                // Handle failures
+//                                                // ...
+//                                            }
+//                                        }
+//                                    });
+//                                    // ...
+//                                }
+//                            });
+//                        }
+//
+//
+//
+//                } else {
+//
+////                    int count = data.getClipData().getItemCount(); //evaluate the count before the for loop --- otherwise, the count is evaluated every loop.
+//                        String uniqueID = UUID.randomUUID().toString();
+//                        final StorageReference filesRef = storageRef.child(uniqueID);
+//
+//                    for (int i = 0; i < uri.size(); i++) {
+//                        Uri imageUri = uri.get(i);
+//
+////                        ClipData.Item data1 = data.getClipData().getItemAt(i);
+//
+////                        uri.add(imageUri);
 //
 //                        //do something with the image (save it to some directory or whatever you need to do with it here)
 //                        Bitmap bitmap = null;
@@ -809,7 +604,6 @@ public class Select extends AppCompatActivity {
 //                        final UploadTask uploadTask = filesRef.putBytes(DATA);
 //
 //
-////                    Uri uri = Uri.fromFile(mImageUri);
 //                        uploadTask.addOnFailureListener(new OnFailureListener() {
 //                            @Override
 //                            public void onFailure(@NonNull Exception exception) {
@@ -830,6 +624,7 @@ public class Select extends AppCompatActivity {
 //                                        }
 //
 //                                        // Continue with the task to get the download URL
+//                                        uploadCnt[0]++;
 //                                        return filesRef.getDownloadUrl();
 //                                    }
 //                                }).addOnCompleteListener(new OnCompleteListener<Uri>() {
@@ -838,21 +633,25 @@ public class Select extends AppCompatActivity {
 //                                    public void onComplete(@NonNull Task<Uri> task) {
 //                                        if (task.isSuccessful()) {
 //                                            Uri downloadUri = task.getResult();
+//
 //                                            pageURL.add(String.valueOf(downloadUri));
-//
-//
-//                                            Log.d("Pages ", String.valueOf(images));
-//                                            Log.d("URLS ", String.valueOf(pageURL));
 //                                            hud.dismiss();
-//                                            Intent goToPageInfo = new Intent(select.this,PageInfo.class);
-////                                            finish();
-//                                            //goToPageInfo.putExtra("Pages",images);
-//                                            goToPageInfo.putExtra("URLS",pageURL);
-//                                            startActivity(goToPageInfo);
+//                                            if(uploadCnt[0] == pageURL.size()){
+//                                                Intent goToPageInfo = new Intent(Select.this, PageInfo.class);
+//                                                Bundle extras = new Bundle();
+//                                                extras.putStringArrayList("URLS", pageURL);
+//                                                extras.putString("FileType", fileType);
+////                                                Log.d("USERNAME",username);
+////                                                extras.putString("username",username);
+////                                                extras.putString("email",email);
+////                                                extras.putLong("num", (num));
 //
-//
+//                                                goToPageInfo.putExtras(extras);
+//                                                startActivity(goToPageInfo);
+//                                            }
 //                                        } else {
 //                                            // Handle failures
+//                                            Log.d("IMAGE", "NOT RECIEVED");
 //                                            // ...
 //                                        }
 //                                    }
@@ -863,143 +662,22 @@ public class Select extends AppCompatActivity {
 //                    }
 //
 //                }
-//            } else if (data.getData() != null) {
-//                String imagePath = data.getData().getPath();
-//                Log.d("IMAGE PATH ", String.valueOf(imagePath));
-//                Log.d("IMAGE is ", String.valueOf(data.getData()));
-//                //do something with the image (save it to some directory or whatever you need to do with it here)
-//                hud.dismiss();
+//
+//              }
 //            }
-//        }else{
-//            Log.d("Failed","To choose files");
+//        } else if (data.getData() != null) {
+//            String imagePath = data.getData().getPath();
+//            Log.d("IMAGE PATH ", String.valueOf(imagePath));
+//            Log.d("IMAGE is ", String.valueOf(data.getData()));
+//            //do something with the image (save it to some directory or whatever you need to do with it here)
+//            hud.dismiss();
 //        }
 //    }
 
 
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        Log.d("we are in","YAYYYY");
-//        Log.d("Data is : ", String.valueOf(data));
-//        Log.d("Request Code is ", String.valueOf(requestCode));
-//        Log.d("Result Code is ", String.valueOf(resultCode));
-//
-//
-//        try {
-//            // When an Image is picked
-//            if (requestCode == PICK_IMAGE_MULTIPLE && resultCode == RESULT_OK
-//                    && data != null) {
-//                // Get the Image from data
-//
-//                String[] filePathColumn = { MediaStore.Images.Media.DATA };
-//                imagesEncodedList = new ArrayList<String>();
-//                if(data.getData()!=null){
-//
-//                    Uri mImageUri=data.getData();
-//
-//                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), mImageUri);
-//                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-//                    images.add(bitmap);
-//                    byte[] DATA = baos.toByteArray();
-//                    final UploadTask uploadTask = filesRef.putBytes(DATA);
-//
-//
-//
-////                    Uri uri = Uri.fromFile(mImageUri);
-//                    uploadTask.addOnFailureListener(new OnFailureListener() {
-//                        @Override
-//                        public void onFailure(@NonNull Exception exception) {
-//                            // Handle unsuccessful uploads
-//                            Log.d("UPLOAD","Not successfull");
-//                        }
-//                    }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-//                        @Override
-//                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-//                            // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
-//                            Log.d("UPLOAD","SUCCESSFULL");
-//
-//                            Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-//                                @Override
-//                                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-//                                    if (!task.isSuccessful()) {
-//                                        throw task.getException();
-//                                    }
-//
-//                                    // Continue with the task to get the download URL
-//                                    return filesRef.getDownloadUrl();
-//                                }
-//                            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-//
-//                                @Override
-//                                public void onComplete(@NonNull Task<Uri> task) {
-//                                    if (task.isSuccessful()) {
-//                                        Uri downloadUri = task.getResult();
-//                                        pageURL.add(String.valueOf(downloadUri));
-//
-////                                        Intent goToPageInfo = new Intent(select.this,PageInfo.class);
-////                                        finish();
-//////                                        goToPageInfo.putExtra("Pages",images);
-////                                        goToPageInfo.putExtra("URLS",pageURL);
-//                                        Log.d("Pages ", String.valueOf(images));
-//                                        Log.d("URLS ", String.valueOf(pageURL));
-////                                        startActivity(goToPageInfo);
-//
-//                                    } else {
-//                                        // Handle failures
-//                                        // ...
-//                                    }
-//                                }
-//                            });
-//                            // ...
-//                        }
-//                    });
-//
-//                    // Get the cursor
-//                    Cursor cursor = getContentResolver().query(mImageUri,
-//                            filePathColumn, null, null, null);
-//                    // Move to first row
-//                    cursor.moveToFirst();
-//
-//                    int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-//                    imageEncoded  = cursor.getString(columnIndex);
-//                    cursor.close();
-//
-//                } else if (data.getClipData() != null) {
-//                        ClipData mClipData = data.getClipData();
-//                        ArrayList<Uri> mArrayUri = new ArrayList<Uri>();
-//                        for (int i = 0; i < mClipData.getItemCount(); i++) {
-//
-//                            ClipData.Item item = mClipData.getItemAt(i);
-//                            Uri uri = item.getUri();
-//                            mArrayUri.add(uri);
-//                            Log.d("IM URI is ", String.valueOf(uri));
-//                            // Get the cursor
-//                            Cursor cursor = getContentResolver().query(uri, filePathColumn, null, null, null);
-//                            // Move to first row
-//                            cursor.moveToFirst();
-//
-//                            int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-//                            imageEncoded  = cursor.getString(columnIndex);
-//                            imagesEncodedList.add(imageEncoded);
-//                            cursor.close();
-//
-//                        }
-//                        Log.v("LOG_TAG", "Selected Images" + mArrayUri.size());
-//
-//                }
-//            } else {
-//                Log.d("No image selected","NOOO");
-//                Toast.makeText(this, "You haven't picked Image",
-//                        Toast.LENGTH_LONG).show();
-//            }
-//        } catch (Exception e) {
-//            Log.d("No image selected","NOOO");
-//
-//            Toast.makeText(this, "Something went wrong", Toast.LENGTH_LONG)
-//                    .show();
-//        }
-//
-//        super.onActivityResult(requestCode, resultCode, data);
-//    }
+
+
+
 
 
 
@@ -1012,4 +690,410 @@ public class Select extends AppCompatActivity {
                 .show();
     }
 
+
+    DatabaseReference orderDb = FirebaseDatabase.getInstance().getReference();
+    OrderStatus obj = new OrderStatus();
+
+    ArrayList<String> orderKey = new ArrayList<>();
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private void setProgressForOrder() {
+
+
+        orderDb.child("users").child(userId).addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+
+                for(DataSnapshot order_Key: dataSnapshot.getChildren()){
+                    orderKey.add(order_Key.getKey());
+                }
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        if (orderKey.size() != 0) {
+                            new createNotification().execute(orderKey.size());
+                        }
+                    }
+                },300);
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
+    }
+
+
+    //    ArrayList<String> orderKey, final int cnt
+    String orderStatus = null;
+    private void createNotification() {
+        // Create an Intent for the activity you want to start
+        final Intent resultIntent = new Intent(Select.this, YourOrders.class);
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(Select.this);
+        stackBuilder.addNextIntentWithParentStack(resultIntent);
+        final PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(1, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        final Bundle extras = new Bundle();
+        resultIntent.putExtras(extras);
+//            extras.putInt("Orders Count", cnt);
+
+        for (int i = 0; i < orderKey.size(); i++) {
+            final String key = orderKey.get(i);
+
+            final int finalI = i;
+            orderDb.child("users").child(userId).child("Orders").addValueEventListener(new ValueEventListener() {
+
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                    NotificationPresented presented = new NotificationPresented(true);
+
+                    Iterator<DataSnapshot> users = dataSnapshot.getChildren().iterator();
+
+
+                    for (final DataSnapshot shop : dataSnapshot.getChildren()) {
+                        for (final DataSnapshot order : shop.getChildren()) {
+                            for (final DataSnapshot user : order.getChildren()) {
+//                            while (users.hasNext()) {
+
+                                String status = null;
+
+                                boolean notify = false;
+//                                DataSnapshot user = users.next();
+                                if (user.getKey().equals("ShopLat")) {
+                                    extras.putDouble("ShopLat", Double.parseDouble(user.getValue().toString()));
+                                }
+                                if (user.getKey().equals("ShopLong")) {
+                                    extras.putDouble("ShopLong", Double.parseDouble(user.getValue().toString()));
+                                }
+                                if (user.getKey().equals("ShopsLocation")) {
+                                    extras.putString("Location", (String) user.getValue());
+                                }
+                                if (user.getKey().equals("ShopName")) {
+                                    extras.putString("ShopName", (String) user.getValue());
+                                }
+                                if (user.getKey().equals("files")) {
+                                    extras.putInt("Files", Integer.parseInt(String.valueOf(user.getValue())));
+                                }
+
+                                //if(user.getKey().equals("presented") && user.getValue().equals(true)) {
+
+                                final HashMap<String, Object> notified = new HashMap<String, Object>();
+
+                                if (user.getKey().equals("orderStatus")) {
+//                                    Log.d("STATUS", user.getValue().toString());
+                                    orderStatus = user.getValue().toString();
+                                }
+
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+
+
+                                        if (orderStatus != null) {
+
+
+                                            final String finalStatus = orderStatus;
+
+                                            Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.appicon);
+
+                                            NotificationCompat.Builder builder = new NotificationCompat.Builder(Select.this, CHANNEL_ID)
+                                                    .setSmallIcon(R.drawable.notify)
+                                                    .setLargeIcon(icon)
+                                                    .setContentTitle("Order Status")
+                                                    .setContentText("Order ID: " + order.getKey() + " " + finalStatus)
+                                                    .setGroup(CHANNEL_ID)
+                                                    .setStyle(new NotificationCompat.BigTextStyle().bigText("Order ID: " + order.getKey() + " " + finalStatus))
+                                                    .setContentIntent(resultPendingIntent)
+                                                    .setPriority(NotificationCompat.PRIORITY_HIGH);
+
+                                            resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                                                    | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+
+                                            if (orderStatus.equals("Retrieved")) {
+//                                        Log.d("ORDERSTAT!",orderStatus);
+//                                        if (user.getKey().equals("RT_Notified") && user.getValue().toString().equals(false)) {
+                                                Log.d("ORDERSTAT", orderStatus);
+
+//                                            status = "Retrieved";
+//                                            Log.d("SHOPID",shop.getKey());
+//                                            Log.d("ORDER",order.getKey());
+
+                                                notified.put("RT_Notified", true);
+                                                orderDb.child("users").child(userId).child("Orders").child(shop.getKey()).child(order.getKey()).updateChildren(notified);
+//                                           Present notification
+//                                            notificationManager.notify((int) System.currentTimeMillis(), builder.build());
+                                                notificationManager.notify(0, builder.build());
+
+                                                Log.d("Progress", String.valueOf(obj.progress));
+//                                        }
+                                            } else if (orderStatus.equals("In Progress")) {
+//                                        Log.d("ORDERSTAT!",orderStatus);
+
+                                                if (user.getKey().equals("IP_Notified") && user.getValue().toString().equals(false)) {
+                                                    Log.d("ORDERSTAT", orderStatus);
+
+//                                            status = "In Progress";
+//                                            Log.d("SHOPID",shop.getKey());
+//                                            Log.d("ORDER",order.getKey());
+
+                                                    notified.put("IP_Notified", true);
+                                                    orderDb.child("users").child(userId).child("Orders").child(shop.getKey()).child(order.getKey()).updateChildren(notified);
+//                                           Present notification
+//                                            notificationManager.notify((int) System.currentTimeMillis(), builder.build());
+                                                    notificationManager.notify(0, builder.build());
+
+                                                    Log.d("Progress", String.valueOf(obj.progress));
+                                                }
+                                            } else if (orderStatus.equals("Ready")) {
+//                                        Log.d("ORDERSTAT!",orderStatus);
+
+                                                if (user.getKey().equals("R_Notified") && user.getValue().toString().equals(false)) {
+                                                    Log.d("ORDERSTAT", orderStatus);
+
+//                                            Log.d("SHOPID",shop.getKey());
+//                                            Log.d("ORDER",order.getKey());
+
+                                                    notified.put("R_Notified", true);
+                                                    orderDb.child("users").child(userId).child("Orders").child(shop.getKey()).child(order.getKey()).updateChildren(notified);
+//                                           Present notification
+//                                            notificationManager.notify((int) System.currentTimeMillis(), builder.build());
+//                                            status = "Ready";
+
+                                                    notificationManager.notify(0, builder.build());
+
+
+                                                }
+                                            }
+
+
+//                                            notificationManager.notify((int) System.currentTimeMillis(), builder.build());
+//                                            notificationManager.notify(0, builder.build());
+                                            extras.putString("OrderStatus", finalStatus);
+
+
+                                        }
+//                              }
+
+                                    }
+                                }, 300);
+
+                                //}
+
+
+                            }
+
+                        }
+                    }
+                }
+
+//                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        }
+    }
+
+    private class createNotification extends AsyncTask<Integer,Void,Void> {
+
+
+        @Override
+        protected Void doInBackground(Integer... cnt) {
+            // Create an Intent for the activity you want to start
+            final Intent resultIntent = new Intent(Select.this, YourOrders.class);
+            TaskStackBuilder stackBuilder = TaskStackBuilder.create(Select.this);
+            stackBuilder.addNextIntentWithParentStack(resultIntent);
+            final PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(1, PendingIntent.FLAG_UPDATE_CURRENT);
+
+            final Bundle extras = new Bundle();
+            resultIntent.putExtras(extras);
+//            extras.putInt("Orders Count", cnt);
+
+            for (int i = 0; i < orderKey.size(); i++) {
+                final String key = orderKey.get(i);
+
+                final int finalI = i;
+                orderDb.child("users").child(userId).child("Orders").addValueEventListener(new ValueEventListener() {
+
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                        NotificationPresented presented = new NotificationPresented(true);
+
+                        Iterator<DataSnapshot> users = dataSnapshot.getChildren().iterator();
+
+
+                        for (final DataSnapshot shop : dataSnapshot.getChildren()) {
+                            for (final DataSnapshot order : shop.getChildren()) {
+                                for (final DataSnapshot user : order.getChildren()) {
+//                            while (users.hasNext()) {
+
+                                    String status = null;
+
+                                    boolean notify = false;
+//                                DataSnapshot user = users.next();
+                                    if (user.getKey().equals("ShopLat")) {
+                                        extras.putDouble("ShopLat", Double.parseDouble(user.getValue().toString()));
+                                    }
+                                    if (user.getKey().equals("ShopLong")) {
+                                        extras.putDouble("ShopLong", Double.parseDouble(user.getValue().toString()));
+                                    }
+                                    if (user.getKey().equals("ShopsLocation")) {
+                                        extras.putString("Location", (String) user.getValue());
+                                    }
+                                    if (user.getKey().equals("ShopName")) {
+                                        extras.putString("ShopName", (String) user.getValue());
+                                    }
+                                    if (user.getKey().equals("files")) {
+                                        extras.putInt("Files", Integer.parseInt(String.valueOf(user.getValue())));
+                                    }
+
+                                    //if(user.getKey().equals("presented") && user.getValue().equals(true)) {
+
+                                    final HashMap<String, Object> notified = new HashMap<String, Object>();
+
+                                    if (user.getKey().equals("orderStatus")) {
+//                                    Log.d("STATUS", user.getValue().toString());
+                                        orderStatus = user.getValue().toString();
+                                    }
+
+                                    new Handler().postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+
+
+                                            if (orderStatus != null) {
+
+
+                                                final String finalStatus = orderStatus;
+
+                                                Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.appicon);
+
+                                                NotificationCompat.Builder builder = new NotificationCompat.Builder(Select.this, CHANNEL_ID)
+                                                        .setSmallIcon(R.drawable.notify)
+                                                        .setLargeIcon(icon)
+                                                        .setContentTitle("Order Status")
+                                                        .setContentText("Order ID: " + order.getKey() + " " + finalStatus)
+                                                        .setGroup(CHANNEL_ID)
+                                                        .setStyle(new NotificationCompat.BigTextStyle().bigText("Order ID: " + order.getKey() + " " + finalStatus))
+                                                        .setContentIntent(resultPendingIntent)
+                                                        .setPriority(NotificationCompat.PRIORITY_HIGH);
+
+                                                resultIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                                                        | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+
+
+                                                if (orderStatus.equals("Retrieved")) {
+//                                        Log.d("ORDERSTAT!",orderStatus);
+//                                        if (user.getKey().equals("RT_Notified") && user.getValue().toString().equals(false)) {
+                                                    Log.d("ORDERSTAT", orderStatus);
+
+//                                            status = "Retrieved";
+//                                            Log.d("SHOPID",shop.getKey());
+//                                            Log.d("ORDER",order.getKey());
+
+                                                    notified.put("RT_Notified", true);
+                                                    orderDb.child("users").child(userId).child("Orders").child(shop.getKey()).child(order.getKey()).updateChildren(notified);
+//                                           Present notification
+//                                            notificationManager.notify((int) System.currentTimeMillis(), builder.build());
+                                                    notificationManager.notify(0, builder.build());
+
+                                                    Log.d("Progress", String.valueOf(obj.progress));
+//                                        }
+                                                } else if (orderStatus.equals("In Progress")) {
+//                                        Log.d("ORDERSTAT!",orderStatus);
+
+                                                    if (user.getKey().equals("IP_Notified") && user.getValue().toString().equals(false)) {
+                                                        Log.d("ORDERSTAT", orderStatus);
+
+//                                            status = "In Progress";
+//                                            Log.d("SHOPID",shop.getKey());
+//                                            Log.d("ORDER",order.getKey());
+
+                                                        notified.put("IP_Notified", true);
+                                                        orderDb.child("users").child(userId).child("Orders").child(shop.getKey()).child(order.getKey()).updateChildren(notified);
+//                                           Present notification
+//                                            notificationManager.notify((int) System.currentTimeMillis(), builder.build());
+                                                        notificationManager.notify(0, builder.build());
+
+                                                        Log.d("Progress", String.valueOf(obj.progress));
+                                                    }
+                                                } else if (orderStatus.equals("Ready")) {
+//                                        Log.d("ORDERSTAT!",orderStatus);
+
+                                                    if (user.getKey().equals("R_Notified") && user.getValue().toString().equals(false)) {
+                                                        Log.d("ORDERSTAT", orderStatus);
+
+//                                            Log.d("SHOPID",shop.getKey());
+//                                            Log.d("ORDER",order.getKey());
+
+                                                        notified.put("R_Notified", true);
+                                                        orderDb.child("users").child(userId).child("Orders").child(shop.getKey()).child(order.getKey()).updateChildren(notified);
+//                                           Present notification
+//                                            notificationManager.notify((int) System.currentTimeMillis(), builder.build());
+//                                            status = "Ready";
+
+                                                        notificationManager.notify(0, builder.build());
+
+
+                                                    }
+                                                }
+
+
+//                                            notificationManager.notify((int) System.currentTimeMillis(), builder.build());
+//                                            notificationManager.notify(0, builder.build());
+                                                extras.putString("OrderStatus", finalStatus);
+
+
+                                            }
+//                              }
+
+                                        }
+                                    }, 300);
+
+                                    //                     }
+
+                                }
+
+                            }
+                        }
+                    }
+
+//                }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            }
+            return null;
+        }
+    }
 }
+

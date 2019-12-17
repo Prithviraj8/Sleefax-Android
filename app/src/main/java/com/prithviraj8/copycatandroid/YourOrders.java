@@ -45,6 +45,8 @@ public class YourOrders extends AppCompatActivity {
     ImageButton back;
     private int shortAnimationDuration;
 
+    int orderCnt;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,8 +84,14 @@ public class YourOrders extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(YourOrders.this,Select.class);
+        startActivity(intent);
+        finish();
+    }
 
-    public class YourOrdersAdapter extends BaseAdapter{
+    public class YourOrdersAdapter extends BaseAdapter {
 
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
@@ -92,8 +100,9 @@ public class YourOrders extends AppCompatActivity {
 
         @Override
         public int getCount() {
-            Log.d("Ordersis", String.valueOf(orders));
+            Log.d("Ordersis", String.valueOf(orderCnt));
             return (int) orders;
+//            return orderCnt;
         }
 
         @Override
@@ -115,6 +124,7 @@ public class YourOrders extends AppCompatActivity {
 //            final Double[] shopLat = new Double[orders];
 //            final Double[] shopLong = new Double[orders];
 //            final int[] files = new int[orders];
+
 
             final ArrayList<String> shopNames = new ArrayList<>();
             final ArrayList<String> locations = new ArrayList<>();
@@ -156,6 +166,8 @@ public class YourOrders extends AppCompatActivity {
                             Log.d("ORDERKEY",SNAP.getKey());
                             shopKey.add(dataSnapshot.getKey());
                             orderkey.add(SNAP.getKey());
+//                            orderCnt = orderkey.size();
+
                         }
 //                   }
                     }
@@ -186,7 +198,11 @@ public class YourOrders extends AppCompatActivity {
                 handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
+                        finalConvertView1.setVisibility(View.GONE);
+                        // Retrieve and cache the system's default "short" animation time.
+                        shortAnimationDuration = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
+//                        orderCnt = orderkey.size();
                         for (int i = 0; i < shopKey.size(); i++) {
 //                            Log.d("SHOPKEY", shopKey.get(i));
 
@@ -229,10 +245,6 @@ public class YourOrders extends AppCompatActivity {
                                         }
                                     }
 
-                                    finalConvertView1.setVisibility(View.GONE);
-                                    // Retrieve and cache the system's default "short" animation time.
-                                    shortAnimationDuration = getResources().getInteger(
-                                            android.R.integer.config_shortAnimTime);
 
 
                                     final Handler handler1 = new Handler();
@@ -410,7 +422,7 @@ public class YourOrders extends AppCompatActivity {
                     public void onClick(View v) {
                         Intent intent = new Intent(YourOrders.this, OrderPlaced.class);
                         Bundle extras = new Bundle();
-                        Log.d("LAT", String.valueOf(shopLat.get(position)));
+//                        Log.d("LAT", String.valueOf(shopLat.get(position)));
                         extras.putString("ShopKey",shopKey.get(position));
                         extras.putString("OrderKey", orderkey.get(position));
                         extras.putString("ShopName", shopNames.get(position));
@@ -419,6 +431,7 @@ public class YourOrders extends AppCompatActivity {
                         extras.putString("Location", locations.get(position));
                         extras.putInt("Files", files.get(position));
                         extras.putString("OrderStatus", orderStatus.get(position));
+                        Log.d("ORDERSTATS",orderStatus.get(position));
                         extras.putInt("Price", Math.toIntExact(price.get(position)));
                         extras.putBoolean("FromYourOrders", true);
                         intent.putExtras(extras);

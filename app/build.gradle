@@ -2,10 +2,10 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 29
-    buildToolsVersion '29.0.1'
+    buildToolsVersion '29.0.2'
     defaultConfig {
         applicationId "com.prithviraj8.copycatandroid"
-        minSdkVersion 18
+        minSdkVersion 21
         targetSdkVersion 29
         multiDexEnabled true
         versionCode 1
@@ -81,6 +81,8 @@ dependencies {
     implementation files('libs/xmlbeans-2.3.0.jar')
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
     implementation files('libs/org.apache.poi.xwpf.converter.pdf-1.0.0.jar')
+    implementation 'androidx.cardview:cardview:1.0.0'
+    implementation files('libs/aspose-words-19.9-android.via.java.jar')
 //    implementation files('libs/httpclient-4.2.3.jar')
 
 //    // ... Anything that was already here

@@ -6,7 +6,7 @@
     <View
         android:id="@+id/animateView"
         android:layout_width="wrap_content"
-        android:layout_height="228dp"
+        android:layout_height="259dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
@@ -18,14 +18,14 @@
     <View
         android:id="@+id/YourOrderView"
         android:layout_width="wrap_content"
-        android:layout_height="223dp"
+        android:layout_height="260dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_marginStart="16dp"
         android:layout_marginTop="23dp"
         android:layout_marginEnd="17dp"
-        android:background="@drawable/orderdetailsview" />
+        android:background="@drawable/pageview" />
 
     <TextView
         android:id="@+id/ShopsName"

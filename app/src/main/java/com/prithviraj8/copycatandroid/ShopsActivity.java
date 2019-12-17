@@ -6,33 +6,26 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Parcelable;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.google.android.gms.maps.model.LatLng;
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -47,13 +40,13 @@ import java.util.ArrayList;
 import java.util.UUID;
 
 class shopinfo{
-     public String  ShopsLocation,ShopName,orderStatus,fileType,pageSize,orientation;
+     public String  ShopsLocation,ShopName,orderStatus,fileType,pageSize,orientation,custom;
      public Double ShopLat,ShopLong;
      public int files, price;
      public long num;
-     boolean P_Notified,RT_Notified,IP_Notified,R_Notified;
+     boolean P_Notified,RT_Notified,IP_Notified,R_Notified,bothSides;
 
-    public shopinfo(String shopsLocation, String shopName, String orderStatus, Double ShopLat, Double ShopLong,long num,int files, String fileType, String pageSize, String orientation, int price, boolean P_Notified, boolean RT_Notified, boolean IP_Notified, boolean R_Notified) {
+    public shopinfo(String shopsLocation, String shopName, String orderStatus, Double ShopLat, Double ShopLong, long num, int files, String fileType, String pageSize, String orientation, int price, boolean bothSides, String custom, boolean P_Notified, boolean RT_Notified, boolean IP_Notified, boolean R_Notified) {
          ShopsLocation = shopsLocation;
          ShopName = shopName;
          this.orderStatus = orderStatus;
@@ -65,6 +58,8 @@ class shopinfo{
          this.price = price;
          this.pageSize = pageSize;
          this.orientation = orientation;
+         this.custom = custom;
+         this.bothSides = bothSides;
          this.P_Notified = P_Notified;
          this.RT_Notified = RT_Notified;
          this.IP_Notified = IP_Notified;
@@ -103,11 +98,12 @@ public class ShopsActivity extends AppCompatActivity {
     int ShopsCount,resultCode,requestCode;
     public static final int REQUEST_LOCATION = 1;
     String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-    String fileType,orientation;
+    String fileType,orientation,custom;
     DatabaseReference storeDb;
     String username,email,pagesize;
     long num;
-
+    Intent data;
+    Boolean bothSides;
 
     //    private FusedLocationProviderClient fusedLocationClient;
     LocationManager locationManager;
@@ -126,13 +122,8 @@ public class ShopsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shops);
-//        getSupportActionBar().hide();
-        FirebaseApp app = FirebaseApp.getInstance("Stores");
-        FirebaseDatabase DB = FirebaseDatabase.getInstance(app);
-        storeDb = DB.getReferenceFromUrl("https://storeowner-9c355.firebaseio.com/").child("users");
 
-
-
+        getCurrentUserInfo();
         ActivityCompat.requestPermissions(ShopsActivity.this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
 
 //        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
@@ -151,14 +142,14 @@ public class ShopsActivity extends AppCompatActivity {
         listView.setAdapter(adapter);
 
 
-        shopsLV = findViewById(R.id.ShopsListView);
+//        shopsLV = findViewById(R.id.ShopsListView);
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
 
         pageURL = extras.getStringArrayList("URLS");
 //        pageURL = extras.getParcelableArrayList("URLS");
         copy = extras.getInt("Copies");
-        color = extras.getString("ColorTypes");
+        color = extras.getString("ColorType");
         fileType = extras.getString("FileType");
 //        storeID = extras.getStringArrayList("StoreID");
         ShopsCount = extras.getInt("ShopCount");
@@ -170,6 +161,10 @@ public class ShopsActivity extends AppCompatActivity {
 //        user_num = extras.getLong("num");
         pagesize = extras.getString("PageSize");
         orientation = extras.getString("Orientation");
+        data = extras.getParcelable("Data");
+        bothSides = extras.getBoolean("BothSides");
+        custom = extras.getString("Custom");
+
 //        ShopsCnt =  intent.getIntExtra("ShopCount",1);
         Log.d("URLS ARE ", String.valueOf(pageURL));
         Log.d("COLOR TYPES ARE ", String.valueOf(color));
@@ -208,10 +203,12 @@ public class ShopsActivity extends AppCompatActivity {
         });
         return count.length;
     }
+
+
     public void getLocation() {
         if (ActivityCompat.checkSelfPermission(ShopsActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission
-                (ShopsActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                (ShopsActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
             ActivityCompat.requestPermissions(ShopsActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
             Log.d("INNN HEREEEE","YESS");
@@ -344,6 +341,8 @@ public class ShopsActivity extends AppCompatActivity {
         return (rad * 180.0 / Math.PI);
     }
 
+
+    //Shop Adapter getting Shop Info......
     public class ShopsAdapter extends BaseAdapter {
 
         public Activity mActivity;
@@ -409,7 +408,7 @@ public class ShopsActivity extends AppCompatActivity {
 
                         @Override
                         public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                            hud.show();
+//                            hud.show();
                             storeID.add(dataSnapshot.getKey());
                             for(DataSnapshot snap:dataSnapshot.getChildren()){
 //                                Log.d("SHOPS NAME IS ",snap.getKey());
@@ -444,8 +443,6 @@ public class ShopsActivity extends AppCompatActivity {
 ////                                if(count >6&&count<=8){
 ////                                    Distance.setText("~"+(int) (distanceFromShop/1000000) + "km");
 ////                            }
-
-
                             }
 
 
@@ -467,7 +464,7 @@ public class ShopsActivity extends AppCompatActivity {
                                     distances.add(distanceFromShop);
 
                                 }
-                            },300);
+                            },100);
 
                             final Handler handler = new Handler();
                             handler.postDelayed(new Runnable() {
@@ -478,7 +475,7 @@ public class ShopsActivity extends AppCompatActivity {
                                     Location.setText(locations.get(position));
                                     Files.setText("Files : "+pageURL.size());
 //                                    Log.d("DISTANCES",String.valueOf(distances.get(position)));
-                                    Distance.setText("~"+(Double) (distances.get(position)) + "km");
+//                                    Distance.setText("~"+(Double) (distances.get(position)) + "km");
 
                                     if(color != null){
                                         if(color.equals("Colors")){
@@ -489,9 +486,9 @@ public class ShopsActivity extends AppCompatActivity {
                                     }
 
 
-                                    hud.dismiss();
+//                                    hud.dismiss();
                                 }
-                            }, 500);
+                            }, 300);
 
 
 
@@ -501,16 +498,10 @@ public class ShopsActivity extends AppCompatActivity {
                                     Log.d("VIEW ","Tapped");
 
                                     if(color.equals("Colors")){
-//                                        Log.d("STID",storeID.get(position));
-//                                        Log.d("LOC",locations.get(position));
-//                                        Log.d("LAT", String.valueOf(shopLat.get(position)));
-//                                        Log.d("LAT", String.valueOf(shopLong.get(position)));
-//                                        Log.d("LAT", String.valueOf(shopNames.get(position)));
-//                                        Log.d("LAT", String.valueOf(numbers.get(position)));
 
-                                        showErrorDialog("Confirm Order",storeID.get(position),locations.get(position),shopLat.get(position),shopLong.get(position),shopNames.get(position),numbers.get(position),pageURL.size(),(5*pageURL.size()),pagesize);
+                                        showErrorDialog("Confirm Order",storeID.get(position),locations.get(position),shopLat.get(position),shopLong.get(position),shopNames.get(position),numbers.get(position),pageURL.size(),(5*pageURL.size()));
                                     }else{
-                                        showErrorDialog("Confirm Order",storeID.get(position),locations.get(position),shopLat.get(position),shopLong.get(position),shopNames.get(position),numbers.get(position),pageURL.size(),pageURL.size(),pagesize);
+                                        showErrorDialog("Confirm Order",storeID.get(position),locations.get(position),shopLat.get(position),shopLong.get(position),shopNames.get(position),numbers.get(position),pageURL.size(),pageURL.size());
 
                                     }
 
@@ -547,7 +538,7 @@ public class ShopsActivity extends AppCompatActivity {
     }
 
 
-    public void showErrorDialog(String message,String storeID,String loc,Double shopLat, Double shopLong,String ShopName,long num,int files,int price,String pagesize){
+    public void showErrorDialog(String message,String storeID,String loc,Double shopLat, Double shopLong,String ShopName,long num,int files,int price){
 
 //        new androidx.appcompat.app.AlertDialog.Builder(this)
 //                .setTitle("Confirmation")
@@ -575,12 +566,19 @@ public class ShopsActivity extends AppCompatActivity {
 //            storeDb.push().setValue(single);
 //            orderKey = uniqueID;
 //        }
+
             orderKey = uniqueID;
+//            Log.d("USERNAME",username);
+//            Log.d("NAMEOFUSER",email);
+
+
 
         Intent intent = new Intent(ShopsActivity.this, OrderPlaced.class);
         Bundle extras = new Bundle();
 
 //        extras.putParcelableArrayList("Uris",pageURL);
+
+
         extras.putStringArrayList("URLS", pageURL);
         extras.putString("ShopName",ShopName);
         extras.putString("Location",loc);
@@ -596,6 +594,8 @@ public class ShopsActivity extends AppCompatActivity {
         extras.putString("email",email);
         extras.putInt("Copies",copy);
         extras.putString("ColorType",color);
+        extras.putBoolean("BothSides",bothSides);
+        extras.putString("Custom",custom);
 
         extras.putString("OrderKey",orderKey);
         extras.putString("ShopKey",storeID);

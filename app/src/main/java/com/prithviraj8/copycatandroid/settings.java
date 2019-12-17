@@ -36,7 +36,7 @@ public class settings extends AppCompatActivity {
 
                 signout.performClick();
                 FirebaseAuth.getInstance().signOut();
-                Intent intent = new Intent(settings.this, MainPage.class);
+                Intent intent = new Intent(settings.this, MainActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);//makesure user cant go back
                 startActivity(intent);
                 finish();

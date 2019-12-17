@@ -18,80 +18,69 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <com.github.ybq.android.spinkit.SpinKitView
-            android:id="@+id/progress"
-            style="@style/SpinKitView.Large.Circle"
-            android:layout_width="184dp"
-            android:layout_height="wrap_content"
-            android:layout_alignStart="@+id/AddFilesButton"
-            android:layout_alignTop="@+id/AddFilesButton"
-            android:layout_alignEnd="@+id/AddFilesButton"
-            android:layout_alignBottom="@+id/AddFilesButton"
-            android:layout_gravity="center"
-            android:layout_marginStart="19dp"
-            android:layout_marginTop="24dp"
-            android:layout_marginEnd="25dp"
-            android:layout_marginBottom="31dp"
-            android:visibility="invisible"
-            app:SpinKit_Color="#31B82A" />
-
         <Button
             android:id="@+id/AddFilesButton"
-            android:layout_width="228dp"
-            android:layout_height="220dp"
+            android:layout_width="213dp"
+            android:layout_height="190dp"
             android:layout_above="@+id/YourOrders"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:layout_marginStart="8dp"
 
-            android:layout_marginTop="200dp"
+            android:layout_marginTop="228dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginBottom="226dp"
-            android:background="#00FFFFFF" />
+            android:layout_marginBottom="238dp"
+            android:background="#00FFFFFF"
+            android:clickable="true" />
+
 
         <ImageButton
             android:id="@+id/settings"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:layout_alignTop="@+id/YourOrders"
+            android:layout_alignBottom="@+id/YourOrders"
             android:layout_alignParentStart="true"
-            android:layout_alignParentBottom="true"
             android:layout_marginStart="30dp"
             android:layout_marginLeft="8dp"
             android:layout_marginTop="0dp"
             android:layout_marginRight="8dp"
-            android:layout_marginBottom="25dp"
-            android:background="#00FFFFFF"
-            android:src="@drawable/actsettings"
-            android:contentDescription="TODO" />
+            android:layout_marginBottom="0dp"
+            android:background="@drawable/ripple_effect"
+            android:clickable="true"
+            android:contentDescription="TODO"
+            android:drawablePadding="5dp"
+            android:src="@drawable/settingsbtn" />
 
         <ImageButton
             android:id="@+id/YourOrders"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginBottom="25dp"
-            android:background="#00FFFFFF"
-            android:src="@drawable/yourordersimg"/>
+            android:background="@drawable/ripple_effect"
+            android:clickable="true"
+            android:src="@drawable/yourordersbtn"
+            tools:background="@drawable/ripple_effect" />
 
         <ImageButton
             android:id="@+id/help"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:layout_alignTop="@+id/YourOrders"
+            android:layout_alignBottom="@+id/YourOrders"
             android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
             android:layout_marginStart="52dp"
-            android:layout_marginLeft="52dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="0dp"
             android:layout_marginEnd="30dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginBottom="25dp"
-            android:background="#00FFFFFF"
-            android:src="@drawable/helpbtnimg" />
+            android:layout_marginBottom="0dp"
+            android:background="@drawable/ripple_effect"
+            android:clickable="true"
+            android:src="@drawable/helpbtnimg"
+            tools:background="@drawable/ripple_effect" />
     </RelativeLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

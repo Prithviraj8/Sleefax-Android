@@ -29,6 +29,8 @@ public class Feedback extends AppCompatActivity {
 
 
     String feedbackText = "";
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

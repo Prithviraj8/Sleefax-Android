@@ -1,7 +1,5 @@
 package com.prithviraj8.copycatandroid;
 
-import android.net.Uri;
-
 public class Page_Info {
 
     public int cnt = 0;
@@ -12,15 +10,17 @@ public class Page_Info {
 class singlePageInfo{
 
     public String url;
-    public String colorType,fileType,pagesize,orientation;
+    public String colorType,fileType,pagesize,orientation,custom;
     public int copies;
-
-    public singlePageInfo(String url, String colorType, int copies, String fileType, String pagesize, String orientation){
+    boolean bothSides;
+    public singlePageInfo(String url, String colorType, int copies, String fileType, String pagesize, String orientation, boolean bothSides,String custom){
         this.url = url;
         this.colorType = colorType;
         this.copies = copies;
         this.fileType = fileType;
         this.pagesize = pagesize;
         this.orientation = orientation;
+        this.bothSides = bothSides;
+        this.custom = custom;
     }
 }

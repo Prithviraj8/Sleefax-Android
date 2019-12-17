@@ -1,38 +1,33 @@
 package com.prithviraj8.copycatandroid;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import android.app.Activity;
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
-import android.view.animation.DecelerateInterpolator;
-import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.github.ybq.android.spinkit.sprite.Sprite;
-import com.github.ybq.android.spinkit.style.ChasingDots;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.Continuation;
@@ -40,9 +35,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -51,11 +44,10 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.kaopiz.kprogresshud.KProgressHUD;
 import com.mikhaellopez.circularprogressbar.CircularProgressBar;
-import com.prithviraj8.copycatandroid.Services.MyFirebaseMessagingService;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -63,15 +55,33 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.UUID;
-
-import static com.prithviraj8.copycatandroid.Select.PICK_PDF_CODE;
 
 class OrderStatus{
     int progress = 0;
+}
+
+
+class info{
+
+    public String name,PrintStatus;
+    public String email,device,fileType;
+    public long num;
+    public int copies;
+
+
+    public info(String name, String email, long num, String device, String placed, String fileType, int copy){
+        this.email = email;
+        this.name = name;
+        this.num = num;
+        this.device = device;
+        this.PrintStatus = placed;
+        this.fileType = fileType;
+        this.copies = copy;
+    }
 
 }
+
 public class OrderPlaced extends AppCompatActivity {
     NotificationManagerCompat notificationManager;
 //    MyFirebaseMessagingService notification = new MyFirebaseMessagingService();
@@ -81,6 +91,7 @@ public class OrderPlaced extends AppCompatActivity {
     TextView Files, shopName,Loc,Price,status1,status2,status3,status4,statusPercent;
 //    ProgressBar orderProgress;
     ImageButton back;
+
     CircularProgressBar orderProgress;
 
     String name,loc,orderKey,orderStatus,shopKey,fileType,pagesize,orientation,username,email;
@@ -90,20 +101,26 @@ public class OrderPlaced extends AppCompatActivity {
     double userLat,userLong;
     int files, price;
     int copy,resultCode,requestCode;
-    String color;
+    String color,custom;
     String CHANNEL_ID = "UsersChannel";
-    boolean FromYourOrders =false;
+    boolean FromYourOrders =false, bothSides;
+
     long num;
-//    ShopInfo info = new ShopInfo();
+    ArrayList<String> pdfs = new ArrayList<>();
+
+    //    ShopInfo info = new ShopInfo();
     private static final int LOCATION_REQUEST = 500;
     private static final String MAPVIEW_BUNDLE_KEY = "MapViewBundleKey";
     OrderStatus obj = new OrderStatus();
+    ArrayList<String> pageURL = new ArrayList<>();
+    Intent data;
 
 
     boolean mLocationPermissionGranted;
     FusedLocationProviderClient mFusedLocationProviderClient;
     DatabaseReference orderDb = FirebaseDatabase.getInstance().getReference();
-    DatabaseReference storeDb;
+    DatabaseReference storeDb = FirebaseDatabase.getInstance().getReference();
+
     FirebaseStorage storage = FirebaseStorage.getInstance();
     StorageReference storageRef = storage.getReference();
 
@@ -120,10 +137,11 @@ public class OrderPlaced extends AppCompatActivity {
 //        getSupportActionBar().hide();
 
         notificationManager = NotificationManagerCompat.from(this);
-        FirebaseApp app = FirebaseApp.getInstance("Stores");
-        FirebaseDatabase DB = FirebaseDatabase.getInstance(app);
-        storeDb = DB.getReferenceFromUrl("https://storeowner-9c355.firebaseio.com/").child("users");
-        ArrayList<String> pdfs = new ArrayList<>();
+
+//        FirebaseApp app = FirebaseApp.getInstance("Stores");
+//        FirebaseDatabase DB = FirebaseDatabase.getInstance(app);
+//        storeDb = DB.getReferenceFromUrl("https://storeowner-9c355.firebaseio.com/").child("users");
+//        orderProgress.setProgressBarWidth((float) 12.0);
 
         back = findViewById(R.id.backBtn);
         back.setOnClickListener(new View.OnClickListener() {
@@ -163,6 +181,8 @@ public class OrderPlaced extends AppCompatActivity {
 
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
+        data = extras.getParcelable("Data");
+
         shopLat = extras.getDouble("ShopLat");
         shopLong = extras.getDouble("ShopLong");
         name = extras.getString("ShopName");
@@ -183,15 +203,19 @@ public class OrderPlaced extends AppCompatActivity {
         num = extras.getLong("Number");
         pdfs = extras.getStringArrayList("URLS");
         copy = extras.getInt("Copies");
-        color = extras.getString("ColorTypes");
+        color = extras.getString("ColorType");
         requestCode = extras.getInt("RequestCode");
         resultCode = extras.getInt("ResultCode");
-
+        pageURL = extras.getStringArrayList("URLS");
+        bothSides = extras.getBoolean("BothSides");
+        custom = extras.getString("Custom");
 
         shopName.setText("Shop Name : " + name);
            Loc.setText(loc);
-           Price.setText("   Amount : ₹" + price);
-           Files.setText("    Files :  " + files);
+//           Price.setText("   Amount : ₹" + price);
+            Price.setText("Amount : ₹" + price);
+
+        Files.setText("    Files :  " + files);
 
 
         Log.d("Shop Lat", String.valueOf(shopLat));
@@ -209,12 +233,19 @@ public class OrderPlaced extends AppCompatActivity {
             }
         });
 
-        if(pdfs != null){
-            uploadFile(pdfs);
-        }else {
-            setProgressForOrder(orderKey);
+        if(fileType != null) {
+            if (!fileType.equals("image/jpeg")) {
+//            Toast.makeText(this,"Files are being sent",Toast.LENGTH_SHORT).show();
+//                uploadFile(pdfs);
+                new uploadFile().execute(pdfs);
+            } else {
+//                uploadImagesOrder();
+
+                new uploadImagesOrder().execute();
+            }
+        }else{
+            new setProgressForOrder().execute();
         }
-//        createNotificationChannel();
     }
 
     @Override
@@ -224,31 +255,333 @@ public class OrderPlaced extends AppCompatActivity {
             finish();
     }
 
+//    @Override
+//    public void onRequestPermissionsResult (int requestCode, String[] permissions, int[] grantResults) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+//        switch (requestCode) {
+//            case General.REQUESTPERMISSION:
+//                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                    //reload my activity with permission granted or use the features that required the permission
+//
+//                } else {
+//
+//                }
+//                break;
+//        }
+//    }
 
-    public void uploadFile(ArrayList<String> pdfs){
 
 
-        final String uniqueID = UUID.randomUUID().toString();
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public class setProgressForOrder extends AsyncTask<String,Void,Void> {
+
+        @SuppressLint("WrongThread")
+        @Override
+        protected Void doInBackground(String... strings) {
+            Log.d("ORDERID", orderKey);
+            Log.d("SHOPKEY", shopKey);
+
+            Intent resultIntent = new Intent(OrderPlaced.this, Select.class);
+            TaskStackBuilder stackBuilder = TaskStackBuilder.create(OrderPlaced.this);
+            stackBuilder.addNextIntentWithParentStack(resultIntent);
+            final PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(1, PendingIntent.FLAG_UPDATE_CURRENT);
+//        final PendingIntent resultPendingIntent = PendingIntent.getActivity(this,1,resultIntent,PendingIntent.FLAG_UPDATE_CURRENT);
+
+//        obj.progress++;
+            final int[] cnt = new int[1];
+
+            Log.d("SHOPNAME", name);
+            Log.d("ORDERID", orderKey);
+            final HashMap<String, Object> notified = new HashMap<String, Object>();
+            final String[] status = {null};
+
+            if (orderStatus != null) {
+
+                Log.d("SHOWINGYOURORDER","Y");
+                NotificationCompat.Builder builder = new NotificationCompat.Builder(OrderPlaced.this, CHANNEL_ID)
+                        .setSmallIcon(R.drawable.notify)
+                        .setContentTitle("Order Status")
+                        .setContentText(orderStatus)
+                        .setGroup(CHANNEL_ID)
+//                                .setContentIntent(resultPendingIntent)
+                        .setPriority(NotificationCompat.PRIORITY_HIGH);
+//
+//                            notificationManager.notify(1, builder.build());
 
 
-//        final String uniqueID = UUID.randomUUID().toString();
+                if (orderStatus.equals("Placed")) {
+                    obj.progress = 25;
+                    statusPercent.setText("25%");
 
-        final StorageReference filesRef = storageRef.child(uniqueID);
+                } else if (orderStatus.equals("Retrieved")) {
+                    statusPercent.setText("50%");
+                    obj.progress = 50;
+                } else if (orderStatus.equals("In Progress")) {
+                    statusPercent.setText("75%");
+                    obj.progress = 75;
+                } else {
+                    statusPercent.setText("100%");
+                    obj.progress = 100;
+                }
 
-//        Log.d("FILEPDF", String.valueOf(changeExtension(new File(file.getPath()),"pdf")));
+
+                if (orderStatus.equals("Placed")) {
 
 
-        final Uri uri;
-        String file = pdfs.get(0);
-        uri = Uri.parse(file);
+                    Log.d("Progress", String.valueOf(obj.progress));
 
-                Log.d("URIID", String.valueOf(pdfs.get(0)));
+                    while (obj.progress <= 25) {
+                        obj.progress++;
+                        orderProgress.setProgress(obj.progress);
+                        orderProgress.setProgressBarColor(Color.RED);
+//                                orderProgress.setBackgroundColor(Color.RED);
+//                                orderProgress.
+                    }
+//                            notified.put("P_Notified", true);
+//                            orderDb.child("users").child(userId).child("Orders").child(shopKey).child(orderKey).updateChildren(notified);
 
-                orderProgress.setProgress(15);
-                statusPercent.setText("15%");
+                } else if (orderStatus.equals("Retrieved")) {
 
-                final UploadTask uploadTask = filesRef.putFile(uri);
-//        final UploadTask uploadTask = filesRef.putFile(changeExtension(new File(file.getPath()),"pdf"));
+
+                    Log.d("Progress", String.valueOf(obj.progress));
+
+                    while (obj.progress > 25 && obj.progress <= 50) {
+
+                        obj.progress++;
+                        orderProgress.setProgress(obj.progress);
+
+//                                orderProgress.setBackgroundResource(R.drawable.colorprogressblue);
+                        orderProgress.setProgressBarColor(Color.YELLOW);
+
+                    }
+                    notified.put("RT_Notified", false);
+                    orderDb.child("users").child(userId).child("Orders").child(shopKey).child(orderKey).setValue(notified);
+                } else if (orderStatus.equals("In Progress")) {
+
+                    Log.d("Progress", String.valueOf(obj.progress));
+
+                    while (obj.progress > 50 && obj.progress <= 75) {
+
+                        obj.progress++;
+                        orderProgress.setProgress(obj.progress);
+//                                orderProgress.setBackgroundResource(R.drawable.colorprogressyellow);
+                        orderProgress.setProgressBarColor(Color.BLUE);
+
+                    }
+                    notified.put("IP_Notified", false);
+                    orderDb.child("users").child(userId).child("Orders").child(shopKey).child(orderKey).setValue(notified);
+                } else if (orderStatus.equals("Ready")) {
+
+                    Log.d("Progress", String.valueOf(obj.progress));
+
+                    while (obj.progress > 75 && obj.progress <= 100) {
+
+                        obj.progress++;
+                        orderProgress.setProgress(obj.progress);
+//                                orderProgress.setBackgroundResource(R.drawable.colorprogressgreen);
+                        orderProgress.setProgressBarColor(Color.GREEN);
+
+                    }
+                    notified.put("R_Notified", false);
+                    orderDb.child("users").child(userId).child("Orders").child(shopKey).child(orderKey).setValue(notified);
+                }
+
+
+                Log.d("ORDERPROG", String.valueOf(orderProgress.getProgress()));
+
+            } else {
+
+                orderDb.child("users").child(userId).child("Orders").child(shopKey).child(orderKey).addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        Log.d("VAL", dataSnapshot.getKey());
+
+//                 Iterator<DataSnapshot> users = dataSnapshot.getChildren().iterator();
+//                 cnt[0] = (int) dataSnapshot.getChildrenCount();
+
+//                while (users.hasNext()){
+//                    DataSnapshot user = users.next();
+//                    Log.d("VVAL", user.getKey());
+
+
+//                        }else {
+
+                        for (DataSnapshot user : dataSnapshot.getChildren()) {
+
+                            NotificationCompat.Builder builder = new NotificationCompat.Builder(OrderPlaced.this, CHANNEL_ID)
+                                    .setSmallIcon(R.drawable.notify)
+                                    .setContentTitle("Order Status")
+                                    .setContentText(status[0])
+                                    .setGroup(CHANNEL_ID)
+//                                        .setContentIntent(resultPendingIntent)
+                                    .setPriority(NotificationCompat.PRIORITY_HIGH);
+
+//                            notificationManager.notify(1, builder.build());
+
+                            if (user.getKey().equals("orderStatus")) {
+                                notified.put("P_Notified", true);
+                                orderDb.child("users").child(userId).child("Orders").child(shopKey).child(orderKey).updateChildren(notified);
+                                notified.put("RT_Notified", false);
+                                orderDb.child("users").child(userId).child("Orders").child(shopKey).child(orderKey).updateChildren(notified);
+                                notified.put("IP_Notified", false);
+                                orderDb.child("users").child(userId).child("Orders").child(shopKey).child(orderKey).updateChildren(notified);
+                                notified.put("R_Notified", false);
+                                orderDb.child("users").child(userId).child("Orders").child(shopKey).child(orderKey).updateChildren(notified);
+
+                                Log.d("STATUS", user.getValue().toString());
+
+                                orderStatus = user.getValue().toString();
+
+                                if (orderStatus.equals("Placed")) {
+
+                                    status[0] = "Placed";
+                                    Log.d("Progress", String.valueOf(obj.progress));
+
+                                    while (obj.progress <= 25) {
+                                        obj.progress++;
+                                        orderProgress.setProgress(obj.progress);
+//                                        orderProgress.setBackgroundResource(R.drawable.colorprogressred);
+                                        orderProgress.setProgressBarColor(Color.RED);
+
+                                    }
+
+                                } else if (orderStatus.equals("Retrieved")) {
+
+//                                    NotificationCompat.Builder builder = new NotificationCompat.Builder(OrderPlaced.this, "Channel_ID")
+//                                            .setSmallIcon(R.drawable.notify)
+//                                            .setContentTitle("Order Status")
+//                                            .setContentText("Your order has been accepted.")
+//                                            .setPriority(NotificationCompat.PRIORITY_HIGH);
+//                                    notificationManager.notify(1, builder.build());
+                                    Log.d("Progress", String.valueOf(obj.progress));
+                                    status[0] = "Retrieved";
+
+                                    while (obj.progress > 25 && obj.progress <= 50) {
+
+                                        obj.progress++;
+                                        orderProgress.setProgress(obj.progress);
+//                                        orderProgress.setBackgroundResource(R.drawable.colorprogressblue);
+                                        orderProgress.setProgressBarColor(Color.YELLOW);
+
+                                    }
+                                } else if (orderStatus.equals("In Progress")) {
+//                                    NotificationCompat.Builder builder = new NotificationCompat.Builder(OrderPlaced.this, "Channel_ID")
+//                                            .setSmallIcon(R.drawable.notify)
+//                                            .setContentTitle("Order Status")
+//                                            .setContentText("Your documents are being printed.")
+//                                            .setPriority(NotificationCompat.PRIORITY_HIGH);
+//                                    notificationManager.notify(1, builder.build());
+                                    Log.d("Progress", String.valueOf(obj.progress));
+                                    status[0] = "In Progress";
+
+                                    while (obj.progress > 50 && obj.progress <= 75) {
+
+                                        obj.progress++;
+                                        orderProgress.setProgress(obj.progress);
+//                                        orderProgress.setBackgroundResource(R.drawable.colorprogressyellow);
+                                        orderProgress.setProgressBarColor(Color.BLUE);
+
+                                    }
+                                } else if (orderStatus.equals("Ready")) {
+//                                    NotificationCompat.Builder builder = new NotificationCompat.Builder(OrderPlaced.this, "Channel_ID")
+//                                            .setSmallIcon(R.drawable.notify)
+//                                            .setContentTitle("Order Status")
+//                                            .setContentText("Your order is ready to be pickeup up.")
+//                                            .setPriority(NotificationCompat.PRIORITY_HIGH);
+//                                    notificationManager.notify(1, builder.build());
+                                    Log.d("Progress", String.valueOf(obj.progress));
+                                    status[0] = "Ready";
+
+                                    while (obj.progress > 75 && obj.progress <= 100) {
+
+                                        obj.progress++;
+                                        orderProgress.setProgress(obj.progress);
+//                                        orderProgress.setBackgroundResource(R.drawable.colorprogressgreen);
+                                        orderProgress.setProgressBarColor(Color.GREEN);
+
+                                    }
+                                }
+
+
+                            }
+
+                        }
+
+
+                        if (obj.progress >= 25) {
+                            // Animation fadeIn = new AlphaAnimation(0, 1);
+                            //fadeIn.setInterpolator(new DecelerateInterpolator());
+                            // fadeIn.setDuration(1000);
+                            statusPercent.setText("25%");
+
+                            status1.setVisibility(View.GONE);
+                            status1.setText("Order in progress");
+                        }
+                        if (obj.progress >= 50) {
+                            status2.setVisibility(View.GONE);
+                            status1.setText("Order Placed");
+                            statusPercent.setText("50%");
+
+                        }
+                        if (obj.progress >= 75) {
+                            status3.setVisibility(View.GONE);
+                            status1.setText("Order in Progress");
+                            statusPercent.setText("75%");
+
+                        }
+                        if (obj.progress >= 100) {
+                            status4.setVisibility(View.GONE);
+                            status1.setText("Order Ready");
+                            statusPercent.setText("100%");
+
+                        }
+//                    }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
+            }
+            return null;
+        }
+    }
+
+
+
+
+    public class uploadImagesOrder extends AsyncTask<Void,Void,Void>{
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+
+        final ArrayList<Bitmap> images = new ArrayList<Bitmap>();
+        final int[] uploadCnt = {0};
+        ArrayList<Uri> uri = new ArrayList<Uri>();
+
+        Log.d("UPLOADING","IMAGE");
+        if (pageURL.size() > 0) {
+            final String uniqueID = UUID.randomUUID().toString();
+            final StorageReference filesRef = storageRef.child(uniqueID);
+
+            for (int i = 0; i < pageURL.size(); i++) {
+                Uri imageUri = Uri.parse(pageURL.get(i));
+
+                //do something with the image (save it to some directory or whatever you need to do with it here)
+                Bitmap bitmap = null;
+                try {
+                    bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+                images.add(bitmap);
+                byte[] DATA = baos.toByteArray();
+                final UploadTask uploadTask = filesRef.putBytes(DATA);
+
                 uploadTask.addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception exception) {
@@ -259,8 +592,7 @@ public class OrderPlaced extends AppCompatActivity {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                         // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
-                        Log.d("UPLOAD", "SUCCESSFULL");
-                        Log.d("UNIQUE", uniqueID);
+
                         Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                             @Override
                             public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
@@ -269,410 +601,155 @@ public class OrderPlaced extends AppCompatActivity {
                                 }
 
                                 // Continue with the task to get the download URL
+                                uploadCnt[0]++;
                                 return filesRef.getDownloadUrl();
                             }
                         }).addOnCompleteListener(new OnCompleteListener<Uri>() {
 
-                            @RequiresApi(api = Build.VERSION_CODES.N)
                             @Override
                             public void onComplete(@NonNull Task<Uri> task) {
                                 if (task.isSuccessful()) {
-                                    String url;
                                     Uri downloadUri = task.getResult();
-                                    url = String.valueOf(downloadUri);
 
+                                    pageURL.add(String.valueOf(downloadUri));
+                                    if(uploadCnt[0] == pageURL.size()){
+                                        DatabaseReference db = FirebaseDatabase.getInstance().getReference();
+                                        shopinfo orderInfo = new shopinfo(loc, name, "Placed", shopLat, shopLong, num, files, fileType, pagesize, orientation, price, bothSides, custom, false, false, false, false);
+                                        info userinfo = new info(username, email, num, "android", "Placed",fileType,copy);
 
-                                    DatabaseReference db = FirebaseDatabase.getInstance().getReference();
-                                    shopinfo orderInfo = new shopinfo(loc, name, "Placed", shopLat, shopLong, num, files, fileType, pagesize, orientation, price, false, false, false, false);
-                                    UserInfo userinfo = new UserInfo(username, email, num, "android");
+                                        String storeID = shopKey;
 
-                                    String storeID = shopKey;
+                                        storeDb = storeDb.child("Stores").child(storeID).child("Orders").child(userId).child(uniqueID);
+                                        storeDb.setValue(userinfo);
+                                        db = db.child("users").child(userId).child("Orders").child(storeID).child(uniqueID);
+                                        db.setValue(orderInfo);
+                                        Log.d("UPLOAD", "SUCCESSFULL");
 
-                                    storeDb = storeDb.child(storeID).child("Orders").child(userId).child(uniqueID);
-                                    storeDb.setValue(userinfo);
-                                    db = db.child("users").child(userId).child("Orders").child(storeID).child(uniqueID);
-                                    db.setValue(orderInfo);
+                                        for(int i =0;i<pageURL.size();i++){
+                                            singlePageInfo single = new singlePageInfo(pageURL.get(i), color, copy, fileType, fileType, pagesize, bothSides, orientation);
+                                            db.push().setValue(single);
+                                            storeDb.push().setValue(single);
+                                            orderKey = uniqueID;
+                                        }
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                            new setProgressForOrder().execute(orderKey);
+                                        }
 
-                                    singlePageInfo single = new singlePageInfo(url, color, copy, fileType, pagesize, orientation);
-                                    db.push().setValue(single);
-                                    storeDb.push().setValue(single);
-                                    orderKey = uniqueID;
-
-                                    setProgressForOrder(orderKey);
-
-
+                                    }
                                 } else {
                                     // Handle failures
+                                    Log.d("IMAGE", "NOT RECIEVED");
                                     // ...
                                 }
                             }
                         });
                         // ...
                     }
-                });
-
-         }
-
-
-
-
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    private void setProgressForOrder(final String orderKey) {
-
-        // Create an Intent for the activity you want to start
-        Intent resultIntent = new Intent(this, Select.class);
-// Create the TaskStackBuilder and add the intent, which inflates the back stack
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-        stackBuilder.addNextIntentWithParentStack(resultIntent);
-// Get the PendingIntent containing the entire back stack
-        final PendingIntent resultPendingIntent = stackBuilder.getPendingIntent(1, PendingIntent.FLAG_UPDATE_CURRENT);
-//        final PendingIntent resultPendingIntent = PendingIntent.getActivity(this,1,resultIntent,PendingIntent.FLAG_UPDATE_CURRENT);
-
-//        obj.progress++;
-        final int[] cnt = new int[1];
-
-//        Log.d("SHOPNAME",name);
-//        Log.d("ORDERID",orderKey);
-        orderDb.child("users").child(userId).child("Orders").child(shopKey).child(orderKey).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                 Log.d("VAL",dataSnapshot.getKey());
-
-//                 Iterator<DataSnapshot> users = dataSnapshot.getChildren().iterator();
-//                 cnt[0] = (int) dataSnapshot.getChildrenCount();
-
-//                while (users.hasNext()){
-                    for(DataSnapshot user: dataSnapshot.getChildren()){
-//                    DataSnapshot user = users.next();
-//                    Log.d("VVAL", user.getKey());
-
-                    final HashMap<String, Object> notified = new HashMap<String, Object>();
-                    String status = null;
-                    if(orderStatus != null){
-                        if(orderStatus.equals("Placed")){
-                            obj.progress = 25;
-                            statusPercent.setText("25%");
-
-                        }else if(orderStatus.equals("Retrieved")){
-                            statusPercent.setText("50%");
-                            obj.progress = 50;
-                        }else if(orderStatus.equals("In Process")){
-                            statusPercent.setText("75%");
-                            obj.progress = 75;
-                        }else{
-                            statusPercent.setText("100%");
-                            obj.progress = 100;
-                        }
-
-
-                        if (orderStatus.equals("Placed")) {
-
-
-                            Log.d("Progress", String.valueOf(obj.progress));
-
-                            while (obj.progress <= 25) {
-                                obj.progress++;
-                                orderProgress.setProgress(obj.progress);
-//                                orderProgress.setBackgroundColor(Color.RED);
-//                                orderProgress.
-                            }
-//                            notified.put("P_Notified", true);
-//                            orderDb.child("users").child(userId).child("Orders").child(shopKey).child(orderKey).updateChildren(notified);
-
-                        }else
-                        if (orderStatus.equals("Retrieved")) {
-
-
-                            Log.d("Progress", String.valueOf(obj.progress));
-
-                            while (obj.progress > 25 && obj.progress <= 50) {
-
-                                obj.progress++;
-                                orderProgress.setProgress(obj.progress);
-
-//                                orderProgress.setBackgroundResource(R.drawable.colorprogressblue);
-
-                            }
-//                            notified.put("RT_Notified", false);
-//                            orderDb.child("users").child(userId).child("Orders").child(shopKey).child(orderKey).setValue(notified);
-                        }else
-                        if (orderStatus.equals("In Progress")) {
-
-                            Log.d("Progress", String.valueOf(obj.progress));
-
-                            while (obj.progress > 50 && obj.progress <= 75) {
-
-                                obj.progress++;
-                                orderProgress.setProgress(obj.progress);
-//                                orderProgress.setBackgroundResource(R.drawable.colorprogressyellow);
-
-                            }
-//                            notified.put("IP_Notified", false);
-//                            orderDb.child("users").child(userId).child("Orders").child(shopKey).child(orderKey).setValue(notified);
-                        }else
-                        if (orderStatus.equals("Ready")) {
-
-                            Log.d("Progress", String.valueOf(obj.progress));
-
-                            while (obj.progress > 75 && obj.progress <= 100) {
-
-                                obj.progress++;
-                                orderProgress.setProgress(obj.progress);
-//                                orderProgress.setBackgroundResource(R.drawable.colorprogressgreen);
-
-                            }
-//                            notified.put("R_Notified", false);
-//                            orderDb.child("users").child(userId).child("Orders").child(shopKey).child(orderKey).setValue(notified);
-                        }
-
-                        NotificationCompat.Builder builder = new NotificationCompat.Builder(OrderPlaced.this, CHANNEL_ID)
-                                .setSmallIcon(R.drawable.notify)
-                                .setContentTitle("Order Status")
-                                .setContentText(orderStatus)
-                                .setGroup(CHANNEL_ID)
-//                                .setContentIntent(resultPendingIntent)
-                                .setPriority(NotificationCompat.PRIORITY_HIGH);
-
-                        notificationManager.notify(1, builder.build());
-
-                        Log.d("ORDERPROG", String.valueOf(orderProgress.getProgress()));
-                    }else {
-
-                            if (user.getKey().equals("orderStatus")) {
-                            notified.put("P_Notified", true);
-                            orderDb.child("users").child(userId).child("Orders").child(shopKey).child(orderKey).updateChildren(notified);
-                            notified.put("RT_Notified", false);
-                            orderDb.child("users").child(userId).child("Orders").child(shopKey).child(orderKey).updateChildren(notified);
-                            notified.put("IP_Notified", false);
-                            orderDb.child("users").child(userId).child("Orders").child(shopKey).child(orderKey).updateChildren(notified);
-                            notified.put("R_Notified", false);
-                            orderDb.child("users").child(userId).child("Orders").child(shopKey).child(orderKey).updateChildren(notified);
-
-                                Log.d("STATUS",user.getValue().toString());
-
-                                orderStatus = user.getValue().toString();
-
-                                if (orderStatus.equals("Placed")) {
-
-                                    status = "Placed";
-                                    Log.d("Progress", String.valueOf(obj.progress));
-
-                                    while (obj.progress <= 25) {
-                                        obj.progress++;
-                                        orderProgress.setProgress(obj.progress);
-//                                        orderProgress.setBackgroundResource(R.drawable.colorprogressred);
-
-                                    }
-
-                                }else
-                                if (orderStatus.equals("Retrieved")) {
-
-//                                    NotificationCompat.Builder builder = new NotificationCompat.Builder(OrderPlaced.this, "Channel_ID")
-//                                            .setSmallIcon(R.drawable.notify)
-//                                            .setContentTitle("Order Status")
-//                                            .setContentText("Your order has been accepted.")
-//                                            .setPriority(NotificationCompat.PRIORITY_HIGH);
-//                                    notificationManager.notify(1, builder.build());
-                                    Log.d("Progress", String.valueOf(obj.progress));
-                                    status = "Retrieved";
-
-                                    while (obj.progress > 25 && obj.progress <= 50) {
-
-                                        obj.progress++;
-                                        orderProgress.setProgress(obj.progress);
-//                                        orderProgress.setBackgroundResource(R.drawable.colorprogressblue);
-
-                                    }
-                                }else
-                                if (orderStatus.equals("In Progress")) {
-//                                    NotificationCompat.Builder builder = new NotificationCompat.Builder(OrderPlaced.this, "Channel_ID")
-//                                            .setSmallIcon(R.drawable.notify)
-//                                            .setContentTitle("Order Status")
-//                                            .setContentText("Your documents are being printed.")
-//                                            .setPriority(NotificationCompat.PRIORITY_HIGH);
-//                                    notificationManager.notify(1, builder.build());
-                                    Log.d("Progress", String.valueOf(obj.progress));
-                                    status = "In Process";
-
-                                    while (obj.progress > 50 && obj.progress <= 75) {
-
-                                        obj.progress++;
-                                        orderProgress.setProgress(obj.progress);
-//                                        orderProgress.setBackgroundResource(R.drawable.colorprogressyellow);
-
-                                    }
-                                }else
-                                if (orderStatus.equals("Ready")) {
-//                                    NotificationCompat.Builder builder = new NotificationCompat.Builder(OrderPlaced.this, "Channel_ID")
-//                                            .setSmallIcon(R.drawable.notify)
-//                                            .setContentTitle("Order Status")
-//                                            .setContentText("Your order is ready to be pickeup up.")
-//                                            .setPriority(NotificationCompat.PRIORITY_HIGH);
-//                                    notificationManager.notify(1, builder.build());
-                                    Log.d("Progress", String.valueOf(obj.progress));
-                                    status = "Ready";
-
-                                    while (obj.progress > 75 && obj.progress <= 100) {
-
-                                        obj.progress++;
-                                        orderProgress.setProgress(obj.progress);
-//                                        orderProgress.setBackgroundResource(R.drawable.colorprogressgreen);
-
-                                    }
-                                }
-
-                                NotificationCompat.Builder builder = new NotificationCompat.Builder(OrderPlaced.this, CHANNEL_ID)
-                                        .setSmallIcon(R.drawable.notify)
-                                        .setContentTitle("Order Status")
-                                        .setContentText(status)
-                                        .setGroup(CHANNEL_ID)
-//                                        .setContentIntent(resultPendingIntent)
-                                        .setPriority(NotificationCompat.PRIORITY_HIGH);
-
-                                notificationManager.notify(1, builder.build());
-                            }
-
-                        }
-                        if (obj.progress >= 25) {
-                            // Animation fadeIn = new AlphaAnimation(0, 1);
-                            //fadeIn.setInterpolator(new DecelerateInterpolator());
-                            // fadeIn.setDuration(1000);
-
-                            status1.setVisibility(View.VISIBLE);
-                            status1.setText("Order in progress");
-                        }
-                        if(obj.progress >= 50){
-                            status2.setVisibility(View.VISIBLE);
-                            status1.setText("Order Placed");
-
-                        }
-                        if(obj.progress >= 75){
-                            status3.setVisibility(View.VISIBLE);
-                            status1.setText("Order in Progress");
-
-                        }
-                        if(obj.progress >= 100){
-                            status4.setVisibility(View.VISIBLE);
-                            status1.setText("Order Ready");
-
-                        }
-                   }
-             }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+                    });
+                }
 
             }
-        });
+            return null;
+        }
+
+//        }
     }
-    
-//
-//    @Override
-//    public void onSaveInstanceState(Bundle outState) {
-//        super.onSaveInstanceState(outState);
-//
-//        Bundle mapViewBundle = outState.getBundle(MAPVIEW_BUNDLE_KEY);
-//        if (mapViewBundle == null) {
-//            mapViewBundle = new Bundle();
-//            outState.putBundle(MAPVIEW_BUNDLE_KEY, mapViewBundle);
-//        }
-//
-//        shopMap.onSaveInstanceState(mapViewBundle);
-//    }
+    public class uploadFile extends AsyncTask<ArrayList<String>,Void,Void>{
 
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//        shopMap.onResume();
-//    }
-//
-//    @Override
-//    protected void onStart() {
-//        super.onStart();
-//        shopMap.onStart();
-//    }
-//
-//    @Override
-//    protected void onStop() {
-//        super.onStop();
-//        shopMap.onStop();
-//    }
+        @SuppressLint("WrongThread")
+        @Override
+        protected Void doInBackground(ArrayList<String>... arrayLists) {
 
-//    @Override
-//    public void onMapReady(final GoogleMap googleMap) {
-//        MarkerOptions options = new MarkerOptions();
-//        googleMap.getUiSettings().setZoomControlsEnabled(true);
-//        Log.d("MAP", "IS READY");
-//
-//        LatLng userLoc = new LatLng(18.573595,73.875822);
-//        LatLng shopLoc = new LatLng(shopLat,shopLong);
-//        String sLat = String.valueOf(shopLoc.latitude);
-//        String sLong = String.valueOf(shopLoc.longitude);
-//
-//
-//
-//        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLoc, 16));
-//
-//        user = new MarkerOptions().position(new LatLng(18.573595, 73.875822)).title("Current Location");
-//        shop = new MarkerOptions().position(new LatLng(shopLat, shopLong)).title("Store");
-//
-//        markerPoints.add(userLoc);
-//        markerPoints.add(shopLoc);
-//        googleMap.addMarker(user);
-//        googleMap.addMarker(shop);
-//        googleMap.animateCamera(
-//                CameraUpdateFactory.newLatLngZoom(userLoc,15f)
-//        );
-//
-//        if (ActivityCompat.checkSelfPermission(this,Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this,Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//            // TODO: Consider calling
-//            //    Activity#requestPermissions
-////            googleMap.setMyLocationEnabled(true);
-//            mLocationPermissionGranted = true;
-//
-//            // here to request the missing permissions, and then overriding
-//            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-//            //                                          int[] grantResults)
-//            // to handle the case where the user grants the permission. See the documentation
-//            // for Activity#requestPermissions for more details.
-//            return;
-//        }
-//        StringBuilder sb = new StringBuilder();
-//        Object[] datatransfer = new Object[4];
-//        sb.append("https://maps.googleapis.com/maps/api/directions/json?");
-//        sb.append("origins="+userLoc.latitude + ","+ userLoc.longitude);
-//        sb.append("&destination="+shopLoc.latitude+","+shopLoc.longitude);
-//        sb.append("&key="+"AIzaSyBRE-1UMmGznNw8hvLE4quITaDBEF00qr4");
-//
-//        GetDirectionsData data = new GetDirectionsData(getApplicationContext());
-//        datatransfer[0] = googleMap;
-//        datatransfer[1] = sb.toString();
-//        datatransfer[2] = new LatLng(userLoc.latitude,userLoc.longitude);
-//        datatransfer[3] = new LatLng(shopLoc.latitude,shopLoc.longitude);
-//        data.execute(datatransfer);
-//        googleMap.getUiSettings().setMyLocationButtonEnabled(true);
-//
-//
-//    }
+            final String uniqueID = UUID.randomUUID().toString();
+            final StorageReference filesRef = storageRef.child(uniqueID);
+            final Uri uri;
+
+            String file = pdfs.get(0);
+            uri = Uri.parse(file);
+
+            Log.d("URIID", String.valueOf(pdfs.get(0)));
+
+            orderProgress.setProgress(15);
+            statusPercent.setText("15%");
+
+//        if (Build.VERSION.SDK_INT < 19) {
+
+//      getContext().getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+
+            if (ContextCompat.checkSelfPermission(OrderPlaced.this, Manifest.permission.MANAGE_DOCUMENTS) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(OrderPlaced.this, new String[]{Manifest.permission.MANAGE_DOCUMENTS, Manifest.permission.MANAGE_DOCUMENTS}, 1);
+            }
+            final UploadTask uploadTask = filesRef.putFile(uri);
+//        final UploadTask uploadTask = filesRef.putFile(changeExtension(new File(file.getPath()),"pdf"));
+            uploadTask.addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    // Handle unsuccessful uploads
+                    Log.d("UPLOAD", "Not successfull");
+                }
+            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
+                    Log.d("UPLOAD", "SUCCESSFULL");
+                    Toast.makeText(OrderPlaced.this,"Files are being sent",Toast.LENGTH_SHORT).show();
+
+                    Log.d("UNIQUE", uniqueID);
+                    Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                        @Override
+                        public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                            if (!task.isSuccessful()) {
+                                throw task.getException();
+                            }
+
+                            // Continue with the task to get the download URL
+                            return filesRef.getDownloadUrl();
+                        }
+                    }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+
+                        @RequiresApi(api = Build.VERSION_CODES.N)
+                        @Override
+                        public void onComplete(@NonNull Task<Uri> task) {
+                            if (task.isSuccessful()) {
+                                String url;
+                                Uri downloadUri = task.getResult();
+                                url = String.valueOf(downloadUri);
+
+                                DatabaseReference db = FirebaseDatabase.getInstance().getReference();
+                                shopinfo orderInfo = new shopinfo(loc, name, "Placed", shopLat, shopLong, num, files, fileType, pagesize, orientation, price,bothSides,custom, false, false, false, false);
+                                info userinfo = new info(username, email, num, "android","Placed", fileType, copy);
+
+                                String storeID = shopKey;
+
+                                storeDb = storeDb.child("Stores").child(storeID).child("Orders").child(userId).child(uniqueID);
+                                storeDb.setValue(userinfo);
+                                db = db.child("users").child(userId).child("Orders").child(storeID).child(uniqueID);
+                                db.setValue(orderInfo);
+
+                                singlePageInfo single = new singlePageInfo(url, color, copy, fileType, pagesize, orientation,bothSides,custom);
+                                db.push().setValue(single);
+                                storeDb.push().setValue(single);
+                                orderKey = uniqueID;
+
+                                Toast.makeText(OrderPlaced.this,"Files are being sent",Toast.LENGTH_SHORT).show();
+
+                                new setProgressForOrder().execute(orderKey);
 
 
-//    @Override
-//    protected void onPause() {
-//        shopMap.onPause();
-//        super.onPause();
-//    }
-//
-//    @Override
-//    protected void onDestroy() {
-//        shopMap.onDestroy();
-//        super.onDestroy();
-//    }
-//
-//    @Override
-//    public void onLowMemory() {
-//        super.onLowMemory();
-//        shopMap.onLowMemory();
-//    }
+                            } else {
+                                // Handle failures
+                                // ...
+                            }
+                        }
+                    });
+                    // ...
+                }
+            });
+
+            return null;
+        }
+    }
+
 
 
     private String getDirectionsUrl(LatLng origin, LatLng dest) {

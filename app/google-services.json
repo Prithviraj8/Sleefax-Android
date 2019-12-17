@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "43369794363",
-    "firebase_url": "https://copycatandroid-ca563.firebaseio.com",
-    "project_id": "copycatandroid-ca563",
-    "storage_bucket": "copycatandroid-ca563.appspot.com"
+    "project_number": "736925032543",
+    "firebase_url": "https://storeowner-9c355.firebaseio.com",
+    "project_id": "storeowner-9c355",
+    "storage_bucket": "storeowner-9c355.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:43369794363:android:af8f14efa08bc2bf",
+        "mobilesdk_app_id": "1:736925032543:android:864b074804a941f8933bea",
         "android_client_info": {
           "package_name": "com.prithviraj8.copycatandroid"
         }
       },
       "oauth_client": [
         {
-          "client_id": "43369794363-hqf3fgcg844ldio84qu2n9le2u43ptrq.apps.googleusercontent.com",
+          "client_id": "736925032543-dml9jsook36fmogi104kgdhrt5q2q6qr.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.prithviraj8.copycatandroid",
@@ -23,21 +23,28 @@
           }
         },
         {
-          "client_id": "43369794363-jdbvqv3p4udal8eol5j975fhd2tcbl92.apps.googleusercontent.com",
+          "client_id": "736925032543-ip2eafmsbot3u28o4i05dctidqjssc4r.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBY6auTnaeE1VN0QF8HHvZZWKTcveWImqo"
+          "current_key": "AIzaSyD3XSkHxs8cNaIPPmeD6v0e6AnblrphYAQ"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "43369794363-jdbvqv3p4udal8eol5j975fhd2tcbl92.apps.googleusercontent.com",
+              "client_id": "736925032543-ip2eafmsbot3u28o4i05dctidqjssc4r.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "736925032543-pij32tupg81f4jngck4ttrnq7ctb8vp8.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.prithviraj8.storeowner"
+              }
             }
           ]
         }
