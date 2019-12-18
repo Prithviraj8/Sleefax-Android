@@ -232,6 +232,8 @@ public class OrderPlaced extends AppCompatActivity {
                 startActivity(intent1);
             }
         });
+//        new uploadFile().execute(pdfs);
+
 
         if(fileType != null) {
             if (!fileType.equals("image/jpeg")) {
@@ -554,6 +556,7 @@ public class OrderPlaced extends AppCompatActivity {
 
     public class uploadImagesOrder extends AsyncTask<Void,Void,Void>{
 
+        @SuppressLint("WrongThread")
         @Override
         protected Void doInBackground(Void... voids) {
 
@@ -561,10 +564,12 @@ public class OrderPlaced extends AppCompatActivity {
         final int[] uploadCnt = {0};
         ArrayList<Uri> uri = new ArrayList<Uri>();
 
-        Log.d("UPLOADING","IMAGE");
         if (pageURL.size() > 0) {
             final String uniqueID = UUID.randomUUID().toString();
             final StorageReference filesRef = storageRef.child(uniqueID);
+
+            orderProgress.setProgress(15);
+            statusPercent.setText("15%");
 
             for (int i = 0; i < pageURL.size(); i++) {
                 Uri imageUri = Uri.parse(pageURL.get(i));
@@ -586,12 +591,15 @@ public class OrderPlaced extends AppCompatActivity {
                     @Override
                     public void onFailure(@NonNull Exception exception) {
                         // Handle unsuccessful uploads
+                        Log.d("UPLOADING","IMAGE");
+
                         Log.d("UPLOAD", "Not successfull");
                     }
                 }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                         // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
+                        Log.d("UPLOADING","Ok SUCCESSFULL");
 
                         Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                             @Override
@@ -630,10 +638,15 @@ public class OrderPlaced extends AppCompatActivity {
                                             db.push().setValue(single);
                                             storeDb.push().setValue(single);
                                             orderKey = uniqueID;
+                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                                if(i==pageURL.size()-1){
+                                                    new setProgressForOrder().execute(orderKey);
+                                                }
+                                            }
                                         }
-                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                                            new setProgressForOrder().execute(orderKey);
-                                        }
+//                                        orderProgress.setProgress(25);
+//                                        statusPercent.setText("25%");
+
 
                                     }
                                 } else {
