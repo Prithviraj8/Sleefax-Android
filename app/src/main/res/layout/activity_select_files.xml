@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/selectfiles"
     android:outlineAmbientShadowColor="#FCE30A"
     android:outlineSpotShadowColor="#E7C714"
     tools:context=".Select">
@@ -12,27 +11,38 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/selecfiles"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <View
+            android:id="@+id/view11"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/AddFilesButton"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginBottom="0dp"
+            android:background="@drawable/selectfiles" />
+
+
         <Button
             android:id="@+id/AddFilesButton"
-            android:layout_width="213dp"
-            android:layout_height="190dp"
-            android:layout_above="@+id/YourOrders"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
+
             android:layout_marginStart="8dp"
-
-            android:layout_marginTop="228dp"
+            android:layout_marginTop="116dp"
             android:layout_marginEnd="8dp"
-            android:layout_marginBottom="238dp"
-            android:background="#00FFFFFF"
+            android:background="@drawable/addfilebtn"
             android:clickable="true" />
-
 
         <ImageButton
             android:id="@+id/settings"
@@ -40,10 +50,10 @@
             android:layout_height="60dp"
             android:layout_alignTop="@+id/YourOrders"
             android:layout_alignBottom="@+id/YourOrders"
-            android:layout_alignParentStart="true"
-            android:layout_marginStart="30dp"
+            android:layout_alignParentEnd="true"
             android:layout_marginLeft="8dp"
             android:layout_marginTop="0dp"
+            android:layout_marginEnd="20dp"
             android:layout_marginRight="8dp"
             android:layout_marginBottom="0dp"
             android:background="@drawable/ripple_effect"
@@ -67,20 +77,19 @@
             tools:background="@drawable/ripple_effect" />
 
         <ImageButton
-            android:id="@+id/help"
+            android:id="@+id/button2"
             android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_height="wrap_content"
             android:layout_alignTop="@+id/YourOrders"
             android:layout_alignBottom="@+id/YourOrders"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="52dp"
+            android:layout_alignParentStart="true"
+            android:layout_marginStart="20dp"
             android:layout_marginTop="0dp"
-            android:layout_marginEnd="30dp"
             android:layout_marginBottom="0dp"
-            android:background="@drawable/ripple_effect"
-            android:clickable="true"
-            android:src="@drawable/helpbtnimg"
-            tools:background="@drawable/ripple_effect" />
+            android:background="#00000000"
+            android:src="@drawable/homebtn"
+            android:text="Button" />
+
     </RelativeLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

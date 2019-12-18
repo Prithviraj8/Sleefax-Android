@@ -25,7 +25,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="23dp"
         android:layout_marginEnd="17dp"
-        android:background="@drawable/pageview" />
+        android:background="@drawable/yourorderimg" />
 
     <TextView
         android:id="@+id/ShopsName"
@@ -34,7 +34,7 @@
         android:layout_alignStart="@+id/YourOrderView"
         android:layout_alignTop="@+id/YourOrderView"
         android:layout_alignParentStart="true"
-        android:layout_marginStart="20dp"
+        android:layout_marginStart="42dp"
         android:layout_marginTop="15dp"
         android:layout_marginEnd="80dp"
         android:text="ShopName :"
@@ -47,9 +47,8 @@
         android:layout_width="252dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/ShopsName"
-        android:layout_alignStart="@+id/YourOrderView"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="21dp"
+        android:layout_alignStart="@+id/ShopsName"
+        android:layout_marginStart="0dp"
         android:layout_marginTop="1dp"
         android:text="@string/Location"
         android:textColor="#542B2A2A"
@@ -61,14 +60,13 @@
         android:layout_width="247dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/view5"
-        android:layout_alignStart="@+id/YourOrderView"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="22dp"
+        android:layout_alignStart="@+id/Location"
+        android:layout_marginStart="0dp"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="86dp"
         android:text="Total Files :"
         android:textColor="#99333333"
-        android:textSize="16sp"
+        android:textSize="19sp"
         android:textStyle="bold" />
 
     <TextView
@@ -76,14 +74,13 @@
         android:layout_width="192dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/Files"
-        android:layout_alignStart="@+id/YourOrderView"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="22dp"
-        android:layout_marginTop="1dp"
+        android:layout_alignStart="@+id/Files"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="15dp"
         android:layout_marginEnd="79dp"
         android:text="@string/Price"
         android:textColor="#99333333"
-        android:textSize="16sp"
+        android:textSize="19sp"
         android:textStyle="bold" />
 
 
@@ -92,14 +89,13 @@
         android:layout_width="193dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/Price"
-        android:layout_alignStart="@+id/YourOrderView"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="22dp"
-        android:layout_marginTop="1dp"
+        android:layout_alignStart="@+id/Price"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="15dp"
         android:layout_marginEnd="78dp"
         android:text="@string/OrderStatus"
         android:textColor="#99333333"
-        android:textSize="16sp"
+        android:textSize="19sp"
         android:textStyle="bold" />
 
     <ImageButton
@@ -116,18 +112,14 @@
 
     <com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar
         android:id="@+id/ProgressBar"
-        android:layout_width="323dp"
-        android:layout_height="33dp"
+        android:layout_width="wrap_content"
+        android:layout_height="31dp"
 
-        android:layout_below="@+id/OrderStatus"
         android:layout_alignStart="@+id/YourOrderView"
         android:layout_alignEnd="@+id/YourOrderView"
         android:layout_alignBottom="@+id/YourOrderView"
-        android:layout_marginStart="34dp"
-        android:layout_marginLeft="25dp"
-        android:layout_marginTop="26dp"
-        android:layout_marginEnd="21dp"
-        android:layout_marginRight="26dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginEnd="27dp"
         android:layout_marginBottom="20dp"
         android:foregroundGravity="center_horizontal" />
 

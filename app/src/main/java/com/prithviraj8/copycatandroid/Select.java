@@ -132,7 +132,8 @@ public class Select extends AppCompatActivity {
         selectFilesBtn =(Button) findViewById(R.id.AddFilesButton);
         setting = findViewById(R.id.settings);
         orders = findViewById(R.id.YourOrders);
-        help = findViewById(R.id.help);
+//        help = findViewById(R.id.help);
+
 //        new getCurrentOrderCnt().execute();
 //        selectFilesBtn.setOnClickListener(fileBtnListener);
 
@@ -165,15 +166,15 @@ public class Select extends AppCompatActivity {
             }
         });
 
-        help.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d("HELP","PRESSED");
-                Intent intent = new Intent(Select.this,HelpActivity.class);
-                startActivity(intent);
-
-            }
-        });
+//        help.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Log.d("HELP","PRESSED");
+//                Intent intent = new Intent(Select.this,HelpActivity.class);
+//                startActivity(intent);
+//
+//            }
+//        });
 
     }
 
@@ -771,7 +772,7 @@ public class Select extends AppCompatActivity {
 
                     Iterator<DataSnapshot> users = dataSnapshot.getChildren().iterator();
 
-
+                    Log.d("ORDERLOG",dataSnapshot.getKey());
                     for (final DataSnapshot shop : dataSnapshot.getChildren()) {
                         for (final DataSnapshot order : shop.getChildren()) {
                             for (final DataSnapshot user : order.getChildren()) {
