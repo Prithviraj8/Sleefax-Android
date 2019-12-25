@@ -2,87 +2,130 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/constraint"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".changeInfoPopUp">
 
     <RelativeLayout
+        android:id="@+id/relativeLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="#FFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/textView14"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+
+        <View
+            android:id="@+id/view11"
+            android:layout_width="match_parent"
+            android:layout_height="162dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="0dp"
+            android:background="@drawable/rectangle102" />
+
+        <Button
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="20dp"
+            android:layout_height="30dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="25dp"
+            android:layout_marginTop="27dp"
+            android:background="@null"
+            android:drawableTop="@drawable/w" />
+
+        <ImageView
+            android:id="@+id/imageview"
+            android:layout_width="113dp"
+            android:layout_height="94dp"
+            android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="32dp"
-            android:text="Change your account details."
-            android:textAlignment="center"
-            android:textColor="#000000"
-            android:textSize="18sp"
+            android:layout_marginStart="146dp"
+            android:layout_marginTop="18dp"
+            android:src="@drawable/w_user" />
+
+        <TextView
+            android:id="@+id/headingTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/imageview"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="1dp"
+            android:text="Enter New Details"
+            android:textColor="#FFFFFF"
+            android:textSize="20dp"
             android:textStyle="bold" />
 
-        <EditText
-            android:id="@+id/numTV"
-            android:layout_width="188dp"
-            android:layout_height="45dp"
-            android:layout_below="@+id/nameTV"
-            android:layout_centerHorizontal="true"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="39dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginBottom="8dp"
-            android:hint="New Number" />
-
-        <EditText
+        <AutoCompleteTextView
             android:id="@+id/emailTV"
-            android:layout_width="180dp"
-            android:layout_height="45dp"
-            android:layout_below="@+id/textView14"
-            android:layout_centerHorizontal="true"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="56dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginBottom="8dp"
-            android:hint="New Email" />
+            android:layout_width="260dp"
+            android:layout_height="46dp"
+            android:layout_below="@+id/nameTV"
+            android:layout_alignStart="@+id/nameTV"
+            android:layout_alignEnd="@+id/nameTV"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="34dp"
+            android:layout_marginEnd="0dp"
+            android:background="@drawable/textfield"
+            android:hint="New Email"
+            android:paddingLeft="20dp"
+            android:textColor="#000000"
+            android:textColorHint="#808080" />
 
-        <EditText
+        <AutoCompleteTextView
             android:id="@+id/nameTV"
-            android:layout_width="180dp"
-            android:layout_height="45dp"
-            android:layout_below="@+id/emailTV"
+            android:layout_width="260dp"
+            android:layout_height="46dp"
+            android:layout_below="@+id/view11"
+
             android:layout_centerHorizontal="true"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="39dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginBottom="8dp"
-            android:hint="New Name" />
+            android:layout_marginStart="75dp"
+            android:layout_marginTop="34dp"
+            android:background="@drawable/textfield"
+            android:hint="New Name"
+            android:paddingLeft="20dp"
+            android:textColor="#000000"
+            android:textColorHint="#808080" />
+
+        <AutoCompleteTextView
+            android:id="@+id/numTV"
+            android:layout_width="260dp"
+            android:layout_height="46dp"
+            android:layout_below="@+id/emailTV"
+            android:layout_alignStart="@+id/emailTV"
+            android:layout_alignEnd="@+id/emailTV"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="34dp"
+            android:layout_marginEnd="0dp"
+            android:background="@drawable/textfield"
+            android:hint="New Number"
+            android:paddingLeft="20dp"
+            android:textColor="#000000"
+            android:textColorHint="#808080" />
 
         <Button
             android:id="@+id/changeInfoBtn"
-            android:layout_width="216dp"
+            android:layout_width="150dp"
             android:layout_height="51dp"
             android:layout_below="@+id/numTV"
             android:layout_centerHorizontal="true"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="39dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginBottom="8dp"
-            android:text="Change" />
+            android:layout_marginTop="34dp"
+            android:background="@drawable/signin_btn_round"
+            android:backgroundTint="#FFF"
+            android:text="Change"
+            android:textAllCaps="false"
+            android:textSize="20sp" />
 
     </RelativeLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

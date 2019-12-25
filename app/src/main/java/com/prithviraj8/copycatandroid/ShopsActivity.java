@@ -39,45 +39,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.UUID;
 
-class shopinfo{
-     public String  ShopsLocation,ShopName,orderStatus,fileType,pageSize,orientation,custom;
-     public Double ShopLat,ShopLong;
-     public int files, price;
-     public long num;
-     boolean P_Notified,RT_Notified,IP_Notified,R_Notified,bothSides;
 
-    public shopinfo(String shopsLocation, String shopName, String orderStatus, Double ShopLat, Double ShopLong, long num, int files, String fileType, String pageSize, String orientation, int price, boolean bothSides, String custom, boolean P_Notified, boolean RT_Notified, boolean IP_Notified, boolean R_Notified) {
-         ShopsLocation = shopsLocation;
-         ShopName = shopName;
-         this.orderStatus = orderStatus;
-         this.ShopLat = ShopLat;
-         this.ShopLong = ShopLong;
-         this.num = num;
-         this.files = files;
-         this.fileType = fileType;
-         this.price = price;
-         this.pageSize = pageSize;
-         this.orientation = orientation;
-         this.custom = custom;
-         this.bothSides = bothSides;
-         this.P_Notified = P_Notified;
-         this.RT_Notified = RT_Notified;
-         this.IP_Notified = IP_Notified;
-         this.R_Notified = R_Notified;
-    }
-
-//     public shopinfo(String shopsLocation, String shopName, String orderStatus, Double ShopLat, Double ShopLong,long num,int files, String fileType, int price) {
-//         ShopsLocation = shopsLocation;
-//         ShopName = shopName;
-//         this.orderStatus = orderStatus;
-//         this.ShopLat = ShopLat;
-//         this.ShopLong = ShopLong;
-//         this.num = num;
-//         this.files = files;
-//         this.fileType = fileType;
-//         this.price = price;
-//     }
- }
 
 public class ShopsActivity extends AppCompatActivity {
 
@@ -87,7 +49,7 @@ public class ShopsActivity extends AppCompatActivity {
     ArrayList<String> pageURL = new ArrayList<>();
 //    ArrayList<Uri> pageURL = new ArrayList<>();
 
-    int copy;
+    int copy,numberOfPages;
     String color;
 
     UserLoc user_loc = new UserLoc();
@@ -164,6 +126,7 @@ public class ShopsActivity extends AppCompatActivity {
         data = extras.getParcelable("Data");
         bothSides = extras.getBoolean("BothSides");
         custom = extras.getString("Custom");
+        numberOfPages = extras.getInt("Pages");
 
 //        ShopsCnt =  intent.getIntExtra("ShopCount",1);
         Log.d("URLS ARE ", String.valueOf(pageURL));
@@ -606,6 +569,9 @@ public class ShopsActivity extends AppCompatActivity {
 
         extras.putInt("RequestCode",requestCode);
         extras.putInt("ResultCode",resultCode);
+        extras.putInt("Pages",numberOfPages);
+
+
         Log.d("USERLAT", String.valueOf(userLoc.getLatitude()));
         Log.d("USERLAT", String.valueOf(userLoc.getLongitude()));
 

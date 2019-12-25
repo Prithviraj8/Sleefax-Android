@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".PdfInfo">
+    tools:context=".PdfInfo"
+    android:background="@drawable/back200">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -14,76 +15,67 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <ImageView
+            android:layout_width="114dp"
+            android:layout_height="90dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="110dp"
+            android:src="@drawable/pdf"
+            android:layout_centerHorizontal="true"/>
+
         <Button
-            android:id="@+id/Pdf_done"
+            android:id="@+id/pdfDone"
             android:layout_width="160dp"
             android:layout_height="wrap_content"
             android:layout_below="@+id/textView12"
-            android:layout_alignParentBottom="true"
+            android:layout_marginTop="45dp"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="43dp"
-            android:layout_marginBottom="0dp"
-            android:background="@drawable/fileinfobtn"
             android:text="@string/DonePageBtn"
             android:textColor="#000000"
             android:textSize="22sp"
             android:textStyle="bold" />
 
         <ImageView
-            android:id="@+id/imageView3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="6dp"
-            android:contentDescription="TODO"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/pagesettingimg" />
-
-        <View
-            android:id="@+id/bwback"
+            android:id="@+id/imageView11"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignStart="@+id/Pdf_Black_White"
             android:layout_alignTop="@+id/Pdf_Black_White"
             android:layout_alignEnd="@+id/Pdf_Black_White"
-            android:layout_alignBottom="@+id/Pdf_Black_White"
+            android:layout_alignBottom="@id/Pdf_Black_White"
             android:layout_marginStart="0dp"
             android:layout_marginTop="0dp"
             android:layout_marginEnd="0dp"
-            android:layout_marginBottom="0dp" />
+            android:layout_marginBottom="0dp"
+            app:srcCompat="@drawable/bwimg" />
 
-        <View
-            android:id="@+id/colorback"
+        <ImageView
+            android:id="@+id/imageView12"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignStart="@+id/Pdf_Colors"
             android:layout_alignTop="@+id/Pdf_Colors"
-            android:layout_alignEnd="@+id/Pdf_Colors"
-            android:layout_alignBottom="@+id/Pdf_Colors"
+            android:layout_alignEnd="@id/Pdf_Colors"
+            android:layout_alignBottom="@id/Pdf_Colors"
             android:layout_marginStart="0dp"
             android:layout_marginTop="0dp"
             android:layout_marginEnd="0dp"
-            android:layout_marginBottom="0dp" />
+            android:layout_marginBottom="0dp"
+            app:srcCompat="@drawable/colorimg" />
 
         <TextView
             android:id="@+id/textView"
-            android:layout_width="136dp"
-            android:layout_height="26dp"
-            android:layout_below="@+id/imageView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="0dp"
+            android:layout_marginTop="49dp"
             android:text="@string/file_settings"
             android:textAlignment="center"
-            android:textColor="#000000"
-            android:textSize="18sp"
+            android:textColor="#FFF"
+            android:textSize="25sp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/imageView3" />
 
         <TextView
@@ -91,31 +83,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/textView"
+            android:layout_alignParentStart="false"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="160dp"
             android:text="@string/select_color_format"
             android:textColor="#85000000"
             android:textSize="18sp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView" />
-
-        <View
-            android:id="@+id/Pdf_Colors"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_below="@+id/textView3"
-            android:layout_alignEnd="@+id/textView3"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginEnd="0dp"
-            android:background="@drawable/colorimg"
-            android:textAlignment="center"
-            android:textSize="26sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toEndOf="@+id/textView3" />
 
         <View
             android:id="@+id/Pdf_Black_White"
@@ -126,7 +101,6 @@
             android:layout_marginStart="0dp"
             android:layout_marginTop="5dp"
             android:layout_marginEnd="0dp"
-            android:background="@drawable/bwimg"
             android:textAlignment="center"
             android:textSize="26sp"
             app:layout_constraintBottom_toBottomOf="@+id/Pdf_Colors"
@@ -134,6 +108,21 @@
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textView3" />
+
+        <View
+            android:id="@+id/Pdf_Colors"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_below="@+id/textView3"
+            android:layout_alignEnd="@+id/textView3"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="0dp"
+            android:textAlignment="center"
+            android:textSize="26sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/textView3" />
 
         <TextView
             android:id="@+id/Copies"

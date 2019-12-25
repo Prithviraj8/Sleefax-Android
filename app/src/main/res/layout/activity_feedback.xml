@@ -14,59 +14,61 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/textView18"
-            android:layout_width="285dp"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/imageView8"
-            android:layout_marginStart="21dp"
-            android:layout_marginTop="10dp"
-            android:layout_toEndOf="@+id/backBtn"
-            android:text="SUBMIT YOUR FEEDBACK"
-            android:textColor="#000000"
-            android:textSize="24sp"
-            android:textStyle="bold" />
-
         <View
-            android:id="@+id/view18"
             android:layout_width="match_parent"
-            android:layout_height="525dp"
-            android:layout_below="@+id/textView18"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="30dp"
-            android:layout_marginEnd="0dp"
-            android:layout_marginBottom="0dp"
-            android:background="@drawable/feedbackview" />
+            android:layout_height="136dp"
+            android:background="@drawable/rectangle102"></View>
+
+
+        <ImageView
+            android:id="@+id/w_vote"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="13dp"
+            android:src="@drawable/w_vote" />
+        <TextView
+            android:id="@+id/vote_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/w_vote"
+            android:text="Submit Your Feedback"
+            android:layout_centerHorizontal="true"
+            android:textColor="#FFF"
+            android:textStyle="bold"
+            android:textAlignment="center"
+            android:textSize="20dp"
+            android:layout_marginTop="10dp">
+
+        </TextView>
 
         <EditText
             android:id="@+id/feedbackTV"
-            android:layout_width="342dp"
-            android:layout_height="160dp"
-            android:layout_alignTop="@+id/view18"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="40dp"
-            android:layout_marginTop="30dp"
-            android:layout_marginEnd="40dp"
+            android:layout_width="302dp"
+            android:layout_height="140dp"
+            android:layout_below="@+id/vote_tv"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="98dp"
+            android:background="@drawable/border"
             android:autofillHints=""
-            android:background="#FFFFFFFF"
             android:ems="10"
             android:gravity="start|top"
-            android:hint="    Your Feedback here"
-            android:inputType="textLongMessage|textMultiLine"
-            android:textAlignment="viewStart" />
+            android:hint="@string/your_feedback_here"
+            android:inputType="textLongMessage|textMultiLine" />
 
         <Button
             android:id="@+id/submitFeedback"
-            android:layout_width="176dp"
-            android:layout_height="wrap_content"
+            android:layout_width="156dp"
+            android:layout_height="50dp"
             android:layout_below="@+id/feedbackTV"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="63dp"
-            android:text="@string/submit" />
+            android:text="@string/submit"
+            android:textColor="#FFF"
+            android:textSize="20dp"
+            android:background="@drawable/rectangle101"/>
 
         <ImageButton
             android:id="@+id/backBtn"
@@ -74,18 +76,9 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="25dp"
             android:background="#00FFFFFF"
-            app:srcCompat="@drawable/backbtnimg" />
-
-        <ImageView
-            android:id="@+id/imageView8"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="10dp"
-            app:srcCompat="@drawable/feedbackimg" />
+            app:srcCompat="@drawable/w" />
     </RelativeLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -4,6 +4,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.pdf.PdfDocument;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,9 +14,19 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDDocumentInformation;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Pop extends AppCompatActivity {
+    private static final String GOOGLE_PHOTOS_PACKAGE_NAME = "com.google.android.apps.photos";
+
+    int numberOfPages;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,7 +34,7 @@ public class Pop extends AppCompatActivity {
         setContentView(R.layout.activity_pop);
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
-//        getSupportActionBar().hide();
+//        getSupportActionBar().setBackgroundDrawable(R.drawable.col);
 
         int width = dm.widthPixels;
         int height = dm.heightPixels;
@@ -41,7 +52,10 @@ public class Pop extends AppCompatActivity {
                 intent.setType("image/*");
                 intent.setAction(Intent.ACTION_GET_CONTENT);
                 intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+
+                intent.setPackage(GOOGLE_PHOTOS_PACKAGE_NAME);
                 startActivityForResult(Intent.createChooser(intent, "Select Images"), 1);
+//                startActivityForResult(Intent.createChooser(intent,"Select files",GOOGLE_PHOTOS_PACKAGE_NAME));
 
 //                Intent intent = new Intent(Pop.this,Select.class);
 //                Bundle extras = new Bundle();
@@ -52,6 +66,7 @@ public class Pop extends AppCompatActivity {
             }
         });
         selectAttachment.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP_MR1)
             @Override
             public void onClick(View v) {
 
@@ -101,6 +116,15 @@ public class Pop extends AppCompatActivity {
 
                     Log.d("FILE", mimeType);
                     fileType = mimeType;
+                    PDDocument doc = null;
+//                    try {
+//                        doc = PDDocument.load(new File(Objects.requireNonNull(returnUri.getPath())));
+//                        int count = doc.getNumberOfPages();
+//                        Log.d("COUNT", String.valueOf(count));
+//
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
 //                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://cloudconvert.com/anything-to-pdf")));
                     uploadFile(requestCode, resultCode,returnUri);
 //                    uploadFile(returnUri);
@@ -142,7 +166,7 @@ public class Pop extends AppCompatActivity {
         //goToPageInfo.putExtra("Pages",images);
         Bundle extras = new Bundle();
 //        extras.putParcelable("PdfURL", file);
-        Log.d("URIPASSED",file.toString());
+        extras.putInt("Pages",numberOfPages);
         extras.putString("PdfURL", file.toString());
         extras.putString("FileType", fileType);
         extras.putInt("RequestCode",requestCode);

@@ -8,8 +8,26 @@
     android:orientation="vertical">
 
     <TextView
+        android:layout_width="80dp"
+        android:layout_height="35dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="313dp"
+        android:layout_marginTop="63dp"
+        android:background="@drawable/open"
+        android:text="Open"
+        android:paddingTop="5dp"
+        android:textStyle="bold"
+        android:textAlignment="center"
+        android:textColor="#FFF"
+        android:textSize="15sp">
+
+    </TextView>
+
+    <TextView
         android:id="@+id/ShopsName"
         android:layout_width="175dp"
+        android:paddingLeft="10dp"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
@@ -29,8 +47,8 @@
         android:layout_height="35dp"
         android:layout_below="@+id/Location"
         android:layout_alignParentStart="true"
-        android:layout_marginStart="118dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginStart="122dp"
+        android:layout_marginTop="3dp"
         android:layout_marginEnd="114dp"
         android:text="@string/Files" />
 

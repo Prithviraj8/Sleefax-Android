@@ -4,90 +4,103 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#BEFFBB"
     tools:context=".FirstNameActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <View
-            android:id="@+id/view8"
+            android:id="@+id/view"
             android:layout_width="match_parent"
-            android:layout_height="660dp"
-            android:layout_alignTop="@+id/imageView19"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="35dp"
-            android:layout_marginEnd="0dp"
-            android:layout_marginBottom="0dp"
-            android:background="@drawable/signinview" />
-
-        <Button
-            android:id="@+id/FirstNameButton"
-            android:layout_width="180dp"
-            android:layout_height="60dp"
-            android:layout_below="@+id/FirstNameTV"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="204dp"
-            android:background="@drawable/roundbutton"
-            android:text="@string/done"
-            android:textColor="#FFFFFF"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/textView17"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/imageView19"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="40dp"
-            android:text="@string/enter_your_personal_details"
-            android:textAlignment="center"
-            android:textColor="#FFFFFFFF"
-            android:textSize="18sp" />
-
-        <AutoCompleteTextView
-            android:id="@+id/FirstNameTV"
-            android:layout_width="312dp"
-            android:layout_height="52dp"
-            android:layout_below="@+id/textView17"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="52dp"
-            android:layout_marginBottom="48dp"
-            android:background="@drawable/textfield"
-            android:hint="@string/your_name"
-            android:textColor="#000000"
-            android:textColorHint="#000000" />
+            android:layout_height="169dp"
+            android:background="@drawable/storesview" />
 
         <ImageView
-            android:id="@+id/imageView19"
+            android:id="@+id/imageView6"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_below="@+id/view"
+            android:layout_alignBottom="@+id/view"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="-50dp"
+            android:layout_marginBottom="-50dp"
+            app:srcCompat="@drawable/logo1" />
+
+        <Button
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="23dp"
+            android:layout_height="28dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="@null"
+            android:drawableTop="@drawable/w" />
+
+        <TextView
+            android:id="@+id/textView11"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="36dp"
-            app:srcCompat="@drawable/sleefaxlogo"
-            android:contentDescription="TODO" />
+            android:layout_marginTop="56dp"
+            android:foregroundGravity="center_horizontal"
+            android:text="A little more about yourself."
+            android:textColor="#FFF"
+            android:textSize="25sp"
+            android:textStyle="bold">
+
+        </TextView>
 
         <EditText
             android:id="@+id/numberTV"
-            android:layout_width="312dp"
-            android:layout_height="57dp"
+            android:layout_width="270dp"
+            android:layout_height="42dp"
             android:layout_below="@+id/FirstNameTV"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="41dp"
-            android:layout_marginBottom="148dp"
+            android:layout_marginTop="26dp"
+            android:autofillHints=""
             android:background="@drawable/textfield"
             android:ems="10"
             android:hint="@string/your_number"
             android:inputType="number"
-            android:textColorHint="#000000"
-            android:autofillHints="" />
+            android:paddingLeft="10dp"
+            android:textColorHint="#808080" />
 
+        <AutoCompleteTextView
+            android:id="@+id/FirstNameTV"
+            android:layout_width="270dp"
+            android:layout_height="42dp"
+            android:layout_below="@+id/imageView6"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="72dp"
+            android:background="@drawable/textfield"
+            android:hint="@string/your_name"
+            android:inputType="textPersonName"
+            android:paddingLeft="10dp"
+            android:textColor="#000000"
+            android:textColorHint="#808080" />
+
+        <Button
+            android:id="@+id/FirstNameButton"
+            android:layout_width="170dp"
+            android:layout_height="45dp"
+            android:layout_below="@+id/numberTV"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="26dp"
+            android:background="@drawable/signin_btn_round"
+            android:backgroundTint="#FFF"
+            android:text="@string/done"
+            android:textAllCaps="false"
+            android:textColor="#000"
+            android:textSize="20sp"
+            android:textStyle="bold" />
     </RelativeLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

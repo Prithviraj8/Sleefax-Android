@@ -4,116 +4,160 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#BEFFBB"
+    android:background="#FFF"
     tools:context=".SignInActivity">
 
     <RelativeLayout
+        android:id="@+id/relativeLayout3"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
 
         <View
-            android:id="@+id/signinview"
+            android:id="@+id/view4"
             android:layout_width="match_parent"
-            android:layout_height="660dp"
-            android:layout_alignTop="@+id/imageView18"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="35dp"
-            android:layout_marginBottom="0dp"
-            android:background="@drawable/signinview" />
-
-        <com.google.android.gms.common.SignInButton
-            android:id="@+id/GoogleSignIn"
-            android:layout_width="315dp"
-            android:layout_height="55dp"
+            android:layout_height="159dp"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="200dp" />
+            android:layout_marginTop="0dp"
+            android:background="@drawable/storesview" />
 
-        <AutoCompleteTextView
-            android:id="@+id/PasswordTV"
-            android:layout_width="315dp"
-            android:layout_height="55dp"
-            android:layout_below="@+id/EmailTV"
-            android:layout_centerHorizontal="true"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="33dp"
-            android:layout_marginEnd="8dp"
-            android:background="@drawable/textfield"
-            android:hint="@string/password"
-            android:textColor="#000000"
-            android:textColorHint="#000000" />
+        <Button
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="25dp"
+            android:layout_marginTop="23dp"
+            android:background="@null"
+            android:drawableTop="@drawable/w" />
 
         <ImageView
-            android:id="@+id/imageView18"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:id="@+id/userimg"
+            android:layout_width="113dp"
+            android:layout_height="94dp"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="36dp"
-            app:srcCompat="@drawable/sleefaxlogo"
-            android:contentDescription="TODO" />
+            android:layout_marginTop="18dp"
+            android:src="@drawable/w_user" />
 
-        <AutoCompleteTextView
-            android:id="@+id/EmailTV"
-            android:layout_width="315dp"
-            android:layout_height="56dp"
-            android:layout_below="@+id/textView16"
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/userimg"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="24dp"
-            android:background="@drawable/textfield"
-            android:hint="@string/email"
-            android:textColor="#000000"
-            android:textColorHint="#000000" />
+            android:layout_marginTop="10dp"
+            android:text="Enter Details"
+            android:textColor="#FFF"
+            android:textSize="20dp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/SignIn_Up"
-            android:layout_width="230dp"
-            android:layout_height="28dp"
-            android:layout_below="@+id/imageView18"
+            android:layout_width="255dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/view4"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="38dp"
-            android:layout_marginBottom="432dp"
-            android:text="@string/sign_in_with"
+            android:layout_marginTop="30dp"
+            android:text="Sign up with"
             android:textAlignment="center"
-            android:textColor="#FFFFFFFF"
-            android:textSize="18sp"
+            android:textColor="#000"
+            android:textSize="28sp"
             android:textStyle="bold" />
 
-        <Button
-            android:id="@+id/SignIn"
-            android:layout_width="180dp"
-            android:layout_height="60dp"
-            android:layout_below="@+id/PasswordTV"
-            android:layout_centerHorizontal="true"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="46dp"
-            android:layout_marginEnd="8dp"
-            android:background="@drawable/roundbutton"
-            android:text="@string/done"
-            android:textColor="#FFFFFFFF"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+        <com.google.android.gms.common.SignInButton
+            android:id="@+id/GoogleSignIn"
+            android:layout_width="260dp"
+            android:layout_height="45dp"
+            android:layout_below="@+id/SignIn_Up"
+            android:layout_alignStart="@+id/SignIn_Up"
+            android:layout_alignEnd="@+id/SignIn_Up"
+            android:layout_marginStart="1dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="0dp" />
 
         <TextView
             android:id="@+id/textView16"
-            android:layout_width="33dp"
-            android:layout_height="23dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_below="@+id/GoogleSignIn"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="31dp"
+            android:layout_marginTop="20dp"
             android:text="@string/or"
             android:textAlignment="center"
-            android:textColor="#FFFFFF"
-            android:textSize="18sp"
+            android:textColor="#000"
+            android:textSize="25sp"
             android:textStyle="bold" />
 
+        <AutoCompleteTextView
+            android:id="@+id/EmailTV"
+            android:layout_width="260dp"
+            android:layout_height="46dp"
+            android:layout_below="@+id/textView16"
+            android:layout_alignStart="@+id/GoogleSignIn"
+            android:layout_alignEnd="@+id/GoogleSignIn"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="0dp"
+            android:background="@drawable/textfield"
+            android:inputType="textEmailAddress"
+            android:hint="@string/email"
+            android:paddingLeft="20dp"
+            android:textColor="#000000"
+            android:textColorHint="#808080" />
+
+        <AutoCompleteTextView
+            android:id="@+id/PasswordTV"
+            android:layout_width="260dp"
+            android:layout_height="46dp"
+            android:layout_below="@+id/EmailTV"
+            android:layout_alignStart="@+id/EmailTV"
+            android:layout_alignEnd="@+id/EmailTV"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginEnd="0dp"
+            android:background="@drawable/textfield"
+            android:inputType="textPassword"
+            android:hint="@string/password"
+            android:paddingLeft="20dp"
+            android:textColor="#000000"
+            android:textColorHint="#808080" />
+
+        <Button
+            android:id="@+id/forgotPasswordBtn"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="28dp"
+            android:layout_below="@+id/PasswordTV"
+            android:layout_alignStart="@+id/PasswordTV"
+            android:layout_alignEnd="@+id/PasswordTV"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginEnd="0dp"
+            android:background="@null"
+            android:text="Forget Password ?"
+            android:textAllCaps="false"
+            android:textColor="#000" />
+
+        <Button
+            android:id="@+id/SignIn"
+            android:layout_width="152dp"
+            android:layout_height="50dp"
+            android:layout_below="@+id/forgotPasswordBtn"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="64dp"
+            android:background="@drawable/signin_btn_round"
+            android:backgroundTint="#FFF"
+            android:text="@string/done"
+            android:textColor="#000"
+            android:textSize="18sp"
+            android:textStyle="bold" />
     </RelativeLayout>
 
 

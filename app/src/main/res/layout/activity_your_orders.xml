@@ -19,12 +19,12 @@
 
         <ImageView
             android:id="@+id/imageView7"
-            android:layout_width="54dp"
-            android:layout_height="60dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="0dp"
-            app:srcCompat="@drawable/yourorders" />
+            android:layout_marginTop="25dp"
+            app:srcCompat="@drawable/group21" />
 
         <TextView
             android:id="@+id/textView2"
@@ -35,23 +35,23 @@
             android:layout_marginTop="4dp"
             android:text="Your Orders"
             android:textAlignment="center"
-            android:textColor="#000000"
+            android:textColor="#6d6d6d"
             android:textSize="24sp"
             android:textStyle="bold" />
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/RefreshLayout"
             android:layout_width="match_parent"
-            android:layout_height="605dp"
+            android:layout_height="564dp"
             android:layout_below="@+id/textView2"
             android:layout_alignParentStart="true"
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:layout_marginStart="0dp"
-            android:layout_marginTop="32dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="0dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginBottom="-1dp"
             android:orientation="vertical">
 
             <ListView
@@ -73,10 +73,10 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:layout_marginStart="15dp"
-            android:layout_marginTop="15dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="25dp"
             android:background="#00FFFFFF"
-            app:srcCompat="@drawable/backbtn" />
+            app:srcCompat="@drawable/b" />
     </RelativeLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

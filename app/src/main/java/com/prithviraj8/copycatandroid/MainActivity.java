@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity  {
     String userId;
 
 
-    Button signUp, signIn;
+    Button signUp, signIn,privacypolicy;
 
 //    String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 //    ShopInfo info = new ShopInfo();
@@ -77,13 +77,21 @@ public class MainActivity extends AppCompatActivity  {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        getSupportActionBar().hide();
         notificationManager = NotificationManagerCompat.from(this);
 
 
 
         signUp = findViewById(R.id.signUp_btn);
         signIn = findViewById(R.id.signIn_Btn);
+        privacypolicy = findViewById(R.id.privacypolicyBtn);
+        privacypolicy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, com.prithviraj8.copycatandroid.privacypolicy.class);
+                startActivity(intent);
+                finish();
+            }
+        });
 //        if(FirebaseApp.getApps(this).size() == 1) {
 //            FirebaseApp.initializeApp(MainActivity.this /* Context */, options, "Stores");
 //        }

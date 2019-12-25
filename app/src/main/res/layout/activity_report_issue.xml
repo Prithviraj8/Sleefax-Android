@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ReportIssue">
+    tools:context=".ReportIssue"
+    android:background="@drawable/back200">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -14,41 +15,69 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/textView19"
-            android:layout_width="289dp"
+
+        <ImageView
+            android:id="@+id/w_vote"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="19dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="61dp"
-            android:layout_toEndOf="@+id/backBtn"
-            android:text="@string/uh_oh_so_sorry_to_hear_you_have_issue_with_our_app_please_tell_us_what_they_are_and_we_will_try_to_fix_it_as_soon_as_possible"
-            android:textColor="#9F000000"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="17dp"
+            android:src="@drawable/w_warning" />
+
+        <TextView
+            android:id="@+id/vote_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/w_vote"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="17dp"
+            android:text="UH OH !"
+            android:textAlignment="center"
+            android:textColor="#FFF"
+            android:textSize="20dp"
+            android:textStyle="bold">
+
+        </TextView>
+
+        <TextView
+            android:id="@+id/textview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/vote_tv"
+            android:layout_centerHorizontal="true"
+            android:layout_marginStart="1dp"
+            android:layout_marginTop="65dp"
+            android:text="So sorry to hear you \nhave issues with our app\n let us know and we will fix it."
+            android:textAlignment="center"
+            android:textColor="#696969"
+            android:textSize="20sp" />
 
         <EditText
             android:id="@+id/IssueTV"
-            android:layout_width="371dp"
+            android:layout_width="302dp"
             android:layout_height="140dp"
-            android:layout_below="@+id/textView19"
+            android:layout_below="@id/textview"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="57dp"
+            android:layout_marginTop="20dp"
+            android:autofillHints=""
+            android:background="@drawable/border"
             android:ems="10"
             android:gravity="start|top"
-            android:hint="Write your issues here."
-            android:inputType="textMultiLine" />
+            android:hint="Your issues here."
+            android:inputType="textLongMessage|textMultiLine" />
 
         <Button
-            android:id="@+id/SubmitIssue"
-            android:layout_width="139dp"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/IssueTV"
+            android:id="@+id/submitIssue"
+            android:layout_width="156dp"
+            android:layout_height="50dp"
+            android:layout_below="@id/IssueTV"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="78dp"
-            android:text="@string/submit" />
+            android:layout_marginTop="54dp"
+            android:background="@drawable/rectangle101"
+            android:text="@string/submit"
+            android:textColor="#FFF"
+            android:textSize="20dp" />
 
         <ImageButton
             android:id="@+id/backBtn"
@@ -56,9 +85,9 @@
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="25dp"
             android:background="#00FFFFFF"
-            app:srcCompat="@drawable/backbtn" />
+            app:srcCompat="@drawable/w" />
     </RelativeLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

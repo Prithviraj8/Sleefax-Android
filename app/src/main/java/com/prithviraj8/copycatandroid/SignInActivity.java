@@ -8,6 +8,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -23,6 +24,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.prithviraj8.copycatandroid.R;
 import com.google.android.gms.auth.api.Auth;
@@ -69,6 +71,7 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
 
 
     Boolean signUp;
+    Button forgotPassword;
 
 
     @Override
@@ -89,13 +92,20 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
         passwordTV = findViewById(R.id.PasswordTV);
         Button SignInButton = findViewById(R.id.SignIn);
         signUp_InTV = findViewById(R.id.SignIn_Up);
-
+        forgotPassword = findViewById(R.id.forgotPasswordBtn);
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
         signUp = extras.getBoolean("SignUp");
 
         if(signUp){
             signUp_InTV.setText("Sign Up with");
+            forgotPassword.setVisibility(View.INVISIBLE);
+            forgotPassword.setEnabled(false);
+
+        }else{
+            signUp_InTV.setText("Sign in with");
+            forgotPassword.setVisibility(View.VISIBLE);
+            forgotPassword.setEnabled(true);
         }
 
 
@@ -118,19 +128,7 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
         //TODO: Get a hold of an instance of firebase auth.
         mAuth = FirebaseAuth.getInstance();
 
-        SignInButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                final KProgressHUD hud = KProgressHUD.create(SignInActivity.this)
-                        .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
-                        .setLabel("Please wait")
-                        .setMaxProgress(100)
-                        .show();
-//                hud.show();
-                attemptRegistration();
-                hud.dismiss();
-            }
-        });
+        SignInButton.setOnClickListener(Listener);
 
 
 
@@ -156,6 +154,18 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
 
 
     }
+
+
+    private View.OnClickListener Listener = new View.OnClickListener() {
+        public void onClick(View v) {
+            // do something when the button is clicked
+            attemptRegistration();
+
+            }
+
+
+    };
+
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
 
@@ -311,6 +321,13 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
 
 
     private void attemptRegistration(){
+        final KProgressHUD hud = KProgressHUD.create(SignInActivity.this)
+                .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
+                .setLabel("Please wait")
+                .setMaxProgress(100)
+                .show();
+
+        hud.show();
 
         // Reset errors displayed in the form.
         emailTV.setError(null);
@@ -351,6 +368,7 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
 
             // TODO: Call create FirebaseUser() here
             login();
+            hud.dismiss();
 
 
         }
@@ -378,6 +396,7 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
                 .setLabel("Please wait.")
                 .setMaxProgress(100);
         hud.show();
+
         mAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(SignInActivity.this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
@@ -391,7 +410,7 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
 
                 }else{
                     hud.dismiss();
-                    Intent intent = new Intent(SignInActivity.this,FirstNameActivity.class);
+                    Intent intent = new Intent(SignInActivity.this,Select.class);
                     intent.putExtra("Email",email);
                     startActivity(intent);
                     finish();
@@ -421,11 +440,48 @@ public class SignInActivity extends AppCompatActivity implements GoogleApiClient
                 hud.dismiss();
                 }else{
 
-                    hud.dismiss();
-                    Intent intent = new Intent(SignInActivity.this,FirstNameActivity.class);
-                    intent.putExtra("Email",email);
-                    startActivity(intent);
-                    finish();
+                    ref.addChildEventListener(new ChildEventListener() {
+                        @Override
+                        public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                            if(dataSnapshot.hasChild(FirebaseAuth.getInstance().getCurrentUser().getUid())){
+                                Log.d("HAS CHILD","YES");
+                                hud.dismiss();
+                                Intent intent = new Intent(SignInActivity.this,Select.class);
+                                intent.putExtra("Email",email);
+                                startActivity(intent);
+                                finish();
+                            }else{
+                                Log.d("HAS CHILD","NOPE");
+
+                                hud.dismiss();
+                                Intent intent = new Intent(SignInActivity.this,FirstNameActivity.class);
+                                intent.putExtra("Email",email);
+                                startActivity(intent);
+                                finish();
+                            }
+                        }
+
+                        @Override
+                        public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                        }
+
+                        @Override
+                        public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+                        }
+
+                        @Override
+                        public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+
                 }
             }
         });

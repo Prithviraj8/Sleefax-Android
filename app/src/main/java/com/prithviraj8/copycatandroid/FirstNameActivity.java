@@ -11,12 +11,16 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -29,7 +33,8 @@ import com.google.firebase.database.ValueEventListener;
 public class FirstNameActivity extends AppCompatActivity {
 
 
-    private TextView firstNameTV,numberTV;
+    private AutoCompleteTextView firstNameTV;
+    EditText numberTV;
     private FirebaseAuth mAuth;
 
 
@@ -37,8 +42,7 @@ public class FirstNameActivity extends AppCompatActivity {
     DatabaseReference ref = database.getReference();
     String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
-    String name;
-    long num;
+    String name = " ",num;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,48 +61,91 @@ public class FirstNameActivity extends AppCompatActivity {
         continueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = getIntent();
-                String email = intent.getStringExtra("Email");
+                attemptRegistration();
+            }
+        });
+
+    }
+
+    private void attemptRegistration(){
+
+        // Reset errors displayed in the form.
+        firstNameTV.setError(null);
+        numberTV.setError(null);
+
+        // Store values at the time of the login attempt.
+        name = firstNameTV.getText().toString();
+        num = (numberTV.getText().toString());
+
+        boolean cancel = false;
+        View focusView = null;
+
+        // Check for a valid password, if the user entered one.
+        if (TextUtils.isEmpty(name) ) {
+            firstNameTV.setError(getString(R.string.error_field_required));
+            focusView = firstNameTV;
+            cancel = true;
+        }
+
+        // Check for a valid email address.
+        if (TextUtils.isEmpty(num)) {
+            numberTV.setError(getString(R.string.error_field_required));
+            focusView = numberTV;
+            cancel = true;
+        }
+
+        if (cancel) {
+            // There was an error; don't attempt login and focus the first
+            // form field with an error.
+            focusView.requestFocus();
+        } else {
+            Log.d("Name is ",name);
+            Log.d("num is", String.valueOf(num));
+
+            // TODO: Call create FirebaseUser() here
+            uploadUserData(name,num);
+
+        }
+    }
+
+    private void uploadUserData(String name,String num){
+        Intent intent = getIntent();
+        String email = intent.getStringExtra("Email");
 //                String name = intent.getStringExtra("Name");
 
 
-                 num = Long.parseLong(numberTV.getText().toString());
-                 name = firstNameTV.getText().toString();
-                Log.d("NAME ",name);
-                Log.d("NUM", String.valueOf(num));
-                final UserInfo info = new UserInfo(firstNameTV.getText().toString(),email,num,"android");
+//        num = Long.parseLong(numberTV.getText().toString());
+//        name = firstNameTV.getText().toString();
+        Log.d("NAME ",name);
+        Log.d("NUM", String.valueOf(num));
+        final UserInfo info = new UserInfo(name,email,Long.parseLong(num),"android");
 
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        ref.addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                if (!dataSnapshot.child("users").hasChild(userId)) {
-                                    ref.child("users").child(userId).setValue(info);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                    final Intent goToMainPage = new Intent(FirstNameActivity.this, Select.class);
 
-                                }
+
+                    ref.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (!dataSnapshot.child("users").hasChild(userId)) {
+                                ref.child("users").child(userId).setValue(info);
+                                startActivity(goToMainPage);
+                                finish();
                             }
+                        }
 
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                            }
-
-
-                        });
-
-                    }
-                },300);
-
-                Intent goToMainPage = new Intent(FirstNameActivity.this, Select.class);
-                startActivity(goToMainPage);
-                finish();
+                        }
 
 
+                    });
 
             }
-        });
+        },300);
 
     }
     @Override

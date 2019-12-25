@@ -37,7 +37,7 @@ public class ReportIssue extends AppCompatActivity {
 //        getSupportActionBar().hide();
 
         issueTV = findViewById(R.id.IssueTV);
-        submit = findViewById(R.id.SubmitIssue);
+        submit = findViewById(R.id.submitIssue);
         back = findViewById(R.id.backBtn);
 
         back.setOnClickListener(new View.OnClickListener() {

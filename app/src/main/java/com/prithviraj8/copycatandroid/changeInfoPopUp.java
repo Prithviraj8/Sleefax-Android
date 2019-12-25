@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -42,7 +43,7 @@ public class changeInfoPopUp extends AppCompatActivity {
         int width = dm.widthPixels;
         int height = dm.heightPixels;
 
-        getWindow().setLayout((int)(width * 0.8),(int) (height* 0.6));
+//        getWindow().setLayout((int)(width * 0.8),(int) (height* 0.6));
 
         Button dismiss = findViewById(R.id.changeInfoBtn);
         dismiss.setOnClickListener(new View.OnClickListener() {
@@ -61,6 +62,10 @@ public class changeInfoPopUp extends AppCompatActivity {
                 }
                 Log.d("USERSDATACHANGING",userId);
                 ref.child("users").child(userId).updateChildren(updateinfo);
+
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                user.updateEmail(email.getText().toString());
+
 
                 Context context = getApplicationContext();
                 CharSequence text = "Details changed successfully. Please Log in once more.";

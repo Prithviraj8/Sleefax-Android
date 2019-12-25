@@ -53,8 +53,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.UUID;
 
 class OrderStatus{
@@ -65,12 +68,12 @@ class OrderStatus{
 class info{
 
     public String name,PrintStatus;
-    public String email,device,fileType;
+    public String email,device,fileType,orderDateTime;
     public long num;
     public int copies;
 
 
-    public info(String name, String email, long num, String device, String placed, String fileType, int copy){
+    public info(String name, String email, long num, String device, String placed, String fileType, int copy, String orderDateTime){
         this.email = email;
         this.name = name;
         this.num = num;
@@ -78,6 +81,7 @@ class info{
         this.PrintStatus = placed;
         this.fileType = fileType;
         this.copies = copy;
+        this.orderDateTime = orderDateTime;
     }
 
 }
@@ -87,7 +91,7 @@ public class OrderPlaced extends AppCompatActivity {
 //    MyFirebaseMessagingService notification = new MyFirebaseMessagingService();
 
     final String TAG = "PathGoogleMapActivity";
-    ImageButton getDirection;
+    ImageButton getDirection,call;
     TextView Files, shopName,Loc,Price,status1,status2,status3,status4,statusPercent;
 //    ProgressBar orderProgress;
     ImageButton back;
@@ -100,8 +104,8 @@ public class OrderPlaced extends AppCompatActivity {
     double shopLong;
     double userLat,userLong;
     int files, price;
-    int copy,resultCode,requestCode;
-    String color,custom;
+    int copy,resultCode,requestCode,numberOfPages;
+    String color,custom,orderDateTime;
     String CHANNEL_ID = "UsersChannel";
     boolean FromYourOrders =false, bothSides;
 
@@ -178,6 +182,9 @@ public class OrderPlaced extends AppCompatActivity {
         getDirection = findViewById(R.id.Directions);
         orderProgress = findViewById(R.id.circularProgressBar);
         statusPercent = findViewById(R.id.statusPercent);
+        call = findViewById(R.id.callBtn);
+
+        call.setOnClickListener(BtnListener);
 
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
@@ -209,6 +216,7 @@ public class OrderPlaced extends AppCompatActivity {
         pageURL = extras.getStringArrayList("URLS");
         bothSides = extras.getBoolean("BothSides");
         custom = extras.getString("Custom");
+        numberOfPages = extras.getInt("Pages");
 
         shopName.setText("Shop Name : " + name);
            Loc.setText(loc);
@@ -218,8 +226,10 @@ public class OrderPlaced extends AppCompatActivity {
         Files.setText("    Files :  " + files);
 
 
-        Log.d("Shop Lat", String.valueOf(shopLat));
-        Log.d("Shop Long",String.valueOf(shopLong));
+        Log.d("REQUEST", String.valueOf(requestCode));
+        Log.d("RESULT",String.valueOf(resultCode));
+//        Log.d("PAGES",String.valueOf(numberOfPages));
+
 
         userLoc = new LatLng(userLat,userLong);
         shopLoc = new LatLng(shopLat,shopLong);
@@ -234,7 +244,12 @@ public class OrderPlaced extends AppCompatActivity {
         });
 //        new uploadFile().execute(pdfs);
 
+        String currentDate = new SimpleDateFormat("dd/MM/yy", Locale.getDefault()).format(new Date());
+        String currentTime = new SimpleDateFormat("HH:mm a", Locale.getDefault()).format(new Date());
+        Log.d("DATE",currentDate);
+        Log.d("TIME",currentTime);
 
+        orderDateTime = currentTime +" " +currentDate;
         if(fileType != null) {
             if (!fileType.equals("image/jpeg")) {
 //            Toast.makeText(this,"Files are being sent",Toast.LENGTH_SHORT).show();
@@ -256,6 +271,28 @@ public class OrderPlaced extends AppCompatActivity {
             startActivity(intent);
             finish();
     }
+
+    //     Create an anonymous implementation of OnClickListener
+    private View.OnClickListener BtnListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            // do something when the button is clicked
+
+            Intent callIntent = new Intent(Intent.ACTION_CALL);
+            callIntent.setData(Uri.parse("tel:"+num));
+            if (ActivityCompat.checkSelfPermission(OrderPlaced.this,
+                    Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+
+                    if (ContextCompat.checkSelfPermission(OrderPlaced.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                    // Permission is not granted
+                    ActivityCompat.requestPermissions(OrderPlaced.this, new String[]{Manifest.permission.CALL_PHONE}, 1);
+                    Log.d("MANAGEPERMISSION", "PERMISSION");
+                }
+                return;
+            }
+            startActivity(callIntent);
+
+        }
+    };
 
 //    @Override
 //    public void onRequestPermissionsResult (int requestCode, String[] permissions, int[] grantResults) {
@@ -281,8 +318,6 @@ public class OrderPlaced extends AppCompatActivity {
         @SuppressLint("WrongThread")
         @Override
         protected Void doInBackground(String... strings) {
-            Log.d("ORDERID", orderKey);
-            Log.d("SHOPKEY", shopKey);
 
             Intent resultIntent = new Intent(OrderPlaced.this, Select.class);
             TaskStackBuilder stackBuilder = TaskStackBuilder.create(OrderPlaced.this);
@@ -298,16 +333,17 @@ public class OrderPlaced extends AppCompatActivity {
             final HashMap<String, Object> notified = new HashMap<String, Object>();
             final String[] status = {null};
 
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(OrderPlaced.this, CHANNEL_ID)
+                    .setSmallIcon(R.drawable.notify)
+                    .setContentTitle("Order Status")
+                    .setContentText(orderStatus)
+                    .setGroup(CHANNEL_ID)
+//                  .setContentIntent(resultPendingIntent)
+                    .setPriority(NotificationCompat.PRIORITY_HIGH);
             if (orderStatus != null) {
 
                 Log.d("SHOWINGYOURORDER","Y");
-                NotificationCompat.Builder builder = new NotificationCompat.Builder(OrderPlaced.this, CHANNEL_ID)
-                        .setSmallIcon(R.drawable.notify)
-                        .setContentTitle("Order Status")
-                        .setContentText(orderStatus)
-                        .setGroup(CHANNEL_ID)
-//                                .setContentIntent(resultPendingIntent)
-                        .setPriority(NotificationCompat.PRIORITY_HIGH);
+
 //
 //                            notificationManager.notify(1, builder.build());
 
@@ -388,7 +424,6 @@ public class OrderPlaced extends AppCompatActivity {
                     notified.put("R_Notified", false);
                     orderDb.child("users").child(userId).child("Orders").child(shopKey).child(orderKey).setValue(notified);
                 }
-
 
                 Log.d("ORDERPROG", String.valueOf(orderProgress.getProgress()));
 
@@ -565,8 +600,9 @@ public class OrderPlaced extends AppCompatActivity {
         ArrayList<Uri> uri = new ArrayList<Uri>();
 
         if (pageURL.size() > 0) {
-            final String uniqueID = UUID.randomUUID().toString();
+            String uniqueID = UUID.randomUUID().toString();
             final StorageReference filesRef = storageRef.child(uniqueID);
+            final String uniqueID1 = UUID.randomUUID().toString();
 
             orderProgress.setProgress(15);
             statusPercent.setText("15%");
@@ -574,18 +610,22 @@ public class OrderPlaced extends AppCompatActivity {
             for (int i = 0; i < pageURL.size(); i++) {
                 Uri imageUri = Uri.parse(pageURL.get(i));
 
-                //do something with the image (save it to some directory or whatever you need to do with it here)
+                //do something with the image (save it to some directory or whatever you need to do with it here.
+
                 Bitmap bitmap = null;
                 try {
                     bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
                 } catch (IOException e) {
+//                  Log.d("ERROR",e.printStackTrace());
                     e.printStackTrace();
                 }
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
                 images.add(bitmap);
+
                 byte[] DATA = baos.toByteArray();
-                final UploadTask uploadTask = filesRef.putBytes(DATA);
+
+                final UploadTask uploadTask = filesRef.putFile(imageUri);
 
                 uploadTask.addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -601,12 +641,15 @@ public class OrderPlaced extends AppCompatActivity {
                         // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
                         Log.d("UPLOADING","Ok SUCCESSFULL");
 
-                        Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                        uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                             @Override
                             public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
                                 if (!task.isSuccessful()) {
+                                    Log.d("UPLOADING", String.valueOf(task.getException()));
+
                                     throw task.getException();
                                 }
+                                Log.d("UPLOADING","YAYYYY");
 
                                 // Continue with the task to get the download URL
                                 uploadCnt[0]++;
@@ -622,14 +665,14 @@ public class OrderPlaced extends AppCompatActivity {
                                     pageURL.add(String.valueOf(downloadUri));
                                     if(uploadCnt[0] == pageURL.size()){
                                         DatabaseReference db = FirebaseDatabase.getInstance().getReference();
-                                        shopinfo orderInfo = new shopinfo(loc, name, "Placed", shopLat, shopLong, num, files, fileType, pagesize, orientation, price, bothSides, custom, false, false, false, false);
-                                        info userinfo = new info(username, email, num, "android", "Placed",fileType,copy);
+                                        shopinfo orderInfo = new shopinfo(loc, name, "Placed", shopLat, shopLong, num, files, fileType, pagesize, orientation, price, bothSides, custom, orderDateTime,false, false, false, false);
+                                        info userinfo = new info(username, email, num, "android", "Placed",fileType,copy,orderDateTime);
 
                                         String storeID = shopKey;
 
-                                        storeDb = storeDb.child("Stores").child(storeID).child("Orders").child(userId).child(uniqueID);
+                                        storeDb = storeDb.child("Stores").child(storeID).child("Orders").child(userId).child(uniqueID1);
                                         storeDb.setValue(userinfo);
-                                        db = db.child("users").child(userId).child("Orders").child(storeID).child(uniqueID);
+                                        db = db.child("users").child(userId).child("Orders").child(storeID).child(uniqueID1);
                                         db.setValue(orderInfo);
                                         Log.d("UPLOAD", "SUCCESSFULL");
 
@@ -637,7 +680,8 @@ public class OrderPlaced extends AppCompatActivity {
                                             singlePageInfo single = new singlePageInfo(pageURL.get(i), color, copy, fileType, fileType, pagesize, bothSides, orientation);
                                             db.push().setValue(single);
                                             storeDb.push().setValue(single);
-                                            orderKey = uniqueID;
+                                            orderKey = uniqueID1;
+                                            Log.d("UPLOADIMG", String.valueOf(i));
                                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                                                 if(i==pageURL.size()-1){
                                                     new setProgressForOrder().execute(orderKey);
@@ -659,6 +703,12 @@ public class OrderPlaced extends AppCompatActivity {
                         // ...
                     }
                     });
+
+
+
+
+
+
                 }
 
             }
@@ -688,10 +738,6 @@ public class OrderPlaced extends AppCompatActivity {
 //        if (Build.VERSION.SDK_INT < 19) {
 
 //      getContext().getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-
-            if (ContextCompat.checkSelfPermission(OrderPlaced.this, Manifest.permission.MANAGE_DOCUMENTS) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(OrderPlaced.this, new String[]{Manifest.permission.MANAGE_DOCUMENTS, Manifest.permission.MANAGE_DOCUMENTS}, 1);
-            }
             final UploadTask uploadTask = filesRef.putFile(uri);
 //        final UploadTask uploadTask = filesRef.putFile(changeExtension(new File(file.getPath()),"pdf"));
             uploadTask.addOnFailureListener(new OnFailureListener() {
@@ -729,8 +775,8 @@ public class OrderPlaced extends AppCompatActivity {
                                 url = String.valueOf(downloadUri);
 
                                 DatabaseReference db = FirebaseDatabase.getInstance().getReference();
-                                shopinfo orderInfo = new shopinfo(loc, name, "Placed", shopLat, shopLong, num, files, fileType, pagesize, orientation, price,bothSides,custom, false, false, false, false);
-                                info userinfo = new info(username, email, num, "android","Placed", fileType, copy);
+                                shopinfo orderInfo = new shopinfo(loc, name, "Placed", shopLat, shopLong, num, files, fileType, pagesize, orientation, price,bothSides,custom,orderDateTime, false, false, false, false);
+                                info userinfo = new info(username, email, num, "android","Placed", fileType, copy,orderDateTime);
 
                                 String storeID = shopKey;
 

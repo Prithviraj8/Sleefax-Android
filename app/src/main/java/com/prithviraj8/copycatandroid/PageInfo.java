@@ -13,17 +13,14 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -42,16 +39,12 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import org.w3c.dom.Text;
-
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.util.ArrayList;
 
-import static schemasMicrosoftComVml.STExt.VIEW;
-
 class AllPagesInfo{
+
     String colorType, url;
     int copies;
 
@@ -82,7 +75,7 @@ public class PageInfo extends AppCompatActivity {
     ArrayList<Bitmap> images = new ArrayList<>();
     Intent data;
 
-    View black_white,colors,h,v,colorback,bwback;
+    View black_white,colors,h,v;
 
     Button sameForAll, pageBtn,prevImg,nextimg;
     ImageButton crop;
@@ -129,12 +122,11 @@ public class PageInfo extends AppCompatActivity {
         data = extras.getParcelable("Data");
 
 
-        colorback = findViewById(R.id.colorback);
-        bwback = findViewById(R.id.bwback);
         colors = findViewById(R.id.colors);
         black_white = findViewById(R.id.black_white);
+
         Page = (ImageView) findViewById(R.id.imageView);
-        pageBtn = findViewById(R.id.Page);
+        pageBtn = findViewById(R.id.imagesDone);
         copies = findViewById(R.id.CopiesText);
 //        crop = findViewById(R.id.Crop);
         h = findViewById(R.id.h);
@@ -174,7 +166,6 @@ public class PageInfo extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         setanimation();
 
         colors.setOnTouchListener(touchListener);
@@ -427,17 +418,18 @@ public class PageInfo extends AppCompatActivity {
             }
             if(view == findViewById(R.id.black_white)){
 
+                Log.d("BW","PRESSED");
                 colour = ("Black/White");
-                bwback.setBackgroundResource(R.drawable.b_w_border);
-                colors.setBackgroundResource(R.drawable.colorimg);
-                colorback.setBackgroundColor(Color.WHITE);
+                black_white.setBackgroundResource(R.drawable.b_w_border);
+                colors.setBackgroundResource(R.drawable.black_white_view_backgroud);
 
             }
             if(view == findViewById(R.id.colors)){
+
+                Log.d("CS","PRESSED");
                 colour = ("Colors");
-                colorback.setBackgroundResource(R.drawable.colors_border);
-                black_white.setBackgroundResource(R.drawable.bwimg);
-                bwback.setBackgroundColor(Color.WHITE);
+                colors.setBackgroundResource(R.drawable.b_w_border);
+                black_white.setBackgroundResource(R.drawable.black_white_view_backgroud);
 
             }
 
@@ -477,7 +469,7 @@ public class PageInfo extends AppCompatActivity {
                 }
             }
 
-            if(v == findViewById(R.id.Page)){
+            if(v == findViewById(R.id.imagesDone)){
                 getShopsCount();
 
                 copy = (Integer.parseInt(copies.getText().toString()));

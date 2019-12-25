@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".privacypolicy">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <View
+            android:id="@+id/view7"
+            android:layout_width="match_parent"
+            android:layout_height="78dp"
+            android:background="@drawable/storesview" />
+
+        <ImageButton
+            android:id="@+id/back"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="19dp"
+            android:background="#00FFFFFF"
+            android:src="@drawable/w"
+            android:text="Button" />
+
+        <TextView
+            android:id="@+id/textView14"
+            android:layout_width="match_parent"
+            android:layout_height="563dp"
+            android:layout_below="@+id/view7"
+            android:layout_alignParentBottom="true"
+            android:layout_marginTop="1dp"
+            android:layout_marginBottom="0dp"
+            android:scrollbars="vertical"
+            android:text="@string/sleefax_app_end_user_license_agreement_this_end_user_license_agreement_agreement_is_between_you_and_sleefax_and_governs_use_of_this_app_made_available_through_the_apple_app_store_by_installing_the_sleefax_app_you_agree_to_be_bound_by_this_agreement_and_understand_that_there_is_no_tolerance_for_objectionable_content_if_you_do_not_agree_with_the_terms_and_conditions_of_this_agreement_you_are_not_entitled_to_use_the_sleefax_app_in_order_to_ensure_sleefax_provides_the_best_experience_possible_for_everyone_we_strongly_enforce_a_no_tolerance_policy_for_objectionable_content_if_you_see_inappropriate_content_please_use_the_quot_report_abuse_quot_feature_found_under_each_user_profile_1_parties_this_agreement_is_between_you_and_sleefax_only_and_not_apple_inc_apple_notwithstanding_the_foregoing_you_acknowledge_that_apple_and_its_subsidiaries_are_third_party_beneficiaries_of_this_agreement_and_apple_has_the_right_to_enforce_this_agreement_against_you_sleefax_not_apple_is_solely_responsible_for_the_sleefax_app_and_its_content_2_privacy_sleefax_may_collect_and_use_information_about_your_usage_of_the_sleefax_app_including_certain_types_of_information_from_and_about_your_device_sleefax_may_use_this_information_as_long_as_it_is_in_a_form_that_does_not_personally_identify_you_to_measure_the_use_and_performance_of_the_sleefax_app_3_limited_license_sleefax_grants_you_a_limited_non_exclusive_non_transferable_revocable_license_to_use_the_sleefax_app_for_your_personal_non_commercial_purposes_you_may_only_use_the_sleefax_app_on_apple_devices_that_you_own_or_control_and_as_permitted_by_the_app_store_terms_of_service_4_age_restrictions_by_using_the_sleefax_app_you_represent_and_warrant_that_a_you_are_17_years_of_age_or_older_and_you_agree_to_be_bound_by_this_agreement_b_if_you_are_under_17_years_of_age_you_have_obtained_verifiable_consent_from_a_parent_or_legal_guardian_and_c_your_use_of_the_sleefax_app_does_not_violate_any_applicable_law_or_regulation_your_access_to_the_sleefax_app_may_be_terminated_without_warning_if_sleefax_believes_in_its_sole_discretion_that_you_are_under_the_age_of_17_years_and_have_not_obtained_verifiable_consent_from_a_parent_or_legal_guardian_if_you_are_a_parent_or_legal_guardian_and_you_provide_your_consent_to_your_child_s_use_of_the_sleefax_app_you_agree_to_be_bound_by_this_agreement_in_respect_to_your_child_s_use_of_the_sleefax_app_5_objectionable_content_policy_content_may_not_be_submitted_to_sleefax_who_will_moderate_all_content_and_ultimately_decide_whether_or_not_to_post_a_submission_to_the_extent_such_content_includes_is_in_conjunction_with_or_alongside_any_objectionable_content_objectionable_content_includes_but_is_not_limited_to_i_sexually_explicit_materials_ii_obscene_defamatory_libelous_slanderous_violent_and_or_unlawful_content_or_profanity_iii_content_that_infringes_upon_the_rights_of_any_third_party_including_copyright_trademark_privacy_publicity_or_other_personal_or_proprietary_right_or_that_is_deceptive_or_fraudulent_iv_content_that_promotes_the_use_or_sale_of_illegal_or_regulated_substances_tobacco_products_ammunition_and_or_firearms_and_v_gambling_including_without_limitation_any_online_casino_sports_books_bingo_or_poker_6_warranty_sleefax_disclaims_all_warranties_about_the_sleefax_app_to_the_fullest_extent_permitted_by_law_to_the_extent_any_warranty_exists_under_law_that_cannot_be_disclaimed_sleefax_not_apple_shall_be_solely_responsible_for_such_warranty_7_maintenance_and_support_sleefax_does_provide_minimal_maintenance_or_support_for_it_but_not_to_the_extent_that_any_maintenance_or_support_is_required_by_applicable_law_sleefax_not_apple_shall_be_obligated_to_furnish_any_such_maintenance_or_support_8_product_claims_sleefax_not_apple_is_responsible_for_addressing_any_claims_by_you_relating_to_the_sleefax_app_or_use_of_it_including_but_not_limited_to_i_any_product_liability_claim_ii_any_claim_that_the_sleefax_app_fails_to_conform_to_any_applicable_legal_or_regulatory_requirement_and_iii_any_claim_arising_under_consumer_protection_or_similar_legislation_nothing_in_this_agreement_shall_be_deemed_an_admission_that_you_may_have_such_claims_9_third_party_intellectual_property_claims_sleefax_shall_not_be_obligated_to_indemnify_or_defend_you_with_respect_to_any_third_party_claim_arising_out_or_relating_to_the_sleefax_app_to_the_extent_sleefax_is_required_to_provide_indemnification_by_applicable_law_sleefax_not_apple_shall_be_solely_responsible_for_the_investigation_defense_settlement_and_discharge_of_any_claim_that_the_sleefax_app_or_your_use_of_it_infringes_any_third_party_intellectual_property_right"
+            android:textColor="#000000"
+            android:textIsSelectable="false"
+            android:verticalScrollbarPosition="defaultPosition" />
+
+        <TextView
+            android:id="@+id/textView17"
+            android:layout_width="292dp"
+            android:layout_height="37dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:text="Privacy policy and terms."
+            android:textAlignment="center"
+            android:textColor="#FFFFFFFF"
+            android:textSize="24sp" />
+
+    </RelativeLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

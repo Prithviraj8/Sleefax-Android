@@ -43,17 +43,17 @@ public class PdfInfo extends AppCompatActivity {
     TextView  customPages;
     Button done;
     Spinner pageSizeSpinner;
-    View colorsTV,bwTV,h,v,colorback,bwback;
+    View colorsTV,bwTV,h,v;
     ToggleButton bothSidePrint;
 
 //    String pdf_url;
     String pdf_url;
-    int copy,resultCode,requestCode;
-    String colour, pagesize;
+    int copy,resultCode,requestCode,numberOfPages;
+    String colour = "Black/White", pagesize;
     ArrayList<String> pdfURL = new ArrayList<>();
     EditText copies;
     String URI = new String();
-    String fileType, orientation;
+    String fileType, orientation="v";
     String username,email,custom = "All";
     boolean bothSides = false;
 
@@ -65,11 +65,10 @@ public class PdfInfo extends AppCompatActivity {
         setContentView(R.layout.activity_pdf_info);
 //        getSupportActionBar().hide();
 
-        colorback = findViewById(R.id.colorback);
-        bwback = findViewById(R.id.bwback);
+
         colorsTV = findViewById(R.id.Pdf_Colors);
         bwTV = findViewById(R.id.Pdf_Black_White);
-        done = findViewById(R.id.Pdf_done);
+        done = findViewById(R.id.pdfDone);
         copies = findViewById(R.id.PDF_copies);
         pageSizeSpinner = findViewById(R.id.sizeSpinner);
         h = findViewById(R.id.h);
@@ -91,6 +90,7 @@ public class PdfInfo extends AppCompatActivity {
         email = extras.getString("email");
         requestCode = extras.getInt("RequestCode");
         resultCode = extras.getInt("ResultCode");
+        numberOfPages = extras.getInt("Pages");
 
         pdfURL.add((pdf_url));
 
@@ -118,9 +118,8 @@ public class PdfInfo extends AppCompatActivity {
 
                 colour = "Colors";
 
-                colorback.setBackgroundResource(R.drawable.colors_border);
-                bwTV.setBackgroundResource(R.drawable.bwimg);
-                bwback.setBackgroundColor(Color.WHITE);
+                colorsTV.setBackgroundResource(R.drawable.colors_border);
+                bwTV.setBackgroundResource(R.drawable.black_white_view_backgroud);
 
                 return false;
             }
@@ -136,9 +135,8 @@ public class PdfInfo extends AppCompatActivity {
 
                 colour = ("Black/White");
 
-                bwback.setBackgroundResource(R.drawable.b_w_border);
-                colorsTV.setBackgroundResource(R.drawable.colorimg);
-                colorback.setBackgroundColor(Color.WHITE);
+                bwTV.setBackgroundResource(R.drawable.b_w_border);
+                colorsTV.setBackgroundResource(R.drawable.black_white_view_backgroud);
                 return false;
             }
         });
@@ -218,6 +216,7 @@ public class findShops extends AsyncTask<Void,Void,Integer>{
 //                  extras.putParcelableArrayList("URLS", pdfURL);
 //                    Log.d("COLORTYPE",colour);
 
+                    extras.putInt("Pages",numberOfPages);
                     extras.putInt("Copies", copy);
                     extras.putString("ColorType", colour);
                     extras.putInt("ShopCount", ShopsCnt);

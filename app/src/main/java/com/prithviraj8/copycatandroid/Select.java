@@ -5,23 +5,18 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
-import androidx.core.content.ContextCompat;
 
-import android.Manifest;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -107,35 +102,14 @@ public class Select extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_files);
 
-//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.MANAGE_DOCUMENTS) != PackageManager.PERMISSION_GRANTED) {
-//            // Permission is not granted
-//            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.MANAGE_DOCUMENTS}, 1);
-//            Log.d("MANAGEPERMISSION", "PERMISSION");
-//        }
-//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_NETWORK_STATE) != PackageManager.PERMISSION_GRANTED) {
-//            // Permission is not granted
-//            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_NETWORK_STATE}, 1);
-//            Log.d("MANAGEPERMISSION", "PERMISSION");
-//        }
-//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//            // Permission is not granted
-//            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-//            Log.d("MANAGEPERMISSION", "PERMISSION");
-//        }
-
         notificationManager = NotificationManagerCompat.from(this);
 //        setProgressForOrder();
-        createNotification();
 
         network = haveNetworkConnection();
         Log.d("NETWORK", String.valueOf(network));
         selectFilesBtn =(Button) findViewById(R.id.AddFilesButton);
         setting = findViewById(R.id.settings);
         orders = findViewById(R.id.YourOrders);
-//        help = findViewById(R.id.help);
-
-//        new getCurrentOrderCnt().execute();
-//        selectFilesBtn.setOnClickListener(fileBtnListener);
 
         getOrders();
         selectFilesBtn.setOnClickListener(new View.OnClickListener() {
@@ -149,14 +123,7 @@ public class Select extends AppCompatActivity {
         });
 
         orders.setOnClickListener(Listener);
-//        orders.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Log.d("GETTING", "ORDERS");
-////                new getCurrentOrderCnt().execute();
-//            }
-//
-//        });
+
 
         setting.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -166,15 +133,6 @@ public class Select extends AppCompatActivity {
             }
         });
 
-//        help.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Log.d("HELP","PRESSED");
-//                Intent intent = new Intent(Select.this,HelpActivity.class);
-//                startActivity(intent);
-//
-//            }
-//        });
 
     }
 
@@ -216,10 +174,11 @@ public class Select extends AppCompatActivity {
 
 
 //    long cnt;
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public void getOrders(){
         final ArrayList<String> orderkey = new ArrayList<>();
         final ArrayList<String> shopKey = new ArrayList<>();
-
+//        setProgressForOrder();
         ref.child("users").child(userId).addChildEventListener(new ChildEventListener() {
 
             @Override
@@ -228,8 +187,9 @@ public class Select extends AppCompatActivity {
 
 
                 if(dataSnapshot.getKey().equals("Orders")) {
-                    Log.d("ORDERCOUNT ", String.valueOf(dataSnapshot.getChildrenCount()));
+                    Log.d("ORDERCOUNT ", (dataSnapshot.getKey()));
                     cnt = dataSnapshot.getChildrenCount();
+
                 }
             }
 
@@ -254,6 +214,7 @@ public class Select extends AppCompatActivity {
             }
         });
     }
+
 
     private boolean haveNetworkConnection() {
         boolean haveConnectedWifi = false;
@@ -715,7 +676,8 @@ public class Select extends AppCompatActivity {
                     public void run() {
 
                         if (orderKey.size() != 0) {
-                            new createNotification().execute(orderKey.size());
+//                            new createNotification().execute(orderKey.size());
+                            createNotification(orderKey);
                         }
                     }
                 },300);
@@ -748,7 +710,7 @@ public class Select extends AppCompatActivity {
 
     //    ArrayList<String> orderKey, final int cnt
     String orderStatus = null;
-    private void createNotification() {
+    private void createNotification(ArrayList<String> orderKey) {
         // Create an Intent for the activity you want to start
         final Intent resultIntent = new Intent(Select.this, YourOrders.class);
         TaskStackBuilder stackBuilder = TaskStackBuilder.create(Select.this);
@@ -1072,12 +1034,12 @@ public class Select extends AppCompatActivity {
 
 
                                             }
-//                              }
+//                                          }
 
                                         }
                                     }, 300);
 
-                                    //                     }
+                                //}
 
                                 }
 

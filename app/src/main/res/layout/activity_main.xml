@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/firstpage"
+    android:background="@drawable/back"
     tools:context=".MainActivity">
 
     <RelativeLayout
@@ -17,50 +17,113 @@
 
         <ImageView
             android:id="@+id/imageView17"
+            android:layout_width="94dp"
+            android:layout_height="79dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="40dp"
+            app:srcCompat="@drawable/logo1" />
+
+        <RelativeLayout
+            android:id="@+id/relativeLayout2"
+            android:layout_width="match_parent"
+            android:layout_height="521dp"
+            android:layout_above="@+id/createAccountTV"
+            android:layout_below="@+id/imageView17"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="0dp">
+
+            <View
+                android:id="@+id/view8"
+                android:layout_width="match_parent"
+                android:layout_height="134dp"
+                android:layout_centerVertical="true"
+                android:layout_marginBottom="17dp" />
+
+            <TextView
+                android:id="@+id/textView15"
+                android:layout_width="wrap_content"
+                android:layout_height="55dp"
+                android:layout_alignTop="@+id/view8"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="29dp"
+                android:layout_marginTop="15dp"
+                android:text="Take printouts."
+                android:textAlignment="center"
+                android:textColor="#FFF"
+                android:textSize="36sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textview16"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/textView15"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="29dp"
+                android:layout_marginTop="0dp"
+                android:text="Go mobile."
+                android:textColor="#FFF"
+                android:textSize="36sp"
+                android:textStyle="bold" />
+        </RelativeLayout>
+
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="66dp"
-            app:srcCompat="@drawable/sleefaxlogo" />
-
-        <View
-            android:id="@+id/view7"
-            android:layout_width="match_parent"
-            android:layout_height="675dp"
             android:layout_alignTop="@+id/imageView17"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginStart="-4dp"
-            android:layout_marginTop="38dp"
-            android:layout_marginEnd="4dp"
-            android:layout_marginBottom="-2dp" />
+            android:layout_alignBottom="@+id/imageView17"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:layout_toEndOf="@+id/imageView17"
+            android:text="Sleefax"
+            android:textColor="#FFF"
+            android:textSize="30dp"
+            android:textStyle="bold" />
+
 
         <Button
             android:id="@+id/signIn_Btn"
-            android:layout_width="180dp"
-            android:layout_height="50dp"
+            android:layout_width="300dp"
+            android:layout_height="44dp"
+            android:layout_above="@+id/textview"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="19dp"
+            android:layout_marginBottom="65dp"
             android:background="@drawable/signin_btn_round"
-            android:text="@string/Sign_In"
-            android:textColor="#FFFFFF"
+            android:backgroundTint="#FFF"
+            android:text="Sign In"
+            android:textAllCaps="false"
+            android:textColor="#000"
             android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/createAccountTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/signUp_btn"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="10dp"
+            android:text="Create a new account"
+            android:textColor="#FFF"
+            android:textSize="16sp"
             android:textStyle="bold" />
 
         <Button
             android:id="@+id/signUp_btn"
-            android:layout_width="180dp"
-            android:layout_height="50dp"
+            android:layout_width="300dp"
+            android:layout_height="44dp"
             android:layout_above="@+id/textView13"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="45dp"
+            android:layout_marginBottom="25dp"
             android:background="@drawable/signin_btn_round"
+            android:backgroundTint="#FFF"
             android:text="@string/action_sign_up"
-            android:textColor="#FFFFFF"
+            android:textAllCaps="false"
+            android:textColor="#000"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -72,31 +135,21 @@
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="10dp"
             android:text="Already a customer ?"
+            android:textColor="#FFF"
             android:textSize="16sp"
             android:textStyle="bold" />
 
-        <ImageView
-            android:id="@+id/imageView16"
-            android:layout_width="298dp"
-            android:layout_height="310dp"
-            android:layout_above="@+id/signUp_btn"
-            android:layout_below="@+id/textView15"
+        <Button
+            android:id="@+id/privacypolicyBtn"
+            android:layout_width="match_parent"
+            android:layout_height="34dp"
+            android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="62dp"
-            android:layout_marginBottom="42dp"
-            app:srcCompat="@drawable/firstpageimg" />
-
-        <TextView
-            android:id="@+id/textView15"
-            android:layout_width="178dp"
-            android:layout_height="24dp"
-            android:layout_below="@+id/imageView17"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="4dp"
-            android:text="Welcome to Sleefax"
-            android:textAlignment="center"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            android:layout_marginBottom="10dp"
+            android:background="#00000000"
+            android:text="By creating an account you accept the privacy policy and terms of Sleefax."
+            android:textColor="#FFFFFFFF"
+            android:textSize="9sp" />
 
     </RelativeLayout>
 

@@ -10,53 +10,39 @@
     <RelativeLayout
         android:layout_width="410dp"
         android:layout_height="733dp"
-        android:background="#00FFFFFF"
+        android:background="@drawable/rectangle25"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <View
-            android:id="@+id/view4"
-            android:layout_width="339dp"
-            android:layout_height="200dp"
-            android:layout_centerInParent="true"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:background="@drawable/status_views" />
-
         <TextView
             android:id="@+id/textView4"
-            android:layout_width="212dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignStart="@+id/view4"
-            android:layout_alignTop="@+id/view4"
-            android:layout_alignEnd="@+id/view4"
-            android:layout_marginStart="65dp"
-            android:layout_marginTop="15dp"
-            android:layout_marginEnd="62dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="215dp"
             android:layout_marginBottom="8dp"
             android:text="Select document type"
             android:textAlignment="center"
-            android:textColor="#9A000000"
-            android:textSize="18sp"
+            android:textColor="#000"
+            android:textSize="29sp"
             android:textStyle="bold" />
+
 
         <Button
             android:id="@+id/selectattachment"
-            android:layout_width="169dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/textView4"
-            android:layout_alignStart="@+id/view4"
-            android:layout_alignEnd="@+id/view4"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="9dp"
-            android:layout_marginTop="47dp"
-            android:layout_marginEnd="161dp"
-            android:background="@drawable/attachmentbtn"
-            android:text="Attachment"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="75dp"
+            android:layout_marginTop="303dp"
+            android:background="@drawable/ellipse25"
+            android:drawableStart="@drawable/attach"
+            android:paddingLeft="20dp"
             android:textSize="15sp" />
 
         <ImageView
@@ -75,16 +61,16 @@
 
         <Button
             android:id="@+id/selectphotos"
-            android:layout_width="121dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/textView4"
-            android:layout_alignEnd="@+id/view4"
-            android:layout_centerVertical="true"
-            android:layout_marginTop="45dp"
-            android:layout_marginEnd="6dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="301dp"
+            android:layout_marginEnd="78dp"
             android:layout_marginBottom="56dp"
-            android:background="@drawable/imagebtn"
-            android:text="Photos"
+            android:background="@drawable/ellipse25"
+            android:drawableStart="@drawable/photo_camera"
+            android:paddingLeft="18dp"
             android:textSize="15sp" />
 
         <ImageView
