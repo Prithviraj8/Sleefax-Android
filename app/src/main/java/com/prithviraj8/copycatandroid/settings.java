@@ -9,6 +9,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -23,6 +24,16 @@ public class settings extends AppCompatActivity {
 //        getSupportActionBar().hide();
         changeInfo = findViewById(R.id.changeInfoBtn);
         signout = findViewById(R.id.signOut);
+        back = findViewById(R.id.back);
+
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(settings.this,Select.class);
+                startActivity(intent);
+                finish();
+            }
+        });
 
         changeInfo.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -41,6 +52,7 @@ public class settings extends AppCompatActivity {
                 Intent intent = new Intent(settings.this, MainActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);//makesure user cant go back
                 startActivity(intent);
+                Toast.makeText(settings.this,"Successfully signed out", Toast.LENGTH_SHORT).show();
                 finish();
 
                 return false;
@@ -104,6 +116,13 @@ public class settings extends AppCompatActivity {
             }
         });
 
+    }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent intent = new Intent(settings.this,Select.class);
+        startActivity(intent);
+        finish();
     }
 }

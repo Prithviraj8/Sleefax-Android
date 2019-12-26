@@ -30,7 +30,6 @@
         <activity android:name=".privacypolicy"></activity>
         <activity android:name=".ReportIssue" />
         <activity android:name=".Feedback" />
-        <activity android:name=".HelpActivity" />
         <activity android:name=".Payments" />
         <activity android:name=".changeInfoPopUp" />
         <activity android:name=".settings" />

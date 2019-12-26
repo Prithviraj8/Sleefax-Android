@@ -91,10 +91,9 @@ public class OrderPlaced extends AppCompatActivity {
 //    MyFirebaseMessagingService notification = new MyFirebaseMessagingService();
 
     final String TAG = "PathGoogleMapActivity";
-    ImageButton getDirection,call;
+    ImageButton getDirection,call,back,help;
     TextView Files, shopName,Loc,Price,status1,status2,status3,status4,statusPercent;
 //    ProgressBar orderProgress;
-    ImageButton back;
 
     CircularProgressBar orderProgress;
 
@@ -183,8 +182,11 @@ public class OrderPlaced extends AppCompatActivity {
         orderProgress = findViewById(R.id.circularProgressBar);
         statusPercent = findViewById(R.id.statusPercent);
         call = findViewById(R.id.callBtn);
+        help = findViewById(R.id.helpbtn);
+
 
         call.setOnClickListener(BtnListener);
+        help.setOnClickListener(BtnListener);
 
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
@@ -272,25 +274,33 @@ public class OrderPlaced extends AppCompatActivity {
             finish();
     }
 
-    //     Create an anonymous implementation of OnClickListener
+
+
+    //Create an anonymous implementation of OnClickListener
     private View.OnClickListener BtnListener = new View.OnClickListener() {
         public void onClick(View v) {
             // do something when the button is clicked
 
-            Intent callIntent = new Intent(Intent.ACTION_CALL);
-            callIntent.setData(Uri.parse("tel:"+num));
-            if (ActivityCompat.checkSelfPermission(OrderPlaced.this,
-                    Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            if(v == findViewById(R.id.callBtn)) {
+                Intent callIntent = new Intent(Intent.ACTION_CALL);
+                callIntent.setData(Uri.parse("tel:" + num));
+                if (ActivityCompat.checkSelfPermission(OrderPlaced.this,
+                        Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
 
                     if (ContextCompat.checkSelfPermission(OrderPlaced.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                    // Permission is not granted
-                    ActivityCompat.requestPermissions(OrderPlaced.this, new String[]{Manifest.permission.CALL_PHONE}, 1);
-                    Log.d("MANAGEPERMISSION", "PERMISSION");
+                        // Permission is not granted
+                        ActivityCompat.requestPermissions(OrderPlaced.this, new String[]{Manifest.permission.CALL_PHONE}, 1);
+                        Log.d("MANAGEPERMISSION", "PERMISSION");
+                    }
+                    return;
                 }
-                return;
-            }
-            startActivity(callIntent);
+                startActivity(callIntent);
+            }else if(v == findViewById(R.id.helpbtn)){
 
+                Intent intent = new Intent(OrderPlaced.this,settings.class);
+                startActivity(intent);
+                finish();
+            }
         }
     };
 
@@ -340,6 +350,8 @@ public class OrderPlaced extends AppCompatActivity {
                     .setGroup(CHANNEL_ID)
 //                  .setContentIntent(resultPendingIntent)
                     .setPriority(NotificationCompat.PRIORITY_HIGH);
+
+
             if (orderStatus != null) {
 
                 Log.d("SHOWINGYOURORDER","Y");
@@ -348,20 +360,20 @@ public class OrderPlaced extends AppCompatActivity {
 //                            notificationManager.notify(1, builder.build());
 
 
-                if (orderStatus.equals("Placed")) {
-                    obj.progress = 25;
-                    statusPercent.setText("25%");
-
-                } else if (orderStatus.equals("Retrieved")) {
-                    statusPercent.setText("50%");
-                    obj.progress = 50;
-                } else if (orderStatus.equals("In Progress")) {
-                    statusPercent.setText("75%");
-                    obj.progress = 75;
-                } else {
-                    statusPercent.setText("100%");
-                    obj.progress = 100;
-                }
+//                if (orderStatus.equals("Placed")) {
+//                    obj.progress = 25;
+//                    statusPercent.setText("25%");
+//
+//                } else if (orderStatus.equals("Retrieved")) {
+//                    statusPercent.setText("50%");
+//                    obj.progress = 50;
+//                } else if (orderStatus.equals("In Progress")) {
+//                    statusPercent.setText("75%");
+//                    obj.progress = 75;
+//                } else {
+//                    statusPercent.setText("100%");
+//                    obj.progress = 100;
+//                }
 
 
                 if (orderStatus.equals("Placed")) {
@@ -426,6 +438,31 @@ public class OrderPlaced extends AppCompatActivity {
                 }
 
                 Log.d("ORDERPROG", String.valueOf(orderProgress.getProgress()));
+
+                if (obj.progress <= 25) {
+                    statusPercent.setText("25%");
+                    status1.setVisibility(View.GONE);
+                    status1.setText("Order in progress");
+                }else
+                if (obj.progress >= 50 && obj.progress <= 75) {
+                    status2.setVisibility(View.GONE);
+                    status1.setText("Order Placed");
+                    statusPercent.setText("50%");
+
+                }else
+                if (obj.progress >= 75 && obj.progress < 100) {
+                    status3.setVisibility(View.GONE);
+                    status1.setText("Order in Progress");
+                    statusPercent.setText("75%");
+
+                }else
+                if (obj.progress == 100) {
+                    status4.setVisibility(View.GONE);
+                    status1.setText("Order Ready");
+                    statusPercent.setText("100%");
+
+                }
+
 
             } else {
 
@@ -545,34 +582,30 @@ public class OrderPlaced extends AppCompatActivity {
 
                         }
 
-
-                        if (obj.progress >= 25) {
-                            // Animation fadeIn = new AlphaAnimation(0, 1);
-                            //fadeIn.setInterpolator(new DecelerateInterpolator());
-                            // fadeIn.setDuration(1000);
+                        if (obj.progress <= 25) {
                             statusPercent.setText("25%");
-
                             status1.setVisibility(View.GONE);
                             status1.setText("Order in progress");
-                        }
-                        if (obj.progress >= 50) {
+                        }else
+                        if (obj.progress >= 50 && obj.progress <= 75) {
                             status2.setVisibility(View.GONE);
                             status1.setText("Order Placed");
                             statusPercent.setText("50%");
 
-                        }
-                        if (obj.progress >= 75) {
+                        }else
+                        if (obj.progress >= 75 && obj.progress < 100) {
                             status3.setVisibility(View.GONE);
                             status1.setText("Order in Progress");
                             statusPercent.setText("75%");
 
-                        }
-                        if (obj.progress >= 100) {
+                        }else
+                        if (obj.progress == 100) {
                             status4.setVisibility(View.GONE);
                             status1.setText("Order Ready");
                             statusPercent.setText("100%");
 
                         }
+
 //                    }
                     }
 
@@ -582,6 +615,9 @@ public class OrderPlaced extends AppCompatActivity {
                     }
                 });
             }
+
+
+
             return null;
         }
     }

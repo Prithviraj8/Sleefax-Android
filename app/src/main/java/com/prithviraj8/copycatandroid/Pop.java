@@ -3,6 +3,7 @@ package com.prithviraj8.copycatandroid;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.ComponentName;
 import android.content.Intent;
 import android.graphics.pdf.PdfDocument;
 import android.net.Uri;
@@ -49,12 +50,16 @@ public class Pop extends AppCompatActivity {
             public void onClick(View v) {
 
                 Intent intent = new Intent();
+//                Intent intent = new Intent("android.intent.action.MAIN");
                 intent.setType("image/*");
                 intent.setAction(Intent.ACTION_GET_CONTENT);
                 intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-
-                intent.setPackage(GOOGLE_PHOTOS_PACKAGE_NAME);
                 startActivityForResult(Intent.createChooser(intent, "Select Images"), 1);
+
+//                intent.setComponent(ComponentName.unflattenFromString("com.google.android.apps.plus.photos"));
+//                intent.addCategory("android.intent.category.LAUNCHER");
+//                intent.setPackage("com.google.android.apps.plus");
+//                startActivity(intent);
 //                startActivityForResult(Intent.createChooser(intent,"Select files",GOOGLE_PHOTOS_PACKAGE_NAME));
 
 //                Intent intent = new Intent(Pop.this,Select.class);

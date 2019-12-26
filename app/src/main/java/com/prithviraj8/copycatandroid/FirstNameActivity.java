@@ -19,6 +19,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -58,6 +59,16 @@ public class FirstNameActivity extends AppCompatActivity {
         numberTV = findViewById(R.id.numberTV);
         Button continueButton = findViewById(R.id.FirstNameButton);
 
+        ImageButton back = findViewById(R.id.back);
+
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(FirstNameActivity.this,SignInActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
         continueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

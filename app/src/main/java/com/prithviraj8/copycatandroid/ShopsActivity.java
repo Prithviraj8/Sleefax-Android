@@ -8,6 +8,7 @@ import androidx.core.app.ActivityCompat;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -23,6 +24,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -48,6 +50,7 @@ public class ShopsActivity extends AppCompatActivity {
 //    ArrayList<String> storeID = new ArrayList<>();
     ArrayList<String> pageURL = new ArrayList<>();
 //    ArrayList<Uri> pageURL = new ArrayList<>();
+    ImageButton crop,back;
 
     int copy,numberOfPages;
     String color;
@@ -108,6 +111,10 @@ public class ShopsActivity extends AppCompatActivity {
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
 
+
+        back = findViewById(R.id.back);
+        back.setOnClickListener(backListener);
+
         pageURL = extras.getStringArrayList("URLS");
 //        pageURL = extras.getParcelableArrayList("URLS");
         copy = extras.getInt("Copies");
@@ -134,6 +141,26 @@ public class ShopsActivity extends AppCompatActivity {
 
 
     }
+
+
+    //     Create an anonymous implementation of OnClickListener
+    private View.OnClickListener backListener = new View.OnClickListener() {
+        public void onClick(View v) {
+
+            if(fileType.contains("application")){
+                Intent intent1 = new Intent(ShopsActivity.this,PdfInfo.class);
+                startActivity(intent1);
+                finish();
+            }else{
+                Intent intent1 = new Intent(ShopsActivity.this,PageInfo.class);
+                startActivity(intent1);
+                finish();
+            }
+
+        }
+    };
+
+
     public int getShopsCount(){
         final int[] count = {1};
         ref.addChildEventListener(new ChildEventListener() {

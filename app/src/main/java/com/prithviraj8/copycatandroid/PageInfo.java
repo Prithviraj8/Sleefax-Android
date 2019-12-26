@@ -69,7 +69,7 @@ public class PageInfo extends AppCompatActivity {
 
     AllPagesInfo[] allInfo = new AllPagesInfo[1000000];
 //    ArrayList<String> allInfo = new ArrayList<String>() ;
-    ImageView Page,leftarr,rightarr;
+    ImageView Page;
     TextView previmgTV,nextimgTV;
     ArrayList<String> pageURL = new ArrayList<>();
     ArrayList<Bitmap> images = new ArrayList<>();
@@ -77,8 +77,8 @@ public class PageInfo extends AppCompatActivity {
 
     View black_white,colors,h,v;
 
-    Button sameForAll, pageBtn,prevImg,nextimg;
-    ImageButton crop;
+    Button  pageBtn;
+    ImageButton crop,back,prevImg,nextimg;
     ToggleButton bothSidePrint;
     Spinner pageSizeSpinner;
 
@@ -122,6 +122,7 @@ public class PageInfo extends AppCompatActivity {
         data = extras.getParcelable("Data");
 
 
+        back = findViewById(R.id.back);
         colors = findViewById(R.id.colors);
         black_white = findViewById(R.id.black_white);
 
@@ -135,9 +136,18 @@ public class PageInfo extends AppCompatActivity {
         nextimg = findViewById(R.id.nextImg);
         previmgTV = findViewById(R.id.previmageTV);
         nextimgTV = findViewById(R.id.nextimageTV);
-        leftarr = findViewById(R.id.leftarr);
-        rightarr = findViewById(R.id.rightarr);
+
         bothSidePrint = findViewById(R.id.bothSidesToggle);
+
+
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent1 = new Intent(PageInfo.this,Select.class);
+                startActivity(intent1);
+                finish();
+            }
+        });
 
         bothSidePrint.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -318,8 +328,7 @@ public class PageInfo extends AppCompatActivity {
     private void setanimation(){
         previmgTV.setVisibility(View.VISIBLE);
         nextimgTV.setVisibility(View.VISIBLE);
-        leftarr.setVisibility(View.VISIBLE);
-        rightarr.setVisibility(View.VISIBLE);
+
         shortAnimationDuration = getResources().getInteger(android.R.integer.config_longAnimTime) + 5000;
 //        leftarr.setAlpha(0f);
 //        rightarr.setAlpha(0f);
@@ -383,24 +392,7 @@ public class PageInfo extends AppCompatActivity {
                         nextimgTV.setVisibility(View.GONE);
                     }
                 });
-        leftarr.animate()
-                .alpha(0f)
-                .setDuration(shortAnimationDuration)
-                .setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        leftarr.setVisibility(View.GONE);
-                    }
-                });
-        rightarr.animate()
-                .alpha(0f)
-                .setDuration(shortAnimationDuration)
-                .setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        rightarr.setVisibility(View.GONE);
-                    }
-                });
+
     }
 
     private View.OnTouchListener  touchListener = new View.OnTouchListener() {
