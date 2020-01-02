@@ -2,6 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scrollViewImages"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".PageInfo">
@@ -41,7 +42,7 @@
         <View
             android:id="@+id/view2"
             android:layout_width="match_parent"
-            android:layout_height="483dp"
+            android:layout_height="wrap_content"
             android:layout_alignTop="@+id/imageView"
             android:layout_alignParentStart="true"
             android:layout_alignParentEnd="true"
@@ -263,11 +264,11 @@
             android:textSize="16sp"
             android:textStyle="bold" />
 
-        <View
-            android:id="@+id/view3"
-            android:layout_width="wrap_content"
+        <Spinner
+            android:id="@+id/orientationSpinner"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignStart="@+id/h"
+            android:layout_alignStart="@+id/bothSidesToggle"
             android:layout_alignTop="@+id/orientationTV"
             android:layout_alignEnd="@+id/orientationTV"
             android:layout_alignBottom="@+id/orientationTV"
@@ -276,68 +277,6 @@
             android:layout_marginEnd="0dp"
             android:layout_marginBottom="0dp"
             android:background="@drawable/copytv" />
-
-        <View
-            android:id="@+id/h"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:layout_alignStart="@+id/pageSizesDropDown"
-            android:layout_alignTop="@+id/orientationTV"
-            android:layout_alignBottom="@+id/orientationTV"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="0dp"
-            android:layout_marginEnd="0dp"
-            android:layout_marginBottom="1dp"
-            android:layout_toStartOf="@id/v"
-            android:background="@drawable/orientation" />
-
-        <TextView
-            android:id="@+id/orH"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_alignStart="@+id/h"
-            android:layout_alignTop="@+id/h"
-            android:layout_alignEnd="@+id/h"
-            android:layout_alignBottom="@+id/h"
-            android:layout_marginHorizontal="10dp"
-            android:layout_marginVertical="10dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginBottom="8dp"
-            android:text="H"
-            android:textAlignment="center"
-            android:textStyle="bold" />
-
-        <View
-            android:id="@+id/v"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:layout_alignTop="@+id/h"
-            android:layout_alignEnd="@+id/pageSizesDropDown"
-            android:layout_alignBottom="@+id/h"
-            android:layout_marginTop="0dp"
-            android:layout_marginEnd="0dp"
-            android:layout_marginBottom="0dp"
-            android:background="@drawable/orientation" />
-
-        <TextView
-            android:id="@+id/orV"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_alignStart="@+id/v"
-            android:layout_alignTop="@+id/v"
-            android:layout_alignEnd="@+id/v"
-            android:layout_alignBottom="@+id/v"
-            android:layout_marginHorizontal="10dp"
-            android:layout_marginVertical="10dp"
-            android:layout_marginStart="2dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="2dp"
-            android:layout_marginBottom="10dp"
-            android:text="V"
-            android:textAlignment="center"
-            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/previmageTV"
@@ -382,12 +321,12 @@
         <ToggleButton
             android:id="@+id/bothSidesToggle"
             android:layout_width="104dp"
-            android:layout_height="35dp"
-            android:layout_alignStart="@+id/h"
+            android:layout_height="40dp"
+            android:layout_alignStart="@+id/pageSizesDropDown"
             android:layout_alignTop="@+id/textView20"
             android:layout_alignEnd="@+id/textView20"
             android:layout_alignBottom="@+id/textView20"
-            android:layout_marginStart="0dp"
+            android:layout_marginStart="-35dp"
             android:layout_marginTop="0dp"
             android:layout_marginEnd="0dp"
             android:layout_marginBottom="0dp"
@@ -408,14 +347,16 @@
             app:srcCompat="@drawable/downarr" />
 
         <ImageButton
-            android:id="@+id/imageButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/pageSIzeTV"
-            android:layout_marginStart="0dp"
+            android:id="@+id/scrollBtn"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_alignTop="@+id/textView20"
+            android:layout_marginStart="10dp"
             android:layout_marginTop="0dp"
-            android:layout_toEndOf="@+id/pageSIzeTV"
-            app:srcCompat="@drawable/downarr" />
+            android:layout_toEndOf="@+id/textView20"
+            android:background="@drawable/roundbutton"
+            android:contentDescription="TODO"
+            app:srcCompat="@drawable/downarrow" />
 
     </RelativeLayout>
 

@@ -2,58 +2,87 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/constraintL"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".OrderPlaced"
-    android:background="@drawable/back300">
+    android:background="#FFFFFFFF"
+    tools:context=".OrderPlaced">
 
     <RelativeLayout
+        android:id="@+id/relativeL"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="#FFFFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <View
+            android:id="@+id/topview"
+            android:layout_width="match_parent"
+            android:layout_height="68dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="0dp"
+            android:background="@drawable/storesview" />
+
+        <View
             android:id="@+id/view9"
-            android:layout_width="410dp"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/view10"
+            android:layout_width="match_parent"
+            android:layout_height="491dp"
+            android:layout_below="@+id/status4"
             android:layout_alignParentStart="true"
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
-            android:layout_marginStart="1dp"
-            android:layout_marginTop="-71dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="17dp"
             android:layout_marginEnd="0dp"
-            android:layout_marginBottom="1dp"
+            android:layout_marginBottom="0dp"
             android:background="@drawable/pageview" />
 
         <View
             android:id="@+id/view10"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="175dp"
+            android:layout_below="@+id/status2"
             android:layout_alignStart="@+id/circularProgressBar"
-            android:layout_alignTop="@+id/circularProgressBar"
             android:layout_alignEnd="@+id/circularProgressBar"
             android:layout_alignBottom="@+id/circularProgressBar"
             android:layout_marginStart="0dp"
-            android:layout_marginTop="0dp"
+            android:layout_marginTop="2dp"
             android:layout_marginEnd="0dp"
             android:layout_marginBottom="0dp"
             android:background="@drawable/orderprogressback" />
 
-        <View
-            android:id="@+id/OrderDetailsView"
-            android:layout_width="358dp"
-            android:layout_height="174dp"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginStart="27dp"
-            android:layout_marginEnd="26dp"
-            android:layout_marginBottom="16dp"
-            android:background="@drawable/orderdetailsview" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignStart="@+id/view10"
+            android:layout_alignTop="@+id/view10"
+            android:layout_alignEnd="@+id/view10"
+            android:layout_alignBottom="@+id/view10"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginBottom="0dp">
+
+            <TextView
+                android:id="@+id/statusPercent"
+                android:layout_width="106dp"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="20dp"
+                android:padding="5dp"
+                android:text="@string/_12"
+                android:textAlignment="center"
+                android:textColor="#252323"
+                android:textColorLink="#C8000000"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+        </RelativeLayout>
 
         <com.mikhaellopez.circularprogressbar.CircularProgressBar
             android:id="@+id/circularProgressBar"
@@ -73,6 +102,18 @@
             app:cpb_progressbar_width="10dp"
             app:cpb_round_border="false" />
 
+        <View
+            android:id="@+id/OrderDetailsView"
+            android:layout_width="358dp"
+            android:layout_height="174dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="27dp"
+            android:layout_marginEnd="26dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/orderdetailsview" />
+
         <TextView
             android:id="@+id/status1"
             android:layout_width="wrap_content"
@@ -81,81 +122,55 @@
             android:layout_alignStart="@+id/circularProgressBar"
             android:layout_alignEnd="@+id/circularProgressBar"
             android:layout_centerHorizontal="true"
-            android:layout_marginStart="22dp"
             android:layout_marginTop="7dp"
-            android:layout_marginEnd="26dp"
             android:background="@drawable/status_views"
-            android:padding="10dp"
-            android:text="@string/order_placed"
+            android:padding="5dp"
+            android:text="Placing Order"
             android:textAlignment="center"
-            android:textColor="#FFFF"
+            android:textColor="#FFFFFF"
             android:textSize="12sp"
+            android:textStyle="bold"
             android:visibility="invisible" />
 
         <ImageButton
             android:id="@+id/backBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="25dp"
+            android:layout_height="36dp"
+            android:layout_alignTop="@+id/OrderStatusTV"
+            android:layout_alignBottom="@+id/OrderStatusTV"
             android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
             android:layout_marginStart="20dp"
-            android:layout_marginTop="23dp"
-            android:background="@drawable/w" />
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="0dp"
+            android:background="#00FFFFFF"
+            android:src="@drawable/w" />
 
         <TextView
             android:id="@+id/status2"
-            android:layout_width="120dp"
+            android:layout_width="wrap_content"
             android:layout_height="31dp"
-            android:layout_below="@+id/OrderStatusTV"
+            android:layout_below="@+id/topview"
             android:layout_centerHorizontal="true"
             android:layout_marginStart="8dp"
             android:layout_marginLeft="8dp"
-            android:layout_marginTop="27dp"
+            android:layout_marginTop="10dp"
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginBottom="0dp"
             android:background="@drawable/status_views"
             android:padding="5dp"
-            android:text="Order Received"
+            android:text="Placing Order"
             android:textAlignment="center"
             android:textSize="12sp"
-            android:visibility="invisible" />
-
-        <TextView
-            android:id="@+id/OrderShop"
-            android:layout_width="272dp"
-            android:layout_height="30dp"
-            android:layout_alignStart="@+id/OrderDetailsView"
-            android:layout_alignTop="@+id/OrderDetailsView"
-            android:layout_marginStart="23dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="8dp"
-            android:text="Shop Name :"
-            android:textColor="#000000"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/OrderPrice"
-            android:layout_width="152dp"
-            android:layout_height="30dp"
-            android:layout_below="@+id/OrderFiles"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="21dp"
-            android:layout_marginEnd="8dp"
-            android:background="@drawable/orderpriceview"
-            android:padding="5dp"
-            android:text="Amount"
-            android:textAlignment="center"
-            android:textSize="15sp" />
+            android:visibility="visible" />
 
         <ImageButton
             android:id="@+id/helpbtn"
             android:layout_width="43dp"
             android:layout_height="37dp"
-            android:layout_alignParentTop="true"
+            android:layout_alignTop="@+id/OrderStatusTV"
             android:layout_alignParentEnd="true"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="0dp"
             android:layout_marginEnd="17dp"
             android:background="#00000000"
             app:srcCompat="@drawable/ihelpimg" />
@@ -168,7 +183,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="13dp"
             android:foregroundGravity="center_vertical|center_horizontal"
-            android:text="Order Status."
+            android:text="@string/OrderStatus"
             android:textAlignment="center"
             android:textColor="#FFF"
             android:textSize="30sp"
@@ -178,9 +193,9 @@
             android:id="@+id/Directions"
             android:layout_width="50dp"
             android:layout_height="60dp"
-            android:layout_alignTop="@+id/view9"
+            android:layout_below="@+id/status1"
             android:layout_alignParentEnd="true"
-            android:layout_marginTop="27dp"
+            android:layout_marginTop="0dp"
             android:layout_marginEnd="47dp"
             android:background="#00000000"
             android:shadowColor="#EC1212"
@@ -189,18 +204,6 @@
             android:shadowRadius="10"
             android:src="@drawable/directionsbtn"
             android:textSize="18sp" />
-
-        <TextView
-            android:id="@+id/OrderFiles"
-            android:layout_width="269dp"
-            android:layout_height="30dp"
-            android:layout_below="@+id/OrderLoc"
-            android:layout_alignStart="@+id/OrderDetailsView"
-            android:layout_marginStart="26dp"
-            android:layout_marginTop="2dp"
-            android:layout_marginEnd="8dp"
-            android:text="Files"
-            android:textSize="15sp" />
 
         <TextView
             android:id="@+id/textView10"
@@ -220,18 +223,6 @@
             android:textColor="#FFFFFFFF"
             android:textSize="16sp"
             android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/OrderLoc"
-            android:layout_width="157dp"
-            android:layout_height="24dp"
-            android:layout_below="@+id/OrderShop"
-            android:layout_alignStart="@+id/OrderDetailsView"
-            android:layout_marginStart="25dp"
-            android:layout_marginTop="2dp"
-            android:text="Location"
-            android:textColor="#252424"
-            android:textSize="15sp" />
 
         <TextView
             android:id="@+id/status4"
@@ -258,9 +249,9 @@
             android:layout_alignTop="@+id/Directions"
             android:layout_alignBottom="@+id/Directions"
             android:layout_alignParentStart="true"
-            android:layout_marginStart="46dp"
-            android:layout_marginTop="1dp"
-            android:layout_marginBottom="-1dp"
+            android:layout_marginStart="40dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="0dp"
             android:background="@drawable/callbtn"
             android:text="Button" />
 
@@ -269,10 +260,12 @@
             android:layout_width="93dp"
             android:layout_height="37dp"
             android:layout_alignTop="@+id/circularProgressBar"
+            android:layout_alignBottom="@+id/status4"
             android:layout_alignParentStart="true"
             android:layout_marginStart="6dp"
             android:layout_marginTop="80dp"
             android:layout_marginEnd="31dp"
+            android:layout_marginBottom="0dp"
             android:background="@drawable/status_views"
             android:padding="5dp"
             android:text="In process"
@@ -286,8 +279,8 @@
             android:layout_height="35dp"
             android:layout_below="@+id/Directions"
             android:layout_alignParentEnd="true"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="4dp"
             android:background="@drawable/directionview"
             android:padding="6dp"
             android:text="Directions"
@@ -300,7 +293,7 @@
             android:layout_alignTop="@+id/textView21"
             android:layout_alignBottom="@+id/textView21"
             android:layout_alignParentStart="true"
-            android:layout_marginStart="5dp"
+            android:layout_marginStart="7dp"
             android:layout_marginTop="0dp"
             android:layout_marginBottom="0dp"
             android:background="@drawable/callshopview"
@@ -309,22 +302,70 @@
             android:textAlignment="center" />
 
         <TextView
-            android:id="@+id/statusPercent"
-            android:layout_width="106dp"
-            android:layout_height="wrap_content"
-            android:layout_alignStart="@+id/view10"
-            android:layout_alignTop="@+id/view10"
-            android:layout_alignEnd="@+id/view10"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="20dp"
-            android:padding="60dp"
-            android:text="@string/_12"
-            android:textAlignment="center"
-            android:textColor="#252323"
-            android:textColorLink="#C8000000"
+            android:id="@+id/OrderShop"
+            android:layout_width="272dp"
+            android:layout_height="30dp"
+            android:layout_alignStart="@+id/OrderDetailsView"
+            android:layout_alignTop="@+id/OrderDetailsView"
+            android:layout_marginStart="23dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
+            android:text="Shop Name :"
+            android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/OrderLoc"
+            android:layout_width="157dp"
+            android:layout_height="24dp"
+            android:layout_below="@+id/OrderShop"
+            android:layout_alignStart="@+id/OrderShop"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="2dp"
+            android:text="Location"
+            android:textColor="#252424"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/OrderFiles"
+            android:layout_width="269dp"
+            android:layout_height="30dp"
+            android:layout_below="@+id/OrderLoc"
+            android:layout_alignStart="@+id/OrderLoc"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginEnd="8dp"
+            android:text="Files"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/orderID"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_below="@+id/OrderFiles"
+            android:layout_alignStart="@+id/OrderFiles"
+            android:layout_alignEnd="@+id/OrderDetailsView"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="5dp"
+            android:text="ORDER ID"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/OrderPrice"
+            android:layout_width="152dp"
+            android:layout_height="30dp"
+            android:layout_below="@+id/orderID"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/orderpriceview"
+            android:padding="5dp"
+            android:text="Amount"
+            android:textAlignment="center"
+            android:textSize="15sp" />
 
     </RelativeLayout>
 

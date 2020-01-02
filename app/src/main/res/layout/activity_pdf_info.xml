@@ -2,6 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scrollViewPdfs"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".PdfInfo">
@@ -22,16 +23,41 @@
             android:layout_marginTop="0dp"
             android:background="@drawable/storesview" />
 
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:text="@string/file_settings"
+            android:textAlignment="center"
+            android:textColor="#FFF"
+            android:textSize="25sp"
+            android:textStyle="bold"
+            app:layout_constraintHorizontal_bias="0.498" />
+
         <ImageButton
             android:id="@+id/back"
             android:layout_width="40dp"
             android:layout_height="40dp"
+            android:layout_alignTop="@+id/textView"
             android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
             android:layout_marginStart="5dp"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="0dp"
             android:background="#00FFFFFF"
             app:srcCompat="@drawable/w" />
+
+        <ImageButton
+            android:id="@+id/scrollDownPdf"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_alignTop="@+id/customPagesText"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="0dp"
+            android:layout_toEndOf="@+id/customPagesText"
+            android:background="@drawable/ripple_effect"
+            app:srcCompat="@drawable/downarrow" />
 
         <ImageView
             android:id="@+id/pdfpageimg"
@@ -46,9 +72,9 @@
             android:id="@+id/pdfDone"
             android:layout_width="160dp"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/textView12"
+            android:layout_below="@+id/viewPdfBtn"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="45dp"
+            android:layout_marginTop="25dp"
             android:text="@string/DonePageBtn"
             android:textColor="#000000"
             android:textSize="22sp"
@@ -81,21 +107,6 @@
             android:layout_marginEnd="0dp"
             android:layout_marginBottom="0dp"
             app:srcCompat="@drawable/colorimg" />
-
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="20dp"
-            android:text="@string/file_settings"
-            android:textAlignment="center"
-            android:textColor="#FFF"
-            android:textSize="25sp"
-            android:textStyle="bold"
-            app:layout_constraintHorizontal_bias="0.498"
-            app:layout_constraintTop_toBottomOf="@+id/imageView3" />
 
         <TextView
             android:id="@+id/textView3"
@@ -175,7 +186,7 @@
             android:ems="10"
             android:hint="@string/Copies"
             android:inputType="number"
-            android:text="1"
+            android:text="0"
             android:textAlignment="center"
             android:textColor="#000000"
             android:textSize="16sp"
@@ -208,7 +219,7 @@
 
         <Spinner
             android:id="@+id/sizeSpinner"
-            android:layout_width="110dp"
+            android:layout_width="120dp"
             android:layout_height="35dp"
             android:layout_alignStart="@+id/PDF_copies"
             android:layout_alignTop="@+id/textView7"
@@ -218,6 +229,19 @@
             app:layout_constraintHorizontal_bias="0.494"
             app:layout_constraintStart_toEndOf="@+id/textView7"
             app:layout_constraintTop_toBottomOf="@+id/PDF_copies" />
+
+        <Spinner
+            android:id="@+id/orientationSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/sizeSpinner"
+            android:layout_alignTop="@+id/textView8"
+            android:layout_alignEnd="@+id/sizeSpinner"
+            android:layout_alignBottom="@+id/textView8"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginBottom="0dp" />
 
         <TextView
             android:id="@+id/textView8"
@@ -236,85 +260,11 @@
             android:textColor="#3D3D3D"
             android:textSize="18sp"
             android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/h"
             app:layout_constraintEnd_toEndOf="@+id/textView7"
             app:layout_constraintStart_toStartOf="@+id/textView7"
             app:layout_constraintTop_toBottomOf="@+id/textView7"
             app:layout_constraintVertical_bias="0.56"
             tools:textStyle="bold" />
-
-        <View
-            android:id="@+id/h"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_alignStart="@+id/sizeSpinner"
-            android:layout_alignTop="@+id/textView8"
-            android:layout_alignBottom="@+id/textView8"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="0dp"
-            android:layout_marginBottom="0dp"
-            android:background="@drawable/orientation" />
-
-        <TextView
-            android:id="@+id/orH"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_alignStart="@+id/h"
-            android:layout_alignTop="@+id/h"
-            android:layout_alignEnd="@+id/h"
-            android:layout_alignBottom="@+id/h"
-            android:layout_marginHorizontal="10dp"
-            android:layout_marginVertical="10dp"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="0dp"
-            android:layout_marginEnd="0dp"
-            android:layout_marginBottom="0dp"
-            android:text="H"
-            android:textAlignment="center"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/h"
-            app:layout_constraintEnd_toEndOf="@+id/h"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="@+id/h"
-            app:layout_constraintTop_toTopOf="@+id/h"
-            app:layout_constraintVertical_bias="1.0" />
-
-        <View
-            android:id="@+id/v"
-            android:layout_width="37dp"
-            android:layout_height="37dp"
-            android:layout_alignTop="@+id/h"
-            android:layout_alignEnd="@+id/sizeSpinner"
-            android:layout_alignBottom="@+id/h"
-            android:layout_marginTop="0dp"
-            android:layout_marginEnd="0dp"
-            android:layout_marginBottom="0dp"
-            android:background="@drawable/orientation"
-            app:layout_constraintBottom_toBottomOf="@+id/h"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/h" />
-
-        <TextView
-            android:id="@+id/orV"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_alignStart="@+id/v"
-            android:layout_alignTop="@+id/v"
-            android:layout_alignEnd="@+id/v"
-            android:layout_alignBottom="@+id/v"
-            android:layout_marginHorizontal="10dp"
-            android:layout_marginVertical="10dp"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="0dp"
-            android:layout_marginEnd="0dp"
-            android:layout_marginBottom="0dp"
-            android:text="V"
-            android:textAlignment="center"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/v"
-            app:layout_constraintEnd_toEndOf="@+id/v"
-            app:layout_constraintStart_toStartOf="@+id/v"
-            app:layout_constraintTop_toTopOf="@+id/v" />
 
         <TextView
             android:id="@+id/textView20"
@@ -341,7 +291,7 @@
             android:id="@+id/bothSidesToggle"
             android:layout_width="110dp"
             android:layout_height="35dp"
-            android:layout_alignStart="@+id/h"
+            android:layout_alignStart="@+id/sizeSpinner"
             android:layout_alignTop="@+id/textView20"
             android:layout_alignBottom="@+id/textView20"
             android:layout_marginStart="0dp"
@@ -393,6 +343,38 @@
             app:layout_constraintStart_toStartOf="@+id/sizeSpinner"
             app:layout_constraintTop_toTopOf="@+id/textView12"
             app:layout_constraintVertical_bias="1.0" />
+
+        <Button
+            android:id="@+id/viewPdfBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:layout_below="@+id/textView12"
+            android:layout_alignStart="@+id/textView12"
+            android:layout_alignEnd="@+id/textView12"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="14dp"
+            android:layout_marginEnd="0dp"
+            android:background="@drawable/ripple_effect"
+            android:text="View Pdf" />
+
+        <EditText
+            android:id="@+id/PageCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/customPagesText"
+            android:layout_alignTop="@+id/viewPdfBtn"
+            android:layout_alignEnd="@+id/customPagesText"
+            android:layout_alignBottom="@+id/viewPdfBtn"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginBottom="0dp"
+            android:ems="10"
+            android:hint="Page Count"
+            android:inputType="number"
+            android:textAlignment="center"
+            android:textColor="#000000"
+            android:textSize="14sp" />
 
     </RelativeLayout>
 </ScrollView>

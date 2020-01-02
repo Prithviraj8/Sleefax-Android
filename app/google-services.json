@@ -8,9 +8,53 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:736925032543:android:864b074804a941f8933bea",
+        "mobilesdk_app_id": "1:736925032543:android:754d733dbbacb82d933bea",
         "android_client_info": {
-          "package_name": "com.prithviraj8.copycatandroid"
+          "package_name": "com.Prithviraj8.Sleefax"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "736925032543-8cal7jnrelauu7j3jjukn9hmaj1ha5ec.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.Prithviraj8.Sleefax",
+            "certificate_hash": "f022e1d5075109316f2905209851b4f1e928838c"
+          }
+        },
+        {
+          "client_id": "736925032543-ip2eafmsbot3u28o4i05dctidqjssc4r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD3XSkHxs8cNaIPPmeD6v0e6AnblrphYAQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "736925032543-ip2eafmsbot3u28o4i05dctidqjssc4r.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "736925032543-pij32tupg81f4jngck4ttrnq7ctb8vp8.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.prithviraj8.storeowner"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:736925032543:android:ba95b0d9a45b160f",
+        "android_client_info": {
+          "package_name": "com.example.storeowner"
         }
       },
       "oauth_client": [
@@ -18,7 +62,7 @@
           "client_id": "736925032543-dml9jsook36fmogi104kgdhrt5q2q6qr.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.prithviraj8.copycatandroid",
+            "package_name": "com.example.storeowner",
             "certificate_hash": "160cc27220facb679657ae679a91922f57fcecfe"
           }
         },

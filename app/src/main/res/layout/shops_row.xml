@@ -10,17 +10,19 @@
     <TextView
         android:layout_width="80dp"
         android:layout_height="35dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="313dp"
-        android:layout_marginTop="63dp"
+        android:layout_below="@+id/Distance"
+        android:layout_alignStart="@+id/Distance"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="0dp"
         android:background="@drawable/open"
-        android:text="Open"
         android:paddingTop="5dp"
-        android:textStyle="bold"
+        android:text="Open"
         android:textAlignment="center"
         android:textColor="#FFF"
-        android:textSize="15sp">
+        android:textSize="15sp"
+        android:textStyle="bold">
 
     </TextView>
 
@@ -46,33 +48,32 @@
         android:layout_width="175dp"
         android:layout_height="35dp"
         android:layout_below="@+id/Location"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="122dp"
+        android:layout_alignStart="@+id/Location"
+        android:layout_marginStart="0dp"
         android:layout_marginTop="3dp"
         android:layout_marginEnd="114dp"
         android:text="@string/Files" />
 
     <TextView
         android:id="@+id/Price"
-        android:layout_width="174dp"
+        android:layout_width="wrap_content"
         android:layout_height="36dp"
         android:layout_below="@+id/Files"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="124dp"
+        android:layout_alignStart="@+id/Files"
+        android:layout_marginStart="2dp"
         android:layout_marginTop="3dp"
-        android:layout_marginEnd="116dp"
-        android:text="@string/Price" />
+        android:text="₹1: B/W   |   ₹5 : Colour"
+        android:textColor="#2196F3" />
 
     <TextView
         android:id="@+id/Distance"
-        android:layout_width="73dp"
-        android:layout_height="45dp"
+        android:layout_width="92dp"
+        android:layout_height="32dp"
         android:layout_alignParentStart="false"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="10dp"
-        android:layout_marginEnd="26dp"
+        android:layout_marginEnd="2dp"
         android:text="@string/Distance"
         android:textAlignment="center"
         android:textColor="#000000"
@@ -83,11 +84,9 @@
         android:layout_width="175dp"
         android:layout_height="35dp"
         android:layout_below="@+id/ShopsName"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="122dp"
+        android:layout_alignStart="@+id/ShopsName"
+        android:layout_marginStart="0dp"
         android:layout_marginTop="7dp"
-        android:layout_marginEnd="115dp"
         android:text="@string/Location"
         android:textColor="#5A5757"
         android:textSize="16sp" />

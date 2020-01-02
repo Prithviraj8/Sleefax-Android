@@ -139,7 +139,7 @@
             android:layout_marginTop="3dp"
             android:layout_marginEnd="0dp"
             android:layout_marginBottom="4dp"
-            app:srcCompat="@drawable/logout" />
+            app:srcCompat="@drawable/log_out" />
 
         <TextView
             android:id="@+id/textView23"
@@ -219,7 +219,7 @@
             android:layout_marginStart="0dp"
             android:layout_marginTop="5dp"
             android:layout_marginBottom="5dp"
-            app:srcCompat="@drawable/reportissueimg" />
+            app:srcCompat="@drawable/warning_sign" />
 
         <View
             android:id="@+id/view16"
@@ -263,7 +263,7 @@
             android:layout_marginTop="9dp"
             android:layout_marginEnd="0dp"
             android:layout_marginBottom="5dp"
-            app:srcCompat="@drawable/contact" />
+            app:srcCompat="@drawable/contact_email" />
 
         <View
             android:id="@+id/view17"
@@ -308,7 +308,7 @@
             android:layout_marginTop="5dp"
             android:layout_marginEnd="0dp"
             android:layout_marginBottom="5dp"
-            app:srcCompat="@drawable/feedbackimg" />
+            app:srcCompat="@drawable/feedbackbtn" />
 
 
     </RelativeLayout>

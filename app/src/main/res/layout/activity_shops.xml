@@ -7,6 +7,7 @@
     tools:context=".ShopsActivity">
 
     <RelativeLayout
+        android:id="@+id/ShopsLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -25,6 +26,18 @@
             android:layout_marginTop="0dp"
             android:layout_marginEnd="0dp"
             android:background="@drawable/storesview" />
+
+        <TextView
+            android:id="@+id/textView9"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/imageView4"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="2dp"
+            android:text="@string/select_your_preferred_store"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
         <ImageButton
             android:id="@+id/back"
@@ -47,6 +60,7 @@
             app:srcCompat="@drawable/stores" />
 
         <LinearLayout
+            android:id="@+id/ShopRows"
             android:layout_width="match_parent"
             android:layout_height="577dp"
             android:layout_below="@+id/view6"
@@ -57,6 +71,7 @@
             android:layout_marginTop="0dp"
             android:layout_marginEnd="0dp"
             android:layout_marginBottom="0dp"
+            android:background="#FFFFFF"
             android:orientation="vertical">
 
             <ListView
@@ -70,17 +85,60 @@
 
         </LinearLayout>
 
+        <View
+            android:id="@+id/confirmView"
+            android:layout_width="302dp"
+            android:layout_height="147dp"
+            android:layout_centerInParent="true"
+            android:background="#FFFFFF" />
+
         <TextView
-            android:id="@+id/textView9"
-            android:layout_width="wrap_content"
+            android:id="@+id/ConfirmOrderTV"
+            android:layout_width="240dp"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/imageView4"
+            android:layout_alignTop="@+id/confirmView"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="2dp"
-            android:text="@string/select_your_preferred_store"
-            android:textColor="#FFFFFF"
+            android:layout_marginTop="10dp"
+            android:text="Confirm your order."
+            android:textAlignment="center"
+            android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/OrderPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/ConfirmOrderTV"
+            android:layout_alignStart="@+id/ConfirmOrderTV"
+            android:layout_alignEnd="@+id/ConfirmOrderTV"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="0dp"
+            android:text="Amount"
+            android:textAlignment="center"
+            android:textColor="#2196F3"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/confirmBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/OrderPrice"
+            android:layout_alignEnd="@+id/ConfirmOrderTV"
+            android:layout_marginTop="11dp"
+            android:layout_marginEnd="0dp"
+            android:text="Yes,sure." />
+
+        <Button
+            android:id="@+id/noBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/ConfirmOrderTV"
+            android:layout_alignTop="@+id/confirmBtn"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp"
+            android:text="No" />
 
     </RelativeLayout>
 
