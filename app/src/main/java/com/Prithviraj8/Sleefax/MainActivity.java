@@ -89,16 +89,16 @@ public class MainActivity extends AppCompatActivity  {
 //        }
         Log.d("USERRRRR", String.valueOf(FirebaseAuth.getInstance().getCurrentUser()));
 
-        if(FirebaseAuth.getInstance().getCurrentUser() != null){
-            userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-            email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
-            getCurrentUserInfo(userId);
-
-            if(username == null) {
-                Log.d("USERNAME", FirebaseAuth.getInstance().getCurrentUser().getEmail());
-            }
-
-        }
+//        if(FirebaseAuth.getInstance().getCurrentUser() != null){
+//            userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+//            email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+//            getCurrentUserInfo(userId);
+//
+//            if(username == null) {
+//                Log.d("USERNAME", FirebaseAuth.getInstance().getCurrentUser().getEmail());
+//            }
+//
+//        }
 
 
         signUp.setOnClickListener(new View.OnClickListener() {

@@ -48,7 +48,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginStart="1dp"
             android:layout_marginTop="65dp"
-            android:text="So sorry to hear you \nhave issues with our app\n let us know and we will fix it."
+            android:text="So sorry to hear you \nhave issues with our app.\n Let us know and we will fix it."
             android:textAlignment="center"
             android:textColor="#696969"
             android:textSize="20sp" />

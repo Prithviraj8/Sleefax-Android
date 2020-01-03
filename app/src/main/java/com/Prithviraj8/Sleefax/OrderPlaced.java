@@ -435,7 +435,7 @@ public class OrderPlaced extends AppCompatActivity {
                 status2.setVisibility(View.VISIBLE);
                 status2.setText("Placing order");
 
-                statusPercent.setText("20%");
+                statusPercent.setText("5%");
 
             }else
             if (obj.progress >= 25 && obj.progress <= 50) {
@@ -446,7 +446,7 @@ public class OrderPlaced extends AppCompatActivity {
                 status4.setVisibility(View.VISIBLE);
                 status4.setText("Order Placed");
 
-                statusPercent.setText("50%");
+                statusPercent.setText("25%");
 
             }else
             if (obj.progress >= 50 && obj.progress <= 75) {
@@ -459,7 +459,7 @@ public class OrderPlaced extends AppCompatActivity {
                 status1.setVisibility(View.VISIBLE);
                 status1.setText("Order in Progress");
 
-                statusPercent.setText("60%");
+                statusPercent.setText("50%");
 
             }else
             if (obj.progress >= 75 && obj.progress <= 100) {
@@ -602,7 +602,7 @@ public class OrderPlaced extends AppCompatActivity {
                         status2.setVisibility(View.VISIBLE);
                         status2.setText("Placing order");
 
-                        statusPercent.setText("20%");
+                        statusPercent.setText("5%");
 
                     }else
                     if (obj.progress >= 25 && obj.progress <= 50) {
@@ -613,7 +613,7 @@ public class OrderPlaced extends AppCompatActivity {
                         status4.setVisibility(View.VISIBLE);
                         status4.setText("Order Placed");
 
-                        statusPercent.setText("50%");
+                        statusPercent.setText("25%");
 
                     }else
                     if (obj.progress >= 50 && obj.progress <= 75) {
@@ -626,7 +626,7 @@ public class OrderPlaced extends AppCompatActivity {
                         status1.setVisibility(View.VISIBLE);
                         status1.setText("Order in Progress");
 
-                        statusPercent.setText("60%");
+                        statusPercent.setText("50%");
 
                     }else
                     if (obj.progress >= 75 && obj.progress <= 100) {

@@ -31,7 +31,8 @@
             android:layout_marginEnd="0dp"
             android:background="@drawable/rectangle102" />
 
-        <Button
+        <ImageButton
+            android:id="@+id/back"
             style="?android:attr/borderlessButtonStyle"
             android:layout_width="20dp"
             android:layout_height="30dp"
@@ -40,7 +41,7 @@
             android:layout_marginStart="25dp"
             android:layout_marginTop="27dp"
             android:background="@null"
-            android:drawableTop="@drawable/w" />
+            android:src="@drawable/w" />
 
         <ImageView
             android:id="@+id/imageview"
@@ -49,7 +50,6 @@
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="12dp"
-            android:src="@drawable/w_user"
             app:srcCompat="@drawable/userimg" />
 
         <TextView

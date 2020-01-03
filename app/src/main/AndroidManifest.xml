@@ -17,7 +17,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" /> <!-- <uses-permission android:name="android.permission.SEND_SMS" /> -->
     <uses-permission android:name="android.permission.READ_SMS" />
-    <uses-permission android:name="android.permission.RECEIVE_SMS" /> <!-- <uses-permission android:name="android.permission.MANAGE_DOCUMENTS" /> -->
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
 
     <application
         android:allowBackup="true"
@@ -26,18 +26,23 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".FlashActivity">
-
+        <activity android:name=".SplashActivity">
             <intent-filter>
-                 <action android:name="android.intent.action.SEND" />
-                 <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
-                <data android:mimeType="image/*"/>
-                <data android:mimeType="application/pdf"/>
-
             </intent-filter>
+        </activity>
+        <activity android:name=".FlashActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <action android:name="android.intent.action.SEND_MULTIPLE" />
 
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.LAUNCHER" />
 
+                <data android:mimeType="image/*" />
+                <data android:mimeType="application/pdf" />
+            </intent-filter>
         </activity>
         <activity android:name=".ShareActivity" />
         <activity android:name=".privacypolicy" />
@@ -104,7 +109,7 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
             </intent-filter>
         </activity>
 

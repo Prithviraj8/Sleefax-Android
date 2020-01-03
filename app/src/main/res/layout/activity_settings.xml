@@ -71,12 +71,12 @@
             android:id="@+id/changeInfoBtn"
             android:layout_width="200dp"
             android:layout_height="64dp"
-            android:layout_alignStart="@+id/ReportIssueBtn"
             android:layout_alignTop="@+id/view"
             android:layout_alignParentEnd="true"
-            android:layout_marginStart="0dp"
+            android:layout_marginStart="-40dp"
             android:layout_marginTop="2dp"
             android:layout_marginEnd="0dp"
+            android:layout_toEndOf="@+id/textView23"
             android:background="#00000000"
             android:text="Account Settings"
             android:textAlignment="viewStart"
@@ -115,7 +115,7 @@
             android:layout_width="304dp"
             android:layout_height="62dp"
             android:layout_below="@+id/changeInfoBtn"
-            android:layout_alignStart="@+id/ReportIssueBtn"
+            android:layout_alignStart="@+id/changeInfoBtn"
             android:layout_alignParentEnd="true"
             android:layout_marginStart="0dp"
             android:layout_marginTop="3dp"
@@ -161,21 +161,11 @@
             android:layout_below="@+id/view"
             android:layout_alignStart="@+id/textView23"
             android:layout_marginStart="0dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="5dp"
             android:text="Support"
             android:textColor="#000000"
             android:textSize="26sp"
             android:textStyle="bold" />
-
-
-        <View
-            android:id="@+id/helpView"
-            android:layout_width="match_parent"
-            android:layout_height="196dp"
-            android:layout_below="@+id/textView24"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="5dp"
-            android:background="@drawable/settingsbtnviews" />
 
 
         <View
@@ -196,12 +186,12 @@
             android:id="@+id/ReportIssueBtn"
             android:layout_width="wrap_content"
             android:layout_height="62dp"
-            android:layout_alignTop="@+id/helpView"
+            android:layout_below="@+id/textView24"
+            android:layout_alignStart="@+id/signOut"
             android:layout_alignParentEnd="true"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="0dp"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="10dp"
             android:layout_marginEnd="0dp"
-            android:layout_toEndOf="@+id/contactImg"
             android:background="#00000000"
             android:text="Report An Issue"
             android:textAlignment="viewStart"
@@ -221,56 +211,13 @@
             android:layout_marginBottom="5dp"
             app:srcCompat="@drawable/warning_sign" />
 
+
         <View
             android:id="@+id/view16"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/view15"
-            android:layout_alignBottom="@+id/Contacts"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="0dp"
-            android:layout_marginEnd="0dp"
-            android:layout_marginBottom="0dp"
-            android:background="@drawable/settingsbtnviews" />
-
-        <Button
-            android:id="@+id/Contacts"
             android:layout_width="match_parent"
-            android:layout_height="64dp"
-            android:layout_below="@+id/ReportIssueBtn"
-            android:layout_alignStart="@+id/ReportIssueBtn"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="0dp"
-            android:background="#00000000"
-            android:text="Contact Us"
-            android:textAlignment="viewStart"
-            android:textColor="#C1000000"
-            android:textSize="18sp"
-            android:textStyle="normal" />
-
-        <ImageView
-            android:id="@+id/contactImg"
-            android:layout_width="30dp"
-            android:layout_height="50dp"
-            android:layout_alignStart="@+id/reportIssueImg"
-            android:layout_alignTop="@+id/Contacts"
-            android:layout_alignEnd="@+id/reportIssueImg"
-            android:layout_alignBottom="@+id/Contacts"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="9dp"
-            android:layout_marginEnd="0dp"
-            android:layout_marginBottom="5dp"
-            app:srcCompat="@drawable/contact_email" />
-
-        <View
-            android:id="@+id/view17"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/view16"
-            android:layout_alignBottom="@+id/helpView"
+            android:layout_height="78dp"
+            android:layout_below="@+id/view15"
+            android:layout_alignBottom="@+id/FeedbackBtn"
             android:layout_alignParentStart="true"
             android:layout_alignParentEnd="true"
             android:layout_marginStart="0dp"
@@ -283,12 +230,10 @@
             android:id="@+id/FeedbackBtn"
             android:layout_width="match_parent"
             android:layout_height="62dp"
-            android:layout_below="@+id/Contacts"
-            android:layout_alignStart="@+id/Contacts"
-            android:layout_alignBottom="@+id/helpView"
+            android:layout_below="@+id/view15"
+            android:layout_alignStart="@+id/ReportIssueBtn"
             android:layout_marginStart="0dp"
             android:layout_marginTop="0dp"
-            android:layout_marginBottom="0dp"
             android:background="#00000000"
             android:text="Feedback"
             android:textAlignment="viewStart"
@@ -300,14 +245,14 @@
             android:id="@+id/feedbackImg"
             android:layout_width="30dp"
             android:layout_height="50dp"
-            android:layout_alignStart="@+id/contactImg"
+            android:layout_alignStart="@+id/reportIssueImg"
             android:layout_alignTop="@+id/FeedbackBtn"
             android:layout_alignEnd="@+id/contactImg"
-            android:layout_alignBottom="@+id/helpView"
+            android:layout_alignBottom="@+id/FeedbackBtn"
             android:layout_marginStart="0dp"
             android:layout_marginTop="5dp"
             android:layout_marginEnd="0dp"
-            android:layout_marginBottom="5dp"
+            android:layout_marginBottom="7dp"
             app:srcCompat="@drawable/feedbackbtn" />
 
 

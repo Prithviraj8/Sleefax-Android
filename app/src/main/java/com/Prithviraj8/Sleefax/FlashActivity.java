@@ -45,13 +45,8 @@ public class FlashActivity extends AppCompatActivity {
 // Get the type of intent (Text or Image)
         String type = intent.getType();
 // When Intent's action is 'ACTION+SEND' and Tyoe is not null
-        if (Intent.ACTION_SEND.equals(action) && type != null) {
-            if (type.startsWith("image")) { // When type is 'image/*'
-                handleSendImage(intent); // Handle single image being sent
-            }else{
-                handleSendFile(intent);
-            }
-
+        if (Intent.ACTION_SEND_MULTIPLE.equals(action) || Intent.ACTION_SEND.equals(action) && type != null ) {
+            handleSendData(intent); // Handle single image being sent
         }else {
             mProgressDialog = new ProgressDialog(FlashActivity.this);
             // Set progressdialog title
@@ -132,42 +127,123 @@ public class FlashActivity extends AppCompatActivity {
     }
 
 
-    public void handleSendImage(Intent intent){
-// Get the image URI from intent
-        Uri imageUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
+    ArrayList<Uri> uri = new ArrayList<>();
+    String fileType;
+    public void handleSendData(Intent data){
+        if (data.getData() != null) {
+            //uploading the file
 
-        ArrayList<String> images = new ArrayList<>();
-        String mimeType = getContentResolver().getType(imageUri);
+            Uri returnUri = data.getData();
+//                uri.add(returnUri);
 
-        // When image URI is not null
-        if (imageUri != null) {
-            // Update UI to reflect image being shared
-            Log.d("RECEIVED",imageUri.toString());
 
-            images.add(imageUri.toString());
-            Intent intent1 = new Intent(FlashActivity.this,PageInfo.class);
-            Bundle extras = new Bundle();
-            extras.putStringArrayList("URLS",images);
-            extras.putString("FileType", mimeType);
-            intent1.putExtras(extras);
-            startActivity(intent1);
-            finish();
+            Log.d("URIID", String.valueOf(returnUri));
+            String mimeType = getContentResolver().getType(returnUri);
+            Log.d("MIME", mimeType);
 
-        } else{
-            Toast.makeText(this, "Error occured, URI is invalid", Toast.LENGTH_LONG).show();
+            if (mimeType.contains("application/pdf")) {
+
+                Log.d("FILE", mimeType);
+                fileType = mimeType;
+//                Log.d("DATACOUNT", String.valueOf(data.getClipData().getItemCount()));
+                uploadFile(data,returnUri);
+
+
+            } else {
+
+                Log.d("FILE", "Image");
+                fileType = mimeType;
+
+                if(data.getClipData() != null) {
+                    for (int i = 0; i < data.getClipData().getItemCount(); i++) {
+                        if (data.getClipData().getItemAt(i).getUri() != null) {
+                            uri.add(data.getClipData().getItemAt(i).getUri());
+                            if (i == data.getClipData().getItemCount() - 1) {
+                                uploadImg(data, uri);
+                            }
+                        }
+                    }
+
+                }else{
+                    uri.add(returnUri);
+                    uploadImg(data,uri);
+                }
+            }
+        } else {
+
+//                Toast.makeText(this, "No file chosen", Toast.LENGTH_SHORT).show();
+            Log.d("MIMETP",String.valueOf(data.getClipData().getDescription()));
+            Log.d("DATA", String.valueOf(data.getClipData()));
+            fileType = "image/png";
+
+            String type = String.valueOf(data.getClipData().getDescription());
+            Log.d("SHARETYPE",type);
+            if(type.contains("application") || type.contains("*/*")) {
+                if (data.getClipData().getItemCount() > 1){
+                    Log.d("WRONG", "FORMAT");
+                    Toast.makeText(FlashActivity.this, "So Sorry! 😢 But we are still working on providing the functionality of selecting multiple pdf/docs and other formats.", Toast.LENGTH_LONG).show();
+                }else {
+
+                    uploadFile(data,data.getClipData().getItemAt(0).getUri());
+                    Log.d("DRIVE","=DATA ");
+                }
+            }else{
+                if (data.getClipData() != null) {
+                    for (int i = 0; i < data.getClipData().getItemCount(); i++) {
+                        if (data.getClipData().getItemAt(i).getUri() != null) {
+                            uri.add(data.getClipData().getItemAt(i).getUri());
+                            if (i == data.getClipData().getItemCount() - 1) {
+                                uploadImg(data, uri);
+                            }
+                        }
+                    }
+
+                }
+            }
         }
     }
-    public void handleSendFile(Intent intent){
-        Uri file = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
-        String mimeType = getContentResolver().getType(file);
 
-        Intent intent1 = new Intent(FlashActivity.this,PdfInfo.class);
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    public void uploadFile(Intent data,Uri file){
+
+        Intent goToPdfInfo = new Intent(FlashActivity.this, PdfInfo.class);
+        //goToPageInfo.putExtra("Pages",images);
         Bundle extras = new Bundle();
+//        extras.putParcelable("PdfURL", file);
+//        extras.putInt("Pages",numberOfPages);
         extras.putString("PdfURL", file.toString());
-        extras.putString("FileType", mimeType);
-        intent1.putExtras(extras);
-        startActivity(intent1);
+        extras.putString("FileType", fileType);
+//        extras.putInt("RequestCode",1);
+//        extras.putInt("ResultCode",0);
+//        extras.putString("FileName",fileName);
+        goToPdfInfo.putExtras(extras);
+        startActivity(goToPdfInfo);
         finish();
+
     }
 
+
+    public void uploadImg(Intent data, ArrayList<Uri> uri){
+        Intent goToPageInfo = new Intent(FlashActivity.this, PageInfo.class);
+        Bundle extras = new Bundle();
+        extras.putString("FileType", fileType);
+        ArrayList<String> images = new ArrayList<>();
+        int i;
+
+        for(i=0;i<uri.size();i++){
+            images.add(uri.get(i).toString());
+
+            Log.d("I IS", String.valueOf(i));
+            if(i == uri.size()-1) {
+//                Log.d("URISIZE", String.valueOf(uri.size()));
+                extras.putStringArrayList("URLS", images);
+                extras.putParcelable("Data",data);
+//            extras.putParcelableArrayList("URLS", uri);
+                goToPageInfo.putExtras(extras);
+                startActivity(goToPageInfo);
+            }
+        }
+
+    }
 }

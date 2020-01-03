@@ -9,6 +9,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,10 +28,23 @@ public class changeInfoPopUp extends AppCompatActivity {
 
 
     TextView email,name,num;
+    ImageButton back;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_change_info_pop_up);
+
+
+        back = findViewById(R.id.back);
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(changeInfoPopUp.this,settings.class);
+                startActivity(intent);
+                finish();
+            }
+        });
+
 
 //        getSupportActionBar().hide();
         DisplayMetrics dm = new DisplayMetrics();
