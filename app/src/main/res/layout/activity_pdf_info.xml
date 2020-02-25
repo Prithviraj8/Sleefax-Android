@@ -52,11 +52,12 @@
             android:id="@+id/scrollDownPdf"
             android:layout_width="35dp"
             android:layout_height="35dp"
-            android:layout_alignTop="@+id/customPagesText"
-            android:layout_marginStart="10dp"
+            android:layout_alignTop="@+id/PageCount"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="0dp"
-            android:layout_toEndOf="@+id/customPagesText"
+            android:layout_toEndOf="@+id/PageCount"
             android:background="@drawable/ripple_effect"
+            android:visibility="invisible"
             app:srcCompat="@drawable/downarrow" />
 
         <ImageView
@@ -72,9 +73,9 @@
             android:id="@+id/pdfDone"
             android:layout_width="160dp"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/viewPdfBtn"
+            android:layout_below="@+id/textView12"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="25dp"
+            android:layout_marginTop="24dp"
             android:text="@string/DonePageBtn"
             android:textColor="#000000"
             android:textSize="22sp"
@@ -112,10 +113,10 @@
             android:id="@+id/textView3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/textView"
+            android:layout_below="@+id/pdfpageimg"
             android:layout_alignParentStart="false"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="160dp"
+            android:layout_marginTop="30dp"
             android:text="@string/select_color_format"
             android:textColor="#85000000"
             android:textSize="18sp"
@@ -186,7 +187,7 @@
             android:ems="10"
             android:hint="@string/Copies"
             android:inputType="number"
-            android:text="0"
+            android:text="1"
             android:textAlignment="center"
             android:textColor="#000000"
             android:textSize="16sp"
@@ -293,21 +294,23 @@
             android:layout_height="35dp"
             android:layout_alignStart="@+id/sizeSpinner"
             android:layout_alignTop="@+id/textView20"
+            android:layout_alignEnd="@+id/orientationSpinner"
             android:layout_alignBottom="@+id/textView20"
             android:layout_marginStart="0dp"
             android:layout_marginTop="0dp"
+            android:layout_marginEnd="0dp"
             android:layout_marginBottom="0dp"
             android:text="ToggleButton"
             android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="@+id/textView20"
-            app:layout_constraintStart_toStartOf="@+id/customPagesText"
+            app:layout_constraintStart_toStartOf="@+id/customValue1"
             app:layout_constraintTop_toTopOf="@+id/textView20" />
 
         <TextView
             android:id="@+id/textView12"
             android:layout_width="160dp"
             android:layout_height="35dp"
-            android:layout_below="@+id/textView20"
+            android:layout_below="@+id/PageCount"
             android:layout_alignStart="@+id/textView20"
             android:layout_alignEnd="@+id/textView20"
             android:layout_marginStart="0dp"
@@ -320,26 +323,28 @@
             android:textColor="#3D3D3D"
             android:textSize="16sp"
             android:textStyle="bold"
+            android:visibility="visible"
             app:layout_constraintEnd_toEndOf="@+id/textView8"
             app:layout_constraintStart_toStartOf="@+id/textView8"
             app:layout_constraintTop_toBottomOf="@+id/textView8" />
 
 
         <EditText
-            android:id="@+id/customPagesText"
-            android:layout_width="110dp"
-            android:layout_height="35dp"
+            android:id="@+id/customValue1"
+            android:layout_width="40dp"
+            android:layout_height="37dp"
             android:layout_alignStart="@+id/bothSidesToggle"
             android:layout_alignTop="@+id/textView12"
             android:layout_alignBottom="@+id/textView12"
             android:layout_marginStart="0dp"
             android:layout_marginTop="0dp"
             android:layout_marginBottom="0dp"
-            android:ems="10"
-            android:hint="1-3,4,6,8,etc."
-            android:inputType="textPersonName"
-            android:textSize="14sp"
             android:digits="0123456789,-"
+            android:ems="10"
+            android:hint="1,4,6,etc."
+            android:inputType="number"
+            android:textSize="12sp"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="@+id/textView12"
             app:layout_constraintStart_toStartOf="@+id/sizeSpinner"
             app:layout_constraintTop_toTopOf="@+id/textView12"
@@ -349,7 +354,7 @@
             android:id="@+id/viewPdfBtn"
             android:layout_width="wrap_content"
             android:layout_height="35dp"
-            android:layout_below="@+id/textView12"
+            android:layout_below="@+id/textView20"
             android:layout_alignStart="@+id/textView12"
             android:layout_alignEnd="@+id/textView12"
             android:layout_marginStart="0dp"
@@ -362,9 +367,9 @@
             android:id="@+id/PageCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignStart="@+id/customPagesText"
+            android:layout_alignStart="@+id/customValue1"
             android:layout_alignTop="@+id/viewPdfBtn"
-            android:layout_alignEnd="@+id/customPagesText"
+            android:layout_alignEnd="@+id/bothSidesToggle"
             android:layout_alignBottom="@+id/viewPdfBtn"
             android:layout_marginStart="0dp"
             android:layout_marginTop="0dp"
@@ -376,6 +381,58 @@
             android:textAlignment="center"
             android:textColor="#000000"
             android:textSize="14sp" />
+
+        <EditText
+            android:id="@+id/customValue2"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/customValue1"
+            android:layout_alignEnd="@+id/PageCount"
+            android:layout_alignBottom="@+id/customValue1"
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginBottom="1dp"
+            android:ems="10"
+            android:hint="1,3,4,5,etc"
+            android:inputType="number"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/textView19"
+            android:layout_width="25dp"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/customValue1"
+            android:layout_alignBottom="@id/customValue1"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="4dp"
+            android:layout_marginBottom="0dp"
+            android:layout_toStartOf="@id/customValue2"
+            android:layout_toEndOf="@+id/customValue1"
+            android:padding="5dp"
+            android:text="to"
+            android:textAlignment="center" />
+
+
+        <com.github.barteksc.pdfviewer.PDFView
+            android:id="@+id/viewPDF"
+            android:layout_width="match_parent"
+            android:layout_height="680dp"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="0dp"
+            android:visibility="invisible" />
+
+<!--        <WebView-->
+<!--            android:id="@+id/webView"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:layout_alignBottom="@+id/pdfDone"-->
+<!--            android:layout_alignParentTop="true"-->
+<!--            android:layout_centerHorizontal="true"-->
+<!--            android:layout_marginTop="10dp"-->
+<!--            android:layout_marginBottom="0dp"-->
+<!--            android:visibility="invisible"-->
+<!--            tools:ignore="WebViewLayout" />-->
 
     </RelativeLayout>
 </ScrollView>

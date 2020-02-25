@@ -68,32 +68,32 @@
             android:id="@+id/emailTV"
             android:layout_width="260dp"
             android:layout_height="46dp"
-            android:layout_below="@+id/nameTV"
-            android:layout_alignStart="@+id/nameTV"
-            android:layout_alignEnd="@+id/nameTV"
+            android:layout_below="@+id/view11"
+            android:layout_centerHorizontal="true"
             android:layout_marginStart="0dp"
-            android:layout_marginTop="34dp"
+            android:layout_marginTop="30dp"
             android:layout_marginEnd="0dp"
             android:background="@drawable/textfield"
             android:hint="New Email"
             android:paddingLeft="20dp"
             android:textColor="#000000"
-            android:textColorHint="#808080" />
+            android:textColorHint="#808080"
+            android:inputType="textEmailAddress"/>
 
-        <AutoCompleteTextView
-            android:id="@+id/nameTV"
-            android:layout_width="260dp"
-            android:layout_height="46dp"
-            android:layout_below="@+id/view11"
+<!--        <AutoCompleteTextView-->
+<!--            android:id="@+id/nameTV"-->
+<!--            android:layout_width="260dp"-->
+<!--            android:layout_height="46dp"-->
+<!--            android:layout_below="@+id/view11"-->
 
-            android:layout_centerHorizontal="true"
-            android:layout_marginStart="75dp"
-            android:layout_marginTop="34dp"
-            android:background="@drawable/textfield"
-            android:hint="New Name"
-            android:paddingLeft="20dp"
-            android:textColor="#000000"
-            android:textColorHint="#808080" />
+<!--            android:layout_centerHorizontal="true"-->
+<!--            android:layout_marginStart="75dp"-->
+<!--            android:layout_marginTop="34dp"-->
+<!--            android:background="@drawable/textfield"-->
+<!--            android:hint="New Name"-->
+<!--            android:paddingLeft="20dp"-->
+<!--            android:textColor="#000000"-->
+<!--            android:textColorHint="#808080" />-->
 
         <AutoCompleteTextView
             android:id="@+id/numTV"
@@ -109,7 +109,8 @@
             android:hint="New Number"
             android:paddingLeft="20dp"
             android:textColor="#000000"
-            android:textColorHint="#808080" />
+            android:textColorHint="#808080"
+            android:inputType="number"/>
 
         <Button
             android:id="@+id/changeInfoBtn"

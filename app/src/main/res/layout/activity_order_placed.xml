@@ -49,11 +49,29 @@
             android:layout_alignStart="@+id/circularProgressBar"
             android:layout_alignEnd="@+id/circularProgressBar"
             android:layout_alignBottom="@+id/circularProgressBar"
+            android:layout_centerHorizontal="true"
             android:layout_marginStart="0dp"
-            android:layout_marginTop="2dp"
+            android:layout_marginTop="0dp"
             android:layout_marginEnd="0dp"
             android:layout_marginBottom="0dp"
+            android:layout_toEndOf="@+id/status3"
             android:background="@drawable/orderprogressback" />
+
+        <com.mikhaellopez.circularprogressbar.CircularProgressBar
+            android:id="@+id/circularProgressBar"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_below="@+id/status2"
+            android:layout_centerHorizontal="true"
+            android:layout_marginStart="106dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginEnd="102dp"
+            app:cpb_background_progressbar_color="#b6bbd8"
+            app:cpb_background_progressbar_width="8dp"
+            app:cpb_progress_direction="to_right"
+            app:cpb_progressbar_color="#3f51b5"
+            app:cpb_progressbar_width="10dp"
+            app:cpb_round_border="false" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -76,31 +94,13 @@
                 android:layout_marginTop="20dp"
                 android:layout_marginEnd="20dp"
                 android:padding="5dp"
-                android:text="@string/_12"
+                android:text="15%"
                 android:textAlignment="center"
                 android:textColor="#252323"
                 android:textColorLink="#C8000000"
                 android:textSize="18sp"
                 android:textStyle="bold" />
         </RelativeLayout>
-
-        <com.mikhaellopez.circularprogressbar.CircularProgressBar
-            android:id="@+id/circularProgressBar"
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:layout_below="@+id/status2"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginStart="106dp"
-            android:layout_marginTop="2dp"
-            android:layout_marginEnd="102dp"
-            app:cpb_background_progressbar_color="#b6bbd8"
-            app:cpb_background_progressbar_width="8dp"
-            app:cpb_progress_direction="to_right"
-            app:cpb_progressbar_color="#3f51b5"
-            app:cpb_progressbar_width="10dp"
-            app:cpb_round_border="false" />
 
         <View
             android:id="@+id/OrderDetailsView"

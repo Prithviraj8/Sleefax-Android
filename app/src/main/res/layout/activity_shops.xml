@@ -106,10 +106,25 @@
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/OrderPrice"
+            android:id="@+id/paymentTV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/ConfirmOrderTV"
+            android:layout_alignStart="@+id/confirmView"
+            android:layout_alignEnd="@+id/confirmView"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="0dp"
+            android:padding="2dp"
+            android:text=" Payment mode: Pay On Pickup. Other modes of payment coming soon."
+            android:textColor="#252424"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/OrderPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/paymentTV"
             android:layout_alignStart="@+id/ConfirmOrderTV"
             android:layout_alignEnd="@+id/ConfirmOrderTV"
             android:layout_marginStart="0dp"
@@ -139,6 +154,8 @@
             android:layout_marginStart="0dp"
             android:layout_marginTop="0dp"
             android:text="No" />
+
+
 
     </RelativeLayout>
 

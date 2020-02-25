@@ -59,7 +59,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/textView20"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="30dp"
             android:layout_marginBottom="10dp"
             android:padding="10dp"
             android:text="Done"
@@ -356,6 +356,7 @@
             android:layout_toEndOf="@+id/textView20"
             android:background="@drawable/roundbutton"
             android:contentDescription="TODO"
+            android:visibility="invisible"
             app:srcCompat="@drawable/downarrow" />
 
     </RelativeLayout>

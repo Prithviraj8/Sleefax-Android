@@ -18,6 +18,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <View
+            android:id="@+id/view"
             android:layout_width="match_parent"
             android:layout_height="285dp"
             android:layout_alignParentStart="true"
@@ -54,6 +55,67 @@
             android:clickable="true">
 
         </Button>
+
+        <RelativeLayout
+            android:id="@+id/OrderRelativeL"
+            android:layout_width="match_parent"
+            android:layout_height="219dp"
+            android:layout_below="@+id/view"
+            android:layout_marginTop="20dp">
+
+            <TextView
+                android:id="@+id/currentOrderID"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/currentOrderStatusBar"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="5dp"
+                android:text="Order id"
+                android:textColor="#BA000000"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/currentOrderDateTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/currentOrderID"
+                android:layout_alignStart="@+id/currentOrderID"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="5dp"
+                android:text="OrderDateTime"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/currentOrderPrice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/currentOrderDateTime"
+                android:layout_alignStart="@+id/currentOrderDateTime"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="5dp"
+                android:text="Price" />
+
+            <com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar
+                android:id="@+id/currentOrderStatusBar"
+                android:layout_width="300dp"
+                android:layout_height="59dp"
+                android:layout_below="@+id/currentOrderPrice"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp" />
+
+            <TextView
+                android:id="@+id/currentOrderStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/currentOrderStatusBar"
+                android:layout_alignStart="@+id/currentOrderStatusBar"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="5dp"
+                android:text="@string/OrderStatus" />
+        </RelativeLayout>
 
         <ImageButton
             android:id="@+id/YourOrders"
