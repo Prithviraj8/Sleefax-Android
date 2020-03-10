@@ -33,6 +33,7 @@ public class settings extends AppCompatActivity {
 //                Intent intent = new Intent(settings.this,Select.class);
 //                startActivity(intent);
                 finish();
+                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
             }
         });
 
@@ -41,6 +42,7 @@ public class settings extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(settings.this,changeInfoPopUp.class);
                 startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             }
         });
 
@@ -94,6 +96,7 @@ public class settings extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(settings.this,ReportIssue.class);
                 startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
 
             }
         });
@@ -114,6 +117,7 @@ public class settings extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(settings.this,Feedback.class);
                 startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
             }
         });
 
@@ -122,8 +126,9 @@ public class settings extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-//        Intent intent = new Intent(settings.this,Select.class);
-//        startActivity(intent);
+        Intent intent = new Intent(settings.this,Select.class);
+        startActivity(intent);
         finish();
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
 }

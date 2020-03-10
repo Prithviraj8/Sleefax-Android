@@ -40,11 +40,8 @@ public class FlashActivity extends AppCompatActivity {
 
 
         Intent intent = getIntent();
-// Get the action of the intent
         String action = intent.getAction();
-// Get the type of intent (Text or Image)
         String type = intent.getType();
-// When Intent's action is 'ACTION+SEND' and Tyoe is not null
         if (Intent.ACTION_SEND_MULTIPLE.equals(action) || Intent.ACTION_SEND.equals(action) && type != null ) {
             handleSendData(intent); // Handle single image being sent
         }else {
@@ -60,70 +57,8 @@ public class FlashActivity extends AppCompatActivity {
             CharSequence text = "No Orders to show";
             int duration = Toast.LENGTH_SHORT;
             Toast toast = Toast.makeText(context, text, duration);
-            getOrders();
         }
 
-    }
-
-    public void getOrders(){
-
-        final ArrayList<String> orderkey = new ArrayList<>();
-        final ArrayList<String> shopKey = new ArrayList<>();
-
-//        setProgressForOrder();
-
-        ref.child("users").child(userId).child("Orders").addChildEventListener(new ChildEventListener() {
-
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-                shopKey.add(dataSnapshot.getKey());
-                Log.d("USERID",userId);
-                Log.d("ORDERCOUNT ", String.valueOf(dataSnapshot.getChildrenCount()));
-
-                cnt = dataSnapshot.getChildrenCount()+cnt;
-                Log.d("ORDERCOUNT ", String.valueOf((cnt)));
-
-//                for(DataSnapshot order : dataSnapshot.getChildren()){
-//                    orderkey.add(order.getKey());
-//                }
-                if (cnt == 0) {
-//                    toast.show();
-                    mProgressDialog.dismiss();
-                } else {
-
-                    Intent intent = new Intent(FlashActivity.this, YourOrders.class);
-                    Bundle extras = new Bundle();
-                    extras.putLong("Orders Count", cnt);
-                    extras.putBoolean("NotificationPressed",true);
-                    intent.putExtras(extras);
-                    startActivity(intent);
-                    mProgressDialog.dismiss();
-                    finish();
-
-                }
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
     }
 
 

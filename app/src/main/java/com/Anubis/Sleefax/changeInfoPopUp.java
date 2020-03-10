@@ -24,7 +24,7 @@ public class changeInfoPopUp extends AppCompatActivity {
 
     final FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference ref = database.getReference();
-    String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+    String userId;
 
 
     TextView email,name,num;
@@ -34,12 +34,15 @@ public class changeInfoPopUp extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_change_info_pop_up);
 
+        if(FirebaseAuth.getInstance().getCurrentUser() != null){
+            userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        }
 
         back = findViewById(R.id.back);
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(changeInfoPopUp.this,settings.class);
+                Intent intent = new Intent(changeInfoPopUp.this,Select.class);
                 startActivity(intent);
                 finish();
             }

@@ -111,6 +111,7 @@
                 <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
             </intent-filter>
         </activity>
+        <service android:name=".Select$notificationService" />
 
         <service
             android:name=".Services.MyFirebaseMessagingService"
@@ -119,6 +120,12 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
+        <meta-data
+
+            android:name="com.razorpay.ApiKey"
+            android:value="rzp_test_VVGChG6ThLrzyS" />
+
     </application>
 
 </manifest>

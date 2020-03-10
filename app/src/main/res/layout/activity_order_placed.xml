@@ -29,77 +29,48 @@
         <View
             android:id="@+id/view9"
             android:layout_width="match_parent"
-            android:layout_height="491dp"
-            android:layout_below="@+id/status4"
+            android:layout_height="406dp"
             android:layout_alignParentStart="true"
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:layout_marginStart="0dp"
-            android:layout_marginTop="17dp"
             android:layout_marginEnd="0dp"
             android:layout_marginBottom="0dp"
             android:background="@drawable/pageview" />
 
-        <View
-            android:id="@+id/view10"
-            android:layout_width="wrap_content"
-            android:layout_height="175dp"
-            android:layout_below="@+id/status2"
-            android:layout_alignStart="@+id/circularProgressBar"
-            android:layout_alignEnd="@+id/circularProgressBar"
-            android:layout_alignBottom="@+id/circularProgressBar"
-            android:layout_centerHorizontal="true"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="0dp"
-            android:layout_marginEnd="0dp"
-            android:layout_marginBottom="0dp"
-            android:layout_toEndOf="@+id/status3"
-            android:background="@drawable/orderprogressback" />
-
-        <com.mikhaellopez.circularprogressbar.CircularProgressBar
-            android:id="@+id/circularProgressBar"
+        <RelativeLayout
             android:layout_width="200dp"
             android:layout_height="200dp"
-            android:layout_below="@+id/status2"
+            android:layout_above="@+id/view9"
             android:layout_centerHorizontal="true"
-            android:layout_marginStart="106dp"
-            android:layout_marginTop="2dp"
-            android:layout_marginEnd="102dp"
-            app:cpb_background_progressbar_color="#b6bbd8"
-            app:cpb_background_progressbar_width="8dp"
-            app:cpb_progress_direction="to_right"
-            app:cpb_progressbar_color="#3f51b5"
-            app:cpb_progressbar_width="10dp"
-            app:cpb_round_border="false" />
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignStart="@+id/view10"
-            android:layout_alignTop="@+id/view10"
-            android:layout_alignEnd="@+id/view10"
-            android:layout_alignBottom="@+id/view10"
             android:layout_marginStart="0dp"
-            android:layout_marginTop="0dp"
             android:layout_marginEnd="0dp"
-            android:layout_marginBottom="0dp">
+            android:layout_marginBottom="-60dp"
+            android:background="@drawable/orderprogressback">
+
+            <com.mikhaellopez.circularprogressbar.CircularProgressBar
+                android:id="@+id/circularProgressBar"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_centerInParent="true"
+                app:cpb_background_progressbar_color="#b6bbd8"
+                app:cpb_background_progressbar_width="8dp"
+                app:cpb_progress_direction="to_right"
+                app:cpb_progressbar_color="#3f51b5"
+                app:cpb_progressbar_width="10dp"
+                app:cpb_round_border="false" />
 
             <TextView
-                android:id="@+id/statusPercent"
-                android:layout_width="106dp"
-                android:layout_height="wrap_content"
+                android:id="@+id/orderStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="31dp"
                 android:layout_centerInParent="true"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginEnd="20dp"
                 android:padding="5dp"
-                android:text="15%"
+                android:text="Placing Order"
                 android:textAlignment="center"
-                android:textColor="#252323"
-                android:textColorLink="#C8000000"
-                android:textSize="18sp"
-                android:textStyle="bold" />
+                android:textSize="12sp"
+                android:visibility="visible" />
         </RelativeLayout>
 
         <View
@@ -118,9 +89,6 @@
             android:id="@+id/status1"
             android:layout_width="wrap_content"
             android:layout_height="26dp"
-            android:layout_below="@+id/circularProgressBar"
-            android:layout_alignStart="@+id/circularProgressBar"
-            android:layout_alignEnd="@+id/circularProgressBar"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="7dp"
             android:background="@drawable/status_views"
@@ -144,25 +112,6 @@
             android:layout_marginBottom="0dp"
             android:background="#00FFFFFF"
             android:src="@drawable/w" />
-
-        <TextView
-            android:id="@+id/status2"
-            android:layout_width="wrap_content"
-            android:layout_height="31dp"
-            android:layout_below="@+id/topview"
-            android:layout_centerHorizontal="true"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginBottom="0dp"
-            android:background="@drawable/status_views"
-            android:padding="5dp"
-            android:text="Placing Order"
-            android:textAlignment="center"
-            android:textSize="12sp"
-            android:visibility="visible" />
 
         <ImageButton
             android:id="@+id/helpbtn"
@@ -191,19 +140,15 @@
 
         <ImageButton
             android:id="@+id/Directions"
-            android:layout_width="50dp"
-            android:layout_height="60dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_alignTop="@+id/view9"
             android:layout_alignParentEnd="true"
             android:layout_marginTop="50dp"
             android:layout_marginEnd="40dp"
             android:background="#00000000"
             android:shadowColor="#EC1212"
-            android:shadowDx="1"
-            android:shadowDy="3"
-            android:shadowRadius="10"
-            android:src="@drawable/directionsbtn"
-            android:textSize="18sp" />
+            android:src="@drawable/directionsbtn" />
 
         <TextView
             android:id="@+id/textView10"
@@ -228,7 +173,6 @@
             android:id="@+id/status4"
             android:layout_width="93dp"
             android:layout_height="32dp"
-            android:layout_alignTop="@+id/circularProgressBar"
             android:layout_alignParentEnd="true"
             android:layout_marginStart="19dp"
             android:layout_marginLeft="8dp"
@@ -240,17 +184,15 @@
             android:text="Order ready"
             android:textAlignment="center"
             android:textSize="12sp"
-            android:visibility="invisible" />
+            android:visibility="gone" />
 
         <ImageButton
             android:id="@+id/callBtn"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_alignTop="@+id/Directions"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_alignBottom="@+id/Directions"
             android:layout_alignParentStart="true"
             android:layout_marginStart="40dp"
-            android:layout_marginTop="0dp"
             android:layout_marginBottom="0dp"
             android:background="@drawable/callbtn"
             android:text="Button" />
@@ -259,7 +201,6 @@
             android:id="@+id/status3"
             android:layout_width="93dp"
             android:layout_height="37dp"
-            android:layout_alignTop="@+id/circularProgressBar"
             android:layout_alignBottom="@+id/status4"
             android:layout_alignParentStart="true"
             android:layout_marginStart="6dp"
@@ -271,12 +212,12 @@
             android:text="In process"
             android:textAlignment="center"
             android:textSize="12sp"
-            android:visibility="invisible" />
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/textView21"
-            android:layout_width="150dp"
-            android:layout_height="35dp"
+            android:layout_width="120dp"
+            android:layout_height="30dp"
             android:layout_below="@+id/Directions"
             android:layout_alignParentEnd="true"
             android:layout_marginTop="5dp"
@@ -288,8 +229,8 @@
 
         <TextView
             android:id="@+id/textView22"
-            android:layout_width="150dp"
-            android:layout_height="35dp"
+            android:layout_width="120dp"
+            android:layout_height="30dp"
             android:layout_alignTop="@+id/textView21"
             android:layout_alignBottom="@+id/textView21"
             android:layout_alignParentStart="true"

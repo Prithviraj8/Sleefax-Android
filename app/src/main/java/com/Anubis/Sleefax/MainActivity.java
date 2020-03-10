@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity  {
     long num;
 
 
-    Button signUp, signIn,privacypolicy;
+    Button addFilesBtn, signIn,privacypolicy;
 
 //    String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 //    ShopInfo info = new ShopInfo();
@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity  {
 
 
 
-        signUp = findViewById(R.id.signUp_btn);
+        addFilesBtn = findViewById(R.id.AddfilesBtn);
         signIn = findViewById(R.id.signIn_Btn);
         privacypolicy = findViewById(R.id.privacypolicyBtn);
 
@@ -85,32 +85,17 @@ public class MainActivity extends AppCompatActivity  {
             }
         });
 
-//        if(FirebaseApp.getApps(this).size() == 1) {
-//            FirebaseApp.initializeApp(MainActivity.this /* Context */, options, "Stores");
-//        }
 
-        Log.d("USERRRRR", String.valueOf(FirebaseAuth.getInstance().getCurrentUser()));
-
-//        if(FirebaseAuth.getInstance().getCurrentUser() != null){
-//            userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-//            email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
-//            getCurrentUserInfo(userId);
-//
-//            if(username == null) {
-//                Log.d("USERNAME", FirebaseAuth.getInstance().getCurrentUser().getEmail());
-//            }
-//
-//        }
-
-
-        signUp.setOnClickListener(new View.OnClickListener() {
+        addFilesBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this,SignInActivity.class);
-                Bundle extras = new Bundle();
-                extras.putBoolean("SignUp",true);
-                intent.putExtras(extras);
-                startActivity(intent);
+                if(FirebaseAuth.getInstance().getCurrentUser() == null) {
+                    Intent intent = new Intent(MainActivity.this, Select.class);
+                    Bundle extras = new Bundle();
+                    extras.putBoolean("NewUser", true);
+                    intent.putExtras(extras);
+                    startActivity(intent);
+                }
             }
         });
 
@@ -121,127 +106,15 @@ public class MainActivity extends AppCompatActivity  {
                 Intent intent = new Intent(MainActivity.this,SignInActivity.class);
                 Bundle extras = new Bundle();
                 extras.putBoolean("SignUp",false);
+                extras.putBoolean("NewUser", false);
+
                 intent.putExtras(extras);
                 startActivity(intent);
             }
         });
 
-//      createNotificationChannel();
-        askPermissions();
-        if (userId != null) {
-//            setProgressForOrder();
-        }
     }
 
-    int isUser=0;
-    private void getCurrentUserInfo(final String userId){
-
-        ref.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-                isUser++;
-                Log.d("ISUSER",String.valueOf(isUser));
-                if(dataSnapshot.hasChild(userId)){
-                    Log.d("ALREADY","THERE");
-                    ref.child("users").child(userId).addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            for(DataSnapshot info:dataSnapshot.getChildren()){
-                                Log.d("INFOOO",info.getValue().toString());
-
-                                if(info.getKey().equals("name")){
-                                    username = info.getValue().toString();
-                                }
-
-                                if(info.getKey().equals("email")){
-                                    email = info.getValue().toString();
-                                }
-
-                                if(info.getKey().equals("num")){
-                                    num = Long.parseLong(info.getValue().toString());
-                                }
-
-                            }
-
-                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-
-//                                    Log.d("USER",username);
-//                                    Log.d("EMAIL",email);
-//                                    Log.d("NUM",String.valueOf(num));
-                                    if(username != null && email != null && num > 0) {
-                                        Intent intent = new Intent(MainActivity.this, Select.class);
-                                        startActivity(intent);
-                                        finish();
-                                    }else {
-                                        Toast.makeText(getApplicationContext(),"Hmmm! It seems some of your information is missing",Toast.LENGTH_SHORT).show();
-                                        Intent intent = new Intent(MainActivity.this, FirstNameActivity.class);
-                                        intent.putExtra("Email",email);
-                                        startActivity(intent);
-                                        finish();
-                                    }
-                                }
-                            },200);
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                        }
-                    });
-                }else
-                if(isUser == 6){
-                    Log.d("NOT","THERE");
-                    Toast.makeText(getApplicationContext(),"Hmmm! It seems some of your information is missing",Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(MainActivity.this, FirstNameActivity.class);
-                    intent.putExtra("Email",email);
-                    startActivity(intent);
-                   finish();
-                }
-//                else{
-////
-//                }
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-    private void askPermissions() {
-
-//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-//            // Permission is not granted
-//            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-//            Log.d("EXTERNAL ", String.valueOf(PackageManager.PERMISSION_DENIED));
-//        }
-
-
-
-//        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED) {
-//            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_SMS, Manifest.permission.RECEIVE_SMS}, 101);
-//        }
-
-    }
 
     private void createNotificationChannel() {
         // Create the NotificationChannel, but only on API 26+ because

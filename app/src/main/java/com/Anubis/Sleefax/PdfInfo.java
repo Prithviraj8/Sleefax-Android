@@ -29,6 +29,8 @@ import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import com.github.barteksc.pdfviewer.PDFView;
+import com.github.barteksc.pdfviewer.listener.OnLoadCompleteListener;
+import com.github.barteksc.pdfviewer.listener.OnPageErrorListener;
 import com.github.barteksc.pdfviewer.scroll.DefaultScrollHandle;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -43,7 +45,7 @@ public class PdfInfo extends AppCompatActivity {
 
     final FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference ref = database.getReference();
-    String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+    String userId;
     int ShopsCnt=0;
 
 //    String colorType;
@@ -66,11 +68,11 @@ public class PdfInfo extends AppCompatActivity {
     String colour, pagesize;
     ArrayList<String> pdfURL = new ArrayList<>();
     EditText copies,pageCount;
-    String URI = new String();
+    String URI = "";
     String fileType, orientation,fileName;
     String username,email,custom,shopType;
     boolean bothSides = false;
-    boolean isTester;
+    boolean isTester,newUser;
 
     ArrayList<String> storeID = new ArrayList<>();
 
@@ -121,7 +123,11 @@ public class PdfInfo extends AppCompatActivity {
         resultCode = extras.getInt("ResultCode");
         numberOfPages = extras.getInt("Pages");
         isTester = extras.getBoolean("IsTester");
+        newUser = extras.getBoolean("NewUser");
 
+        if(!newUser){
+            userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        }
         if(isTester){
             shopType = "TestStores";
         }else{
@@ -140,13 +146,9 @@ public class PdfInfo extends AppCompatActivity {
 
         bothSidePrint.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    // The toggle is enabled
-                    bothSides = true;
-                } else {
-                    // The toggle is disabled
-                    bothSides = false;
-                }
+                // The toggle is enabled
+                // The toggle is disabled
+                bothSides = isChecked;
             }
         });
 
@@ -158,84 +160,13 @@ public class PdfInfo extends AppCompatActivity {
         scrollDown.setOnClickListener(BtnListener);
         viewPdf.setOnClickListener(BtnListener);
 
-
-
-
-
-//        colorsTV.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//
-////                GradientDrawable gd = new GradientDrawable(
-////                        GradientDrawable.Orientation.LEFT_RIGHT,
-////                        new int[] {0xFA9A0A,0xD15DF8});
-//
-//                Log.d("Colors","Pressed");
-//                colour = "Colors";
-//                colorsTV.setBackgroundResource(R.drawable.colors_border);
-//                bwTV.setBackgroundResource(R.drawable.black_white_view_backgroud);
-//
-//                return false;
-//            }
-//        });
-//
-//        bwTV.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-////                GradientDrawable gd = new GradientDrawable(
-////                        GradientDrawable.Orientation.LEFT_RIGHT,
-////                        new int[] {0x000000,0x616061});
-//
-//                Log.d("Black/White","Pressed");
-//                colour = ("Black/White");
-//                bwTV.setBackgroundResource(R.drawable.b_w_border);
-//                colorsTV.setBackgroundResource(R.drawable.black_white_view_backgroud);
-//                return false;
-//            }
-//        });
-//
-//
-//        h.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View view, MotionEvent motionEvent) {
-//
-//                h.setBackgroundResource(R.drawable.orientation_after_clicked);
-//                v.setBackgroundResource(R.drawable.orientation);
-//                orientation = "h";
-//
-//                return false;
-//            }
-//        });
-//
-//        v.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View view, MotionEvent motionEvent) {
-//
-//                v.setBackgroundResource(R.drawable.orientation_after_clicked);
-//                h.setBackgroundResource(R.drawable.orientation);
-//                orientation = "v";
-//                return false;
-//            }
-//        });
-
-
+        Log.d("PDFVISIBLE",String.valueOf(pdfView.VISIBLE));
 
     }
 
     private View.OnTouchListener touchListener = new View.OnTouchListener() {
         public boolean onTouch(View view, MotionEvent motionEvent) {
 
-//            if(view == findViewById(R.id.h)){
-//                h.setBackgroundResource(R.drawable.orientation_after_clicked);
-//                v.setBackgroundResource(R.drawable.orientation);
-//                orientation = "h";
-//
-//            }
-//            if(view == findViewById(R.id.v)){
-//                v.setBackgroundResource(R.drawable.orientation_after_clicked);
-//                h.setBackgroundResource(R.drawable.orientation);
-//                orientation = "v";
-//            }
             if(view == findViewById(R.id.Pdf_Black_White)){
 
                 colour = ("Black/White");
@@ -262,8 +193,8 @@ public class PdfInfo extends AppCompatActivity {
 
 
             if(v == findViewById(R.id.back)) {
-                Intent intent1 = new Intent(PdfInfo.this, Select.class);
-                startActivity(intent1);
+//                Intent intent1 = new Intent(PdfInfo.this, Select.class);
+//                startActivity(intent1);
                 finish();
             }
 
@@ -311,30 +242,9 @@ public class PdfInfo extends AppCompatActivity {
                 }
 
 
-//                Log.d("PAGESIZE",pagesize);
-//                Log.d("CUSTOM",custom);
-//                Log.d("ORIENTATION",orientation);
-//                Log.d("COLOR",colour);
-//                Log.d("COPY", String.valueOf(copy));
-//                Log.d("BOTHSIDES", String.valueOf(bothSides));
-
-//                if (custom.equals("All")) {
-//                    if (!pageCount.getText().toString().equals("")) {
-//                        numberOfPages = Integer.parseInt(pageCount.getText().toString());
-//                        new findShops().execute();
-//                    }else{
-//                        alertBox("Please view your pdf and provide a page number till which you need a printout.\n For the entire pdf to be printed , specify the number of the last page.");
-//                    }
-//                } else {
-//
-////                    if(custom.contains("/")|| custom.contains("/") || custom.contains("_")||)
-//                    new findShops().execute();
-//                }
-
-
                 if(custValue2 == 1 && custValue1 == 1){
                     Log.d("NO CUSTOM","YES");
-                  alertBox("Please view your pdf and provide a page number till which you need a printout.\n For the entire pdf to be printed , specify the number of the last page.");
+//                  alertBox("Please view your pdf and provide a page number till which you need a printout.\n For the entire pdf to be printed , specify the number of the last page.");
                   custom = "All";
                 }else if(custValue1 != 1 && custValue2 != 1){
                     Log.d("CUSTOM","BOTH TV");
@@ -367,13 +277,13 @@ public class PdfInfo extends AppCompatActivity {
                 if(custom != "All") {
                     Log.d("CUSTOM","ALL");
                 }else{
-
-                    if (!pageCount.getText().toString().equals("")) {
-                        numberOfPages = Integer.parseInt(pageCount.getText().toString());
-                        new findShops().execute();
-                    } else {
-                        alertBox("Please view your pdf and provide a page number till which you need a printout.\n For the entire pdf to be printed , specify the number of the last page.");
-                    }
+                    new findShops().execute();
+//                    if (!pageCount.getText().toString().equals("")) {
+////                        numberOfPages = Integer.parseInt(pageCount.getText().toString());
+//                        new findShops().execute();
+//                    } else {
+//                        alertBox("Please view your pdf and provide a page number till which you need a printout.\n For the entire pdf to be printed , specify the number of the last page.");
+//                    }
                 }
             }
 
@@ -396,20 +306,36 @@ public class PdfInfo extends AppCompatActivity {
                 pdfView.fromUri(Uri.parse(pdf_url))
                         .enableSwipe(true)
                         .enableAnnotationRendering(true)
-                        .scrollHandle(new DefaultScrollHandle(PdfInfo.this))
+                        .scrollHandle(new DefaultScrollHandle(getApplicationContext()))
+                        .enableDoubletap(true)
+                        .onPageError(new OnPageErrorListener() {
+                            @Override
+                            public void onPageError(int page, Throwable t) {
+                                Log.d("PAGE ERROR",String.valueOf(page));
+                                Log.d("ERROR IS",String.valueOf(t));
+                            }
+                        })
+                        .onLoad(new OnLoadCompleteListener() {
+                            @Override
+                            public void loadComplete(int nbPages) {
+                                Log.d("PDFNOP", String.valueOf(pdfView.getPageCount()));
+                                numberOfPages = pdfView.getPageCount();
+                            }
+                        })
                         .load();
 
-                Log.d("PDFNOP", String.valueOf(pdfView.getPageCount()));
             }
         }
     };
 
     @Override
     public void onBackPressed() {
-        viewPdf.setVisibility(View.VISIBLE);
-        bothSidePrint.setVisibility(View.VISIBLE);
-        done.setVisibility(View.VISIBLE);
-        pdfView.setVisibility(View.INVISIBLE);
+        if(pdfView.VISIBLE == 0){
+            viewPdf.setVisibility(View.VISIBLE);
+            bothSidePrint.setVisibility(View.VISIBLE);
+            done.setVisibility(View.VISIBLE);
+            pdfView.setVisibility(View.INVISIBLE);
+        }
 
     }
 
@@ -499,6 +425,9 @@ public class findShops extends AsyncTask<Void,Void,Integer>{
                         extras.putInt("RequestCode", requestCode);
                         extras.putInt("ResultCode", resultCode);
                         extras.putBoolean("BothSides", bothSides);
+                        extras.putBoolean("NewUser",newUser);
+
+
                         if(custom == "All"){
                             extras.putString("Custom", "All");
                         }else {

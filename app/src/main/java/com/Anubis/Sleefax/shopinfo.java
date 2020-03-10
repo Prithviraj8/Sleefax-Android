@@ -1,14 +1,14 @@
 package com.Anubis.Sleefax;
 
 public class shopinfo{
-    public String  ShopsLocation,ShopName,orderStatus,fileType,pageSize,orientation,custom,orderDateTime;
+    public String  ShopsLocation,ShopName,orderStatus,fileType,pageSize,orientation,custom,orderDateTime,paymentMode;
     public Double ShopLat,ShopLong;
-    public int files;
+    public int files,id;
     public double price;
     public long num;
-    public boolean P_Notified,RT_Notified,IP_Notified,R_Notified,bothSides;
+    public boolean P_Notified,RT_Notified,IP_Notified,R_Notified,D_Notified;
 
-    public shopinfo(String shopsLocation, String shopName, String orderStatus, Double ShopLat, Double ShopLong, long num, int files, String fileType, String pageSize, String orientation, double price, String custom,String orderDateTime, boolean P_Notified, boolean RT_Notified, boolean IP_Notified, boolean R_Notified) {
+    public shopinfo(String shopsLocation, String shopName, String orderStatus, Double ShopLat, Double ShopLong, long num, int files, String fileType, String pageSize, String orientation, double price, String custom, String orderDateTime, boolean P_Notified, boolean RT_Notified, boolean IP_Notified, boolean R_Notified,boolean D_Notified, String paymentMode, int id) {
         ShopsLocation = shopsLocation;
         ShopName = shopName;
         this.orderStatus = orderStatus;
@@ -26,7 +26,9 @@ public class shopinfo{
         this.RT_Notified = RT_Notified;
         this.IP_Notified = IP_Notified;
         this.R_Notified = R_Notified;
-//        this.bothSides = bothSides;
+        this.D_Notified = D_Notified;
+        this.paymentMode = paymentMode;
+        this.id = id;
 
     }
 

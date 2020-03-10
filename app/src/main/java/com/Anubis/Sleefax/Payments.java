@@ -8,10 +8,12 @@ import androidx.core.app.NotificationCompat;
 
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -22,8 +24,10 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.transition.TransitionInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -50,6 +54,10 @@ import com.paytm.pgsdk.PaytmClientCertificate;
 import com.paytm.pgsdk.PaytmOrder;
 import com.paytm.pgsdk.PaytmPGService;
 import com.paytm.pgsdk.PaytmPaymentTransactionCallback;
+import com.razorpay.Checkout;
+import com.razorpay.PaymentResultListener;
+
+import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -60,14 +68,16 @@ import java.util.Locale;
 import java.util.TreeMap;
 import java.util.UUID;
 
-public class Payments extends AppCompatActivity {
+public class Payments extends AppCompatActivity implements PaymentResultListener {
 
     final FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference ref = database.getReference();
     DatabaseReference storeDb = FirebaseDatabase.getInstance().getReference();
-    String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+    String userId;
 
     PaytmPGService Service = PaytmPGService.getProductionService();
+    private static final String TAG = MainActivity.class.getSimpleName();
+    private int shortAnimationDuration;
 
 
     String name,loc,orderKey,orderStatus,shopKey,fileType,pagesize,orientation,username,email;
@@ -82,18 +92,18 @@ public class Payments extends AppCompatActivity {
     int resultCode;
     int requestCode;
     double numberOfPages;
-    String color,custom,orderDateTime;
+    String color,custom,orderDateTime,paymentMode;
     String CHANNEL_ID = "UsersChannel",shopType;
-    boolean FromYourOrders =false, bothSides,isTester;
+    boolean FromYourOrders =false, bothSides,isTester,newUser;
     ArrayList<String> urls = new ArrayList<>();
     ArrayList<String> downloadUrls = new ArrayList<>();
 
     long usernum;
-    Button paytm,card,payOnPickup,upi;
+    Button paytm,otherPayments,payOnPickup,upi;
     TextView amount,tv;
     ProgressBar mProgress;
     View view3,orderProcessAnime;
-
+    ImageButton back;
 
     ArrayList<String> pageURL = new ArrayList<>();
 
@@ -102,13 +112,13 @@ public class Payments extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_payments);
 //        getSupportActionBar().hide();
-
+        shortAnimationDuration = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
         orderProcessAnime = findViewById(R.id.orderProcessAnime);
         view3 = findViewById(R.id.view3);
         mProgress = (ProgressBar) findViewById(R.id.circularProgressbar);
         tv = findViewById(R.id.tv);
-
+        back = findViewById(R.id.paymentBackBtn);
 
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
@@ -130,52 +140,50 @@ public class Payments extends AppCompatActivity {
         /////////////////////////////////////////////////Order info////////////////////////////////////////
 
 
-//        orderKey = extras.getString("OrderKey");
         fileType = extras.getString("FileType");
         pagesize = extras.getString("PageSize");
         orientation = extras.getString("Orientation");
-        username = extras.getString("Username");
-        email = extras.getString("email");
-        usernum = extras.getLong("UserNumber");
+
         shopNum = extras.getLong("ShopNum");
         urls = extras.getStringArrayList("URLS");
         copy = extras.getInt("Copies");
         color = extras.getString("ColorType");
         requestCode = extras.getInt("RequestCode");
         resultCode = extras.getInt("ResultCode");
-//        pageURL = extras.getStringArrayList("URLS");
         bothSides = extras.getBoolean("BothSides");
         custom = extras.getString("Custom");
         numberOfPages = extras.getDouble("Pages");
         isTester = extras.getBoolean("IsTester");
+        newUser = extras.getBoolean("NewUser");
 
-        if(isTester){
-            shopType = "TestStores";
+        if(!newUser) {
+            userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            getCurrentUserInfo();
+            Log.d("ISTESTER",String.valueOf(isTester));
+
+            if(isTester){
+                shopType = "TestStores";
+            }else{
+                shopType = "Stores";
+            }
+            //Gathering ids of pervious orders
+            getId();
+
         }else{
-            shopType = "Stores";
+            sendData();
         }
 
-
-//        paytm.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//                paytmPay(orderKey, userID,num,CHANNEL_ID,price,Service);
-//
-//
-//            }
-//        });
         paytm = findViewById(R.id.paytm);
         upi = findViewById(R.id.upi);
         payOnPickup = findViewById(R.id.pickup);
-        card = findViewById(R.id.card);
+        otherPayments = findViewById(R.id.otherPayments);
         amount = findViewById(R.id.amount);
         amount.setText(("₹"+price));
 
         upi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                payUsingUpi(String.valueOf(price),String.valueOf(shopNum)+"@paytm","Order","");
+                payUsingUpi(String.valueOf(price),"7875210665"+"@paytm","Order","");
             }
         });
 
@@ -184,10 +192,101 @@ public class Payments extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                paymentMode = "Pay on Pickup";
                 setVisibilities();
             }
         });
 
+
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+
+            }
+        });
+        Checkout.preload(getApplicationContext());
+        otherPayments.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startPayment();
+            }
+        });
+    }
+
+    private void getCurrentUserInfo(){
+        com.Anubis.Sleefax.CONSTANTS.constants obj = new com.Anubis.Sleefax.CONSTANTS.constants();
+        SharedPreferences sharedPreferences = getSharedPreferences(obj.SharedPrefs,0);
+        username = sharedPreferences.getString("DisplayName",null);
+        email = sharedPreferences.getString("Email",null);
+        usernum = sharedPreferences.getLong("UserNumber",0);
+
+    }
+    public void startPayment() {
+        /*
+          You need to pass current activity in order to let Razorpay create CheckoutActivity
+         */
+        final Activity activity = this;
+
+        final Checkout co = new Checkout();
+        co.setImage(R.drawable.appicon);
+//        co.setFullScreenDisable(true);
+
+
+        try {
+            JSONObject options = new JSONObject();
+            options.put("name", "Sleefax");
+            options.put("description", "Order amount");
+            //You can omit the image option to fetch the image from dashboard
+//            options.put("image", "https://s3.amazonaws.com/rzp-mobile/images/rzp.png");
+            options.put("currency", "INR");
+
+            /**
+             * Amount is always passed in currency subunits
+             * Eg: "500" = INR 5.00
+             */
+
+            options.put("amount", (int) (price)+"00");
+
+            JSONObject preFill = new JSONObject();
+            preFill.put("email", email);
+            preFill.put("contact", "91"+usernum);
+
+            options.put("prefill", preFill);
+
+            co.open(activity, options);
+        } catch (Exception e) {
+            Toast.makeText(activity, "Error in payment: " + e.getMessage(), Toast.LENGTH_SHORT)
+                    .show();
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onPaymentSuccess(String razorpayPaymentID) {
+        try {
+            Toast.makeText(this, "Payment Successful: " + razorpayPaymentID, Toast.LENGTH_SHORT).show();
+            paymentMode = "Online";
+            setVisibilities();
+        } catch (Exception e) {
+            android.util.Log.e(TAG, "Exception in onPaymentSuccess", e);
+        }
+    }
+
+    /**
+     * The name of the function has to be
+     * onPaymentError
+     * Wrap your code in try catch, as shown, to ensure that this method runs correctly
+     */
+    @SuppressWarnings("unused")
+    @Override
+    public void onPaymentError(int code, String response) {
+        try {
+            Toast.makeText(this, "Payment failed: " + code + " " + response, Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            android.util.Log.e(TAG, "Exception in onPaymentError", e);
+        }
     }
 
 
@@ -275,7 +374,7 @@ public class Payments extends AppCompatActivity {
                 //Code to handle successful transaction here.
                 Toast.makeText(Payments.this, "Transaction successful.", Toast.LENGTH_SHORT).show();
                 android.util.Log.d("UPI", "responseStr: "+approvalRefNo);
-
+                paymentMode = "UPI";
                 /////////////////////////////Placing order////////////////////
                 setVisibilities();
 
@@ -327,38 +426,68 @@ public class Payments extends AppCompatActivity {
                     .setStyle(new NotificationCompat.BigTextStyle().bigText("Order ID: " + orderKey))
                     .setPriority(NotificationCompat.PRIORITY_DEFAULT);
             notificationManager.notify(1, builder.build());
-
             sendData();
-
         }
-
     }
 
     public void setVisibilities(){
         payOnPickup.setVisibility(View.INVISIBLE);
         upi.setVisibility(View.INVISIBLE);
-        card.setVisibility(View.INVISIBLE);
+        otherPayments.setVisibility(View.INVISIBLE);
         paytm.setVisibility(View.INVISIBLE);
 
-        view3.setVisibility(View.VISIBLE);
-        orderProcessAnime.setVisibility(View.VISIBLE);
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setEnterTransition(TransitionInflater.from(Payments.this).inflateTransition(R.transition.slide_from_bottom));
+        }
+
+//        view3.setVisibility(View.VISIBLE);
+        view3.setAlpha(0f);
+        view3.setVisibility(View.VISIBLE);
+        view3.animate()
+                .alpha(1f)
+                .setDuration(shortAnimationDuration)
+                .setListener(null);
+
+        orderProcessAnime.setAlpha(0f);
+        orderProcessAnime.setVisibility(View.VISIBLE);
+        orderProcessAnime.animate()
+                .alpha(1f)
+                .setDuration(shortAnimationDuration)
+                .setListener(null);
+
+//        orderProcessAnime.setVisibility(View.VISIBLE);
 
         Resources res = getResources();
         Drawable drawable;
         drawable = res.getDrawable(R.drawable.circular);
 
+
+        mProgress.setAlpha(0f);
         mProgress.setVisibility(View.VISIBLE);
+        mProgress.animate()
+                .alpha(1f)
+                .setDuration(shortAnimationDuration)
+                .setListener(null);
+
+        tv.setAlpha(0f);
         tv.setVisibility(View.VISIBLE);
+        tv.animate()
+                .alpha(1f)
+                .setDuration(shortAnimationDuration)
+                .setListener(null);
+
 
         mProgress.setProgress(0);   // Main Progress
         mProgress.setSecondaryProgress(100); // Secondary Progress
         mProgress.setMax(100); // Maximum Progress
         mProgress.setProgressDrawable(drawable);
 
-        //Gathering ids of pervious orders
-        getId();
+        new uploadFile().execute();
+
     }
+
+
 
     public void sendData(){
 //        view3.setVisibility(View.GONE);
@@ -366,8 +495,17 @@ public class Payments extends AppCompatActivity {
 //        mProgress.setVisibility(View.GONE);
 //        tv.setVisibility(View.GONE);
 
-        Intent intent = new Intent(Payments.this, OrderPlaced.class);
+        Intent intent;
         Bundle extras = new Bundle();
+
+        if (newUser) {
+            intent = new Intent(Payments.this,SignInActivity.class);
+            extras.putBoolean("SignUp",true);
+            extras.putBoolean("NewUser",true);
+        }else{
+            intent = new Intent(Payments.this,OrderPlaced.class);
+        }
+
 
         extras.putStringArrayList("URLS", urls);
         extras.putString("ShopName", name);
@@ -376,7 +514,7 @@ public class Payments extends AppCompatActivity {
         extras.putDouble("ShopLong", shopLong);
         extras.putInt("Files", files);
         extras.putDouble("Price", price);
-        android.util.Log.d("PRICE", String.valueOf(price));
+        android.util.Log.d("PAYMMPRICE", String.valueOf(price));
         extras.putString("FileType", fileType);
         extras.putString("PageSize", pagesize);
         extras.putString("Orientation", orientation);
@@ -401,7 +539,7 @@ public class Payments extends AppCompatActivity {
         extras.putInt("RequestCode", requestCode);
         extras.putInt("ResultCode", resultCode);
         extras.putDouble("Pages", numberOfPages);
-
+        extras.putString("PaymentMode",paymentMode);
         intent.putExtras(extras);
         startActivity(intent);
 
@@ -410,22 +548,18 @@ public class Payments extends AppCompatActivity {
 
 
     ArrayList<Integer> ids = new ArrayList<>();
+    ArrayList<Integer> custOrderIDS = new ArrayList<>();
+
     public void getId(){
-
-
 
         ref.child(shopType).child(shopKey).child("Orders").addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
-//                android.util.Log.d("cust",dataSnapshot.getKey());
-
                 for(DataSnapshot orders: dataSnapshot.getChildren()){
                     for(DataSnapshot values: orders.getChildren()) {
                         if (values.getKey().equals("id")) {
                             ids.add(Integer.parseInt(values.getValue().toString()));
-//                            android.util.Log.d("IDS",values.getValue().toString());
-                            Collections.sort(ids);
 
                         }
                     }
@@ -453,15 +587,48 @@ public class Payments extends AppCompatActivity {
 
             }
         });
+        ref.child("users").child(userId).child("Orders").addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                for(DataSnapshot orders: dataSnapshot.getChildren()){
+                    for(DataSnapshot values: orders.getChildren()) {
+                        Log.d("VALUEIDD",String.valueOf(values.getKey()));
 
-        new uploadFile().execute();
+                        if (values.getKey().equals("id")) {
+                            Log.d("CUSTOMERID",String.valueOf(values.getValue()));
+                            custOrderIDS.add(Integer.parseInt(values.getValue().toString()));
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
     }
 
     FirebaseStorage storage = FirebaseStorage.getInstance();
     StorageReference storageRef = storage.getReference();
     public class uploadFile extends AsyncTask<ArrayList<String>,Void,Void> {
-        final int[] uploadCnt = {0};
+    final int[] uploadCnt = {0};
 
 
         @SuppressLint("WrongThread")
@@ -475,8 +642,6 @@ public class Payments extends AppCompatActivity {
             final ObjectAnimator[] progressAnimator = new ObjectAnimator[1];
             Log.d("UPLOADINGGGG","DATA");
             Uri uri;
-//            statusPercent.setText("15%");
-//            final ArrayList<String> urls = pageURL;
 
             for (int i = 0; i < urls.size(); i++) {
                 String file = urls.get(i);
@@ -492,6 +657,7 @@ public class Payments extends AppCompatActivity {
 //        final UploadTask uploadTask = filesRef.putFile(changeExtension(new File(file.getPath()),"pdf"));
                 final int finalI = i;
                 final Uri finalUri = uri;
+
                 uploadTask.addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception exception) {
@@ -506,14 +672,14 @@ public class Payments extends AppCompatActivity {
 
                         android.util.Log.d("UPLOADPROGRESS ", String.valueOf(progress));
 
-                        progressAnimator[0] = ObjectAnimator.ofInt(mProgress,"Progress",0,30);
+                        progressAnimator[0] = ObjectAnimator.ofInt(mProgress,"Progress", (int) progress, (int) progress);
                         progressAnimator[0].setDuration(2000);
                         progressAnimator[0].start();
 
 //                        progressAnimator[0] = ObjectAnimator.ofInt(tv,"ProgressTV",3,35);
 //                        progressAnimator[0].setDuration(2000);
 //                        progressAnimator[0].start();
-                        tv.setText(30 + "%");
+//                        tv.setText(30 + "%");
 
                     }
                 }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -523,22 +689,21 @@ public class Payments extends AppCompatActivity {
                         android.util.Log.d("UPLOAD", "SUCCESSFULL");
                         Toast.makeText(Payments.this, "Files are being sent", Toast.LENGTH_SHORT).show();
 
-                        progressAnimator[0].end();
+//                        progressAnimator[0].end();
 
                         android.util.Log.d("UNIQUE", uniqueID);
-                        Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                        uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                             @Override
                             public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
                                 if (!task.isSuccessful()) {
                                     throw task.getException();
                                 }
-                                android.util.Log.d("URIID", String.valueOf(finalUri));
 
-                                progressAnimator[0] = ObjectAnimator.ofInt(mProgress,"Progress",30,55);
-                                progressAnimator[0].setDuration(2000);
-                                progressAnimator[0].start();
+//                                progressAnimator[0] = ObjectAnimator.ofInt(mProgress,"Progress",30,55);
+//                                progressAnimator[0].setDuration(2000);
+//                                progressAnimator[0].start();
 
-                                tv.setText(55 + "%");
+//                                tv.setText(55 + "%");
                                 uploadCnt[0]++;
                                 // Continue with the task to get the download URL
                                 return filesRef.getDownloadUrl();
@@ -556,26 +721,27 @@ public class Payments extends AppCompatActivity {
                                     downloadUrls.add(url);
                                     android.util.Log.d("DOWNLOADURL", String.valueOf(url));
 
-                                    progressAnimator[0].end();
+//                                    progressAnimator[0].end();
 
 //                                    mProgress.setProgress(65);
 //                                    tv.setText(65 + "%");
                                     if (urls.size() == downloadUrls.size()) {
 
-
-//                                        Log.d("PAGESIZEGEE",pagesize);
-//                                        Log.d("CUSTOM",custom);
-//                                        Log.d("ORIENTATION",orientation);
-//                                        Log.d("COLOR",color);
-//                                        Log.d("COPY", String.valueOf(copy));
                                         String orderID = UUID.randomUUID().toString();
+                                        orderKey = orderID.substring(orderID.length()-8,orderID.length());
 
 
-                                        int id = 0;
-                                        if (ids.size() > 0) {
+                                        Collections.sort(custOrderIDS);
+                                        Collections.sort(ids);
+                                        int id = 0,custorderID=0;
+                                        if(ids.size()>0 && custOrderIDS.size()>0){
 //                                            Log.d("IDS",String.valueOf(ids.get(2)));
-                                            id = ids.get(ids.size() - 1) + 1;
+                                            id = ids.get(ids.size()-1)+1;
+                                            custorderID = custOrderIDS.get(custOrderIDS.size()-1)+1;
+
                                         }
+
+
 
                                         if (custom == "" || custom == null) {
                                             custom = "All";
@@ -583,30 +749,29 @@ public class Payments extends AppCompatActivity {
 
                                         DatabaseReference db = FirebaseDatabase.getInstance().getReference();
                                         android.util.Log.d("ORDERPBOTHSIDES", String.valueOf(bothSides));
-                                        shopinfo orderInfo = new shopinfo(loc, name, "Placed", shopLat, shopLong, shopNum, files, fileType, pagesize, orientation, price, custom, orderDateTime, false, false, false, false);
-                                        info userinfo = new info(username, email, usernum, "android", "Placed", fileType, copy, orderDateTime, id, custom, price, bothSides);
+                                        shopinfo orderInfo = new shopinfo(loc, name, "Placed", shopLat, shopLong, shopNum, files, fileType, pagesize, orientation, price, custom, orderDateTime, false, false, false, false,false, paymentMode, custorderID);
+                                        info userinfo = new info(username, email, usernum, "android", "Placed", fileType, copy, orderDateTime, id, custom, price, bothSides, paymentMode);
 
                                         String storeID = shopKey;
 
-                                        storeDb = storeDb.child(shopType).child(storeID).child("Orders").child(userId).child(orderID);
+                                        storeDb = storeDb.child(shopType).child(storeID).child("Orders").child(userId).child(orderKey);
                                         storeDb.setValue(userinfo);
-                                        db = db.child("users").child(userId).child("Orders").child(storeID).child(orderID);
+                                        db = db.child("users").child(userId).child("Orders").child(storeID).child(orderKey);
                                         db.setValue(orderInfo);
 //                                        orderid.setText("Order ID: "+orderID);
 
 
                                         for (int k = 0; k < downloadUrls.size(); k++) {
 
-                                            progressAnimator[0] = ObjectAnimator.ofInt(mProgress,"Progress",55,75);
-                                            progressAnimator[0].setDuration(2000);
-                                            progressAnimator[0].start();
-                                            tv.setText(75 + "%");
+//                                            progressAnimator[0] = ObjectAnimator.ofInt(mProgress,"Progress",55,75);
+//                                            progressAnimator[0].setDuration(2000);
+//                                            progressAnimator[0].start();
+//                                            tv.setText(75 + "%");
 
 
                                             singlePageInfo single = new singlePageInfo(downloadUrls.get(k), color, copy, fileType, pagesize, orientation);
                                             db.push().setValue(single);
                                             storeDb.push().setValue(single);
-                                            orderKey = orderID;
 
 
                                             if (k == urls.size() - 1) {
@@ -615,11 +780,11 @@ public class Payments extends AppCompatActivity {
 //                                                setProgressForOrder(orderKey);
                                                 progressAnimator[0].end();
 
-                                                progressAnimator[0] = ObjectAnimator.ofInt(mProgress,"Progress",75,100);
-                                                progressAnimator[0].setDuration(2000);
-                                                progressAnimator[0].start();
-                                                progressAnimator[0].end();
-                                                tv.setText(100 + "%");
+//                                                progressAnimator[0] = ObjectAnimator.ofInt(mProgress,"Progress",75,100);
+//                                                progressAnimator[0].setDuration(2000);
+//                                                progressAnimator[0].start();
+//                                                progressAnimator[0].end();
+//                                                tv.setText(100 + "%");
                                                 showNotification(orderKey);
 
 
@@ -721,6 +886,5 @@ public class Payments extends AppCompatActivity {
 //            e.printStackTrace();
 //        }
     }
-
 
 }

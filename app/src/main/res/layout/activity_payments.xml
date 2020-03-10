@@ -10,6 +10,15 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <View
+            android:id="@+id/view"
+            android:layout_width="match_parent"
+            android:layout_height="121dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="0dp"
+            android:background="@drawable/storesview" />
+
         <ImageView
             android:id="@+id/imageView8"
             android:layout_width="wrap_content"
@@ -25,20 +34,20 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/imageView8"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="10dp"
-            android:text="Select your payment method "
-            android:textColor="#000000"
+            android:layout_marginTop="0dp"
+            android:text="Payment"
+            android:textColor="#FFFFFF"
             android:textSize="18sp"
             android:textStyle="bold" />
 
         <View
             android:id="@+id/view17"
-            android:layout_width="343dp"
-            android:layout_height="130dp"
-            android:layout_below="@+id/textView25"
+            android:layout_width="350dp"
+            android:layout_height="125dp"
+            android:layout_below="@+id/view"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="20dp"
-            android:background="#4B505050" />
+            android:layout_marginTop="60dp"
+            android:background="@drawable/paymentback" />
 
         <TextView
             android:id="@+id/amount"
@@ -47,13 +56,13 @@
             android:layout_alignTop="@+id/view17"
             android:layout_alignBottom="@+id/view17"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="32.5dp"
-            android:layout_marginBottom="32.5dp"
-            android:padding="10dp"
+            android:layout_marginTop="35dp"
+            android:layout_marginBottom="35dp"
+            android:padding="7dp"
             android:text="200"
             android:textAlignment="center"
             android:textColor="#000000"
-            android:textSize="30sp"
+            android:textSize="28sp"
             android:textStyle="bold" />
 
         <TextView
@@ -64,29 +73,55 @@
             android:layout_marginStart="0dp"
             android:layout_marginBottom="20dp"
             android:layout_toEndOf="@+id/amount"
-            android:text="with taxes" />
+            android:text="(with taxes)" />
 
         <Button
             android:id="@+id/upi"
             android:layout_width="320dp"
-            android:layout_height="57dp"
+            android:layout_height="60dp"
             android:layout_below="@+id/view17"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="30dp"
-            android:background="#4A161414"
+            android:background="@drawable/status_views"
             android:text="Pay with UPI "
             android:textSize="18sp" />
 
         <Button
             android:id="@+id/pickup"
-            android:layout_width="322dp"
-            android:layout_height="51dp"
+            android:layout_width="320dp"
+            android:layout_height="60dp"
             android:layout_below="@+id/upi"
-            android:layout_centerHorizontal="true"
+            android:layout_alignStart="@+id/upi"
+            android:layout_alignEnd="@+id/upi"
+            android:layout_marginStart="0dp"
             android:layout_marginTop="30dp"
-            android:background="#4A9E9C9C"
+            android:layout_marginEnd="0dp"
+            android:background="@drawable/status_views"
             android:text="Pay on pickup"
             android:textSize="18sp" />
+
+
+
+        <Button
+            android:id="@+id/paytm"
+            android:layout_width="319dp"
+            android:layout_height="54dp"
+            android:layout_below="@+id/otherPayments"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="30dp"
+            android:background="#4A161414"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/otherPayments"
+            android:layout_width="316dp"
+            android:layout_height="58dp"
+            android:layout_below="@+id/pickup"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="30dp"
+            android:background="#4A161414"
+            android:text="Other Payment Options"
+            android:visibility="gone" />
 
         <ImageView
             android:id="@+id/imageView15"
@@ -95,28 +130,10 @@
             android:layout_alignStart="@+id/pickup"
             android:layout_alignTop="@+id/pickup"
             android:layout_alignBottom="@+id/pickup"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="0dp"
-            android:layout_marginBottom="0dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
             app:srcCompat="@drawable/pickupimg" />
-
-        <Button
-            android:id="@+id/paytm"
-            android:layout_width="319dp"
-            android:layout_height="54dp"
-            android:layout_below="@+id/card"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="30dp"
-            android:background="#4A161414" />
-
-        <Button
-            android:id="@+id/card"
-            android:layout_width="316dp"
-            android:layout_height="58dp"
-            android:layout_below="@+id/pickup"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="30dp"
-            android:background="#4A161414" />
 
         <ImageView
             android:id="@+id/imageView13"
@@ -125,9 +142,10 @@
             android:layout_alignStart="@+id/upi"
             android:layout_alignTop="@+id/upi"
             android:layout_alignBottom="@+id/upi"
-            android:layout_marginStart="0dp"
+            android:layout_marginStart="5dp"
             android:layout_marginTop="0dp"
             android:layout_marginBottom="0dp"
+            android:background="#FFFFFF"
             app:srcCompat="@drawable/upiimg" />
 
         <View
@@ -184,12 +202,23 @@
             android:id="@+id/tv"
             android:layout_width="250dp"
             android:layout_height="250dp"
-            android:gravity="center"
-            android:text="25%"
             android:layout_centerInParent="true"
+            android:gravity="center"
+            android:text="Placing order."
             android:textColor="@color/colorPrimaryDark"
-            android:textSize="20sp"
-            android:visibility="gone"/>
+            android:textSize="15sp"
+            android:visibility="gone" />
+
+        <ImageButton
+            android:id="@+id/paymentBackBtn"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="5dp"
+            android:background="#00FFFFFF"
+            app:srcCompat="@drawable/w" />
 
     </RelativeLayout>
 

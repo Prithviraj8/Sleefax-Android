@@ -61,11 +61,11 @@ public class PageInfo extends AppCompatActivity {
     ProgressDialog mProgressDialog;
     final FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference ref = database.getReference();
-    String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+    String userId;
     int ShopsCnt=0;
     String username,email;
     long num;
-    boolean isTester;
+    boolean isTester,newUser;
 
 
     AllPagesInfo[] allInfo = new AllPagesInfo[1000000];
@@ -121,7 +121,10 @@ public class PageInfo extends AppCompatActivity {
         fileType = extras.getString("FileType");
         images = extras.getParcelableArrayList("Images");
         data = extras.getParcelable("Data");
-
+        newUser = extras.getBoolean("NewUser");
+        if(!newUser){
+            userId  = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        }
 
         scrollView = findViewById(R.id.scrollViewImages);
         scrollDown = findViewById(R.id.scrollBtn);
@@ -472,6 +475,7 @@ public class PageInfo extends AppCompatActivity {
                             extras.putBoolean("BothSides",bothSides);
                             extras.putString("Custom","All");
                             extras.putBoolean("IsTester",isTester);
+                            extras.putBoolean("NewUser",newUser);
 
                             intent.putExtras(extras);
                             mProgressDialog.dismiss();

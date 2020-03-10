@@ -10,6 +10,7 @@ import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.InputType;
@@ -32,6 +33,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
@@ -47,9 +49,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.kaopiz.kprogresshud.KProgressHUD;
 
+import java.util.ArrayList;
+
 public class SignInActivity extends AppCompatActivity {
     private static final String  TAG = "SignInActivity";
     private static final int RC_SIGN_IN = 9001;
+    public String SharedPrefs = "Data";
 
     final FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference ref = database.getReference();
@@ -63,6 +68,20 @@ public class SignInActivity extends AppCompatActivity {
 
 
 
+    String name,loc,orderStatus,shopKey,fileType,pagesize,orientation,email;
+    double shopLat;
+    double shopLong;
+    double userLat,userLong;
+    long shopNum;
+    int files;
+    double price;
+    int copy;
+    int resultCode;
+    int requestCode;
+    double numberOfPages;
+    String color,custom;
+    boolean FromYourOrders =false, bothSides,isTester,newUser;
+    ArrayList<String> urls = new ArrayList<>();
     Boolean signUp,isShowPassword = false;
     Button forgotPassword,back;
     ImageButton showPass;
@@ -87,6 +106,7 @@ public class SignInActivity extends AppCompatActivity {
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
         signUp = extras.getBoolean("SignUp");
+        newUser = extras.getBoolean("NewUser");
 
         if(signUp){
             signUp_InTV.setText("Sign Up with");
@@ -98,6 +118,12 @@ public class SignInActivity extends AppCompatActivity {
             forgotPassword.setVisibility(View.VISIBLE);
             forgotPassword.setEnabled(true);
         }
+
+        if(newUser){
+            getNewUserOrderDetails();
+        }
+
+
 
         emailTV.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -145,6 +171,95 @@ public class SignInActivity extends AppCompatActivity {
         forgotPassword.setOnClickListener(Listener);
         showPass.setOnClickListener(Listener);
     }
+    public void getNewUserOrderDetails(){
+
+
+        Intent intent = getIntent();
+        Bundle extras = intent.getExtras();
+//        signUp = extras.getBoolean("SignUp");
+//        newUser = extras.getBoolean("NewUser");
+
+
+
+        //////////////////////////////////////////////////Shop Info//////////////////////////////////////////
+        shopLat = extras.getDouble("ShopLat");
+        shopLong = extras.getDouble("ShopLong");
+        name = extras.getString("ShopName");
+        loc = extras.getString("Location");
+        files = extras.getInt("Files");
+        orderStatus = extras.getString("OrderStatus");
+        price = extras.getDouble("Price");
+        FromYourOrders = extras.getBoolean("FromYourOrders");
+        shopKey = extras.getString("ShopKey");
+        userLat = extras.getDouble("User Lat");
+        userLong = extras.getDouble("User Long");
+
+
+        /////////////////////////////////////////////////Order info////////////////////////////////////////
+
+
+        fileType = extras.getString("FileType");
+        pagesize = extras.getString("PageSize");
+        orientation = extras.getString("Orientation");
+
+        shopNum = extras.getLong("ShopNum");
+        urls = extras.getStringArrayList("URLS");
+        copy = extras.getInt("Copies");
+        color = extras.getString("ColorType");
+        requestCode = extras.getInt("RequestCode");
+        resultCode = extras.getInt("ResultCode");
+        bothSides = extras.getBoolean("BothSides");
+        custom = extras.getString("Custom");
+        numberOfPages = extras.getDouble("Pages");
+        isTester = extras.getBoolean("IsTester");
+        newUser = extras.getBoolean("NewUser");
+
+
+    }
+
+    public void sendNewUsersOrderData(final FirebaseUser currentUser){
+
+
+        Intent intent = new Intent(SignInActivity.this,FirstNameActivity.class);
+        Bundle extras = new Bundle();
+
+        extras.putBoolean("SignUp",true);
+        extras.putBoolean("NewUser",true);
+        extras.putString("Email", currentUser.getEmail());
+        extras.putString("Name", currentUser.getDisplayName());
+
+        extras.putStringArrayList("URLS", urls);
+        extras.putString("ShopName", name);
+        extras.putString("Location", loc);
+        extras.putDouble("ShopLat", shopLat);
+        extras.putDouble("ShopLong", shopLong);
+        extras.putInt("Files", files);
+        extras.putDouble("Price", price);
+        android.util.Log.d("SSSSPRRICE", String.valueOf(price));
+
+        extras.putString("FileType", fileType);
+        extras.putString("PageSize", pagesize);
+        extras.putString("Orientation", orientation);
+        extras.putBoolean("IsTester", isTester);
+        extras.putLong("ShopNum", shopNum);
+
+        extras.putInt("Copies", copy);
+        extras.putString("ColorType", color);
+        extras.putBoolean("BothSides", bothSides);
+        extras.putString("Custom", custom);
+        extras.putString("ShopKey", shopKey);
+//        extras.putString("UserID", userID);
+        extras.putDouble("User Lat", userLat);
+        extras.putDouble("User Long", userLong);
+        extras.putInt("RequestCode", requestCode);
+        extras.putInt("ResultCode", resultCode);
+        extras.putDouble("Pages", numberOfPages);
+        intent.putExtras(extras);
+        startActivity(intent);
+
+
+    }
+
 
 
     private View.OnClickListener Listener = new View.OnClickListener() {
@@ -278,6 +393,7 @@ public class SignInActivity extends AppCompatActivity {
 
         final String[] name = new String[1];
         if(currentUser != null) {
+            saveEmailLocally(email);
             hud.show();
 
             ref.addChildEventListener(new ChildEventListener() {
@@ -293,14 +409,19 @@ public class SignInActivity extends AppCompatActivity {
 //                        finish();
 
 //                    }else {
+
                         if (!dataSnapshot.hasChild(currentUser.getUid())) {
-                            Intent intent = new Intent(SignInActivity.this, FirstNameActivity.class);
-                            Bundle extras = new Bundle();
-                            extras.putString("Email", currentUser.getEmail());
-                            extras.putString("Name", currentUser.getDisplayName());
-                            intent.putExtras(extras);
-                            hud.dismiss();
-                            startActivity(intent);
+                            if(newUser){
+                                sendNewUsersOrderData(currentUser);
+                            }else {
+                                Intent intent = new Intent(SignInActivity.this, FirstNameActivity.class);
+                                Bundle extras = new Bundle();
+                                extras.putString("Email", currentUser.getEmail());
+                                extras.putString("Name", currentUser.getDisplayName());
+                                intent.putExtras(extras);
+                                hud.dismiss();
+                                startActivity(intent);
+                            }
 //                            finish();
                         }else{
                             Intent intent = new Intent(SignInActivity.this, Select.class);
@@ -481,16 +602,22 @@ public class SignInActivity extends AppCompatActivity {
                             if(dataSnapshot.hasChild(FirebaseAuth.getInstance().getCurrentUser().getUid())){
                                 Log.d("HAS CHILD","YES");
                                 hud.dismiss();
-                                Intent intent = new Intent(SignInActivity.this,Select.class);
-                                intent.putExtra("Email",email);
-                                startActivity(intent);
-                                finish();
+//                                Intent intent = new Intent(SignInActivity.this,Select.class);
+//                                intent.putExtra("Email",email);
+//                                startActivity(intent);
+//                                finish();
                             }else{
-                                Log.d("HAS CHILD","NOPE");
-                                hud.dismiss();
-                                Intent intent = new Intent(SignInActivity.this,FirstNameActivity.class);
-                                intent.putExtra("Email",email);
-                                startActivity(intent);
+                                if(newUser){
+                                    sendNewUsersOrderData(FirebaseAuth.getInstance().getCurrentUser());
+                                }else {
+                                    hud.dismiss();
+                                    Intent intent = new Intent(SignInActivity.this, FirstNameActivity.class);
+                                    Bundle bundle = new Bundle();
+                                    bundle.putBoolean("NewUser", newUser);
+                                    bundle.putString("Email", email);
+                                    intent.putExtras(bundle);
+                                    startActivity(intent);
+                                }
 //                                finish();
                             }
                         }
@@ -519,6 +646,11 @@ public class SignInActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+    public void saveEmailLocally(String email){
+        SharedPreferences sharedPreferences = getSharedPreferences(SharedPrefs,0);
+        sharedPreferences.edit().putString("Email",email).apply();
+
     }
 
     //TODO : Create an alert dialog

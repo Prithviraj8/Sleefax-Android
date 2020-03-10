@@ -3,6 +3,8 @@ package com.Anubis.Sleefax;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
@@ -11,16 +13,27 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
+import com.github.barteksc.pdfviewer.PDFView;
+import com.github.barteksc.pdfviewer.listener.OnLoadCompleteListener;
+import com.github.barteksc.pdfviewer.listener.OnPageErrorListener;
+import com.github.barteksc.pdfviewer.scroll.DefaultScrollHandle;
+
+import java.io.File;
 import java.util.ArrayList;
+
+import static com.aspose.words.LoadFormat.DOC;
 
 public class Pop extends AppCompatActivity {
 
     private static final String GOOGLE_PHOTOS_PACKAGE_NAME = "com.google.android.apps.photos";
 
-    int numberOfPages;
-    Boolean isTester;
-
+    int numberOfPages,shortAnimationDuration;
+    Boolean isTester,newUser;
+    PDFView pdfView;
+    Button nextActivity,dismissViewPDF,selectPhotos,selectAttachment;
+    View bottomNavView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,17 +42,23 @@ public class Pop extends AppCompatActivity {
         getWindowManager().getDefaultDisplay().getMetrics(dm);
 //      getSupportActionBar().setBackgroundDrawable(R.drawable.col);
 
+        pdfView = findViewById(R.id.viewPDF);
+        bottomNavView = findViewById(R.id.bottomNavView);
+
         int width = dm.widthPixels;
         int height = dm.heightPixels;
 
         getWindow().setLayout((int)(width),(int) (height));
 
-        Button selectPhotos = findViewById(R.id.selectphotos);
-        Button selectAttachment = findViewById(R.id.selectattachment);
+        selectPhotos = findViewById(R.id.selectphotos);
+        selectAttachment = findViewById(R.id.selectattachment);
+        nextActivity = findViewById(R.id.nextActivity);
+        dismissViewPDF = findViewById(R.id.dismissBtn);
 
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
         isTester = bundle.getBoolean("IsTester");
+        newUser = bundle.getBoolean("NewUser");
 
         selectPhotos.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -52,18 +71,6 @@ public class Pop extends AppCompatActivity {
                 intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
                 startActivityForResult(Intent.createChooser(intent, "Select Images"), 1);
 
-//                intent.setComponent(ComponentName.unflattenFromString("com.google.android.apps.plus.photos"));
-//                intent.addCategory("android.intent.category.LAUNCHER");
-//                intent.setPackage("com.google.android.apps.plus");
-//                startActivity(intent);
-//                startActivityForResult(Intent.createChooser(intent,"Select files",GOOGLE_PHOTOS_PACKAGE_NAME));
-
-//                Intent intent = new Intent(Pop.this,Select.class);
-//                Bundle extras = new Bundle();
-//                extras.putBoolean("Photos",true);
-//                intent.putExtras(extras);
-//                startActivity(intent);
-//                finish();
             }
         });
 
@@ -74,35 +81,88 @@ public class Pop extends AppCompatActivity {
             public void onClick(View v) {
 
                 Intent intent = new Intent();
-                intent.setType("application/pdf");
+                intent.setType("application/*");
                 intent.setAction(Intent.ACTION_OPEN_DOCUMENT);
                 intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
                 startActivityForResult(Intent.createChooser(intent, "Select files"), 1);
 
-//                Intent intent = new Intent(Pop.this,Select.class);
-//                Bundle extras = new Bundle();
-//                extras.putBoolean("Photos",false);
-//                intent.putExtras(extras);
-//                startActivity(intent);
-//                finish();
             }
         });
-    }
 
+        nextActivity.setOnClickListener(Listener);
+        dismissViewPDF.setOnClickListener(Listener);
+
+        shortAnimationDuration = getResources().getInteger(android.R.integer.config_shortAnimTime);
+
+
+    }
 
     ArrayList<Uri> uri = new ArrayList<>();
     String fileType;
-    String fileName;
+    Uri file;
 
+
+    //     Create an anonymous implementation of OnClickListener
+    private View.OnClickListener Listener = new View.OnClickListener() {
+        @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+        public void onClick(View v) {
+            // do something when the button is clicked
+            Log.d("GETTING", "ORDERS");
+
+
+            if(v == findViewById(R.id.nextActivity)){
+                uploadFile(file);
+            }
+            if(v == findViewById(R.id.dismissBtn)){
+                pdfView.setVisibility(View.GONE);
+                bottomNavView.setVisibility(View.GONE);
+                nextActivity.setVisibility(View.GONE);
+                dismissViewPDF.setVisibility(View.GONE);
+
+                selectAttachment.setVisibility(View.VISIBLE);
+                selectPhotos.setVisibility(View.VISIBLE);
+            }
+        }
+    };
+
+
+    public void setVisibilities(){
+        pdfView.setAlpha(0f);
+        pdfView.setVisibility(View.VISIBLE);
+        pdfView.animate()
+                .alpha(1f)
+                .setDuration(shortAnimationDuration)
+                .setListener(null);
+
+
+
+        bottomNavView.setAlpha(0f);
+        bottomNavView.setVisibility(View.VISIBLE);
+        bottomNavView.animate()
+                .alpha(1f)
+                .setDuration(shortAnimationDuration)
+                .setListener(null);
+
+
+
+        dismissViewPDF.setAlpha(0f);
+        dismissViewPDF.setVisibility(View.VISIBLE);
+        dismissViewPDF.animate()
+                .alpha(1f)
+                .setDuration(shortAnimationDuration)
+                .setListener(null);
+
+
+        selectAttachment.setVisibility(View.GONE);
+        selectPhotos.setVisibility(View.GONE);
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        uri.clear();
 
+        uri.clear();
         super.onActivityResult(requestCode, resultCode, data);
         //when the user choses the file
-//        Log.d("FILE CHOSEN",data.getData().toString());
-//        Log.d("REQUESTCODE", String.valueOf(requestCode));
 
         if (requestCode == 1 && resultCode == RESULT_OK) {
             //if a file is selected
@@ -113,6 +173,7 @@ public class Pop extends AppCompatActivity {
 
                 Uri returnUri = data.getData();
 //                uri.add(returnUri);
+                file = returnUri;
 
 
                 Log.d("URIID", String.valueOf(returnUri));
@@ -124,70 +185,12 @@ public class Pop extends AppCompatActivity {
                     Log.d("FILE", mimeType);
                     fileType = mimeType;
 
-                    uploadFile(requestCode, resultCode,returnUri);
-
-//                    if (returnUri.getScheme().equals("file")) {
-//                        fileName = returnUri.getLastPathSegment();
-//
-//                        try {
-//                            PdfReader reader = new PdfReader(fileName);
-//                            int numPages = reader.getNumberOfPages();
-//                            Log.d("PDFPAGES",String.valueOf(numPages));
-//                        } catch (IOException e) {
-//                            Log.d("CANT","GET");
-//                            e.printStackTrace();
-//                        }
-//
-//                    } else {
-//                        Cursor cursor = null;
-//
-//                        try {
-//
-//                            cursor = getContentResolver().query(returnUri, new String[]{
-//                                    MediaStore.Images.ImageColumns.DISPLAY_NAME
-//                            }, null, null, null);
-//
-//                            if (cursor != null && cursor.moveToFirst()) {
-//
-//                                fileName = cursor.getString(cursor.getColumnIndex(MediaStore.Images.ImageColumns.DISPLAY_NAME));
-//                                Log.d("FILENAME",fileName);
-//
-//                                try {
-//
-////                                  Document pdfDocument = new Document(fileName);
-//
-////                                    PDDocument doc = PDDocument.load(new File(fileName));
-////                                    Log.d("PDFPAGES",String.valueOf(doc.getNumberOfPages()));
-//
-////                                    PdfDocument document = new PdfDocument();
-////                                    PageInfo pageInfo = new PdfDocument.Page((new Rect(0, 0, 100, 100), 1).create();
-////                                    PdfDocument.Page page = document.startPage(pageInfo);
-//
-////                                    PdfReader reader = new PdfReader(String.valueOf(returnUri));
-////                                    Log.d("PDFPAGES",String.valueOf(reader.getNumberOfPages()));
-//
-////                                    ParcelFileDescriptor parcelFileDescriptor = ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY);
-////                                    PdfRenderer reader = new PdfRenderer(parcelFileDescriptor);
-//
-////                                    Document pdfDocument = new Document(Objects.requireNonNull(returnUri.toString()));
-//                                } catch (IOException e) {
-//                                    Log.d("CANT","GET");
-//                                    e.printStackTrace();
-//                                } catch (Exception e) {
-//                                    e.printStackTrace();
-//                                }
-//                            }
-//
-//                        } finally {
-//                            if (cursor != null) {
-//                                cursor.close();
-//                            }
-//                        }
-//                    }
-
-
-
-
+//                    uploadFile(requestCode, resultCode,returnUri);
+                    if(mimeType.equals("application/pdf")){
+                        ViewPDF(returnUri);
+                    }else if(mimeType.contains("msword")|| mimeType.contains("docx")){
+                        ViewDoc(returnUri);
+                    }
                 } else {
 
                     Log.d("FILE", "Image");
@@ -234,8 +237,61 @@ public class Pop extends AppCompatActivity {
     }
 
 
+    public void ViewPDF(Uri file){
+        setVisibilities();
+        pdfView.fromUri(file)
+                .enableSwipe(true)
+                .enableAnnotationRendering(true)
+                .scrollHandle(new DefaultScrollHandle(getApplicationContext()))
+                .enableDoubletap(true)
+                .onPageError(new OnPageErrorListener() {
+                    @Override
+                    public void onPageError(int page, Throwable t) {
+                        Toast.makeText(Pop.this,"Sorry but we faced an error on our side 😢. \n Please select this file again.",Toast.LENGTH_LONG).show();
+
+                    }
+                })
+                .onLoad(new OnLoadCompleteListener() {
+                    @Override
+                    public void loadComplete(int nbPages) {
+                        Log.d("PDFNOP", String.valueOf(pdfView.getPageCount()));
+
+                        nextActivity.setAlpha(0f);
+                        nextActivity.setVisibility(View.VISIBLE);
+                        nextActivity.animate()
+                                .alpha(1f)
+                                .setDuration(shortAnimationDuration)
+                                .setListener(null);
+
+                        numberOfPages = pdfView.getPageCount();
+                    }
+                })
+                .load();
+    }
+
+//    public void ViewDoc(Uri file){
+////        setVisibilities();
+//        Toast.makeText(this,"OPENING DOC",Toast.LENGTH_LONG).show();
+//        Intent intent = new Intent();
+//        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        intent.setAction(Intent.ACTION_VIEW);
+//        String type = "application/msword";
+//        intent.setDataAndType(file, type);
+//        startActivity(intent);
+//    }
+    public void ViewDoc(Uri word) {
+//        nextActivity.setVisibility(View.VISIBLE);
+
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setDataAndType(word, "application/msword");
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        this.startActivity(intent);
+        startActivity(Intent.createChooser(intent, "Choose an Application:"));
+
+
+    }
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-    public void uploadFile(int requestCode, int resultCode, Uri file){
+    public void uploadFile(Uri file){
 
         Intent goToPdfInfo = new Intent(Pop.this, PdfInfo.class);
         //goToPageInfo.putExtra("Pages",images);
@@ -245,9 +301,11 @@ public class Pop extends AppCompatActivity {
         extras.putString("PdfURL", file.toString());
 //        extras.putParcelable("PDFUri",file);
         extras.putString("FileType", fileType);
-        extras.putInt("RequestCode",requestCode);
-        extras.putInt("ResultCode",resultCode);
+//        extras.putInt("RequestCode",requestCode);
+//        extras.putInt("ResultCode",resultCode);
         extras.putBoolean("IsTester",isTester);
+        extras.putBoolean("NewUser",newUser);
+
 //        extras.putString("FileName",fileName);
         goToPdfInfo.putExtras(extras);
         startActivity(goToPdfInfo);
@@ -272,6 +330,7 @@ public class Pop extends AppCompatActivity {
                 extras.putStringArrayList("URLS", images);
                 extras.putParcelable("Data",data);
                 extras.putBoolean("IsTester",isTester);
+                extras.putBoolean("NewUser",newUser);
 
 //            extras.putParcelableArrayList("URLS", uri);
                 goToPageInfo.putExtras(extras);

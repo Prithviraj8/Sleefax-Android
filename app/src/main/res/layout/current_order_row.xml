@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/OrderRelativeL"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_below="@+id/addFilesView">
+
+    <View
+        android:id="@+id/view20"
+        android:layout_width="387dp"
+        android:layout_height="205dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:background="@drawable/liveorderview" />
+
+    <TextView
+        android:id="@+id/currentOrderShopName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/view20"
+        android:layout_alignTop="@+id/view20"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="25dp"
+        android:text="@string/ShopName"
+        android:textColor="#255270"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/currentOrderShopLoc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/currentOrderShopName"
+        android:layout_alignStart="@+id/currentOrderShopName"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="5dp"
+        android:text="@string/Location"
+        android:textColor="#4D4949"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/currentOrderStatus"
+        android:layout_width="120dp"
+        android:layout_height="30dp"
+        android:layout_alignTop="@+id/currentOrderShopName"
+        android:layout_alignEnd="@+id/view20"
+        android:layout_marginTop="-5dp"
+        android:layout_marginEnd="30dp"
+        android:background="@drawable/orderstatusview1"
+        android:padding="3dp"
+        android:text="@string/OrderStatus"
+        android:textAlignment="center"
+        android:textColor="#FFFF"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/currentOrderID"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/currentOrderStatus"
+        android:layout_alignStart="@+id/currentOrderStatus"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="5dp"
+        android:text="Order id"
+        android:textColor="#BA000000"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+    <View
+        android:id="@+id/view21"
+        android:layout_width="match_parent"
+        android:layout_height="14dp"
+        android:layout_below="@+id/currentOrderShopLoc"
+        android:layout_alignStart="@+id/view20"
+        android:layout_alignEnd="@+id/view20"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="5dp"
+        android:background="@drawable/dottedline" />
+
+    <TextView
+        android:id="@+id/currentOrderDateTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/view21"
+        android:layout_alignStart="@+id/currentOrderShopLoc"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="10dp"
+        android:text="OrderDateTime"
+        android:textSize="15sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/currentOrderPrice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/currentOrderDateTime"
+        android:layout_alignStart="@+id/currentOrderDateTime"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="10dp"
+        android:text="Price" />
+
+    <ImageButton
+        android:id="@+id/more"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_alignEnd="@+id/view20"
+        android:layout_alignBottom="@+id/view20"
+        android:layout_marginEnd="30dp"
+        android:layout_marginBottom="0dp"
+        android:background="#00000000"
+        android:src="@drawable/more"
+        android:text="View details" />
+
+    <RelativeLayout
+        android:id="@+id/PickedUpOrderRL"
+        android:layout_width="match_parent"
+        android:layout_height="128dp"
+        android:layout_below="@+id/view20"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="0dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/textView27"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:text="Hi there, have you picked up the order yet?" />
+
+        <Button
+            android:id="@+id/pickedOrderYes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/textView27"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="15dp"
+            android:text="Yes" />
+    </RelativeLayout>
+
+
+</RelativeLayout>

@@ -65,9 +65,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Map;
 import java.util.UUID;
-
-
 
 public class ShopsActivity extends AppCompatActivity {
 
@@ -96,13 +95,13 @@ public class ShopsActivity extends AppCompatActivity {
     LinearLayout shopRows;
     int ShopsCount,resultCode,requestCode;
     public static final int REQUEST_LOCATION = 1;
-    String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+    String userID;
     String fileType,orientation,custom,shopType;
     DatabaseReference storeDb = FirebaseDatabase.getInstance().getReference();
     String username,email,pagesize;
     long usernum;
     Intent data;
-    Boolean bothSides,isTester;
+    Boolean bothSides,isTester,newUser;
 
     //    private FusedLocationProviderClient fusedLocationClient;
     LocationManager locationManager;
@@ -113,7 +112,6 @@ public class ShopsActivity extends AppCompatActivity {
 
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference ref = database.getReference();
-        String userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
 //    @SuppressLint("MissingPermission")
     @SuppressLint("SetTextI18n")
@@ -122,7 +120,7 @@ public class ShopsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shops);
 
-        getCurrentUserInfo();
+//        getCurrentUserInfo();
         ActivityCompat.requestPermissions(ShopsActivity.this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
 
 //        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
@@ -170,7 +168,12 @@ public class ShopsActivity extends AppCompatActivity {
         bothSides = extras.getBoolean("BothSides");
         custom = extras.getString("Custom");
         numberOfPages = Double.valueOf(extras.getInt("Pages"));
+        newUser = extras.getBoolean("NewUser");
 
+
+        if(!newUser){
+            userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        }
         isTester = extras.getBoolean("IsTester");
 
         Log.d("FILETYPE",fileType);
@@ -386,47 +389,7 @@ public class ShopsActivity extends AppCompatActivity {
         }
     }
 
-    private void getCurrentUserInfo(){
 
-        ref.child("users").child(userId).addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                Log.d("INFOOO",dataSnapshot.getKey());
-                if(dataSnapshot.getKey().equals("name")){
-                    username = dataSnapshot.getValue().toString();
-                }
-                if(dataSnapshot.getKey().equals("email")){
-                    email = dataSnapshot.getValue().toString();
-                }
-
-                if(dataSnapshot.getKey().equals("num")){
-                    usernum = Long.parseLong(dataSnapshot.getValue().toString());
-                }
-                Log.d("GETTINGINFO", String.valueOf(true));
-
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-    }
 
     protected void buildAlertMessageNoGps() {
 
@@ -490,6 +453,7 @@ public class ShopsActivity extends AppCompatActivity {
         public ArrayList<DataSnapshot> snapshots;
         public String shopName;
         public Context context;
+        int shortAnimationDuration;
 
         @Override
         public int getCount() {
@@ -552,42 +516,12 @@ public class ShopsActivity extends AppCompatActivity {
                     public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 //                            hud.show();
                         storeID.add(dataSnapshot.getKey());
-                        for(DataSnapshot snap:dataSnapshot.getChildren()){
-//                                Log.d("SHOPS NAME IS ",snap.getKey());
-                            if(snap.getKey().equals("ShopName")){
-                                shopNames.add(snap.getValue().toString());
-                            }
-
-                            if (snap.getKey().equals("area")) {
-                                locations.add(snap.getValue().toString());
-                            }
-
-                            if (snap.getKey().equals("latitude")) {
-                                shopLat.add((Double) snap.getValue());
-                            }
-
-                            if (snap.getKey().equals("longitude")) {
-                                shopLong.add((Double) snap.getValue());
-                            }
-
-                            if(snap.getKey().equals("num")){
-                                numbers.add(Long.parseLong(snap.getValue().toString()));
-                            }
-
-
-////                                while(distance != 0)
-////                                {
-////                                    // num = num/10
-////                                    distance /= 10;
-////                                    ++count;
-////                                }
-////                                Log.d("COUNT IS ", String.valueOf(count));
-////                                if(count >6&&count<=8){
-////                                    Distance.setText("~"+(int) (distanceFromShop/1000000) + "km");
-////                            }
-                        }
-
-
+                        Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
+                        shopNames.add(String.valueOf(map.get("ShopName")));
+                        locations.add(String.valueOf(map.get("area")));
+                        shopLat.add(Double.parseDouble(String.valueOf(map.get("latitude"))));
+                        shopLong.add(Double.parseDouble(String.valueOf(map.get("longitude"))));
+                        numbers.add(Long.parseLong(String.valueOf(map.get("num"))));
 
                         final Handler handler1 = new Handler();
                         handler1.postDelayed(new Runnable() {
@@ -639,8 +573,18 @@ public class ShopsActivity extends AppCompatActivity {
                             public void onClick(View v) {
                                 Log.d("VIEW ","Tapped");
 
+
+                                shortAnimationDuration = getResources().getInteger(android.R.integer.config_shortAnimTime);
                                 shopRows.setBackgroundColor(Color.GRAY);
+//                                confirmView.setVisibility(View.VISIBLE);
+                                confirmView.setAlpha(0f);
                                 confirmView.setVisibility(View.VISIBLE);
+                                confirmView.animate()
+                                        .alpha(1f)
+                                        .setDuration(shortAnimationDuration)
+                                        .setListener(null);
+
+
                                 confirmOrder.setVisibility(View.VISIBLE);
                                 no.setVisibility(View.VISIBLE);
                                 confirm.setVisibility(View.VISIBLE);
@@ -752,11 +696,11 @@ public class ShopsActivity extends AppCompatActivity {
         extras.putBoolean("IsTester", isTester);
         extras.putLong("ShopNum", shopNum);
 
-        if (username != null && email != null && usernum > 0) {
-            extras.putString("Username", username);
-            extras.putString("email", email);
-            extras.putLong("UserNumber", usernum);
-        }
+//        if (username != null && email != null && usernum > 0) {
+//            extras.putString("Username", username);
+//            extras.putString("email", email);
+//            extras.putLong("UserNumber", usernum);
+//        }
 
         extras.putInt("Copies", copy);
         extras.putString("ColorType", color);
@@ -770,6 +714,7 @@ public class ShopsActivity extends AppCompatActivity {
         extras.putInt("RequestCode", requestCode);
         extras.putInt("ResultCode", resultCode);
         extras.putDouble("Pages", numberOfPages);
+        extras.putBoolean("NewUser",newUser);
 
         intent.putExtras(extras);
         startActivity(intent);
