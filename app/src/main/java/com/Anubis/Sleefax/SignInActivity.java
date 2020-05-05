@@ -9,10 +9,12 @@ import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.util.Log;
@@ -37,11 +39,16 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseException;
+import com.google.firebase.FirebaseTooManyRequestsException;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.auth.PhoneAuthCredential;
+import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -50,6 +57,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.kaopiz.kprogresshud.KProgressHUD;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
+
+import static org.bouncycastle.crypto.tls.ContentType.alert;
 
 public class SignInActivity extends AppCompatActivity {
     private static final String  TAG = "SignInActivity";
@@ -65,10 +75,11 @@ public class SignInActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     GoogleSignInClient mGoogleSignInClient;
     TextView signUp_InTV;
+    EditText phoneNum;
 
 
 
-    String name,loc,orderStatus,shopKey,fileType,pagesize,orientation,email;
+    String loc,orderStatus,shopKey,fileType,pagesize,orientation,email,shopName;
     double shopLat;
     double shopLong;
     double userLat,userLong;
@@ -86,6 +97,10 @@ public class SignInActivity extends AppCompatActivity {
     Button forgotPassword,back;
     ImageButton showPass;
 
+
+    Intent otpIntent;
+    Bundle otpBundle;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,6 +117,8 @@ public class SignInActivity extends AppCompatActivity {
         forgotPassword = findViewById(R.id.forgotPasswordBtn);
         back = findViewById(R.id.back);
         showPass = findViewById(R.id.showPassword);
+        phoneNum = findViewById(R.id.phoneNumber);
+
 
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
@@ -170,6 +187,10 @@ public class SignInActivity extends AppCompatActivity {
 
         forgotPassword.setOnClickListener(Listener);
         showPass.setOnClickListener(Listener);
+
+        otpIntent = new Intent(SignInActivity.this,verifyOTPActivity.class);
+        otpBundle = new Bundle();
+
     }
     public void getNewUserOrderDetails(){
 
@@ -184,7 +205,7 @@ public class SignInActivity extends AppCompatActivity {
         //////////////////////////////////////////////////Shop Info//////////////////////////////////////////
         shopLat = extras.getDouble("ShopLat");
         shopLong = extras.getDouble("ShopLong");
-        name = extras.getString("ShopName");
+        shopName = extras.getString("ShopName");
         loc = extras.getString("Location");
         files = extras.getInt("Files");
         orderStatus = extras.getString("OrderStatus");
@@ -216,20 +237,36 @@ public class SignInActivity extends AppCompatActivity {
 
 
     }
+    String mVerificationId;
+    PhoneAuthProvider.ForceResendingToken mResendToken;
+    PhoneAuthCredential mcredential;
+    public void sendNewUsersOrderData(){
 
-    public void sendNewUsersOrderData(final FirebaseUser currentUser){
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
+        Intent intent;
 
-        Intent intent = new Intent(SignInActivity.this,FirstNameActivity.class);
+        Toast.makeText(this,String.valueOf(mVerificationId),Toast.LENGTH_LONG).show();
+        if(mVerificationId != null){
+            intent = new Intent(SignInActivity.this,verifyOTPActivity.class);
+        }else {
+            intent = new Intent(SignInActivity.this, FirstNameActivity.class);
+        }
         Bundle extras = new Bundle();
 
         extras.putBoolean("SignUp",true);
         extras.putBoolean("NewUser",true);
-        extras.putString("Email", currentUser.getEmail());
-        extras.putString("Name", currentUser.getDisplayName());
 
+        extras.putString("Number",phoneNum.getText().toString());
+        extras.putString("VID",mVerificationId);
+        otpBundle.putParcelable("Credential",mcredential);
+
+        if(currentUser!=null) {
+            extras.putString("Email", currentUser.getEmail());
+            extras.putString("Name", currentUser.getDisplayName());
+        }
         extras.putStringArrayList("URLS", urls);
-        extras.putString("ShopName", name);
+        extras.putString("ShopName", shopName);
         extras.putString("Location", loc);
         extras.putDouble("ShopLat", shopLat);
         extras.putDouble("ShopLong", shopLong);
@@ -266,7 +303,12 @@ public class SignInActivity extends AppCompatActivity {
         public void onClick(View v) {
             // do something when the button is clicked
             if(v == findViewById(R.id.SignIn)) {
-                attemptRegistration();
+                if(phoneNum.getText().length() == 0) {
+                    attemptRegistration();
+                }else{
+                    Toast.makeText(SignInActivity.this, "PHONE "+phoneNum.getText(), Toast.LENGTH_SHORT).show();
+                    attemptPhoneAuth("+1"+phoneNum.getText().toString().trim());
+                }
             }else
             if(v == findViewById(R.id.forgotPasswordBtn)){
                 // Check for a valid email address.
@@ -323,6 +365,90 @@ public class SignInActivity extends AppCompatActivity {
     }
 
 
+//    PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks;
+
+    private void attemptPhoneAuth(final String phoneNumber){
+        PhoneAuthProvider.getInstance().verifyPhoneNumber(
+                phoneNumber,        // Phone number to verify
+                60,                 // Timeout duration
+                TimeUnit.SECONDS,   // Unit of timeout
+                this,               // Activity (for callback binding)
+                mCallbacks);        // OnVerificationStateChangedCallbacks
+
+    }
+    PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+
+        @Override
+        public void onVerificationCompleted(PhoneAuthCredential credential) {
+            // This callback will be invoked in two situations:
+            // 1 - Instant verification. In some cases the phone number can be instantly
+            //     verified without needing to send or enter a verification code.
+            // 2 - Auto-retrieval. On some devices Google Play services can automatically
+            //     detect the incoming verification SMS and perform verification without
+            //     user action.
+            Log.d(TAG, "onVerificationCompleted:" + credential);
+
+            mcredential = credential;
+
+
+            if(!newUser){
+                otpBundle.putParcelable("Credential",credential);
+                otpIntent.putExtras(otpBundle);
+
+                startActivity(otpIntent);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+            }else {
+                sendNewUsersOrderData();
+            }
+
+        }
+
+        @Override
+        public void onVerificationFailed(FirebaseException e) {
+            // This callback is invoked in an invalid request for verification is made,
+            // for instance if the the phone number format is not valid.
+            Log.w(TAG, "onVerificationFailed", e);
+
+            if (e instanceof FirebaseAuthInvalidCredentialsException) {
+                // Invalid request
+                // ...
+            } else if (e instanceof FirebaseTooManyRequestsException) {
+                // The SMS quota for the project has been exceeded
+                // ...
+            }
+
+            // Show a message and update the UI
+            messageBox("Phone number entered seems of the wrong format 🤨");
+            // ...
+        }
+
+        @Override
+        public void onCodeSent(@NonNull String verificationId,
+                @NonNull PhoneAuthProvider.ForceResendingToken token) {
+            // The SMS verification code has been sent to the provided phone number, we
+            // now need to ask the user to enter the code and then construct a credential
+            // by combining the code with a verification ID.
+            Log.d(TAG, "onCodeSent:" + verificationId);
+
+            // Save verification ID and resending token so we can use them later
+            mVerificationId = verificationId;
+            mResendToken = token;
+
+            if(!newUser) {
+                otpBundle.putString("Number",phoneNum.getText().toString());
+                otpBundle.putString("VID",mVerificationId);
+                otpIntent.putExtras(otpBundle);
+                startActivity(otpIntent);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+            }else{
+                sendNewUsersOrderData();
+            }
+
+
+
+            // ...
+        }
+    };
 
 
     private void signIn() {
@@ -412,7 +538,7 @@ public class SignInActivity extends AppCompatActivity {
 
                         if (!dataSnapshot.hasChild(currentUser.getUid())) {
                             if(newUser){
-                                sendNewUsersOrderData(currentUser);
+                                sendNewUsersOrderData();
                             }else {
                                 Intent intent = new Intent(SignInActivity.this, FirstNameActivity.class);
                                 Bundle extras = new Bundle();
@@ -576,6 +702,7 @@ public class SignInActivity extends AppCompatActivity {
                 .setLabel("Please wait.")
                 .setMaxProgress(100);
         hud.show();
+
         mAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
@@ -608,7 +735,7 @@ public class SignInActivity extends AppCompatActivity {
 //                                finish();
                             }else{
                                 if(newUser){
-                                    sendNewUsersOrderData(FirebaseAuth.getInstance().getCurrentUser());
+                                    sendNewUsersOrderData();
                                 }else {
                                     hud.dismiss();
                                     Intent intent = new Intent(SignInActivity.this, FirstNameActivity.class);
@@ -647,12 +774,26 @@ public class SignInActivity extends AppCompatActivity {
             }
         });
     }
+
     public void saveEmailLocally(String email){
         SharedPreferences sharedPreferences = getSharedPreferences(SharedPrefs,0);
         sharedPreferences.edit().putString("Email",email).apply();
-
     }
 
+    protected void messageBox(String message) {
+
+        final android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+        builder.setMessage(message)
+                .setCancelable(false)
+                .setPositiveButton("Got it", new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, final int id) {
+                        dialog.dismiss();
+                    }
+                });
+
+        final android.app.AlertDialog alert = builder.create();
+        alert.show();
+    }
     //TODO : Create an alert dialog
 
     private void showErrorDialog(String message){

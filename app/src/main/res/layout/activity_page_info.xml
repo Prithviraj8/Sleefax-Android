@@ -1,364 +1,369 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/scrollViewImages"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".PageInfo">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
+
+    <ImageButton
+        android:id="@+id/back"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:background="#00FFFFFF"
+        android:src="@drawable/b"
+        android:text="Button" />
+
+    <ImageView
+        android:id="@+id/PageSettingIMG"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:backgroundTint="#FFF"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="6dp"
+        app:srcCompat="@drawable/pagesettingimg" />
 
-        <ImageButton
-            android:id="@+id/back"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:layout_above="@+id/textView5"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="0dp"
-            android:layout_marginBottom="0dp"
-            android:background="#00FFFFFF"
-            android:src="@drawable/b"
-            android:text="Button" />
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/PageSettingIMG"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="2dp"
+        android:text="Page Settings"
+        android:textAlignment="center"
+        android:textColor="#000000"
+        android:textSize="16sp"
+        android:textStyle="bold" />
 
-        <ImageView
-            android:id="@+id/PageSettingIMG"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="6dp"
-            app:srcCompat="@drawable/pagesettingimg" />
+    <ScrollView
+        android:id="@+id/scrollViewImages"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/textView5"
+        android:layout_marginTop="0dp">
 
-        <View
-            android:id="@+id/view2"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/imageView"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="139dp"
-            android:layout_marginEnd="0dp"
-            android:layout_marginBottom="0dp"
-            android:background="@drawable/pageview" />
+            android:backgroundTint="#FFF"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-        <Button
-            android:id="@+id/imagesDone"
-            android:layout_width="160dp"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/textView20"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="30dp"
-            android:layout_marginBottom="10dp"
-            android:padding="10dp"
-            android:text="Done"
-            android:textAlignment="center"
-            android:textColor="#000"
-            android:textSize="17sp"
-            android:textStyle="bold" />
+            <View
+                android:id="@+id/view2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/imageView"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="139dp"
+                android:layout_marginEnd="0dp"
+                android:layout_marginBottom="0dp"
+                android:background="@drawable/pageview" />
 
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="184dp"
-            android:layout_height="202dp"
-            android:layout_below="@+id/textView5"
-            android:layout_centerHorizontal="true"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="7dp"
-            android:layout_marginEnd="8dp" />
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="184dp"
+                android:layout_height="202dp"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="6dp"
+                android:layout_marginEnd="8dp" />
 
-        <ImageButton
-            android:id="@+id/previousImg"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:layout_alignTop="@+id/nextImg"
-            android:layout_marginTop="0dp"
-            android:layout_marginEnd="0dp"
-            android:layout_toStartOf="@+id/imageView"
-            android:background="#00FFFFFF"
-            android:src="@drawable/leftarrow" />
+            <Button
+                android:id="@+id/imagesDone"
+                android:layout_width="160dp"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/textView20"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="10dp"
+                android:padding="10dp"
+                android:text="Done"
+                android:textAlignment="center"
+                android:textColor="#000"
+                android:textSize="17sp"
+                android:textStyle="bold" />
 
-        <ImageButton
-            android:id="@+id/nextImg"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:layout_alignTop="@+id/imageView"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="56dp"
-            android:layout_toEndOf="@+id/imageView"
-            android:background="#00FFFFFF"
-            android:src="@drawable/rightarrow" />
+            <ImageButton
+                android:id="@+id/previousImg"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_alignTop="@+id/nextImg"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="0dp"
+                android:layout_toStartOf="@+id/imageView"
+                android:background="#00FFFFFF"
+                android:src="@drawable/leftarrow" />
 
-        <ImageView
-            android:id="@+id/imageView9"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignStart="@+id/black_white"
-            android:layout_alignTop="@+id/black_white"
-            android:layout_alignEnd="@+id/black_white"
-            android:layout_alignBottom="@+id/black_white"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="0dp"
-            android:layout_marginEnd="0dp"
-            android:layout_marginBottom="0dp"
-            app:srcCompat="@drawable/bwimg" />
+            <ImageButton
+                android:id="@+id/nextImg"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_alignTop="@+id/imageView"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="56dp"
+                android:layout_toEndOf="@+id/imageView"
+                android:background="#00FFFFFF"
+                android:src="@drawable/rightarrow" />
 
-        <ImageView
-            android:id="@+id/imageView10"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignStart="@+id/colors"
-            android:layout_alignTop="@+id/colors"
-            android:layout_alignEnd="@+id/colors"
-            android:layout_alignBottom="@+id/colors"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="0dp"
-            android:layout_marginEnd="0dp"
-            android:layout_marginBottom="0dp"
-            app:srcCompat="@drawable/colorimg" />
+            <ImageView
+                android:id="@+id/imageView9"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/black_white"
+                android:layout_alignTop="@+id/black_white"
+                android:layout_alignEnd="@+id/black_white"
+                android:layout_alignBottom="@+id/black_white"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="0dp"
+                android:layout_marginBottom="0dp"
+                app:srcCompat="@drawable/bwimg" />
 
-        <TextView
-            android:id="@+id/textView5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/PageSettingIMG"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="2dp"
-            android:text="Page Settings"
-            android:textAlignment="center"
-            android:textColor="#000000"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            <ImageView
+                android:id="@+id/imageView10"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/colors"
+                android:layout_alignTop="@+id/colors"
+                android:layout_alignEnd="@+id/colors"
+                android:layout_alignBottom="@+id/colors"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="0dp"
+                android:layout_marginBottom="0dp"
+                app:srcCompat="@drawable/colorimg" />
 
-        <TextView
-            android:id="@+id/textView6"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/imageView"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="27dp"
-            android:text="Select Colour Format"
-            android:textAlignment="center"
-            android:textColor="#5C5A5A"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            <TextView
+                android:id="@+id/textView6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/imageView"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="27dp"
+                android:text="Select Colour Format"
+                android:textAlignment="center"
+                android:textColor="#5C5A5A"
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
-        <View
-            android:id="@+id/black_white"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_below="@+id/textView6"
-            android:layout_alignStart="@+id/imageView"
-            android:layout_marginStart="2dp"
-            android:layout_marginTop="15dp"
-            android:background="#00FFFFFF" />
+            <View
+                android:id="@+id/black_white"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_below="@+id/textView6"
+                android:layout_alignStart="@+id/imageView"
+                android:layout_marginStart="2dp"
+                android:layout_marginTop="15dp"
+                android:background="#00FFFFFF" />
 
-        <View
-            android:id="@+id/colors"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_below="@+id/textView6"
-            android:layout_alignEnd="@+id/imageView"
-            android:layout_alignBottom="@+id/black_white"
-            android:layout_marginTop="15dp"
-            android:layout_marginEnd="1dp"
-            android:layout_marginBottom="3dp"
-            android:background="#00FFFFFF" />
+            <View
+                android:id="@+id/colors"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_below="@+id/textView6"
+                android:layout_alignEnd="@+id/imageView"
+                android:layout_alignBottom="@+id/black_white"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="1dp"
+                android:layout_marginBottom="3dp"
+                android:background="#00FFFFFF" />
 
-        <TextView
-            android:id="@+id/copiesTV"
-            android:layout_width="250dp"
-            android:layout_height="35dp"
-            android:layout_below="@+id/black_white"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="12dp"
-            android:background="@drawable/page_info_views"
-            android:padding="5dp"
-            android:text="@string/Copies"
-            android:textAlignment="viewStart"
-            android:textColor="#3D3D3D"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            <TextView
+                android:id="@+id/copiesTV"
+                android:layout_width="250dp"
+                android:layout_height="35dp"
+                android:layout_below="@+id/black_white"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/page_info_views"
+                android:padding="5dp"
+                android:text="@string/Copies"
+                android:textAlignment="viewStart"
+                android:textColor="#3D3D3D"
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
-        <EditText
-            android:id="@+id/CopiesText"
-            android:layout_width="75dp"
-            android:layout_height="32dp"
-            android:layout_alignTop="@+id/copiesTV"
-            android:layout_alignEnd="@+id/copiesTV"
-            android:layout_alignBottom="@+id/copiesTV"
-            android:layout_marginTop="0dp"
-            android:layout_marginEnd="0dp"
-            android:layout_marginBottom="0dp"
-            android:background="@drawable/copytv"
-            android:ems="10"
-            android:hint="@string/Copies"
-            android:inputType="number"
-            android:padding="1dp"
-            android:text="1"
-            android:textAlignment="center"
-            android:textColor="#3D3D3D"
-            android:textSize="12sp" />
+            <EditText
+                android:id="@+id/CopiesText"
+                android:layout_width="75dp"
+                android:layout_height="32dp"
+                android:layout_alignTop="@+id/copiesTV"
+                android:layout_alignEnd="@+id/copiesTV"
+                android:layout_alignBottom="@+id/copiesTV"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="0dp"
+                android:layout_marginBottom="0dp"
+                android:background="@drawable/copytv"
+                android:ems="10"
+                android:hint="@string/Copies"
+                android:inputType="number"
+                android:padding="1dp"
+                android:text="1"
+                android:textAlignment="center"
+                android:textColor="#3D3D3D"
+                android:textSize="12sp" />
 
-        <TextView
-            android:id="@+id/pageSIzeTV"
-            android:layout_width="200dp"
-            android:layout_height="35dp"
-            android:layout_below="@+id/copiesTV"
-            android:layout_alignStart="@+id/copiesTV"
+            <TextView
+                android:id="@+id/pageSIzeTV"
+                android:layout_width="200dp"
+                android:layout_height="35dp"
+                android:layout_below="@+id/copiesTV"
+                android:layout_alignStart="@+id/copiesTV"
 
-            android:layout_alignEnd="@+id/copiesTV"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="12dp"
-            android:layout_marginEnd="0dp"
-            android:background="@drawable/page_info_views"
-            android:padding="5dp"
-            android:text="Page Size"
-            android:textAlignment="viewStart"
-            android:textColor="#3D3D3D"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+                android:layout_alignEnd="@+id/copiesTV"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="0dp"
+                android:background="@drawable/page_info_views"
+                android:padding="5dp"
+                android:text="Page Size"
+                android:textAlignment="viewStart"
+                android:textColor="#3D3D3D"
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
-        <Spinner
-            android:id="@+id/pageSizesDropDown"
-            android:layout_width="82dp"
-            android:layout_height="33dp"
-            android:layout_alignStart="@+id/CopiesText"
-            android:layout_alignTop="@+id/pageSIzeTV"
-            android:layout_alignEnd="@+id/pageSIzeTV"
-            android:layout_alignBottom="@+id/pageSIzeTV"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="0dp"
-            android:layout_marginEnd="0dp"
-            android:layout_marginBottom="2dp"
-            android:background="@drawable/copytv"
-            android:spinnerMode="dropdown" />
+            <Spinner
+                android:id="@+id/pageSizesDropDown"
+                android:layout_width="82dp"
+                android:layout_height="33dp"
+                android:layout_alignStart="@+id/CopiesText"
+                android:layout_alignTop="@+id/pageSIzeTV"
+                android:layout_alignEnd="@+id/pageSIzeTV"
+                android:layout_alignBottom="@+id/pageSIzeTV"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="0dp"
+                android:layout_marginBottom="2dp"
+                android:background="@drawable/copytv"
+                android:spinnerMode="dropdown" />
 
-        <TextView
-            android:id="@+id/orientationTV"
-            android:layout_width="200dp"
-            android:layout_height="35dp"
-            android:layout_below="@+id/pageSIzeTV"
-            android:layout_alignStart="@+id/pageSIzeTV"
+            <TextView
+                android:id="@+id/orientationTV"
+                android:layout_width="200dp"
+                android:layout_height="35dp"
+                android:layout_below="@+id/pageSIzeTV"
+                android:layout_alignStart="@+id/pageSIzeTV"
 
-            android:layout_alignEnd="@+id/pageSIzeTV"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="12dp"
-            android:layout_marginEnd="0dp"
-            android:background="@drawable/page_info_views"
-            android:padding="5dp"
-            android:text="Orientation"
-            android:textAlignment="viewStart"
-            android:textColor="#3D3D3D"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+                android:layout_alignEnd="@+id/pageSIzeTV"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="0dp"
+                android:background="@drawable/page_info_views"
+                android:padding="5dp"
+                android:text="Orientation"
+                android:textAlignment="viewStart"
+                android:textColor="#3D3D3D"
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
-        <Spinner
-            android:id="@+id/orientationSpinner"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignStart="@+id/bothSidesToggle"
-            android:layout_alignTop="@+id/orientationTV"
-            android:layout_alignEnd="@+id/orientationTV"
-            android:layout_alignBottom="@+id/orientationTV"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="0dp"
-            android:layout_marginEnd="0dp"
-            android:layout_marginBottom="0dp"
-            android:background="@drawable/copytv" />
+            <Spinner
+                android:id="@+id/orientationSpinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@+id/bothSidesToggle"
+                android:layout_alignTop="@+id/orientationTV"
+                android:layout_alignEnd="@+id/orientationTV"
+                android:layout_alignBottom="@+id/orientationTV"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="0dp"
+                android:layout_marginBottom="0dp"
+                android:background="@drawable/copytv" />
 
-        <TextView
-            android:id="@+id/previmageTV"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/previousImg"
-            android:layout_marginEnd="14dp"
-            android:layout_marginBottom="0dp"
-            android:layout_toStartOf="@+id/imageView"
-            android:text="Prev. image"
-            android:textSize="12sp" />
+            <TextView
+                android:id="@+id/previmageTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/previousImg"
+                android:layout_marginEnd="14dp"
+                android:layout_marginBottom="0dp"
+                android:layout_toStartOf="@+id/imageView"
+                android:text="Prev. image"
+                android:textSize="12sp" />
 
-        <TextView
-            android:id="@+id/nextimageTV"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/previousImg"
-            android:layout_marginStart="11dp"
-            android:layout_marginBottom="0dp"
-            android:layout_toEndOf="@+id/imageView"
-            android:text="Next image"
-            android:textSize="12sp" />
+            <TextView
+                android:id="@+id/nextimageTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/previousImg"
+                android:layout_marginStart="11dp"
+                android:layout_marginBottom="0dp"
+                android:layout_toEndOf="@+id/imageView"
+                android:text="Next image"
+                android:textSize="12sp" />
 
-        <TextView
-            android:id="@+id/textView20"
-            android:layout_width="200dp"
-            android:layout_height="35dp"
-            android:layout_below="@+id/orientationTV"
-            android:layout_alignStart="@+id/orientationTV"
-            android:layout_alignEnd="@+id/orientationTV"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="12dp"
-            android:layout_marginEnd="0dp"
-            android:background="@drawable/page_info_views"
-            android:padding="5dp"
-            android:text="Both Sides"
-            android:textAlignment="viewStart"
-            android:textColor="#3D3D3D"
-            android:textSize="16sp"
-            android:textStyle="bold" />
+            <TextView
+                android:id="@+id/textView20"
+                android:layout_width="200dp"
+                android:layout_height="35dp"
+                android:layout_below="@+id/orientationTV"
+                android:layout_alignStart="@+id/orientationTV"
+                android:layout_alignEnd="@+id/orientationTV"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="0dp"
+                android:background="@drawable/page_info_views"
+                android:padding="5dp"
+                android:text="Both Sides"
+                android:textAlignment="viewStart"
+                android:textColor="#3D3D3D"
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
-        <ToggleButton
-            android:id="@+id/bothSidesToggle"
-            android:layout_width="104dp"
-            android:layout_height="40dp"
-            android:layout_alignStart="@+id/pageSizesDropDown"
-            android:layout_alignTop="@+id/textView20"
-            android:layout_alignEnd="@+id/textView20"
-            android:layout_alignBottom="@+id/textView20"
-            android:layout_marginStart="-35dp"
-            android:layout_marginTop="0dp"
-            android:layout_marginEnd="0dp"
-            android:layout_marginBottom="0dp"
-            android:background="@drawable/copytv"
-            android:text="ToggleButton"
-            android:textSize="12sp" />
+            <ToggleButton
+                android:id="@+id/bothSidesToggle"
+                android:layout_width="104dp"
+                android:layout_height="40dp"
+                android:layout_alignStart="@+id/pageSizesDropDown"
+                android:layout_alignTop="@+id/textView20"
+                android:layout_alignEnd="@+id/textView20"
+                android:layout_alignBottom="@+id/textView20"
+                android:layout_marginStart="-35dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="0dp"
+                android:layout_marginBottom="0dp"
+                android:background="@drawable/copytv"
+                android:text="ToggleButton"
+                android:textSize="12sp" />
 
-        <ImageView
-            android:id="@+id/imageView2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/pageSizesDropDown"
-            android:layout_alignEnd="@+id/pageSIzeTV"
-            android:layout_alignBottom="@+id/pageSizesDropDown"
-            android:layout_marginTop="0dp"
-            android:layout_marginEnd="3dp"
-            android:layout_marginBottom="0dp"
-            app:srcCompat="@drawable/downarr" />
+            <ImageView
+                android:id="@+id/imageView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/pageSizesDropDown"
+                android:layout_alignEnd="@+id/pageSIzeTV"
+                android:layout_alignBottom="@+id/pageSizesDropDown"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="3dp"
+                android:layout_marginBottom="0dp"
+                app:srcCompat="@drawable/downarr" />
 
-        <ImageButton
-            android:id="@+id/scrollBtn"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_alignTop="@+id/textView20"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="0dp"
-            android:layout_toEndOf="@+id/textView20"
-            android:background="@drawable/roundbutton"
-            android:contentDescription="TODO"
-            android:visibility="invisible"
-            app:srcCompat="@drawable/downarrow" />
+            <ImageButton
+                android:id="@+id/scrollBtn"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_alignTop="@+id/textView20"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="0dp"
+                android:layout_toEndOf="@+id/textView20"
+                android:background="@drawable/roundbutton"
+                android:contentDescription="TODO"
+                android:visibility="invisible"
+                app:srcCompat="@drawable/downarrow" />
 
-    </RelativeLayout>
-
-</ScrollView>
+        </RelativeLayout>
+    </ScrollView>
+</RelativeLayout>

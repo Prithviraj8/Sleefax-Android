@@ -16,6 +16,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -73,18 +74,17 @@ public class ShopsActivity extends AppCompatActivity {
     ListView shopsLV;
 //    ArrayList<Integer> pageCopies = new ArrayList<Integer>();
 //    ArrayList<String> storeID = new ArrayList<>();
-    ArrayList<String> pageURL = new ArrayList<>();
-//    ArrayList<Uri> pageURL = new ArrayList<>();
+    ArrayList<String> urls = new ArrayList<>();
+//    ArrayList<Uri> urls = new ArrayList<>();
     ImageButton crop,back;
     Button no,confirm;
     int copy;
-    Double numberOfPages;
-    double price;
+    ArrayList<Double> price = new ArrayList<>();
     String color;
 
 
     UserLoc user_loc = new UserLoc();
-    Page_Info info = new Page_Info();
+//    Page_Info info = new Page_Info();
     final Location userLoc = new Location("");
 
 
@@ -95,13 +95,25 @@ public class ShopsActivity extends AppCompatActivity {
     LinearLayout shopRows;
     int ShopsCount,resultCode,requestCode;
     public static final int REQUEST_LOCATION = 1;
-    String userID;
+    String userID,customVal;
     String fileType,orientation,custom,shopType;
     DatabaseReference storeDb = FirebaseDatabase.getInstance().getReference();
     String username,email,pagesize;
     long usernum;
     Intent data;
-    Boolean bothSides,isTester,newUser;
+    Boolean isTester,newUser;
+
+    ArrayList<String> pdfURL = new ArrayList<>();
+    ArrayList<String> fileTypes = new ArrayList<>();
+    ArrayList<String> colors = new ArrayList<>();
+    ArrayList<Integer> copies = new ArrayList<>();
+    ArrayList<String> pageSize = new ArrayList<>();
+    ArrayList<String> orientations = new ArrayList<>();
+    boolean bothSides[];
+    ArrayList<String> customPages = new ArrayList<>();
+    ArrayList<String> customValues = new ArrayList<>();
+    double numberOfPages[];
+    ArrayList<String> fileNames = new ArrayList<>();
 
     //    private FusedLocationProviderClient fusedLocationClient;
     LocationManager locationManager;
@@ -127,12 +139,19 @@ public class ShopsActivity extends AppCompatActivity {
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 //        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, (LocationListener) this);
         if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+//            final Intent poke = new Intent();
+//            poke.setClassName("com.android.settings", "com.android.settings.widget.SettingsAppWidgetProvider");
+//            poke.addCategory(Intent.CATEGORY_ALTERNATIVE);
+//            poke.setData(Uri.parse("3"));
+//            sendBroadcast(poke);
+
             buildAlertMessageNoGps();
 
         } else if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             getLocation();
         }
-        getLocation();
+
+//        getLocation();
 
         ListView listView = findViewById(R.id.ShopsListView);
         ShopsAdapter adapter = new ShopsAdapter();
@@ -155,122 +174,40 @@ public class ShopsActivity extends AppCompatActivity {
         confirmOrder = findViewById(R.id.ConfirmOrderTV);
         paymentModeTV = findViewById(R.id.paymentTV);
 
-        pageURL = extras.getStringArrayList("URLS");
-        copy = extras.getInt("Copies");
-        color = extras.getString("ColorType");
-        fileType = extras.getString("FileType");
+        urls = extras.getStringArrayList("URLS");
+//        copy = extras.getInt("Copies");
+        copies = extras.getIntegerArrayList("Copies");
+        colors = extras.getStringArrayList("ColorType");
+        fileTypes = extras.getStringArrayList("FileType");
         ShopsCount = extras.getInt("ShopCount");
         requestCode = extras.getInt("RequestCode");
         resultCode = extras.getInt("ResultCode");
-        pagesize = extras.getString("PageSize");
-        orientation = extras.getString("Orientation");
+        pageSize = extras.getStringArrayList("PageSize");
+        orientations = extras.getStringArrayList("Orientation");
         data = extras.getParcelable("Data");
-        bothSides = extras.getBoolean("BothSides");
-        custom = extras.getString("Custom");
-        numberOfPages = Double.valueOf(extras.getInt("Pages"));
+        bothSides = extras.getBooleanArray("BothSides");
+        customPages = extras.getStringArrayList("Custom");
+        numberOfPages = extras.getDoubleArray("Pages");
         newUser = extras.getBoolean("NewUser");
-
+        customValues = extras.getStringArrayList("CustomValue");
+        fileNames = extras.getStringArrayList("FileNames");
 
         if(!newUser){
             userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
         }
         isTester = extras.getBoolean("IsTester");
 
-        Log.d("FILETYPE",fileType);
         if(isTester){
             shopType = "TestStores";
         }else{
             shopType = "Stores";
         }
 
-//        ShopsCnt =  intent.getIntExtra("ShopCount",1);
-        Log.d("URLS ARE ", String.valueOf(pageURL));
-        Log.d("COLOR TYPES ARE ", String.valueOf(color));
-        Log.d("CUSTOM", String.valueOf(custom));
-        Log.d("NOPPP", String.valueOf(numberOfPages));
-        Log.d("BOTHSIDES", String.valueOf(bothSides));
+//        Toast.makeText(this, "PDFCNT3 "+urls.size(), Toast.LENGTH_SHORT).show();
 
-        Double cnt=0.0;
-        if(!custom.equals("All")){
-            if(bothSides) {
-                Log.d("CUSTOMCNTPRICE",(custom));
-                cnt = Double.parseDouble(custom)/2;
+//        calculatePrice();
 
-            }else{
-                cnt = Double.parseDouble(custom);
-            }
 
-        }
-
-        if(cnt>0){
-            numberOfPages = cnt;
-        }else{
-            if(bothSides) {
-                numberOfPages = numberOfPages / 2;
-            }
-        }
-
-        if(color != null){
-
-            if(fileType.equals("application/pdf")){
-
-                if (color.equals("Colors")) {
-                    Log.d("PRICE FOR PDF", String.valueOf(bothSides));
-
-                    if(bothSides) {
-                        orderPrice.setText("₹ " + ((5 * pageURL.size()) * numberOfPages * copy));
-                        price =  ((5 * pageURL.size()) * numberOfPages * copy);
-                    }else{
-                        orderPrice.setText("₹ " + (5 * pageURL.size()) * numberOfPages * copy);
-                        price =  ((5 * pageURL.size())* numberOfPages  * copy);
-                    }
-                } else {
-                    if(bothSides) {
-                        orderPrice.setText("₹ " + ((pageURL.size()) * numberOfPages * copy));
-                        price =  ((pageURL.size()) * numberOfPages * copy);
-                    }else{
-                        orderPrice.setText("₹ " + (pageURL.size()) * numberOfPages * copy);
-                        price =  ((pageURL.size()) * numberOfPages * copy);
-                    }
-
-                }
-
-            }else{
-
-                 Log.d("PRICEFOR","IMAGE");
-                if (color.equals("Colors")) {
-                    Log.d("BOTHSIDEIMG",String.valueOf(bothSides));
-                    Log.d("IMAGENOS",String.valueOf(pageURL.size()));
-                    Log.d("IMAGECOPIES",String.valueOf(copy));
-
-                    if(bothSides) {
-                        price = ((5 * pageURL.size()) * copy);
-                        price = price/2;
-                    }else{
-                        price = (5 * pageURL.size()) * copy;
-                    }
-                    orderPrice.setText("₹ " + price);
-
-                } else {
-                    Log.d("BOTHSIDEIMG",String.valueOf(bothSides));
-                    Log.d("IMAGENOS",String.valueOf(pageURL.size()));
-                    Log.d("IMAGECOPIES",String.valueOf(copy));
-                    if(bothSides){
-                        Log.d("BSSS", String.valueOf(bothSides));
-                        price = ((pageURL.size()) * copy);
-                        price = price/2;
-                    }else {
-                        price = (pageURL.size()) * copy;
-                    }
-                    orderPrice.setText("₹ " + (price));
-                    Log.d("PRICE FOR IMG", String.valueOf(price));
-
-                }
-
-            }
-        }
-
-        Log.d("FINAL","PRICE "+price);
 
         confirmView.setVisibility(View.INVISIBLE);
         confirmOrder.setVisibility(View.INVISIBLE);
@@ -281,56 +218,129 @@ public class ShopsActivity extends AppCompatActivity {
     }
 
 
+    double finalPrice = 0.0;
+    public void calculatePrice(){
+        ArrayList<Double> cnt = new ArrayList<>();
+
+        for(int i =0;i<urls.size();i++) {
+
+//            Log.d("CP ",customPages.get(i));
+//            Log.d("BS ", String.valueOf(bothSides[i]));
+//            Log.d("COL ",String.valueOf(colors.get(i)));
+//            Log.d("NOP ",String.valueOf(numberOfPages[i]));
+//            Toast.makeText(this, "CP "+customPages.get(i), Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "BS "+bothSides[i], Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "CV "+customPages.get(i), Toast.LENGTH_SHORT).show();
+//            Toast.makeText(this, "NOP "+numberOfPages[i], Toast.LENGTH_SHORT).show();
+
+            if(bothSides[i]){
+                if(fileTypes.get(i).contains("application")){
+                    if(!customPages.get(i).equals("All")){
+
+                    }
+                }else{
+
+                }
+            }
+
+
+            if (!customPages.get(i).equals("All")) {
+                Log.d("CV ",String.valueOf(customValues.get(i)));
+
+                if (bothSides[i]) {
+                    cnt.add(Double.parseDouble(customValues.get(i)) / 2);
+                } else {
+                    cnt.add(Double.parseDouble(customValues.get(i)));
+                }
+
+            }
+
+            if(cnt.size()>0) {
+                if (cnt.get(i) > 0) {
+                    numberOfPages[i] = (cnt.get(i));
+                } else {
+                    if (bothSides[i]) {
+                        numberOfPages[i] = numberOfPages[i] / 2;
+                    }
+                }
+            }
+            if (colors.get(i) != null) {
+
+                if (fileTypes.get(i).contains("application")) {
+
+                    if (colors.get(i).equals("Colors")) {
+                        Log.d("PRICE FOR PDF", String.valueOf(bothSides));
+
+                        if (bothSides[i]) {
+                            price.add(i,((5 * urls.size()) * numberOfPages[i] * copies.get(i)));
+                        } else {
+                            price.add(i,((5 * urls.size()) * numberOfPages[i] * copies.get(i)));
+                        }
+                    } else {
+                        if (bothSides[i]) {
+                            price.add(i,((urls.size()) * numberOfPages[i] * copies.get(i)));
+                        } else {
+                            price.add(i,((urls.size()) * numberOfPages[i] * copies.get(i)));
+                        }
+
+                    }
+
+                } else {
+
+                    if (colors.get(i).equals("Colors")) {
+
+                        if (bothSides[i]) {
+                            price.add(i, (double) (5 * urls.size() * copies.get(i))/2);
+//                            price = price.get(i) / 2;
+                        } else {
+                            price.add(i, (double) (5 * urls.size() * copies.get(i)));
+                        }
+//                        orderPrice.setText("₹ " + price);
+
+                    } else {
+                        if (bothSides[i]) {
+                            price.add(i, (double) ((urls.size()) * copies.get(i))/2);
+//                            price = price / 2;
+                        } else {
+                            price.add(i, (double) (urls.size() * copies.get(i)));
+                        }
+//                        orderPrice.setText("₹ " + (price));
+                        Log.d("PRICE FOR IMG", String.valueOf(price));
+
+                    }
+
+                }
+            }
+
+            //setting final price of order for multiple files...
+            if(i == urls.size()-1){
+                for(int j = 0; j < price.size(); j++) {
+                    finalPrice += price.get(j);
+                    if(j == price.size()-1){
+                        Toast.makeText(this, "FINAL PRICE "+(finalPrice/2), Toast.LENGTH_SHORT).show();
+//                        orderPrice.setText((int) finalPrice);
+                    }
+                }
+            }
+        }
+    }
+
     //     Create an anonymous implementation of OnClickListener
     private View.OnClickListener backListener = new View.OnClickListener() {
         public void onClick(View v) {
-
-            if(fileType.contains("application")){
+            finish();
+            if(fileTypes.get(0).contains("application")){
 //                Intent intent1 = new Intent(ShopsActivity.this,PdfInfo.class);
 //                startActivity(intent1);
-                finish();
             }else{
 //                Intent intent1 = new Intent(ShopsActivity.this,PageInfo.class);
 //                startActivity(intent1);
-                finish();
             }
 
         }
     };
 
 
-    public int getShopsCount(){
-        final int[] count = {1};
-        ref.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                count[0] = (int) dataSnapshot.getChildrenCount();
-                Log.d("Shops cnt ", String.valueOf(info.shopCnt));
-            }
-
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-        return count.length;
-    }
 
 
     public void getLocation() {
@@ -400,12 +410,8 @@ public class ShopsActivity extends AppCompatActivity {
                     public void onClick(final DialogInterface dialog, final int id) {
                         startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
                     }
-                })
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    public void onClick(final DialogInterface dialog, final int id) {
-                        dialog.cancel();
-                    }
                 });
+
         final AlertDialog alert = builder.create();
         alert.show();
     }
@@ -480,7 +486,15 @@ public class ShopsActivity extends AppCompatActivity {
             final ArrayList<Double> shopLat = new ArrayList<>();
             final ArrayList<Double> shopLong = new ArrayList<>();
             final ArrayList<Integer> files = new ArrayList<>();
-//            final ArrayList<Long> price = new ArrayList<>();
+
+
+            // Getting prices set by the shopkeeper while signing up////
+            final ArrayList<Integer> bwBothSidesPrice = new ArrayList<>();
+            final ArrayList<Integer> bwPrice = new ArrayList<>();
+            final ArrayList<Integer> colorBothSidesPrice = new ArrayList<>();
+            final ArrayList<Integer> colorPrice = new ArrayList<>();
+
+
             final ArrayList<Double> distances = new ArrayList<>();
             final ArrayList<Long> numbers = new ArrayList<>();
             final ArrayList<String> storeID = new ArrayList<>();
@@ -497,7 +511,7 @@ public class ShopsActivity extends AppCompatActivity {
                     final TextView Price = convertView.findViewById(R.id.Price);
                     final TextView Distance = convertView.findViewById(R.id.Distance);
 //                    ImageButton button = convertView.findViewById(R.id.ShopsLVButton);
-                    Files.setText("Files: "+pageURL.size());
+                    Files.setText("Files: "+urls.size());
 
 //                    ShopsName.setText("Shops1");
             userLoc.setLatitude(user_loc.latitude);
@@ -517,11 +531,21 @@ public class ShopsActivity extends AppCompatActivity {
 //                            hud.show();
                         storeID.add(dataSnapshot.getKey());
                         Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
+
+                        ///Getting shop details///
                         shopNames.add(String.valueOf(map.get("ShopName")));
                         locations.add(String.valueOf(map.get("area")));
                         shopLat.add(Double.parseDouble(String.valueOf(map.get("latitude"))));
                         shopLong.add(Double.parseDouble(String.valueOf(map.get("longitude"))));
                         numbers.add(Long.parseLong(String.valueOf(map.get("num"))));
+
+                        ////Getting prices of various types of print from db .///
+                        bwBothSidesPrice.add((int) Double.parseDouble(String.valueOf(map.get("blackAndwhitePrintOutBothSidesPerPage"))));
+                        colorBothSidesPrice.add((int) Double.parseDouble(String.valueOf(map.get("colorPrintOutBothSidesPerPage"))));
+                        bwPrice.add((int) Double.parseDouble(String.valueOf(map.get("blackAndwhitePrintOutSingleSidePerPage"))));
+                        colorPrice.add((int) Double.parseDouble(String.valueOf(map.get("colorPrintOutSingleSidePerPage"))));
+
+                        Log.d("CPPRICE ", String.valueOf(colorPrice.get(0)));
 
                         final Handler handler1 = new Handler();
                         handler1.postDelayed(new Runnable() {
@@ -536,15 +560,7 @@ public class ShopsActivity extends AppCompatActivity {
                                     shopLoc.setLatitude(finalShopLat);
                                     shopLoc.setLongitude(finalShopLong);
 
-//                                    int distanceFromShop = (int) distance(userLoc.getLatitude(), userLoc.getLongitude(), shopLoc.getLatitude(), shopLoc.getLongitude());
-//                                  double distanceFromShop = distance(userLoc.getLatitude(),userLoc.getLongitude(),shopLoc.getLatitude(),shopLoc.getLongitude());
-
                                     int distanceFromShop = (int) userLoc.distanceTo(shopLoc);
-
-
-                                    Log.d("UL",userLoc.getLatitude()+"ULON"+userLoc.getLongitude());
-                                    Log.d("SL",shopLoc.getLatitude()+"SLONG"+shopLoc.getLongitude());
-                                    Log.d("DISTANCE", String.valueOf(distanceFromShop/1000));
                                     distances.add((double) (distanceFromShop / 1000));
 
 
@@ -560,7 +576,7 @@ public class ShopsActivity extends AppCompatActivity {
                                 if(position<shopNames.size()) {
                                     ShopsName.setText(shopNames.get(position));
                                     Location.setText(locations.get(position));
-                                    Files.setText("Files : " + pageURL.size());
+                                    Files.setText("Files : " + urls.size());
                                     Distance.setText("~" + (distances.get(position)) + "km");
                                 }
                             }
@@ -573,51 +589,56 @@ public class ShopsActivity extends AppCompatActivity {
                             public void onClick(View v) {
                                 Log.d("VIEW ","Tapped");
 
+                                ////// Haven't calculated price yet for selection of multiple orders//////
+                                    processOrder(storeID.get(position),locations.get(position),shopLat.get(position),shopLong.get(position),shopNames.get(position),numbers.get(position),urls.size(),1);
 
-                                shortAnimationDuration = getResources().getInteger(android.R.integer.config_shortAnimTime);
-                                shopRows.setBackgroundColor(Color.GRAY);
+                                ;
+//                                if(color.equals("Colors")){
+//                                    processOrder(storeID.get(position),locations.get(position),shopLat.get(position),shopLong.get(position),shopNames.get(position),numbers.get(position),urls.size(),finalPrice);
+//                                }else{
+//                                    processOrder(storeID.get(position),locations.get(position),shopLat.get(position),shopLong.get(position),shopNames.get(position),numbers.get(position),urls.size(),finalPrice);
+//
+//                                }
+
+//                                shortAnimationDuration = getResources().getInteger(android.R.integer.config_shortAnimTime);
+//                                shopRows.setBackgroundColor(Color.GRAY);
+////                                confirmView.setVisibility(View.VISIBLE);
+//                                confirmView.setAlpha(0f);
 //                                confirmView.setVisibility(View.VISIBLE);
-                                confirmView.setAlpha(0f);
-                                confirmView.setVisibility(View.VISIBLE);
-                                confirmView.animate()
-                                        .alpha(1f)
-                                        .setDuration(shortAnimationDuration)
-                                        .setListener(null);
-
-
-                                confirmOrder.setVisibility(View.VISIBLE);
-                                no.setVisibility(View.VISIBLE);
-                                confirm.setVisibility(View.VISIBLE);
-                                orderPrice.setVisibility(View.VISIBLE);
-                                paymentModeTV.setVisibility(View.VISIBLE);
-
-                                Log.d("PRICE", String.valueOf(price));
-
-                                confirm.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-
-                                        if(color.equals("Colors")){
-                                            processOrder("Confirm Order",storeID.get(position),locations.get(position),shopLat.get(position),shopLong.get(position),shopNames.get(position),numbers.get(position),pageURL.size(),price);
-                                        }else{
-                                            processOrder("Confirm Order",storeID.get(position),locations.get(position),shopLat.get(position),shopLong.get(position),shopNames.get(position),numbers.get(position),pageURL.size(),price);
-
-                                        }
-                                    }
-                                });
-                                no.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View v) {
-                                        shopRows.setBackgroundColor(Color.WHITE);
-                                        confirmOrder.setVisibility(View.INVISIBLE);
-                                        confirmView.setVisibility(View.INVISIBLE);
-                                        no.setVisibility(View.INVISIBLE);
-                                        confirm.setVisibility(View.INVISIBLE);
-                                        orderPrice.setVisibility(View.INVISIBLE);
-                                        paymentModeTV.setVisibility(View.INVISIBLE);
-
-                                    }
-                                });
+//                                confirmView.animate()
+//                                        .alpha(1f)
+//                                        .setDuration(shortAnimationDuration)
+//                                        .setListener(null);
+//
+//
+//                                confirmOrder.setVisibility(View.VISIBLE);
+//                                no.setVisibility(View.VISIBLE);
+//                                confirm.setVisibility(View.VISIBLE);
+//                                orderPrice.setVisibility(View.VISIBLE);
+//                                paymentModeTV.setVisibility(View.VISIBLE);
+//
+//                                Log.d("PRICE", String.valueOf(price));
+//
+//                                confirm.setOnClickListener(new View.OnClickListener() {
+//                                    @Override
+//                                    public void onClick(View v) {
+//
+//
+//                                    }
+//                                });
+//                                no.setOnClickListener(new View.OnClickListener() {
+//                                    @Override
+//                                    public void onClick(View v) {
+//                                        shopRows.setBackgroundColor(Color.WHITE);
+//                                        confirmOrder.setVisibility(View.INVISIBLE);
+//                                        confirmView.setVisibility(View.INVISIBLE);
+//                                        no.setVisibility(View.INVISIBLE);
+//                                        confirm.setVisibility(View.INVISIBLE);
+//                                        orderPrice.setVisibility(View.INVISIBLE);
+//                                        paymentModeTV.setVisibility(View.INVISIBLE);
+//
+//                                    }
+//                                });
 
 
 
@@ -652,7 +673,7 @@ public class ShopsActivity extends AppCompatActivity {
                     return convertView;
         }
     }
-    String name,loc,orderKey,orderStatus,shopKey,orderDateTime;
+    String shopName,loc,orderKey,orderStatus,shopKey,orderDateTime;
     double shopLat;
     double shopLong;
     int files;
@@ -660,7 +681,7 @@ public class ShopsActivity extends AppCompatActivity {
 
 
 
-    public void processOrder(String message,String storeID,String loc,Double shopLat, Double shopLong,String ShopName,long num,int files,double price){
+    public void processOrder(String storeID,String loc,Double shopLat, Double shopLong,String ShopName,long num,int files,double price){
 
 //        String uniqueID = UUID.randomUUID().toString();
 //        String orderKey = "";
@@ -670,29 +691,37 @@ public class ShopsActivity extends AppCompatActivity {
         this.loc = loc;
         this.shopLat = shopLat;
         this.shopLong = shopLong;
-        this.name = ShopName;
+        this.shopName = ShopName;
         this.files = files;
         this.shopNum = num;
-
-
-
 
 
 
         Intent intent = new Intent(ShopsActivity.this, Payments.class);
         Bundle extras = new Bundle();
 
-        extras.putStringArrayList("URLS", pageURL);
-        extras.putString("ShopName", name);
+        extras.putStringArrayList("URLS", urls);
+        extras.putString("ShopName", shopName);
         extras.putString("Location", loc);
         extras.putDouble("ShopLat", shopLat);
         extras.putDouble("ShopLong", shopLong);
         extras.putInt("Files", files);
-        extras.putDouble("Price", price);
+//        extras.putDouble("Price", price);
+
+        ///// Change default price value here to calculated price...//////
+        extras.putDouble("Price", 1);
+
         Log.d("PRICE", String.valueOf(price));
-        extras.putString("FileType", fileType);
-        extras.putString("PageSize", pagesize);
-        extras.putString("Orientation", orientation);
+
+        extras.putIntegerArrayList("Copies", copies);
+        extras.putStringArrayList("ColorType", colors);
+        extras.putStringArrayList("Custom", customPages);
+        extras.putStringArrayList("FileType", fileTypes);
+        extras.putStringArrayList("PageSize", pageSize);
+        extras.putStringArrayList("Orientation", orientations);
+        extras.putDoubleArray("Pages", numberOfPages);
+        extras.putStringArrayList("FileNames",fileNames);
+
         extras.putBoolean("IsTester", isTester);
         extras.putLong("ShopNum", shopNum);
 
@@ -702,18 +731,11 @@ public class ShopsActivity extends AppCompatActivity {
 //            extras.putLong("UserNumber", usernum);
 //        }
 
-        extras.putInt("Copies", copy);
-        extras.putString("ColorType", color);
-        extras.putBoolean("BothSides", bothSides);
-        extras.putString("Custom", custom);
-//        extras.putString("OrderKey", orderKey);
+
         extras.putString("ShopKey", storeID);
         extras.putString("UserID", userID);
         extras.putDouble("User Lat", userLoc.getLatitude());
         extras.putDouble("User Long", userLoc.getLongitude());
-        extras.putInt("RequestCode", requestCode);
-        extras.putInt("ResultCode", resultCode);
-        extras.putDouble("Pages", numberOfPages);
         extras.putBoolean("NewUser",newUser);
 
         intent.putExtras(extras);

@@ -19,6 +19,8 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
+import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.ActivityOptions;
 import android.app.AlarmManager;
@@ -52,6 +54,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -60,6 +63,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.Anubis.Sleefax.CONSTANTS.CONSTANTS;
 import com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -91,6 +95,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 import static android.app.AlarmManager.ELAPSED_REALTIME;
@@ -115,14 +120,14 @@ public class Select extends AppCompatActivity {
 
     int shortAnimationDuration;
 
-    Button selectFilesBtn,orders;
-    ImageButton more ,setting,sideMenu;
-    View pickedUpOrderView;
+    Button orders,orderPickBtn;
+    ImageButton selectFilesBtn,more ,setting,sideMenu;
+    View pickedUpOrderView,addFileView;
 
     int PICK_IMAGE_MULTIPLE = 1;
     final static int PICK_PDF_CODE = 2342;
     final static int PICK_IMAGE_CODE = 100;
-    int orderCnt = 0;
+    int orderCnt = 0,mScreenHeight;
 
     String imageEncoded;
     List<String> imagesEncodedList;
@@ -131,13 +136,17 @@ public class Select extends AppCompatActivity {
     boolean network,isTester,newUser;
     PaytmPGService Service = PaytmPGService.getProductionService();
 
-    RelativeLayout addfileRl2;
-//    ConstraintLayout addfileCl;
+    RelativeLayout contactsRl,addfilePage;
+
+    ////// Buttons and items of contacts page /////
+    Button num1,num2;
+    ImageButton back;
+
 
     /////////// Variables for current order status layout/////
     RelativeLayout currentOrderLayout;
-    TextView currentOrderStatus,currentOrderDateTime,currentOrderPrice,currentOrderID,currentOrderShopName, currentOrderShopLoc,orderPickBtn;
-
+    TextView currentOrderStatus,currentOrderDateTime,currentOrderPrice,currentOrderID,currentOrderShopName, currentOrderShopLoc,orderPickedTV,stat1,stat2,stat3,stat4;
+    View stat1view,stat2view,stat3view,stat4view;
 
     //////////Variables for naviagtion drawer / menu ///////////////
     DrawerLayout drawerLayout;
@@ -158,16 +167,21 @@ public class Select extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_files);
 
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+        mScreenHeight = displaymetrics.heightPixels;
 
 
-
+        addFileView = findViewById(R.id.addFilesView);
         shortAnimationDuration = getResources().getInteger(android.R.integer.config_shortAnimTime);
-        selectFilesBtn =(Button) findViewById(R.id.AddFilesButton);
+        selectFilesBtn = findViewById(R.id.AddFilesButton);
         setting = findViewById(R.id.settings);
         orders = findViewById(R.id.YourOrders);
         sideMenu = findViewById(R.id.SideMenu);
-        addfileRl2 = findViewById(R.id.addfileRL2);
-
+        more = findViewById(R.id.more);
+        contactsRl = findViewById(R.id.contactsRelativeL);
+        addfilePage = findViewById(R.id.addfilesRL);
+        back = findViewById(R.id.contactspageback);
 
         notificationManager = NotificationManagerCompat.from(this);
 
@@ -186,12 +200,13 @@ public class Select extends AppCompatActivity {
             newUser = extras.getBoolean("NewUser");
         }
 
-
-
         if(newUser){
             orders.setVisibility(View.INVISIBLE);
         }else{
             if(FirebaseAuth.getInstance().getCurrentUser() != null) {
+
+                SharedPreferences sharedPreferences = getSharedPreferences(SharedPrefs,0);
+                sharedPreferences.edit().putString("UserID", FirebaseAuth.getInstance().getCurrentUser().getUid()).apply();
 
                 ////Setting up navigation and drawer layour viewssss/////
                 setUpNavigationViews();
@@ -199,16 +214,26 @@ public class Select extends AppCompatActivity {
                 userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
                 getOrders();
 
+                getCurrentOrderDetails();
                 ///////Order Cnt for order history///////
                 getOrderCntForOrderHistory();
 
 
                 /////// Order History button listener ///////
                 orders.setOnClickListener(Listener);
-                if (FirebaseAuth.getInstance().getCurrentUser().getEmail().contains("tester") || FirebaseAuth.getInstance().getCurrentUser().getEmail().contains("Tester")) {
-                    isTester = true;
-                } else {
-                    isTester = false;
+                if(FirebaseAuth.getInstance().getCurrentUser().getEmail() != null) {
+                    if (FirebaseAuth.getInstance().getCurrentUser().getEmail().contains("tester") || FirebaseAuth.getInstance().getCurrentUser().getEmail().contains("Tester")) {
+                        isTester = true;
+                    } else {
+                        isTester = false;
+                    }
+                }else{
+                    if(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber()).contains("909")){
+                        isTester = true;
+                    }else {
+                        isTester = false;
+                    }
+
                 }
                 createNotificationChannel();
                 //startService(new Intent(Select.this, notificationService.class));
@@ -256,90 +281,157 @@ public class Select extends AppCompatActivity {
             public void onRefresh() {
                 Log.i("REFRESHING", "onRefresh called from SwipeRefreshLayout");
 
+//                getOrders();
                 currentOrderLV();
                 pullToRefresh.setRefreshing(false);
 
             }
         });
 
-        //////setting size of add file view to full page if cnt == 0  ////////
+        ////setting size of add file view to full page if cnt == 0  ////////
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 setupLayoutParams();
-
             }
-        },1000);
+        },200);
 
 
     }
+    //Create an anonymous implementation of OnClickListener
+    private View.OnClickListener contactsPageListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            // do something when the button is clicked
 
+            if(v == findViewById(R.id.num1)) {
+//                Intent callIntent = new Intent(Intent.ACTION_CALL);
+                Uri number = Uri.parse("tel:"+num1.getText());
+                Intent callIntent = new Intent(Intent.ACTION_DIAL, number);
+//                callIntent.setData(Uri.parse("tel:" + shopNum));
+
+                if (ActivityCompat.checkSelfPermission(Select.this,
+                        Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                    // Permission is not granted
+                    ActivityCompat.requestPermissions(Select.this, new String[]{Manifest.permission.CALL_PHONE}, 1);
+                    Log.d("MANAGEPERMISSION", "PERMISSION");
+//                    startActivity(callIntent);
+//                    return;
+                }
+                startActivity(callIntent);
+
+            }else if(v == findViewById(R.id.num2)){
+//                Intent callIntent = new Intent(Intent.ACTION_CALL);
+                Uri number = Uri.parse("tel:"+num1.getText());
+                Intent callIntent = new Intent(Intent.ACTION_DIAL, number);
+//                callIntent.setData(Uri.parse("tel:" + shopNum));
+
+                if (ActivityCompat.checkSelfPermission(Select.this,
+                        Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                    // Permission is not granted
+                    ActivityCompat.requestPermissions(Select.this, new String[]{Manifest.permission.CALL_PHONE}, 1);
+                    Log.d("MANAGEPERMISSION", "PERMISSION");
+//                    startActivity(callIntent);
+//                    return;
+                }
+                startActivity(callIntent);
+            }else if(v == findViewById(R.id.contactspageback)){
+                finish();
+
+            }
+        }
+    };
+
+    int initialHt;
     public void setupLayoutParams(){
         DisplayMetrics displayMetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         final int height = displayMetrics.heightPixels;
 
-        View addFileView = findViewById(R.id.addFilesView);
         final ViewGroup.LayoutParams params = addFileView.getLayoutParams();
         final RelativeLayout.LayoutParams addfileParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
 //        addFileView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
+        initialHt = params.height;
+
         SharedPreferences sharedPreferences = getSharedPreferences(SharedPrefs,0);
         int liveOrderCnt = sharedPreferences.getInt("LiveOrderCnt",0);
         int orderHistoryCnt = sharedPreferences.getInt("OrderHistoryCnt",0);
-        Log.d("liveOrderCnt",String.valueOf(liveOrderCnt));
-        Log.d("orderHistoryCnt",String.valueOf(orderHistoryCnt));
 
 
-        if(listView == null) {
+        CONSTANTS obj = new CONSTANTS();
+        Log.d("liveOrderCnt",String.valueOf(cnt));
+//        Log.d("orderHistoryCnt",String.valueOf(orderCnt));
+        if(cnt == 0) {
+//            addFileView.setAlpha(0f);
+//            addFileView.animate()
+//                    .alpha(1f)
+//                    .setDuration(shortAnimationDuration + 500)
+//                    .setListener(new AnimatorListenerAdapter() {
+//                        @Override
+//                        public void onAnimationEnd(Animator animation) {
+//                            super.onAnimationEnd(animation);
+//                            params.height = height;
+//                        }
+//                    });
 
-            addFileView.setAlpha(0f);
-            addFileView.animate()
-                    .alpha(1f)
-                    .setDuration(shortAnimationDuration + 500)
-                    .setListener(new AnimatorListenerAdapter() {
-                        @Override
-                        public void onAnimationEnd(Animator animation) {
-                            super.onAnimationEnd(animation);
-                            params.height = height;
-                        }
-                    });
-
-            addfileRl2.setAlpha(0f);
-            addfileRl2.animate()
-                    .alpha(1f)
-                    .setDuration(shortAnimationDuration+500)
-                    .setListener(new AnimatorListenerAdapter() {
-                        @Override
-                        public void onAnimationEnd(Animator animation) {
-                            super.onAnimationEnd(animation);
-                            addfileParams.addRule(RelativeLayout.CENTER_IN_PARENT);
-                            addfileRl2.setLayoutParams(addfileParams);
-                        }
-                    });
-        }
-
-        if(orderHistoryCnt == 0 ){
+            expandView();
 
 
-            orders.animate()
-                    .alpha(0f)
-                    .setDuration(shortAnimationDuration + 500)
-                    .setListener(new AnimatorListenerAdapter() {
-                        @Override
-                        public void onAnimationEnd(Animator animation) {
-                            super.onAnimationEnd(animation);
-                            orders.setVisibility(View.GONE);
-
-                        }
-                    });
         }
     }
 
 
+    public void expandView(){
+
+
+        ValueAnimator slideAnimator = ValueAnimator.ofInt(initialHt,mScreenHeight).setDuration(shortAnimationDuration);
+        slideAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                // get the value the interpolator is at
+                Integer value = (Integer) animation.getAnimatedValue();
+                // I'm going to set the layout's height 1:1 to the tick
+                addFileView.getLayoutParams().height = value.intValue();
+                // force all layouts to see which ones are affected by
+                // this layouts height change
+                addFileView.requestLayout();
+
+            }
+        });
+
+        AnimatorSet set = new AnimatorSet();
+        set.play(slideAnimator);
+        set.setInterpolator(new AccelerateDecelerateInterpolator());
+        set.start();
+
+    }
+
+    public void collapseView(){
+
+
+        ValueAnimator slideAnimator = ValueAnimator.ofInt(mScreenHeight,initialHt).setDuration(shortAnimationDuration);
+        slideAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                // get the value the interpolator is at
+                Integer value = (Integer) animation.getAnimatedValue();
+                // I'm going to set the layout's height 1:1 to the tick
+                addFileView.getLayoutParams().height = value.intValue();
+                // force all layouts to see which ones are affected by
+                // this layouts height change
+                addFileView.requestLayout();
+
+            }
+        });
+
+        AnimatorSet set = new AnimatorSet();
+        set.play(slideAnimator);
+        set.setInterpolator(new AccelerateDecelerateInterpolator());
+        set.start();
+
+    }
+
     public void setUpNavigationViews(){
-
-
 
         //////////////////////NAVIGATION VIEW/////////////////////////
 
@@ -378,7 +470,7 @@ public class Select extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         actionBarDrawerToggle.setDrawerIndicatorEnabled(false);
-        Drawable drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.openmenu,getTheme());
+        Drawable drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.openmenublack,getTheme());
         actionBarDrawerToggle.setHomeAsUpIndicator(drawable);
         actionBarDrawerToggle.setToolbarNavigationClickListener(new View.OnClickListener() {
             @Override
@@ -428,6 +520,15 @@ public class Select extends AppCompatActivity {
 
                     case R.id.contact:
 
+                        contactsRl.setVisibility(View.VISIBLE);
+                        addfilePage.setVisibility(View.INVISIBLE);
+
+                        num1 = findViewById(R.id.num1);
+                        num2 = findViewById(R.id.num2);
+
+                        num1.setOnClickListener(contactsPageListener);
+                        num2.setOnClickListener(contactsPageListener);
+                        back.setOnClickListener(contactsPageListener);
 
                         break;
 
@@ -456,11 +557,17 @@ public class Select extends AppCompatActivity {
     @Override
     public void onBackPressed() {
 //        super.onBackPressed();
-        Intent a = new Intent(Intent.ACTION_MAIN);
-        a.addCategory(Intent.CATEGORY_HOME);
-        a.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(a);
-        finish();
+        if(addfilePage.getVisibility() == View.GONE) {
+//            addfilePage.setVisibility(View.VISIBLE);
+            contactsRl.setVisibility(View.GONE);
+
+        }else {
+            Intent a = new Intent(Intent.ACTION_MAIN);
+            a.addCategory(Intent.CATEGORY_HOME);
+            a.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(a);
+            finish();
+        }
     }
 
     public void currentOrderLV(){
@@ -490,7 +597,8 @@ public class Select extends AppCompatActivity {
                 // Show progressdialog
                 mProgressDialog.show();
                 Context context = getApplicationContext();
-                CharSequence text = "No Orders to show";
+//                CharSequence text = "No order history to show.";
+                CharSequence text = "Order Cnt"+orderCnt;
                 int duration = Toast.LENGTH_SHORT;
                 Toast toast = Toast.makeText(context, text, duration);
 
@@ -499,64 +607,64 @@ public class Select extends AppCompatActivity {
                 finish();
                 mProgressDialog.dismiss();
 
-//                if (orderCnt == 0) {
-//                    toast.show();
-//                    mProgressDialog.dismiss();
-//                } else {
-//
-//                    Intent intent = new Intent(Select.this, YourOrders.class);
-//                    Bundle extras = new Bundle();
-//                    extras.putInt("Orders Count", orderCnt);
-//                    intent.putExtras(extras);
-//                    startActivity(intent);
-//                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-//
-////                    startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(Select.this).toBundle());
-//                    mProgressDialog.dismiss();
-//                    finish();
-//
-//                }
-
             }
         }
     };
 
 
 
+     ArrayList<String> orderkey = new ArrayList<>();
+     ArrayList<String> shopKey = new ArrayList<>();
+     ArrayList<String> shopNames = new ArrayList<>();
+     ArrayList<String> locations = new ArrayList<>();
+     ArrayList<String> orderStatus = new ArrayList<>();
 
+    //final ArrayList<String> orderkey = new ArrayList<>();
 
+     ArrayList<String> orderDate = new ArrayList<>();
+     ArrayList<String> paymentModes = new ArrayList<>();
+
+    //final ArrayList<String> shopKey = new ArrayList<>();
+
+     ArrayList<Double> shopLat = new ArrayList<>();
+     ArrayList<Double> shopLong = new ArrayList<>();
+     ArrayList<Integer> files = new ArrayList<>();
+     ArrayList<Double> price = new ArrayList<>();
 //    long cnt;
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void getOrders(){
 
-        final ArrayList<String> orderkey = new ArrayList<>();
-        final ArrayList<String> shopKey = new ArrayList<>();
-
 //        setProgressForOrder();
 
+        shopKey.clear();
+        orderkey.clear();
+
+        cnt = 0;
         ref.child("users").child(userId).child("Orders").addChildEventListener(new ChildEventListener() {
 
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
-                shopKey.add(dataSnapshot.getKey());
-
-                for(DataSnapshot orderIDS: dataSnapshot.getChildren()){
-                    Map<String, Object> map = (Map<String, Object>) orderIDS.getValue();
+//                for(DataSnapshot orderIDS: dataSnapshot.getChildren()){
+                    Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
                     if(!String.valueOf(map.get("orderStatus")).equals("Done")){
-//                        cnt = (int) (dataSnapshot.getChildrenCount()+cnt);
                         cnt = cnt + 1;
-                        Log.d("ORDERDONE",String.valueOf(cnt));
+                        orderkey.add(dataSnapshot.getKey());
+                        shopKey.add(String.valueOf(map.get("storeId")));
+
 
                         SharedPreferences sharedPreferences = getSharedPreferences(SharedPrefs,0);
                         sharedPreferences.edit().putInt("LiveOrderCnt",cnt).apply();
 
-                        currentOrderLV();
+                        CONSTANTS obj = new CONSTANTS();
+                        obj.cnt = cnt;
+
+
+
+                        setupLayoutParams();
                     }
 
-
-                }
-
+//                }
 
             }
 
@@ -567,7 +675,7 @@ public class Select extends AppCompatActivity {
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                setupLayoutParams();
+//                setupLayoutParams();
             }
 
             @Override
@@ -585,6 +693,76 @@ public class Select extends AppCompatActivity {
 
     }
 
+    public void getCurrentOrderDetails(){
+        ref.child("users").child(userId).child("Orders").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot orderKeys) {
+
+                files.clear();
+                locations.clear();
+                shopNames.clear();
+                shopLat.clear();
+                shopLong.clear();
+                orderStatus.clear();
+                price.clear();
+                orderDate.clear();
+                paymentModes.clear();
+
+//                Toast.makeText(Select.this,"ORDERID"+orderKeys.getChildrenCount(),Toast.LENGTH_LONG).show();
+                Log.d("NEWORDERMAP",String.valueOf(orderKeys.getValue()));
+                for(DataSnapshot values: orderKeys.getChildren()) {
+                    Map<String, Object> map = (Map<String, Object>) values.getValue();
+
+                    if (map != null) {
+                        Log.d("MAPVAL", String.valueOf(map));
+                        if (!String.valueOf(map.get("orderStatus")).equals("Done")) {
+//                            cnt = (int) orderKeys.getChildrenCount();
+
+                            files.add(Integer.parseInt(String.valueOf(map.get("files"))));
+                            locations.add(String.valueOf(map.get("ShopsLocation")));
+                            shopNames.add(String.valueOf(map.get("ShopName")));
+                            shopLat.add(Double.parseDouble(String.valueOf(map.get("ShopLat"))));
+                            shopLong.add(Double.parseDouble(String.valueOf(map.get("ShopLong"))));
+                            orderStatus.add(String.valueOf(map.get("orderStatus")));
+                            price.add(Double.parseDouble(String.valueOf(map.get("price"))));
+                            orderDate.add(String.valueOf(map.get("orderDateTime")));
+                            paymentModes.add(String.valueOf(map.get("paymentMode")));
+                        }
+                    }
+                }
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+
+//                        Collections.reverse(orderkey);
+//                        Collections.reverse(shopKey);
+//
+//                        Collections.reverse(files);
+//                        Collections.reverse(locations);
+//                        Collections.reverse(shopNames);
+//                        Collections.reverse(shopLat);
+//                        Collections.reverse(shopLong);
+//                        Collections.reverse(paymentModes);
+//                        Collections.reverse(price);
+//                        Collections.reverse(orderDate);
+//                        Collections.reverse(orderStatus);
+
+
+                        currentOrderLV();
+                    }
+                },500);
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void getOrderCntForOrderHistory(){
 
@@ -596,11 +774,21 @@ public class Select extends AppCompatActivity {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
-                shopKey.add(dataSnapshot.getKey());
-                orderCnt = (int) (dataSnapshot.getChildrenCount()+orderCnt);
+//                shopKey.add(dataSnapshot.getKey());
+//                for(DataSnapshot orderIDS: dataSnapshot.getChildren()){
+                    Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
+                    if(String.valueOf(map.get("orderStatus")).equals("Done")){
+//                        cnt = (int) (dataSnapshot.getChildrenCount()+cnt);
+                        orderCnt = orderCnt + 1;
+                        SharedPreferences sharedPreferences = getSharedPreferences(SharedPrefs,0);
+                        sharedPreferences.edit().putInt("OrderHistoryCnt",orderCnt).apply();
 
-                SharedPreferences sharedPreferences = getSharedPreferences(SharedPrefs,0);
-                sharedPreferences.edit().putInt("OrderHistoryCnt",orderCnt).apply();
+                        CONSTANTS obj = new CONSTANTS();
+                        obj.orderHistoryCnt = orderCnt;
+//                        setupLayoutParams();
+                    }
+//                }
+
 
             }
 
@@ -657,401 +845,10 @@ public class Select extends AppCompatActivity {
     }
 
 
-//    private void uploadFile(Uri file) {
-//        final String uniqueID = UUID.randomUUID().toString();
-//
-//        final StorageReference filesRef = storageRef.child(uniqueID);
-//
-////        Log.d("FILEPDF", String.valueOf(changeExtension(new File(file.getPath()),"pdf")));
-//
-//
-//        final Uri uri;
-//        uri = file;
-//
-//        Log.d("PATHIS",uri.toString());
-////        ConvertToPDF(file.toString(),file.getLastPathSegment()+"/"+uniqueID);
-//
-//        final KProgressHUD hud = KProgressHUD.create(Select.this)
-//                .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
-//                .setLabel("Please wait")
-//                .setMaxProgress(100);
-////                .show();
-//
-//
-//        Sprite chasingDots = new ChasingDots();
-//        progressBar.setVisibility(View.VISIBLE);
-//        progressBar.setIndeterminateDrawable(chasingDots);
-//
-//
-//        //Checking for internet connection
-//        Boolean isNetwork = isNetworkAvailable();
-//        if (!isNetwork) {
-//            showErrorDialog("No internet connection detected");
-//            hud.dismiss();
-//        }
-//        final UploadTask uploadTask = filesRef.putFile(file);
-//        uploadTask.addOnFailureListener(new OnFailureListener() {
-//            @Override
-//            public void onFailure(@NonNull Exception exception) {
-//                // Handle unsuccessful uploads
-//                Log.d("UPLOAD", "Not successfull");
-//            }
-//        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-//            @Override
-//            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-//                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
-//                Log.d("UPLOAD", "SUCCESSFULL");
-//                Log.d("UNIQUE",uniqueID);
-//                Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-//                    @Override
-//                    public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-//                        if (!task.isSuccessful()) {
-//                            throw task.getException();
-//                        }
-//
-//                        // Continue with the task to get the download URL
-//                        return filesRef.getDownloadUrl();
-//                    }
-//                }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-//
-//                    @Override
-//                    public void onComplete(@NonNull Task<Uri> task) {
-//                        if (task.isSuccessful()) {
-//                            String url;
-//                            Uri downloadUri = task.getResult();
-//                            url = String.valueOf(downloadUri);
-//                            hud.dismiss();
-//
-//                            Intent goToPdfInfo = new Intent(Select.this, PdfInfo.class);
-////                                            finish();
-//                            //goToPageInfo.putExtra("Pages",images);
-//                            Bundle extras = new Bundle();
-//                            extras.putString("PdfURL", url);
-//                            extras.putString("URI", String.valueOf(uri));
-//                            extras.putString("FileType", fileType);
-//
-//                            goToPdfInfo.putExtras(extras);
-//
-//                            progressBar.setVisibility(View.INVISIBLE);
-//
-//                            startActivity(goToPdfInfo);
-//                            finish();
-//
-//                        } else {
-//                            // Handle failures
-//                            // ...
-//                        }
-//                    }
-//                });
-//                // ...
-//            }
-//        });
-//    }
-
-
-
-    public void ConvertToPDF(String docPath, String pdfPath) {
-        final String uniqueID = UUID.randomUUID().toString();
-
-//        File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-        String path = Environment.getExternalStorageDirectory().toString();
-        File folder = new File(path, uniqueID);
-
-//        File file = new File(folder, uniqueID);
-        folder.mkdir();
-        File pdfFile = new File(folder, "File");
-
-        try {
-            pdfFile.createNewFile();
-            InputStream doc = new FileInputStream(new File(docPath));
-            XWPFDocument document = new XWPFDocument(doc);
-            PdfOptions options = PdfOptions.create();
-//            OutputStream out = new FileOutputStream(new File(String.valueOf(path)));
-            OutputStream out = new FileOutputStream(pdfFile);
-            PdfConverter.getInstance().convert(document, out, options);
-            Log.d("DoneConvert", String.valueOf(out));
-        } catch (FileNotFoundException ex) {
-            System.out.println(ex.getMessage());
-            Log.d("FILENOTFOUND", String.valueOf(ex));
-        } catch (IOException ex) {
-            Log.d("IOEXCEPTION",ex.getMessage());
-        }
-    }
-
-
-    ArrayList<Uri> uri = new ArrayList<Uri>();
-    String fileType;
-
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        uri.clear();
-//        super.onActivityResult(requestCode, resultCode, data);
-//        //when the user choses the file
-////        Log.d("FILE CHOSEN",data.getData().toString());
-////        Log.d("REQUESTCODE", String.valueOf(requestCode));
-//        Log.d("ACTIVI","RES");
-//        if (requestCode == 1 && resultCode == RESULT_OK) {
-//            //if a file is selected
-//
-//
-//            if (data.getData() != null) {
-//                //uploading the file
-//
-//                Uri returnUri = data.getData();
-////                uri.add(returnUri);
-//
-//                Log.d("URIID", String.valueOf(returnUri));
-//                String mimeType = getContentResolver().getType(returnUri);
-//                Log.d("MIME", mimeType);
-//
-//
-//                if (mimeType.contains("application")) {
-//
-//
-//                    Log.d("FILE", "Image");
-//                    fileType = mimeType;
-////                    Log.d("URRISIZE", String.valueOf(uri.size()));
-////                    uploadImg(requestCode, resultCode, data, uri);
-//
-////                    Log.d("IMAGESARE", String.valueOf(data.getClipData().getItemCount()));
-//                    if(data.getClipData() != null) {
-//                        for (int i = 0; i < data.getClipData().getItemCount(); i++) {
-//                            if (data.getClipData().getItemAt(i).getUri() != null) {
-//                                uri.add(data.getClipData().getItemAt(i).getUri());
-//                                if (i == data.getClipData().getItemCount() - 1) {
-//                                    uploadImg(requestCode, resultCode, data, uri);
-//                                }
-//                            }
-//                        }
-////                        uri.add(returnUri);
-////                        uploadImg(requestCode, resultCode, data, uri);
-//
-//
-//                    }else{
-//                        uri.add(returnUri);
-//                        uploadImg(requestCode,resultCode,data,uri);
-//                    }
-//                }
-//            } else {
-//                Toast.makeText(this, "No file chosen", Toast.LENGTH_SHORT).show();
-//                Log.d("DATA", String.valueOf(data.getClipData()));
-//            }
-//        }
-//    }
-
-//    private void uploadImg(int requestCode, int resultCode, Intent data, final ArrayList<Uri> uri) {
-//
-//        final KProgressHUD hud = KProgressHUD.create(Select.this)
-//                .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
-//                .setLabel("Please wait")
-//                .setMaxProgress(100);
-////                .show();
-//
-////        Sprite chasingDots = new ChasingDots();
-////        progressBar.setVisibility(View.VISIBLE);
-////        progressBar.setIndeterminateDrawable(chasingDots);
-//
-//
-//
-//        final int[] uploadCnt = {0};
-//
-//        if (requestCode == PICK_PDF_CODE) {
-//            if (resultCode == Activity.RESULT_OK) {
-//                if (uri.size() > 0) {
-//                    if (data.getClipData()!=null ) {
-//
-//                        int count = data.getClipData().getItemCount(); //evaluate the count before the for loop --- otherwise, the count is evaluated every loop.
-//                        for (int i = 0; i < count; i++) {
-//
-//                            final String uniqueID = UUID.randomUUID().toString();
-//                            final StorageReference filesRef = storageRef.child(uniqueID);
-//
-//                            Uri imageUri = data.getClipData().getItemAt(i).getUri();
-//                            uri.add(imageUri);
-//
-//                            //do something with the image (save it to some directory or whatever you need to do with it here)
-//                            Bitmap bitmap = null;
-//                            try {
-//                                bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
-//                            } catch (IOException e) {
-//                                e.printStackTrace();
-//                            }
-//                            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-//                            images.add(bitmap);
-//                            byte[] DATA = baos.toByteArray();
-//                            final UploadTask uploadTask = filesRef.putBytes(DATA);
-//
-//
-//                            uploadTask.addOnFailureListener(new OnFailureListener() {
-//                                @Override
-//                                public void onFailure(@NonNull Exception exception) {
-//                                    // Handle unsuccessful uploads
-//                                    Log.d("UPLOAD", "Not successfull");
-//                                }
-//                            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-//                                @Override
-//                                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-//                                    // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
-//                                    Log.d("UPLOAD", "SUCCESSFULL");
-//                                    Log.d("UNIQUE",uniqueID);
-//
-//                                    uploadCnt[0]++;
-//                                    uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-//                                        @Override
-//                                        public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-//                                            if (!task.isSuccessful()) {
-//                                                throw task.getException();
-//                                            }
-//
-//                                            // Continue with the task to get the download URL
-//                                            return filesRef.getDownloadUrl();
-//                                        }
-//                                    }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-//
-//                                        @Override
-//                                        public void onComplete(@NonNull Task<Uri> task) {
-//                                            if (task.isSuccessful()) {
-//                                                Uri downloadUri = task.getResult();
-//                                                pageURL.add(String.valueOf(downloadUri));
-//
-//
-////                                                Log.d("Pages ", String.valueOf(images));
-////                                                Log.d("URLS ", String.valueOf(pageURL));
-//                                                hud.dismiss();
-//                                            if(uploadCnt[0] == pageURL.size()) {
-//                                                Intent goToPageInfo = new Intent(Select.this, PageInfo.class);
-//                                                Bundle extras = new Bundle();
-//                                                extras.putStringArrayList("URLS", pageURL);
-//                                                extras.putString("FileType", fileType);
-////                                                Log.d("USERNAME", username);
-////                                                extras.putString("username", username);
-////                                                extras.putString("email", email);
-////                                                extras.putLong("num", (num));
-//
-//                                                //extras.putParcelableArrayList("Images",images);
-//                                                extras.putStringArray("URI", new String[]{String.valueOf(uri)});
-//                                                goToPageInfo.putExtras(extras);
-//
-////                                                progressBar.setVisibility(View.INVISIBLE);
-//
-//                                                startActivity(goToPageInfo);
-//
-//                                            }
-//
-//                                            } else {
-//                                                // Handle failures
-//                                                // ...
-//                                            }
-//                                        }
-//                                    });
-//                                    // ...
-//                                }
-//                            });
-//                        }
-//
-//
-//
-//                } else {
-//
-////                    int count = data.getClipData().getItemCount(); //evaluate the count before the for loop --- otherwise, the count is evaluated every loop.
-//                        String uniqueID = UUID.randomUUID().toString();
-//                        final StorageReference filesRef = storageRef.child(uniqueID);
-//
-//                    for (int i = 0; i < uri.size(); i++) {
-//                        Uri imageUri = uri.get(i);
-//
-////                        ClipData.Item data1 = data.getClipData().getItemAt(i);
-//
-////                        uri.add(imageUri);
-//
-//                        //do something with the image (save it to some directory or whatever you need to do with it here)
-//                        Bitmap bitmap = null;
-//                        try {
-//                            bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
-//                        } catch (IOException e) {
-//                            e.printStackTrace();
-//                        }
-//                        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-//                        images.add(bitmap);
-//                        byte[] DATA = baos.toByteArray();
-//                        final UploadTask uploadTask = filesRef.putBytes(DATA);
-//
-//
-//                        uploadTask.addOnFailureListener(new OnFailureListener() {
-//                            @Override
-//                            public void onFailure(@NonNull Exception exception) {
-//                                // Handle unsuccessful uploads
-//                                Log.d("UPLOAD", "Not successfull");
-//                            }
-//                        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-//                            @Override
-//                            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-//                                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
-//                                Log.d("UPLOAD", "SUCCESSFULL");
-//
-//                                Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-//                                    @Override
-//                                    public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-//                                        if (!task.isSuccessful()) {
-//                                            throw task.getException();
-//                                        }
-//
-//                                        // Continue with the task to get the download URL
-//                                        uploadCnt[0]++;
-//                                        return filesRef.getDownloadUrl();
-//                                    }
-//                                }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-//
-//                                    @Override
-//                                    public void onComplete(@NonNull Task<Uri> task) {
-//                                        if (task.isSuccessful()) {
-//                                            Uri downloadUri = task.getResult();
-//
-//                                            pageURL.add(String.valueOf(downloadUri));
-//                                            hud.dismiss();
-//                                            if(uploadCnt[0] == pageURL.size()){
-//                                                Intent goToPageInfo = new Intent(Select.this, PageInfo.class);
-//                                                Bundle extras = new Bundle();
-//                                                extras.putStringArrayList("URLS", pageURL);
-//                                                extras.putString("FileType", fileType);
-////                                                Log.d("USERNAME",username);
-////                                                extras.putString("username",username);
-////                                                extras.putString("email",email);
-////                                                extras.putLong("num", (num));
-//
-//                                                goToPageInfo.putExtras(extras);
-//                                                startActivity(goToPageInfo);
-//                                            }
-//                                        } else {
-//                                            // Handle failures
-//                                            Log.d("IMAGE", "NOT RECIEVED");
-//                                            // ...
-//                                        }
-//                                    }
-//                                });
-//                                // ...
-//                            }
-//                        });
-//                    }
-//
-//                }
-//
-//              }
-//            }
-//        } else if (data.getData() != null) {
-//            String imagePath = data.getData().getPath();
-//            Log.d("IMAGE PATH ", String.valueOf(imagePath));
-//            Log.d("IMAGE is ", String.valueOf(data.getData()));
-//            //do something with the image (save it to some directory or whatever you need to do with it here)
-//            hud.dismiss();
-//        }
-//    }
 
 
     DatabaseReference orderDb = FirebaseDatabase.getInstance().getReference();
-    ArrayList<String> orderKeys = new ArrayList<>();
+//    ArrayList<String> orderKeys = new ArrayList<>();
 
 
 
@@ -1083,7 +880,7 @@ public class Select extends AppCompatActivity {
         /**
          * Creates an IntentService.  Invoked by your subclass's constructor.
          *
-         * @param name Used to name the worker thread, important only for debugging.
+//         * @param name Used to name the worker thread, important only for debugging.
          */
 
         public notificationService() {
@@ -1139,35 +936,36 @@ public class Select extends AppCompatActivity {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                     //                      Log.d("ORDERLOG",dataSnapshot.getKey());
-                    for (final DataSnapshot shop : dataSnapshot.getChildren()) {
+                    for (DataSnapshot orderKeys : dataSnapshot.getChildren()) {
 
-                        for (final DataSnapshot order : shop.getChildren()) {
 //                            Log.d("ORDERID",order.getKey());
 
-                            String orderStatus;
-                            Double price;
-                            String orderDateTime;
+
 
                             boolean RTnotifyStatus = true;
                             boolean IPnotifyStatus = true;
                             boolean RnotifyStatus = true,doneNotifyStatus = true;
 
-                            Map<String, Object> map = (Map<String, Object>) order.getValue();
+                            Map<String, Object> map = (Map<String, Object>) orderKeys.getValue();
 
 //                            orderDateTime = String.valueOf(map.get("orderDateTime"));
-                            orderStatus = String.valueOf(map.get("orderStatus"));
 //                            price = Double.parseDouble(String.valueOf(map.get("price")));
-
 //                            shopName = String.valueOf(map.get("ShopName"));
 //                            shopLat = Double.parseDouble(String.valueOf(map.get("ShopLat")));
 //                            shopLong = Double.parseDouble(String.valueOf(map.get("ShopLong")));
 //                            loc = String.valueOf(map.get("ShopsLocation"));
 //                            files = Integer.parseInt(String.valueOf(map.get("files")));
 
+
+
+                            String orderStatus;
+                            Double price;
+                            String orderDateTime;
                             RTnotifyStatus = Boolean.parseBoolean(String.valueOf(map.get("RT_Notified")));
                             IPnotifyStatus = Boolean.parseBoolean(String.valueOf(map.get("IP_Notified")));
                             RnotifyStatus =  Boolean.parseBoolean(String.valueOf(map.get("R_Notified")));
                             doneNotifyStatus =  Boolean.parseBoolean(String.valueOf(map.get("D_Notified")));
+                             orderStatus = String.valueOf(map.get("orderStatus"));
 
 //                            for (final DataSnapshot user : order.getChildren()) {
 
@@ -1221,9 +1019,9 @@ public class Select extends AppCompatActivity {
                                                         .setSmallIcon(R.drawable.notify)
                                                         .setLargeIcon(icon)
                                                         .setContentTitle("Order Status :"+finalStatus)
-                                                        .setContentText("Order ID: " + order.getKey() + " " + finalStatus)
+                                                        .setContentText("Order ID: " + orderKeys.getKey() + " " + finalStatus)
                                                         .setGroup(CHANNEL_ID)
-                                                        .setStyle(new NotificationCompat.BigTextStyle().bigText("Order ID: " + order.getKey()))
+                                                        .setStyle(new NotificationCompat.BigTextStyle().bigText("Order ID: " + orderKeys.getKey()))
                                                         .setContentIntent(resultPendingIntent)
                                                         .addAction(R.drawable.notify, "Check order Status", resultPendingIntent)
                                                         .setPriority(NotificationCompat.PRIORITY_DEFAULT);
@@ -1233,7 +1031,7 @@ public class Select extends AppCompatActivity {
                                                 builder = new NotificationCompat.Builder(Select.this, CHANNEL_ID)
                                                         .setSmallIcon(R.drawable.notify)
                                                         .setLargeIcon(icon)
-                                                        .setContentTitle("Order ID: " + order.getKey())
+                                                        .setContentTitle("Order ID: " + orderKeys.getKey())
                                                         .setGroup(CHANNEL_ID)
                                                         .setStyle(new NotificationCompat.BigTextStyle().bigText("Thank You for using Sleefax 😁 \n We hope you had a great experience."))
                                                         .setContentIntent(resultPendingIntent)
@@ -1252,31 +1050,31 @@ public class Select extends AppCompatActivity {
 //                                            Log.d("ORDERDATETIME",orderDateTime);
 
 
-                                            if (finalOrderStatus.equals("Retrieved") && !finalRTnotifyStatus) {
+                                            if (finalOrderStatus.equals("Received") && !finalRTnotifyStatus) {
 
                                                 notified.put("RT_Notified", true);
-                                                orderDb.child("users").child(userId).child("Orders").child(shop.getKey()).child(order.getKey()).updateChildren(notified);
+                                                orderDb.child("users").child(userId).child("Orders").child(orderKeys.getKey()).updateChildren(notified);
                                                 notificationManager.notify(1, builder.build());
                                                 notifyCnt = 0;
 
                                             } else if (finalOrderStatus.equals("In Progress") && !finalIPnotifyStatus) {
 
                                                 notified.put("IP_Notified", true);
-                                                orderDb.child("users").child(userId).child("Orders").child(shop.getKey()).child(order.getKey()).updateChildren(notified);
+                                                orderDb.child("users").child(userId).child("Orders").child(orderKeys.getKey()).updateChildren(notified);
                                                 notificationManager.notify(1, builder.build());
 
                                             } else if (finalOrderStatus.equals("Ready") && !finalRnotifyStatus) {
 
 
                                                 notified.put("R_Notified", true);
-                                                orderDb.child("users").child(userId).child("Orders").child(shop.getKey()).child(order.getKey()).updateChildren(notified);
+                                                orderDb.child("users").child(userId).child("Orders").child(orderKeys.getKey()).updateChildren(notified);
                                                 notificationManager.notify(1, builder.build());
                                             }
                                             else if (finalOrderStatus.equals("Done") && !finalDoneNotifyStatus) {
 
 
                                                 notified.put("D_Notified", true);
-                                                orderDb.child("users").child(userId).child("Orders").child(shop.getKey()).child(order.getKey()).updateChildren(notified);
+                                                orderDb.child("users").child(userId).child("Orders").child(orderKeys.getKey()).updateChildren(notified);
                                                 notificationManager.notify(1, builder.build());
                                             }
 
@@ -1285,7 +1083,7 @@ public class Select extends AppCompatActivity {
 //                                            }
 
                                         }
-                                     }
+
 
                         }
                     }
@@ -1304,94 +1102,35 @@ public class Select extends AppCompatActivity {
 
 
 
-//    public void setCurrentOrderStatus(String orderDateTime, String orderStatus, String orderKey, String shopKey, Double price, String shopName, String loc){
-//
-//        this.shopName = shopName;
-//        this.shopKey = shopKey;
-//        this.orderKey = orderKey;
-//        this.orderStatus = orderStatus;
-//        this.price = price;
-//        this.loc = loc;
-//
-////        Log.d("ORDERDATETIME",(orderDateTime));
-//
-////        String orderID = orderKey.substring(orderKey.length()-8,orderKey.length());
-//        currentOrderShopName.setText(shopName);
-//        currentOrderID.setText("Order ID : "+orderKey);
-//        currentOrderDateTime.setText(orderDateTime);
-//        currentOrderPrice.setText("₹ "+(price));
-//        currentOrderStatus.setText(orderStatus);
-//        currentOrderShopLoc.setText(loc);
-//
-//        if (orderStatus.equals("Placed")){
-////            progressBar.setProgress(25);
-////            progressBar.setProgressColor(getResources().getColor(R.color.custom_progress_red_progress));
-//            currentOrderStatus.setBackgroundResource(R.drawable.orderstatusview1);
-//        }else
-//        if (orderStatus.equals("Retrieved")) {
-////            progressBar.setProgress(50);
-////            progressBar.setProgressColor(getResources().getColor(R.color.custom_progress_orange_progress));
-//            currentOrderStatus.setBackgroundResource(R.drawable.orderstatusview2);
-//
-//        }else
-//        if (orderStatus.equals("In Progress")) {
-////            progressBar.setProgress(75);
-////            progressBar.setProgressColor(getResources().getColor(R.color.custom_progress_blue_progress));
-//            currentOrderStatus.setBackgroundResource(R.drawable.orderstatusview3);
-//
-//        }else
-//        if (orderStatus.equals("Ready")){
-////            progressBar.setProgress(100);
-////            progressBar.setProgressColor(getResources().getColor(R.color.custom_progress_green_progress));
-//            currentOrderStatus.setBackgroundResource(R.drawable.orderstatusview4);
-//
-//        }
-//
-//    }
+    public void moreDetails(String shopKey,String orderKey,String shopName,Double shopLat, Double shopLong, String loc,int files,String orderStatus, Double price){
+
+        Intent intent = new Intent(Select.this, OrderPlaced.class);
+        Bundle extras = new Bundle();
+//                        Log.d("LAT", String.valueOf(shopLat.get(position)));
+        extras.putString("ShopKey",shopKey);
+        extras.putString("OrderKey", orderKey);
+        extras.putString("ShopName", shopName);
+        extras.putDouble("ShopLat", shopLat);
+        extras.putDouble("ShopLong", shopLong);
+        extras.putString("Location", loc);
+        extras.putInt("Files", files);
+        extras.putString("OrderStatus", orderStatus);
+        extras.putDouble("Price", (Double) price);
+        extras.putBoolean("FromYourOrders", false);
+        extras.putBoolean("FromAddFilesPage", true);
+
+        intent.putExtras(extras);
+        startActivity(intent);
+
+    }
 
 
-//    public void moreDetails(){
-//
-//
-//        Intent intent = new Intent(Select.this, OrderPlaced.class);
-//        Bundle extras = new Bundle();
-////                        Log.d("LAT", String.valueOf(shopLat.get(position)));
-//        extras.putString("ShopKey",shopKey);
-//        extras.putString("OrderKey", orderKey);
-//        extras.putString("ShopName", shopName);
-//        extras.putDouble("ShopLat", shopLat);
-//        extras.putDouble("ShopLong", shopLong);
-//        extras.putString("Location", loc);
-//        extras.putInt("Files", files);
-//        extras.putString("OrderStatus", orderStatus);
-//        extras.putDouble("Price", (Double) price);
-//        extras.putBoolean("FromYourOrders", false);
-//        extras.putBoolean("FromAddFilesPage", true);
-//
-//        intent.putExtras(extras);
-//        startActivity(intent);
-//
-//    }
 
-
-    final ArrayList<String> shopNames = new ArrayList<>();
-    final ArrayList<String> locations = new ArrayList<>();
-    final ArrayList<String> orderStatus = new ArrayList<>();
-    final ArrayList<String> orderkey = new ArrayList<>();
-    final ArrayList<String> orderDate = new ArrayList<>();
-    final ArrayList<String> paymentModes = new ArrayList<>();
-
-    final ArrayList<String> shopKey = new ArrayList<>();
-    final ArrayList<Double> shopLat = new ArrayList<>();
-    final ArrayList<Double> shopLong = new ArrayList<>();
-    final ArrayList<Integer> files = new ArrayList<>();
-    final ArrayList<Double> price = new ArrayList<>();
-
-    class currentOrderAdapter extends BaseAdapter{
+  public class currentOrderAdapter extends BaseAdapter{
 
         @Override
         public int getCount() {
-            return 2;
+            return cnt;
         }
 
         @Override
@@ -1413,6 +1152,7 @@ public class Select extends AppCompatActivity {
 
             if(convertView != null) {
 
+
                 ///////////////////// Initializing views for current order layout   //////////////////////
                 currentOrderLayout = convertView.findViewById(R.id.OrderRelativeL);
                 currentOrderShopName = convertView.findViewById(R.id.currentOrderShopName);
@@ -1423,202 +1163,118 @@ public class Select extends AppCompatActivity {
                 currentOrderPrice = convertView.findViewById(R.id.currentOrderPrice);
                 pickedUpOrderView = convertView.findViewById(R.id.PickedUpOrderRL);
                 orderPickBtn = convertView.findViewById(R.id.pickedOrderYes);
+                orderPickedTV = convertView.findViewById(R.id.orderPickedTV);
 
-                ref.child("users").child(userId).child("Orders").addChildEventListener(new ChildEventListener() {
-                    @Override
-                    public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                //Current Order Status Text View//
+                stat1 = convertView.findViewById(R.id.stat1);
+                stat2 = convertView.findViewById(R.id.stat2);
+                stat3 = convertView.findViewById(R.id.stat3);
+                stat4 = convertView.findViewById(R.id.stat4);
 
-                        for(DataSnapshot SNAP:dataSnapshot.getChildren()) {
-                            Map<String, Object> map = (Map<String, Object>) SNAP.getValue();
-                            if(!String.valueOf(map.get("orderStatus")).equals("Done")) {
-                                shopKey.add(dataSnapshot.getKey());
-                                orderkey.add(SNAP.getKey());
-                            }
-//                            orderCnt = orderkey.size();
+                ///Current order status view(balls)//
+                stat1view = convertView.findViewById(R.id.statball1);
+                stat2view = convertView.findViewById(R.id.statball2);
+                stat3view = convertView.findViewById(R.id.statball3);
+                stat4view = convertView.findViewById(R.id.statball4);
 
-                        }
-//                   }
-                    }
-
-                    @Override
-                    public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-                    }
-
-                    @Override
-                    public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-                    }
-
-                    @Override
-                    public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
+                currentOrderID.setShadowLayer(10, 10, 10, Color.parseColor("#52BAB8B8"));
 
                 final Handler handler = new Handler();
                 final View finalConvertView = convertView;
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        // Retrieve and cache the system's default "short" animation time.
 
-//                        orderCnt = orderkey.size();
-                        for (int i = 0; i < shopKey.size(); i++) {
-//                            Log.d("SHOPKEY", shopKey.get(i));
-
-                            final int finalI = i;
-                            ref.child("users").child(userId).child("Orders").child(shopKey.get(i)).addValueEventListener(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot orderKeys) {
-
-                                    for(DataSnapshot info: orderKeys.getChildren()) {
-                                        Map<String, Object> map = (Map<String, Object>) info.getValue();
-                                        if(!String.valueOf(map.get("orderStatus")).equals("Done")) {
-                                            files.add(Integer.parseInt(String.valueOf(map.get("files"))));
-                                            locations.add(String.valueOf(map.get("ShopsLocation")));
-                                            shopNames.add(String.valueOf(map.get("ShopName")));
-                                            shopLat.add(Double.parseDouble(String.valueOf(map.get("ShopLat"))));
-                                            shopLong.add(Double.parseDouble(String.valueOf(map.get("ShopLong"))));
-                                            orderStatus.add(String.valueOf(map.get("orderStatus")));
-                                            price.add(Double.parseDouble(String.valueOf(map.get("price"))));
-                                            orderDate.add(String.valueOf(map.get("orderDateTime")));
-                                            paymentModes.add(String.valueOf(map.get("paymentMode")));
-                                        }
-//                                        for (DataSnapshot snap : info.getChildren()) {
-////                                            Log.d("ORDERINFO", snap.getKey());
-//
-//                                            if (snap.getKey().equals("files")) {
-//                                                files.add(Integer.parseInt(snap.getValue().toString()));
-//                                            }
-//
-//                                            if (snap.getKey().equals("ShopsLocation")) {
-//                                                Log.d("LOCATIONS", snap.getValue().toString());
-//                                                locations.add(snap.getValue().toString());
-//                                            }
-//
-//                                            if (snap.getKey().equals("ShopName")) {
-//                                                shopNames.add(snap.getValue().toString());
-//                                            }
-//
-//                                            if (snap.getKey().equals("ShopLat")) {
-//                                                shopLat.add((Double) snap.getValue());
-//                                            }
-//
-//                                            if (snap.getKey().equals("ShopLong")) {
-//                                                shopLong.add((Double) snap.getValue());
-//                                            }
-//
-//                                            if (snap.getKey().equals("orderStatus")) {
-//                                                orderStatus.add(snap.getValue().toString());
-//                                            }
-//
-//                                            if (snap.getKey().equals("price")) {
-//                                                price.add(Double.parseDouble(snap.getValue().toString()));
-//                                            }
-//                                            if (snap.getKey().equals("orderDateTime")) {
-//                                                orderDate.add(snap.getValue().toString());
-//                                            }
-//                                            if (snap.getKey().equals("paymentMode")) {
-//                                                paymentModes.add(snap.getValue().toString());
-//                                            }
-//                                        }
-                                    }
-
-
-
-//                                    final Handler handler1 = new Handler();
-//                                    handler1.postDelayed(new Runnable() {
-//                                        @Override
-//                                        public void run() {
-
+                final Handler handler1 = new Handler();
+//                handler1.postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+                        finalConvertView.setAlpha(0f);
+                        finalConvertView.setVisibility(View.VISIBLE);
+                        finalConvertView.animate()
+                                .alpha(1f)
+                                .setDuration(shortAnimationDuration)
+                                .setListener(null);
 //                                            if (!orderStatus.get(position).equals("Done")) {
-                                                currentOrderShopLoc.setText(locations.get(position));
-                                                currentOrderShopName.setText(shopNames.get(position));
-                                                currentOrderStatus.setText(orderStatus.get(position));
-                                                currentOrderPrice.setText("Price : ₹" + price.get(position));
-                                                currentOrderDateTime.setText(orderDate.get(position));
-                                                currentOrderID.setText("Order ID: " + orderkey.get(position));
-                                                Log.d("LIVESTAT",orderStatus.get(position));
 
-                                                if ((orderStatus.get(position)).equals("Placed")) {
-                                                    currentOrderStatus.setBackgroundResource(R.drawable.orderstatusview1);
-                                                }
-                                                if ((orderStatus.get(position)).equals("Retrieved")) {
-                                                    currentOrderStatus.setBackgroundResource(R.drawable.orderstatusview2);
-                                                }
-                                                if ((orderStatus.get(position)).equals("In Progress")) {
-                                                    currentOrderStatus.setBackgroundResource(R.drawable.orderstatusview3);
-                                                }
-                                                if ((orderStatus.get(position)).equals("Ready")) {
-
-                                                    currentOrderStatus.setBackgroundResource(R.drawable.orderstatusview4);
-                                                    shortAnimationDuration = getResources().getInteger(android.R.integer.config_shortAnimTime);
-
-                                                    pickedUpOrderView.setAlpha(0f);
-                                                    pickedUpOrderView.setVisibility(View.VISIBLE);
-                                                    pickedUpOrderView.animate()
-                                                            .alpha(1f)
-                                                            .setDuration(shortAnimationDuration)
-                                                            .setListener(null);
-
-                                                    orderPickBtn.setOnClickListener(new View.OnClickListener() {
-                                                        @RequiresApi(api = Build.VERSION_CODES.N)
-                                                        @Override
-                                                        public void onClick(View v) {
-                                                            final HashMap<String, Object> orderStatusUpdate = new HashMap<String, Object>();
-                                                            orderStatusUpdate.put("orderStatus", "Done");
-                                                            ref.child("users").child(userId).child("Orders").child(shopKey.get(finalI)).child(orderkey.get(position)).updateChildren(orderStatusUpdate);
-                                                            getOrders();
-                                                        }
-                                                    });
-                                                }
-//                                            }
-//                                            else{
+                        if (position < locations.size() && position < shopNames.size() && position < orderStatus.size() && position < price.size() && position < orderDate.size() && position < orderkey.size()) {
 
 
-//                                                finalConvertView.setAlpha(0f);
-//                                                finalConvertView.setVisibility(View.GONE);
-//                                                finalConvertView.animate()
-//                                                        .alpha(0f)
-//                                                        .setDuration(shortAnimationDuration)
-//                                                        .setListener(null);
+                            currentOrderID.setText("ID " + orderkey.get(position));
+                            currentOrderShopLoc.setText(locations.get(position));
+                            currentOrderShopName.setText(shopNames.get(position));
+                            currentOrderPrice.setText("Price : ₹ " + price.get(position));
+                            currentOrderDateTime.setText(orderDate.get(position));
+                            currentOrderStatus.setText(orderStatus.get(position));
 
-//                                                currentOrderLV();
-//                                                listView.setVisibility(View.GONE);
+                            if ((orderStatus.get(position)).equals("Placed")) {
+//                                currentOrderStatus.setBackgroundResource(R.drawable.orderstatusview1);
 
-//                                                files.remove(position);
-//                                                locations.remove(position);
-//                                                shopNames.remove(position);
-//                                                shopLat.remove(position);
-//                                                shopLong.remove(position);
-//                                                orderStatus.remove(position);
-//                                                price.remove(position);
-//                                                orderDate.remove(position);
-//                                                paymentModes.remove(position);
-//                                            }
+                            }
+                            if ((orderStatus.get(position)).equals("Received")) {
+//                                currentOrderStatus.setBackgroundResource(R.drawable.orderstatusview2);
+                                stat1.setTextColor(Color.parseColor("#227093"));
+                                stat1view.setBackgroundResource(R.drawable.orderstatballs);
 
-//                                        }
-//                                    }, 10);
+                            }
+                            if ((orderStatus.get(position)).equals("In Progress")) {
+//                                currentOrderStatus.setBackgroundResource(R.drawable.orderstatusview3);
+                                stat2.setTextColor(Color.parseColor("#227093"));
+                                stat2view.setBackgroundResource(R.drawable.orderstatballs);
 
 
-                                }
+                            }
+                            if ((orderStatus.get(position)).equals("Ready")) {
+//                                currentOrderStatus.setBackgroundResource(R.drawable.orderstatusview4);
+                                stat3.setTextColor(Color.parseColor("#227093"));
+                                stat3view.setBackgroundResource(R.drawable.orderstatballs);
 
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError databaseError) {
 
-                                }
-                            });
+
+                                shortAnimationDuration = getResources().getInteger(android.R.integer.config_shortAnimTime);
+
+                                pickedUpOrderView.setAlpha(0f);
+                                pickedUpOrderView.setVisibility(View.VISIBLE);
+                                pickedUpOrderView.animate()
+                                        .alpha(1f)
+                                        .setDuration(shortAnimationDuration)
+                                        .setListener(null);
+
+                                orderPickBtn.setOnClickListener(new View.OnClickListener() {
+                                    @RequiresApi(api = Build.VERSION_CODES.N)
+                                    @Override
+                                    public void onClick(View v) {
+                                        final HashMap<String, Object> orderStatusUpdate = new HashMap<String, Object>();
+                                        orderStatusUpdate.put("orderStatus", "Done");
+                                        ref.child("users").child(userId).child("Orders").child(orderkey.get(position)).updateChildren(orderStatusUpdate);
+
+                                        orderPickedTV.setText("Thank you for using Sleefax. 😄 \n We hope you had a great experience.");
+                                        orderPickBtn.setVisibility(View.INVISIBLE);
+
+                                        stat4.setTextColor(Color.parseColor("#227093"));
+                                        stat4view.setBackgroundResource(R.drawable.orderstatballs);
+
+                                        new Handler().postDelayed(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                getOrders();
+                                                getOrderCntForOrderHistory();
+                                                getCurrentOrderDetails();
+                                            }
+                                        }, 2000);
+
+                                    }
+                                });
+                            }
                         }
+//                                            }
+//                    }
+//                }, 100);
+
+                finalConvertView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        moreDetails(shopKey.get(position),orderkey.get(position),shopNames.get(position),shopLat.get(position),shopLong.get(position),locations.get(position), files.get(position),orderStatus.get(position),price.get(position));
 
                     }
-
-                }, 100);
+                });
 
 
             }

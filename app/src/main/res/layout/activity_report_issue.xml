@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ReportIssue"
-    android:background="@drawable/back200">
+    tools:context=".ReportIssue">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -15,6 +14,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+
+        <View
+            android:id="@+id/view23"
+            android:layout_width="match_parent"
+            android:layout_height="136dp"
+            android:layout_alignBottom="@+id/vote_tv"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="-10dp"
+            android:background="@drawable/storesview" />
 
         <ImageView
             android:id="@+id/w_vote"
@@ -31,7 +40,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/w_vote"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="17dp"
+            android:layout_marginTop="5dp"
             android:text="UH OH !"
             android:textAlignment="center"
             android:textColor="#FFF"
@@ -74,7 +83,7 @@
             android:layout_below="@id/IssueTV"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="54dp"
-            android:background="@drawable/rectangle101"
+            android:background="@drawable/mainpageback"
             android:text="@string/submit"
             android:textColor="#FFF"
             android:textSize="20dp" />

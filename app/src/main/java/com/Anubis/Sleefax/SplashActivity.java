@@ -9,6 +9,7 @@ import androidx.core.content.ContextCompat;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -27,6 +28,7 @@ import com.google.firebase.database.ValueEventListener;
 
 public class SplashActivity extends AppCompatActivity {
 
+    public String SharedPrefs = "Data";
     final FirebaseDatabase database = com.google.firebase.database.FirebaseDatabase.getInstance();
     DatabaseReference ref = database.getReference();
 
@@ -47,29 +49,65 @@ public class SplashActivity extends AppCompatActivity {
             Log.d("NOTIFICATION ", String.valueOf(PackageManager.PERMISSION_DENIED));
         }
         network = haveNetworkConnection();
-
+        checkUserInfo();
 //        if(network) {
-            if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-                userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
-                getCurrentUserInfo(userId);
-
-                if (username == null) {
-                    Log.d("USERNAME", FirebaseAuth.getInstance().getCurrentUser().getEmail());
-                }
-
-            } else {
-
-                Intent intent = new Intent(SplashActivity.this, MainActivity.class);
-                startActivity(intent);
-                finish();
-            }
+//            if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+//
+//                userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+//                email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
+//                getCurrentUserInfo(userId);
+//
+//            } else {
+//
+//                Intent intent = new Intent(SplashActivity.this, MainActivity.class);
+//                startActivity(intent);
+//                finish();
+//            }
 //        }else{
 //            Log.d("NO", String.valueOf(network));
 //            Toast.makeText(SplashActivity.this,"Please check your internet connection.",Toast.LENGTH_SHORT).show();
 //        }
     }
 
+    public void checkUserInfo(){
+
+        String userid,name;
+        long number;
+        SharedPreferences sharedPreferences = getSharedPreferences(SharedPrefs,0);
+        userid = sharedPreferences.getString("UserID",null);
+        name = sharedPreferences.getString("DisplayName",null);
+        number = sharedPreferences.getLong("UserNumber",0);
+
+
+        if (FirebaseAuth.getInstance().getCurrentUser() != null && userid != null) {
+            Log.d("CURRUSID",userid);
+            Log.d("INSTANCEID",FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+            if(userid !=null && userid.equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+
+                if (name != null && number > 0) {
+                    Log.d("NAMEOFUSER",name);
+                    Log.d("NUMOFUSER",String.valueOf(number));
+
+                    Intent intent = new Intent(SplashActivity.this, Select.class);
+                    startActivity(intent);
+                    finish();
+                }else{
+                    Toast.makeText(getApplicationContext(),"Hmmm! It seems some of your information is missing",Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(SplashActivity.this, FirstNameActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putBoolean("NewUser",false);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                    finish();
+                }
+            }
+        }else{
+            Intent intent = new Intent(SplashActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish();
+        }
+    }
 
     private boolean haveNetworkConnection() {
         boolean haveConnectedWifi = false;

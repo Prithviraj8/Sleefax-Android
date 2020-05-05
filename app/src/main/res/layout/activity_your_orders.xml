@@ -17,14 +17,23 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+        <View
+            android:id="@+id/view10"
+            android:layout_width="match_parent"
+            android:layout_height="131dp"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="0dp"
+            android:background="@drawable/storesview" />
+
         <ImageView
+
             android:id="@+id/imageView7"
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="25dp"
-            app:srcCompat="@drawable/group21" />
+            android:layout_marginTop="10dp"
+            app:srcCompat="@drawable/yourordersbtn" />
 
         <TextView
             android:id="@+id/textView2"
@@ -35,9 +44,20 @@
             android:layout_marginTop="4dp"
             android:text="Your Orders"
             android:textAlignment="center"
-            android:textColor="#6d6d6d"
-            android:textSize="24sp"
+            android:textColor="#FFFFFF"
+            android:textSize="20sp"
             android:textStyle="bold" />
+
+        <ImageButton
+            android:id="@+id/backBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="25dp"
+            android:background="#00FFFFFF"
+            app:srcCompat="@drawable/w" />
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/RefreshLayout"
@@ -49,9 +69,9 @@
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:layout_marginStart="0dp"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="15dp"
             android:layout_marginEnd="0dp"
-            android:layout_marginBottom="-1dp"
+            android:layout_marginBottom="0dp"
             android:orientation="vertical">
 
             <ListView
@@ -65,21 +85,21 @@
                 android:layout_marginRight="8dp"
                 android:layout_marginBottom="8dp"
 
-                android:dividerHeight="0dp"
                 android:divider="@null"
-                />
+                android:dividerHeight="0dp" />
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-        <ImageButton
-            android:id="@+id/backBtn"
+        <TextView
+            android:id="@+id/NoOrdersTV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="25dp"
-            android:background="#00FFFFFF"
-            app:srcCompat="@drawable/b" />
+            android:layout_centerInParent="true"
+            android:text="No past orders to show. 🤷🏻‍♀️"
+            android:textColor="#4BAAD5"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:visibility="invisible" />
+
     </RelativeLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

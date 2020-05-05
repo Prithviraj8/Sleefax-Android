@@ -44,11 +44,11 @@ public class FirstNameActivity extends AppCompatActivity {
 
     final FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference ref = database.getReference();
-    String userId;
+    String userId,number;
     boolean newUser;
     String name = " ",email,num;
 
-    String loc,orderStatus,shopKey,fileType,pagesize,orientation;
+    String loc,orderStatus,shopKey,fileType,pagesize,orientation,shopName;
     double shopLat;
     double shopLong;
     double userLat,userLong;
@@ -74,6 +74,8 @@ public class FirstNameActivity extends AppCompatActivity {
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
         newUser = extras.getBoolean("NewUser");
+        number = extras.getString("Number");
+
         if(newUser){
             getNewUserOrderDetails();
         }
@@ -86,6 +88,8 @@ public class FirstNameActivity extends AppCompatActivity {
         }
         firstNameTV = findViewById(R.id.FirstNameTV);
         numberTV = findViewById(R.id.numberTV);
+        numberTV.setText(number);
+
         Button continueButton = findViewById(R.id.FirstNameButton);
 
         ImageButton back = findViewById(R.id.back);
@@ -117,10 +121,11 @@ public class FirstNameActivity extends AppCompatActivity {
         Bundle extras = intent.getExtras();
 //        newUser = extras.getBoolean("NewUser");
         email = extras.getString("Email");
+        number = extras.getString("Number");
         //////////////////////////////////////////////////Shop Info//////////////////////////////////////////
         shopLat = extras.getDouble("ShopLat");
         shopLong = extras.getDouble("ShopLong");
-        name = extras.getString("ShopName");
+        shopName = extras.getString("ShopName");
         loc = extras.getString("Location");
         files = extras.getInt("Files");
         orderStatus = extras.getString("OrderStatus");
@@ -165,7 +170,7 @@ public class FirstNameActivity extends AppCompatActivity {
         extras.putString("Name", FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
 
         extras.putStringArrayList("URLS", urls);
-        extras.putString("ShopName", name);
+        extras.putString("ShopName", shopName);
         extras.putString("Location", loc);
         extras.putDouble("ShopLat", shopLat);
         extras.putDouble("ShopLong", shopLong);
@@ -283,7 +288,9 @@ public class FirstNameActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences(SharedPrefs,0);
         sharedPreferences.edit().putString("DisplayName",name).apply();
         sharedPreferences.edit().putLong("UserNumber",num).apply();
-
+        if(FirebaseAuth.getInstance().getCurrentUser()!=null) {
+            sharedPreferences.edit().putString("UserID", FirebaseAuth.getInstance().getCurrentUser().getUid()).apply();
+        }
     }
 
     @Override

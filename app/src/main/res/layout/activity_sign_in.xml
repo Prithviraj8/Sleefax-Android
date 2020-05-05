@@ -60,6 +60,30 @@
             android:textSize="20dp"
             android:textStyle="bold" />
 
+        <EditText
+            android:id="@+id/phoneNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/SignIn_Up"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:ems="10"
+            android:inputType="number"
+            android:hint="Phone Number"
+            />
+
+        <TextView
+            android:id="@+id/textView32"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/phoneNumber"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:text="@string/or"
+            android:textColor="#000"
+            android:textSize="25sp"
+            android:textStyle="bold" />
+
         <TextView
             android:id="@+id/SignIn_Up"
             android:layout_width="255dp"
@@ -77,11 +101,11 @@
             android:id="@+id/GoogleSignIn"
             android:layout_width="260dp"
             android:layout_height="45dp"
-            android:layout_below="@+id/SignIn_Up"
+            android:layout_below="@+id/textView32"
             android:layout_alignStart="@+id/SignIn_Up"
             android:layout_alignEnd="@+id/SignIn_Up"
             android:layout_marginStart="1dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="10dp"
             android:layout_marginEnd="0dp" />
 
         <TextView
@@ -90,12 +114,13 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/GoogleSignIn"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="10dp"
             android:text="@string/or"
             android:textAlignment="center"
             android:textColor="#000"
             android:textSize="25sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:visibility="visible" />
 
         <AutoCompleteTextView
             android:id="@+id/EmailTV"
@@ -108,11 +133,12 @@
             android:layout_marginTop="10dp"
             android:layout_marginEnd="0dp"
             android:background="@drawable/textfield"
-            android:inputType="textEmailAddress"
             android:hint="@string/email"
+            android:inputType="textEmailAddress"
             android:paddingLeft="20dp"
             android:textColor="#000000"
-            android:textColorHint="#808080" />
+            android:textColorHint="#808080"
+            android:visibility="visible" />
 
         <AutoCompleteTextView
             android:id="@+id/PasswordTV"
@@ -125,11 +151,12 @@
             android:layout_marginTop="15dp"
             android:layout_marginEnd="0dp"
             android:background="@drawable/textfield"
-            android:inputType="textPassword"
             android:hint="@string/password"
+            android:inputType="textPassword"
             android:paddingLeft="20dp"
             android:textColor="#000000"
-            android:textColorHint="#808080" />
+            android:textColorHint="#808080"
+            android:visibility="visible" />
 
         <Button
             android:id="@+id/forgotPasswordBtn"
@@ -145,7 +172,8 @@
             android:background="@null"
             android:text="Forgot Password ?"
             android:textAllCaps="false"
-            android:textColor="#000" />
+            android:textColor="#000"
+            android:visibility="visible" />
 
         <Button
             android:id="@+id/SignIn"
@@ -153,7 +181,7 @@
             android:layout_height="50dp"
             android:layout_below="@+id/forgotPasswordBtn"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="64dp"
+            android:layout_marginTop="20dp"
             android:background="@drawable/signin_btn_round"
             android:backgroundTint="#FFF"
             android:text="@string/done"
@@ -172,6 +200,7 @@
             android:layout_marginBottom="0dp"
             android:layout_toEndOf="@+id/PasswordTV"
             android:background="@drawable/roundbutton"
+            android:visibility="gone"
             app:srcCompat="@drawable/eye" />
     </RelativeLayout>
 

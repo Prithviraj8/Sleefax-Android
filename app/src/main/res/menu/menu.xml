@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
+
     <item android:id="@+id/userprofile"
         android:icon="@drawable/actsettingsimg"
         android:title="Edit Profile"
@@ -11,17 +12,21 @@
         android:title="Logout"
         android:icon="@drawable/log_out"/>
 
-<!--    <item android:id="@+id/support"-->
-<!--        android:title="Support"/>-->
 
-    <item android:id="@+id/issue"
-        android:title="Report an issue"
-        android:icon="@drawable/warning_sign"/>
+<item android:title="Support">
 
-    <item android:id="@+id/contact"
-        android:title="Contact us"/>
+    <menu>
+        <item android:id="@+id/issue"
+            android:title="Report an issue"
+            android:icon="@drawable/warning_sign"/>
+        <item android:id="@+id/contact"
+            android:title="Contact us"
+            android:icon="@drawable/contact_email"/>
 
-    <item android:id="@+id/feedback"
-        android:title="Feedback"
-        android:icon="@drawable/feedbackbtn"/>
+        <item android:id="@+id/feedback"
+            android:title="Feedback"
+            android:icon="@drawable/feedbackbtn"/>
+    </menu>
+</item>
+
 </menu>

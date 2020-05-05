@@ -1,11 +1,16 @@
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">#55ABCE</item>
-        <item name="colorPrimaryDark">#55ABCE</item>
+        <item name="colorPrimary">#45D2EE</item>
+        <item name="colorPrimaryDark">#45D2EE</item>
         <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:src">@drawable/appicon</item>
+        <item name="android:windowBackground">@drawable/mainpageback</item>
     </style>
 
     <style name="NavigationDrawerStyle">

@@ -76,7 +76,7 @@ public class PageInfo extends AppCompatActivity {
     ArrayList<Bitmap> images = new ArrayList<>();
     Intent data;
 
-    View black_white,colors,h,v;
+    View black_whiteV,colorsV,h,v;
     ScrollView scrollView;
     Button  pageBtn;
     ImageButton crop,back,prevImg,nextimg,scrollDown;
@@ -84,21 +84,26 @@ public class PageInfo extends AppCompatActivity {
     Spinner pageSizeSpinner, orientSpinner;
 
     //    ArrayList<Bitmap> images = new ArrayList<Bitmap>();
-    EditText copies;
-    Page_Info info = new Page_Info();
+    EditText copyTV;
+//    Page_Info info = new Page_Info();
 
-    ArrayList<Integer> pageCopies = new ArrayList<Integer>();
-    ArrayList<String> colorTypes = new ArrayList<String>();
     int copy =1;
     String colour,fileType, pagesize,orientation,shopType;
 
-    int cnt = 0;
+    int cnt = 0,imgCnt;
     ArrayList<String> storeID = new ArrayList<>();
-    final boolean[] color = new boolean[1];
-    boolean setDefaultVal = false, bothSides;
+    boolean setDefaultVal = false;
     private int shortAnimationDuration;
 
-
+    ArrayList<String> pdfURL = new ArrayList<>();
+    ArrayList<String> fileTypes = new ArrayList<>();
+    ArrayList<String> colors = new ArrayList<>();
+    ArrayList<Integer> copies = new ArrayList<>();
+    ArrayList<String> pageSize = new ArrayList<>();
+    ArrayList<String> orientations = new ArrayList<>();
+    boolean bothSides[];
+    ArrayList<String> customPages = new ArrayList<>();
+    ArrayList<String> customValues = new ArrayList<>();
 
 
     @Override
@@ -107,20 +112,22 @@ public class PageInfo extends AppCompatActivity {
         setContentView(R.layout.activity_page_info);
 //        getSupportActionBar().hide();
 
+        imgCnt =0;
 
 
         final Intent intent = getIntent();
         Bundle extras = intent.getExtras();
         pageURL = extras.getStringArrayList("URLS");
+        bothSides = new boolean[pageURL.size()];
+        bothSides[imgCnt] = false;
 //        pageURL = extras.getParcelableArrayList("URLS");
 //        Log.d("URLSIZE", String.valueOf(pageURL.size()));
 
         username = extras.getString("username");
         email = extras.getString("email");
         num = extras.getLong("num");
-        fileType = extras.getString("FileType");
+        fileTypes = extras.getStringArrayList("FileType");
         images = extras.getParcelableArrayList("Images");
-        data = extras.getParcelable("Data");
         newUser = extras.getBoolean("NewUser");
         if(!newUser){
             userId  = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -129,11 +136,11 @@ public class PageInfo extends AppCompatActivity {
         scrollView = findViewById(R.id.scrollViewImages);
         scrollDown = findViewById(R.id.scrollBtn);
         back = findViewById(R.id.back);
-        colors = findViewById(R.id.colors);
-        black_white = findViewById(R.id.black_white);
+        colorsV = findViewById(R.id.colors);
+        black_whiteV = findViewById(R.id.black_white);
         Page = (ImageView) findViewById(R.id.imageView);
         pageBtn = findViewById(R.id.imagesDone);
-        copies = findViewById(R.id.CopiesText);
+        copyTV = findViewById(R.id.CopiesText);
         orientSpinner = findViewById(R.id.orientationSpinner);
         pageSizeSpinner = findViewById(R.id.pageSizesDropDown);
         isTester = extras.getBoolean("IsTester");
@@ -180,10 +187,10 @@ public class PageInfo extends AppCompatActivity {
                 if (isChecked) {
                     // The toggle is enabled
                     Log.d("ENABLEDD", String.valueOf(isChecked));
-                    bothSides = true;
+                    bothSides[cnt] = true;
                 } else {
                     // The toggle is disabled
-                    bothSides = false;
+                    bothSides[cnt] = false;
                     Log.d("ENABLEDD", String.valueOf(isChecked));
 
                 }
@@ -211,18 +218,9 @@ public class PageInfo extends AppCompatActivity {
         }
         setanimation();
 
-        colors.setOnTouchListener(touchListener);
-        black_white.setOnTouchListener(touchListener);
-         //Crop button
-//        crop.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                String image = String.valueOf(Uri.parse(pageURL.get(0)));
-//                cropImage(image);
-//            }
-//        });
-//        h.setOnTouchListener(touchListener);
-//        v.setOnTouchListener(touchListener);
+        colorsV.setOnTouchListener(touchListener);
+        black_whiteV.setOnTouchListener(touchListener);
+
         nextimg.setOnClickListener(btnListener);
         prevImg.setOnClickListener(btnListener);
         pageBtn.setOnClickListener(btnListener);
@@ -235,26 +233,6 @@ public class PageInfo extends AppCompatActivity {
 
         shortAnimationDuration = getResources().getInteger(android.R.integer.config_longAnimTime) + 5000;
 
-//        prevImg.animate()
-//                .alpha(0f)
-//                .setDuration(shortAnimationDuration)
-//                .setListener(new AnimatorListenerAdapter() {
-//                    @Override
-//                    public void onAnimationStart(Animator animation) {
-//                        super.onAnimationStart(animation);
-//                        prevImg.setBackgroundResource(R.drawable.status_views);
-//                    }
-//                });
-//        nextimg.animate()
-//                .alpha(0f)
-//                .setDuration(shortAnimationDuration)
-//                .setListener(new AnimatorListenerAdapter() {
-//                    @Override
-//                    public void onAnimationStart(Animator animation) {
-//                        super.onAnimationStart(animation);
-//                        nextimg.setBackgroundResource(R.drawable.status_views);
-//                    }
-//                });
         if(pageURL.size() == 1) {
             prevImg.setVisibility(View.INVISIBLE);
             nextimg.setVisibility(View.INVISIBLE);
@@ -285,31 +263,21 @@ public class PageInfo extends AppCompatActivity {
     private View.OnTouchListener  touchListener = new View.OnTouchListener() {
         public boolean onTouch(View view, MotionEvent motionEvent) {
 
-//            if(view == findViewById(R.id.h)){
-//                h.setBackgroundResource(R.drawable.orientation_after_clicked);
-//                v.setBackgroundResource(R.drawable.orientation);
-//                orientation = "h";
-//            }
-//            if(view == findViewById(R.id.v)){
-//                v.setBackgroundResource(R.drawable.orientation_after_clicked);
-//                h.setBackgroundResource(R.drawable.orientation);
-//                orientation = "v";
-//            }
 
             if(view == findViewById(R.id.black_white)){
 
                 Log.d("BW","PRESSED");
                 colour = ("Black/White");
-                black_white.setBackgroundResource(R.drawable.b_w_border);
-                colors.setBackgroundResource(R.drawable.black_white_view_backgroud);
+                black_whiteV.setBackgroundResource(R.drawable.b_w_border);
+                colorsV.setBackgroundResource(R.drawable.black_white_view_backgroud);
 
             }
             if(view == findViewById(R.id.colors)){
 
                 Log.d("CS","PRESSED");
                 colour = ("Colors");
-                colors.setBackgroundResource(R.drawable.b_w_border);
-                black_white.setBackgroundResource(R.drawable.black_white_view_backgroud);
+                colorsV.setBackgroundResource(R.drawable.b_w_border);
+                black_whiteV.setBackgroundResource(R.drawable.black_white_view_backgroud);
 
             }
 
@@ -317,13 +285,13 @@ public class PageInfo extends AppCompatActivity {
         }
     };
 
-    private View.OnClickListener btnListener = new View.OnClickListener() {
+    private final View.OnClickListener btnListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
 
-            if(v == findViewById(R.id.previousImg)){
-                Log.d("PREV",pageURL.get(cnt));
-                if(cnt > 0 && cnt < pageURL.size()) {
+            if (v == findViewById(R.id.previousImg)) {
+                Log.d("PREV", pageURL.get(cnt));
+                if (cnt > 0 && cnt < pageURL.size()) {
                     cnt--;
 //                    new DownloadImage().execute(pageURL.get(cnt));
                     try {
@@ -335,10 +303,10 @@ public class PageInfo extends AppCompatActivity {
                 }
             }
 
-            if(v == findViewById(R.id.nextImg)){
-                Log.d("NEXT",pageURL.get(cnt));
+            if (v == findViewById(R.id.nextImg)) {
+                Log.d("NEXT", pageURL.get(cnt));
 
-                if(cnt >= 0 && cnt < pageURL.size()-1) {
+                if (cnt >= 0 && cnt < pageURL.size() - 1) {
                     cnt++;
 //                    new DownloadImage().execute(pageURL.get(cnt));
                     try {
@@ -350,40 +318,50 @@ public class PageInfo extends AppCompatActivity {
                 }
             }
 
-            if(v == findViewById(R.id.imagesDone)){
+            if (v == findViewById(R.id.imagesDone)) {
                 getShopsCount();
 
-                copy = (Integer.parseInt(copies.getText().toString()));
-                if(copy == 0){
+                copy = (Integer.parseInt(copyTV.getText().toString()));
+                if (copy == 0) {
                     copy = 1;
                 }
+                copies.add(imgCnt, copy);
 
                 final String[] items = new String[]{"A4", "A3", "A2"};
                 pagesize = items[pageSizeSpinner.getSelectedItemPosition()];
+                pageSize.add(imgCnt, pagesize);
 
-                final String[] orientations = new String[]{"Portrait", "Landscape"};
-                orientation = orientations[orientSpinner.getSelectedItemPosition()];
+                final String[] ots = new String[]{"Portrait", "Landscape"};
+                orientation = ots[orientSpinner.getSelectedItemPosition()];
+                orientations.add(imgCnt, orientation);
 
-                if(orientation == null){
+                if (orientation == null) {
                     orientation = "Portrait";
                 }
-                if(colour == null){
+                if (colour == null) {
                     colour = "Black/White";
                 }
+                colors.add(imgCnt, colour);
+
 //                if (!info.black) {
 //                    colour = "Colors";
 //                } else {
 //                    colour = "Black/White";
 //                }
-                if(info.page_cnt==pageURL.size()-1){
+
+//                if (info.page_cnt == pageURL.size() - 1) {
+//                    pageBtn.setText("Done");
+//                }
+                if(cnt == pageURL.size()-1){
                     pageBtn.setText("Done");
                 }
-                if(!bothSides){
-                    bothSides = false;
+                if (!bothSides[imgCnt]) {
+                    bothSides[imgCnt] = false;
                 }
 
+                imgCnt += 1;
             }
-            if(v == findViewById(R.id.scrollBtn)){
+            if (v == findViewById(R.id.scrollBtn)) {
                 scrollView.post(new Runnable() {
                     public void run() {
                         scrollView.fullScroll(View.FOCUS_DOWN);
@@ -465,17 +443,24 @@ public class PageInfo extends AppCompatActivity {
                             Bundle extras = new Bundle();
                             extras.putStringArrayList("URLS", pageURL);
 //                            extras.putParcelableArrayList("URLS", pageURL);
-                            extras.putInt("Copies", copy);
-                            extras.putString("ColorType", colour);
+//                            extras.putInt("Copies", copy);
+//                            extras.putString("ColorType", colour);
                             extras.putInt("ShopCount", ShopsCnt);
-                            extras.putString("FileType", fileType);
-                            extras.putString("PageSize", pagesize);
+//                            extras.putString("FileType", fileType);
+//                            extras.putString("PageSize", pagesize);
                             extras.putStringArrayList("StoreID", storeID);
-                            extras.putString("Orientation", orientation);
-                            extras.putBoolean("BothSides",bothSides);
+//                            extras.putString("Orientation", orientation);
+//                            extras.putBoolean("BothSides",bothSides);
                             extras.putString("Custom","All");
                             extras.putBoolean("IsTester",isTester);
                             extras.putBoolean("NewUser",newUser);
+
+                            extras.putBooleanArray("BothSides", bothSides);
+                            extras.putIntegerArrayList("Copies", copies);
+                            extras.putStringArrayList("ColorType", colors);
+                            extras.putStringArrayList("FileType", fileTypes);
+                            extras.putStringArrayList("PageSize", pageSize);
+                            extras.putStringArrayList("Orientation", orientations);
 
                             intent.putExtras(extras);
                             mProgressDialog.dismiss();

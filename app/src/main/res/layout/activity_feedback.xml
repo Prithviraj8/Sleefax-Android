@@ -17,7 +17,7 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="136dp"
-            android:background="@drawable/rectangle102"></View>
+            android:background="@drawable/storesview"></View>
 
 
         <ImageView
@@ -65,10 +65,10 @@
             android:layout_below="@+id/feedbackTV"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="63dp"
+            android:background="@drawable/mainpageback"
             android:text="@string/submit"
             android:textColor="#FFF"
-            android:textSize="20dp"
-            android:background="@drawable/rectangle101"/>
+            android:textSize="20dp" />
 
         <ImageButton
             android:id="@+id/backBtn"

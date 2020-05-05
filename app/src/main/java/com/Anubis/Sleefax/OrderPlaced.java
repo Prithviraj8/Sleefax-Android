@@ -58,6 +58,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.UUID;
 
 class OrderStatus{
@@ -65,32 +66,7 @@ class OrderStatus{
 }
 
 
-class info{
 
-    public String name,orderStatus;
-    public String email,device,fileType,orderDateTime,custom,paymentMode;
-    public long num;
-    public int copies,id;
-    public double price;
-    public boolean bothSides;
-
-    public info(String name, String email, long num, String device, String placed, String fileType, int copy, String orderDateTime, int id, String custom, double price, boolean bothSides, String paymentMode){
-        this.email = email;
-        this.name = name;
-        this.num = num;
-        this.device = device;
-        this.orderStatus = placed;
-        this.fileType = fileType;
-        this.copies = copy;
-        this.orderDateTime = orderDateTime;
-        this.id = id;
-        this.custom = custom;
-        this.price = price;
-        this.bothSides = bothSides;
-        this.paymentMode = paymentMode;
-    }
-
-}
 
 public class OrderPlaced extends AppCompatActivity {
     NotificationManagerCompat notificationManager;
@@ -113,14 +89,11 @@ public class OrderPlaced extends AppCompatActivity {
     int copy;
     int resultCode;
     int requestCode;
-    double numberOfPages;
     String color,custom,orderDateTime;
     String CHANNEL_ID = "UsersChannel",shopType;
-    boolean FromYourOrders =false, bothSides,isTester;
+    boolean FromYourOrders =false,isTester;
 
     long usernum,shopNum;
-    ArrayList<String> urls = new ArrayList<>();
-    ArrayList<String> downloadUrls = new ArrayList<>();
 
     //    ShopInfo info = new ShopInfo();
     private static final int LOCATION_REQUEST = 500;
@@ -140,6 +113,17 @@ public class OrderPlaced extends AppCompatActivity {
 
     String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
+    ArrayList<String> downloadUrls = new ArrayList<>();
+    ArrayList<String> urls = new ArrayList<>();
+    ArrayList<String> fileTypes = new ArrayList<>();
+    ArrayList<String> colors = new ArrayList<>();
+    ArrayList<Integer> copies = new ArrayList<>();
+    ArrayList<String> pageSize = new ArrayList<>();
+    ArrayList<String> orientations = new ArrayList<>();
+    boolean bothSides[];
+    ArrayList<String> customPages = new ArrayList<>();
+    ArrayList<String> customValues = new ArrayList<>();
+    double numberOfPages[];
 
 
 
@@ -161,14 +145,9 @@ public class OrderPlaced extends AppCompatActivity {
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                if(obj.progress >=25) {
-                    Intent intent = new Intent(OrderPlaced.this, Select.class);
-                    startActivity(intent);
-                    finish();
-                }else{
-                    alertBox("Please wait while you we process your order. ");
-                }
+                Intent intent = new Intent(OrderPlaced.this, Select.class);
+                startActivity(intent);
+                finish();
 
             }
         });
@@ -223,22 +202,29 @@ public class OrderPlaced extends AppCompatActivity {
 
 
         orderKey = extras.getString("OrderKey");
-        fileType = extras.getString("FileType");
-        pagesize = extras.getString("PageSize");
-        orientation = extras.getString("Orientation");
+        urls = extras.getStringArrayList("URLS");
+        fileTypes = extras.getStringArrayList("FileType");
+        pageSize = extras.getStringArrayList("PageSize");
+        orientations = extras.getStringArrayList("Orientation");
+        copies = extras.getIntegerArrayList("Copies");
+        colors = extras.getStringArrayList("ColorType");
+        bothSides = extras.getBooleanArray("BothSides");
+        customPages = extras.getStringArrayList("Custom");
+        numberOfPages = extras.getDoubleArray("Pages");
+
+//        fileType = extras.getString("FileType");
+//        pagesize = extras.getString("PageSize");
+//        orientation = extras.getString("Orientation");
         username = extras.getString("Username");
         email = extras.getString("email");
         usernum = extras.getLong("UserNumber");
         shopNum = extras.getLong("ShopNum");
-        urls = extras.getStringArrayList("URLS");
-        copy = extras.getInt("Copies");
-        color = extras.getString("ColorType");
-        requestCode = extras.getInt("RequestCode");
-        resultCode = extras.getInt("ResultCode");
+//        copy = extras.getInt("Copies");
+//        color = extras.getString("ColorType");
 //        pageURL = extras.getStringArrayList("URLS");
-        bothSides = extras.getBoolean("BothSides");
-        custom = extras.getString("Custom");
-        numberOfPages = extras.getDouble("Pages");
+//        bothSides = extras.getBoolean("BothSides");
+//        custom = extras.getString("Custom");
+//        numberOfPages = extras.getDouble("Pages");
         isTester = extras.getBoolean("IsTester");
         paymentMode = extras.getString("PaymentMode");
 
@@ -283,8 +269,8 @@ public class OrderPlaced extends AppCompatActivity {
         Log.d("TIME",currentTime);
 
         orderDateTime = currentTime +" " +currentDate;
-        if(fileType != null) {
-            getId();
+
+        if(fileTypes != null) {
 //            new uploadFile().execute(urls);
             setProgress(orderKey);
         }else{
@@ -296,13 +282,10 @@ public class OrderPlaced extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if(obj.progress >=25) {
-            Intent intent = new Intent(this, Select.class);
-            startActivity(intent);
-            finish();
-        }else{
-            alertBox("Please wait while we process your order.");
-        }
+        Intent intent = new Intent(this, Select.class);
+        startActivity(intent);
+        finish();
+
     }
     public void alertBox(String message){
         AlertDialog.Builder builder1 = new AlertDialog.Builder(OrderPlaced.this);
@@ -367,7 +350,7 @@ public class OrderPlaced extends AppCompatActivity {
         final String[] status = {null};
 
 
-        orderDb.child("users").child(userId).child("Orders").child(shopKey).child(orderKey).addValueEventListener(new ValueEventListener() {
+        orderDb.child("users").child(userId).child("Orders").child(orderKey).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 Log.d("VAL", dataSnapshot.getKey());
@@ -387,7 +370,7 @@ public class OrderPlaced extends AppCompatActivity {
                     if (user.getKey().equals("orderStatus")) {
 
                         notified.put("P_Notified", true);
-                        orderDb.child("users").child(userId).child("Orders").child(shopKey).child(orderKey).updateChildren(notified);
+                        orderDb.child("users").child(userId).child("Orders").child(orderKey).updateChildren(notified);
 //                        notified.put("RT_Notified", false);
 //                        orderDb.child("users").child(userId).child("Orders").child(shopKey).child(orderKey).updateChildren(notified);
 //                        notified.put("IP_Notified", false);
@@ -412,10 +395,10 @@ public class OrderPlaced extends AppCompatActivity {
 
                             }
 
-                        } else if (orderStatus.equals("Retrieved")) {
+                        } else if (orderStatus.equals("Received")) {
 
                             Log.d("Progress", String.valueOf(obj.progress));
-                            status[0] = "Retrieved";
+                            status[0] = "Received";
 
                             while (obj.progress > 25 && obj.progress < 50) {
 
@@ -456,7 +439,7 @@ public class OrderPlaced extends AppCompatActivity {
 
                 if (obj.progress <= 25) {
                     orderStatusTV.setVisibility(View.VISIBLE);
-                    orderStatusTV.setText("Placing order");
+                    orderStatusTV.setText("Order Placed");
 
 
                 }else
@@ -464,7 +447,7 @@ public class OrderPlaced extends AppCompatActivity {
                     Log.d("ORDERPROG", String.valueOf(orderProgress.getProgress()));
 
                     orderStatusTV.setVisibility(View.VISIBLE);
-                    orderStatusTV.setText("Order Placed");
+                    orderStatusTV.setText("Order Received");
 
                 }else
                 if (obj.progress >= 50 && obj.progress <= 75) {
@@ -481,11 +464,7 @@ public class OrderPlaced extends AppCompatActivity {
                     orderStatusTV.setVisibility(View.VISIBLE);
                     orderStatusTV.setText("Order Ready");
 
-
                 }
-
-
-//                    }
             }
 
             @Override
@@ -540,7 +519,7 @@ public class OrderPlaced extends AppCompatActivity {
 //                            notified.put("P_Notified", true);
 //                            orderDb.child("users").child(userId).child("Orders").child(shopKey).child(orderKey).updateChildren(notified);
 
-            } else if (orderStatus.equals("Retrieved")) {
+            } else if (orderStatus.equals("Received")) {
 
 
                 Log.d("RProgress", String.valueOf(obj.progress));
@@ -602,7 +581,7 @@ public class OrderPlaced extends AppCompatActivity {
 
             if (obj.progress <= 20) {
                 orderStatusTV.setVisibility(View.VISIBLE);
-                orderStatusTV.setText("Placing order");
+                orderStatusTV.setText("Order Placed");
 
 
             }else
@@ -610,7 +589,7 @@ public class OrderPlaced extends AppCompatActivity {
                 Log.d("ORDERPROG", String.valueOf(orderProgress.getProgress()));
 
                 orderStatusTV.setVisibility(View.VISIBLE);
-                orderStatusTV.setText("Order Placed");
+                orderStatusTV.setText("Order Received");
 
 
             }else
@@ -647,82 +626,7 @@ public class OrderPlaced extends AppCompatActivity {
     ArrayList<Integer> ids = new ArrayList<>();
     ArrayList<Integer> custOrderIDS = new ArrayList<>();
 
-    public void getId(){
 
-        ref.child(shopType).child(shopKey).child("Orders").addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-                Log.d("cust",dataSnapshot.getKey());
-
-                for(DataSnapshot orders: dataSnapshot.getChildren()){
-                    for(DataSnapshot values: orders.getChildren()) {
-                        if (values.getKey().equals("id")) {
-                            ids.add(Integer.parseInt(values.getValue().toString()));
-                            Log.d("IDS",values.getValue().toString());
-                            Collections.sort(ids);
-
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-        ref.child("users").child(userId).child("Orders").addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                for(DataSnapshot orders: dataSnapshot.getChildren()){
-                    for(DataSnapshot values: orders.getChildren()) {
-                        if (values.getKey().equals("id")) {
-                            custOrderIDS.add(Integer.parseInt(values.getValue().toString()));
-                            Log.d("IDS",values.getValue().toString());
-                            Collections.sort(custOrderIDS);
-
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-    }
 
 
 //    public class uploadFile extends AsyncTask<ArrayList<String>,Void,Void>{

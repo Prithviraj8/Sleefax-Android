@@ -9,9 +9,11 @@
 
 
     <RelativeLayout
+        android:id="@+id/pdfsettingsRL2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/pdfsettingsRL2">
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="0dp">
 
         <View
             android:id="@+id/view19"
@@ -19,7 +21,7 @@
             android:layout_height="80dp"
             android:layout_alignParentTop="true"
             android:layout_marginTop="0dp"
-            android:background="@drawable/storesview" />
+            android:background="@drawable/mainpageback" />
 
         <TextView
             android:id="@+id/textView"

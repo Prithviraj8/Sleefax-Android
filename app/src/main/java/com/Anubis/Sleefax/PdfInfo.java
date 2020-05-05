@@ -5,7 +5,9 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -26,6 +28,7 @@ import android.widget.ImageButton;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.github.barteksc.pdfviewer.PDFView;
@@ -38,19 +41,19 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.kaopiz.kprogresshud.KProgressHUD;
 
 import java.util.ArrayList;
 
 public class PdfInfo extends AppCompatActivity {
-
+    ProgressDialog mProgressDialog;
     final FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference ref = database.getReference();
     String userId;
-    int ShopsCnt=0;
+    int ShopsCnt=0,pdfCnt=0;
 
 //    String colorType;
 
-    TextView  customPages;
     Button done,viewPdf;
     Spinner pageSizeSpinner, orientSpinner;
     View colorsTV,bwTV,h,v;
@@ -60,18 +63,31 @@ public class PdfInfo extends AppCompatActivity {
     PDFView pdfView;
     WebView webView;
     EditText customValue1,customValue2;
-    int custValue1,custValue2;
+    int copy,custValue1,custValue2;
 
     //    String pdf_url;
     String pdf_url,pdf_uri;
-    int copy,resultCode,requestCode,numberOfPages = 0;
+    int resultCode,requestCode;
     String colour, pagesize;
+
     ArrayList<String> pdfURL = new ArrayList<>();
-    EditText copies,pageCount;
+    ArrayList<String> fileType = new ArrayList<>();
+    ArrayList<String> colors = new ArrayList<>();
+    ArrayList<Integer> copies = new ArrayList<>();
+    ArrayList<String> pageSize = new ArrayList<>();
+    ArrayList<String> orientations = new ArrayList<>();
+    boolean bothSides[];
+    ArrayList<String> customPages = new ArrayList<>();
+    ArrayList<String> customValues = new ArrayList<>();
+    double numberOfPages[];
+    ArrayList<String> fileNames = new ArrayList<>();
+
+
+    EditText copiesTV,pageCount;
     String URI = "";
-    String fileType, orientation,fileName;
-    String username,email,custom,shopType;
-    boolean bothSides = false;
+    String orientation,fileName;
+    String username,email,custom,shopType,customVal;
+//    boolean bothSides = false;
     boolean isTester,newUser;
 
     ArrayList<String> storeID = new ArrayList<>();
@@ -82,11 +98,12 @@ public class PdfInfo extends AppCompatActivity {
         setContentView(R.layout.activity_pdf_info);
 //        getSupportActionBar().hide();
 
+        pdfCnt = 0;
 
         colorsTV = findViewById(R.id.Pdf_Colors);
         bwTV = findViewById(R.id.Pdf_Black_White);
         done = findViewById(R.id.pdfDone);
-        copies = findViewById(R.id.PDF_copies);
+        copiesTV = findViewById(R.id.PDF_copies);
         pageSizeSpinner = findViewById(R.id.sizeSpinner);
         orientSpinner = findViewById(R.id.orientationSpinner);
         scrollView = findViewById(R.id.scrollViewPdfs);
@@ -111,19 +128,35 @@ public class PdfInfo extends AppCompatActivity {
         customValue2 = findViewById(R.id.customValue2);
 
 
+
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
 //        pdf_url = extras.getString("PdfURL");
 //        pdf_url = extras.getParcelable("PdfURL");
-        pdf_url = extras.getString("PdfURL");
-        fileType = extras.getString("FileType");
+        pdfURL = extras.getStringArrayList("URLS");
+//        pdf_url = extras.getString("PdfURL");
+        fileType = extras.getStringArrayList("FileType");
         username = extras.getString("username");
         email = extras.getString("email");
         requestCode = extras.getInt("RequestCode");
         resultCode = extras.getInt("ResultCode");
-        numberOfPages = extras.getInt("Pages");
+//        numberOfPages = new double[pdfURL.size()];
+        numberOfPages = extras.getDoubleArray("Pages");
         isTester = extras.getBoolean("IsTester");
         newUser = extras.getBoolean("NewUser");
+        fileNames = extras.getStringArrayList("FileNames");
+
+
+        bothSides = new boolean[pdfURL.size()];
+
+        Toast.makeText(this, "PDFCNT1 "+pdfURL.size(), Toast.LENGTH_SHORT).show();
+
+        customValue1.setText("1");
+        if(numberOfPages == null){
+            numberOfPages = new double[1];
+            numberOfPages[pdfCnt] = 10;
+        }
+        customValue2.setText(String.valueOf((int) numberOfPages[pdfCnt]));
 
         if(!newUser){
             userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -137,7 +170,7 @@ public class PdfInfo extends AppCompatActivity {
 //        pdf_uri = extras.getParcelable("PDFUri");
 
 
-        pdfURL.add((pdf_url));
+//        pdfURL.add((pdf_url));
 
         back = findViewById(R.id.back);
         back.setOnClickListener(BtnListener);
@@ -148,14 +181,15 @@ public class PdfInfo extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 // The toggle is enabled
                 // The toggle is disabled
-                bothSides = isChecked;
+
+
+                bothSides[pdfCnt] = isChecked;
+
             }
         });
 
         colorsTV.setOnTouchListener(touchListener);
         bwTV.setOnTouchListener(touchListener);
-//        h.setOnTouchListener(touchListener);
-//        v.setOnTouchListener(touchListener);
         done.setOnClickListener(BtnListener);
         scrollDown.setOnClickListener(BtnListener);
         viewPdf.setOnClickListener(BtnListener);
@@ -170,13 +204,16 @@ public class PdfInfo extends AppCompatActivity {
             if(view == findViewById(R.id.Pdf_Black_White)){
 
                 colour = ("Black/White");
+                colors.add(pdfCnt,colour);
+
                 bwTV.setBackgroundResource(R.drawable.b_w_border);
                 colorsTV.setBackgroundResource(R.drawable.black_white_view_backgroud);
             }
             if(view == findViewById(R.id.Pdf_Colors)){
 
-                Log.d("Colors","Pressed");
                 colour = "Colors";
+                colors.add(pdfCnt,colour);
+
                 colorsTV.setBackgroundResource(R.drawable.colors_border);
                 bwTV.setBackgroundResource(R.drawable.black_white_view_backgroud);
 
@@ -188,25 +225,38 @@ public class PdfInfo extends AppCompatActivity {
 
     //Create an anonymous implementation of OnClickListener
     private View.OnClickListener BtnListener = new View.OnClickListener() {
+        @SuppressLint("SetTextI18n")
         @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
         public void onClick(View v) {
 
 
             if(v == findViewById(R.id.back)) {
-//                Intent intent1 = new Intent(PdfInfo.this, Select.class);
-//                startActivity(intent1);
-                finish();
+                if(pdfCnt>0){
+                    pdfCnt = pdfCnt - 1;
+                }else{
+                    finish();
+                }
             }
 
             if(v == findViewById(R.id.pdfDone)) {
-                copy = (Integer.parseInt(copies.getText().toString()));
+                Toast.makeText(PdfInfo.this, "PDFCNT "+customValue2.getText(), Toast.LENGTH_SHORT).show();
+                if(pdfCnt == pdfURL.size()-1) {
+                    new findShops().execute();
+                }
+
+                copy = (Integer.parseInt(copiesTV.getText().toString()));
+                if (copy == 0) {
+                    copy = 1;
+                }
+                copies.add(pdfCnt,copy);
+
 //                custom = customPages.getText().toString();
                 final String[] sizes = new String[]{"A4", "A3", "A2"};
                 pagesize = sizes[pageSizeSpinner.getSelectedItemPosition()];
+                pageSize.add(pdfCnt,pagesize);
 
-                final String[] orientations = new String[]{"Portrait", "Landscape"};
-                orientation = orientations[orientSpinner.getSelectedItemPosition()];
-
+                final String[] ots = new String[]{"Portrait", "Landscape"};
+                orientation = ots[orientSpinner.getSelectedItemPosition()];
 
 //                if (customPages.getText().toString().equals("")) {
 //                    custom = "All";
@@ -215,76 +265,94 @@ public class PdfInfo extends AppCompatActivity {
                 custValue1 = 1;
                 custValue2 = 2;
 
-                if(customValue1.getText().toString().equals("")){
+                if(customValue1.getText().toString().equals("1")){
                     custValue1 = 1;
                 }else{
                     custValue1 = Integer.parseInt(customValue1.getText().toString());
-
                 }
 
-                if(customValue2.getText().toString().equals("")){
-                    custValue2 = 1;
+                if(customValue2.getText().toString().equals(String.valueOf(numberOfPages))){
+                    custValue2 = (int) numberOfPages[pdfCnt];
                 }else{
                     custValue2 = Integer.parseInt(customValue2.getText().toString());
                 }
 
 
-                if (copy == 0) {
-                    copy = 1;
-                }
-
                 if(orientation == null){
                     orientation = "Portrait";
                 }
+                orientations.add(pdfCnt,orientation);
 
                 if(colour == null){
                     colour = "Black/White";
                 }
+                colors.add(pdfCnt,colour);
 
-
-                if(custValue2 == 1 && custValue1 == 1){
-                    Log.d("NO CUSTOM","YES");
-//                  alertBox("Please view your pdf and provide a page number till which you need a printout.\n For the entire pdf to be printed , specify the number of the last page.");
+                if(custValue2 == (int) numberOfPages[pdfCnt] && custValue1 == 1){
                   custom = "All";
-                }else if(custValue1 != 1 && custValue2 != 1){
-                    Log.d("CUSTOM","BOTH TV");
+                  customPages.add(pdfCnt,custom);
+
+                }else if(custValue1 != 1 && custValue2 != (int) numberOfPages[pdfCnt]){
 
                     if(custValue1 > custValue2){
                         int temp = custValue1;
                         custValue1 = custValue2;
                         custValue2 = temp;
-                        custom = String.valueOf(custValue2-custValue1 + 1);
+
+                        custom = String.valueOf(custValue1)+"-"+String.valueOf(custValue2);
+                        customPages.add(pdfCnt,custom);
+
+                        customVal = String.valueOf(custValue2-custValue1 + 1);
+                        customValues.add(pdfCnt,customVal);
+
                     }else{
-                        custom = String.valueOf(custValue2-custValue1 + 1);
+                        custom = String.valueOf(custValue1)+"-"+String.valueOf(custValue2);
+                        customPages.add(pdfCnt,custom);
+
+                        customVal = String.valueOf(custValue2-custValue1 + 1);
+                        customValues.add(pdfCnt,customVal);
+
                     }
-                    new findShops().execute();
+                    pdfCnt = pdfCnt + 1;
+                    customValue2.setText((int) numberOfPages[pdfCnt]);
+                    Toast.makeText(PdfInfo.this, "CUSV2 "+customValue2.getText(), Toast.LENGTH_SHORT).show();
 
-                }else{
-                    Log.d("CUSTOM","MAYBE BOTH");
-
-                    if(custValue1 > custValue2){
-                        int temp = custValue1;
-                        custValue1 = custValue2;
-                        custValue2 = temp;
-                        custom = String.valueOf(custValue2-custValue1 + 1) ;
-                    }else{
-                        custom = String.valueOf(custValue2-custValue1 + 1);
-                    }
-                    new findShops().execute();
-
-                }
-
-                if(custom != "All") {
-                    Log.d("CUSTOM","ALL");
-                }else{
-                    new findShops().execute();
-//                    if (!pageCount.getText().toString().equals("")) {
-////                        numberOfPages = Integer.parseInt(pageCount.getText().toString());
+//                    if(pdfCnt == pdfURL.size()) {
 //                        new findShops().execute();
-//                    } else {
-//                        alertBox("Please view your pdf and provide a page number till which you need a printout.\n For the entire pdf to be printed , specify the number of the last page.");
 //                    }
                 }
+                else {
+
+                    if (custValue1 > custValue2) {
+                        int temp = custValue1;
+                        custValue1 = custValue2;
+                        custValue2 = temp;
+
+                        custom = (custValue1) + "-" + (custValue2);
+                        customPages.add(pdfCnt, custom);
+
+                        customVal = String.valueOf(custValue2 - custValue1 + 1);
+                        customValues.add(pdfCnt, customVal);
+
+                    } else {
+                        custom = (custValue1) + "-" + (custValue2);
+                        customPages.add(pdfCnt, custom);
+
+                        customVal = String.valueOf(custValue2 - custValue1 + 1);
+                        customValues.add(pdfCnt, customVal);
+
+                    }
+                }
+                Toast.makeText(PdfInfo.this, "CUSV2 "+customValue2.getText(), Toast.LENGTH_SHORT).show();
+                pdfCnt = pdfCnt + 1;
+                    if(pdfCnt < pdfURL.size()) {
+                        customValue2.setText(String.valueOf((int) numberOfPages[pdfCnt]));
+                    }
+//                    if(pdfCnt == pdfURL.size()) {
+//                        new findShops().execute();
+//                    }
+
+
             }
 
 
@@ -303,7 +371,7 @@ public class PdfInfo extends AppCompatActivity {
                 done.setVisibility(View.INVISIBLE);
                 pdfView.setVisibility(View.VISIBLE);
 
-                pdfView.fromUri(Uri.parse(pdf_url))
+                pdfView.fromUri(Uri.parse(pdfURL.get(pdfCnt)))
                         .enableSwipe(true)
                         .enableAnnotationRendering(true)
                         .scrollHandle(new DefaultScrollHandle(getApplicationContext()))
@@ -319,7 +387,7 @@ public class PdfInfo extends AppCompatActivity {
                             @Override
                             public void loadComplete(int nbPages) {
                                 Log.d("PDFNOP", String.valueOf(pdfView.getPageCount()));
-                                numberOfPages = pdfView.getPageCount();
+//                                numberOfPages = pdfView.getPageCount();
                             }
                         })
                         .load();
@@ -374,22 +442,39 @@ public class PdfInfo extends AppCompatActivity {
         alert11.show();
     }
 
+    KProgressHUD hud;
 
 public class findShops extends AsyncTask<Void,Void,Integer>{
 
-        int shopsCount;
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
+          hud = KProgressHUD.create(PdfInfo.this)
+                .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
+                .setLabel("Finding stores")
+                .setMaxProgress(100)
+                .show();
+    }
+
+    int shopsCount;
     @Override
     protected Integer doInBackground(Void... integers) {
         getShopsCount();
 //        Log.d("Shops Count is ", String.valueOf(shopsCount));
-
         return ShopsCnt;
     }
 
+    @Override
+    protected void onPostExecute(Integer integer) {
+        super.onPostExecute(integer);
+//        hud.dismiss();
+    }
 }
 
 
     private void getShopsCount(){
+
+
         ref.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
@@ -398,85 +483,37 @@ public class findShops extends AsyncTask<Void,Void,Integer>{
                     if(dataSnapshot.getKey().equals(shopType)) {
                         ShopsCnt = (int) dataSnapshot.getChildrenCount();
 
-//                        for (DataSnapshot ids : dataSnapshot.getChildren()) {
-//                            for (DataSnapshot shopInfo : ids.getChildren()) {
-//                                if (shopInfo.getKey().equals("ShopName")) {
-//                                    if (!shopInfo.getValue().toString().contains("tester")) {
-//                                        ShopsCnt = ShopsCnt + 1;
-//                                    }
-//                                }
-//                            }
-//                        }
-                        Log.d("STORENO", String.valueOf(ShopsCnt));
                         Intent intent = new Intent(PdfInfo.this, ShopsActivity.class);
                         Bundle extras = new Bundle();
-                        extras.putStringArrayList("URLS", pdfURL);
-//                  extras.putParcelableArrayList("URLS", pdfURL);
-//                    Log.d("COLORTYPE",colour);
-
-                        extras.putInt("Pages", numberOfPages);
-                        extras.putInt("Copies", copy);
-                        extras.putString("ColorType", colour);
+                        Toast.makeText(PdfInfo.this, "PDFCNT2 "+pdfURL.size(), Toast.LENGTH_SHORT).show();
                         extras.putInt("ShopCount", ShopsCnt);
-                        extras.putString("FileType", "application/pdf");
                         extras.putStringArrayList("StoreID", storeID);
-                        extras.putString("PageSize", pagesize);
-                        extras.putString("Orientation", orientation);
-                        extras.putInt("RequestCode", requestCode);
-                        extras.putInt("ResultCode", resultCode);
-                        extras.putBoolean("BothSides", bothSides);
+
+                        extras.putStringArrayList("URLS", pdfURL);
+                        extras.putDoubleArray("Pages", numberOfPages);
+                        extras.putBooleanArray("BothSides", bothSides);
+                        extras.putIntegerArrayList("Copies", copies);
+                        extras.putStringArrayList("ColorType", colors);
+                        extras.putStringArrayList("FileType", fileType);
+                        extras.putStringArrayList("PageSize", pageSize);
+                        extras.putStringArrayList("Orientation", orientations);
+                        extras.putStringArrayList("FileNames",fileNames);
                         extras.putBoolean("NewUser",newUser);
 
-
-                        if(custom == "All"){
-                            extras.putString("Custom", "All");
-                        }else {
-                            extras.putString("Custom", custom);
-                        }
+                        extras.putStringArrayList("Custom",customPages);
+                        extras.putStringArrayList("CustomValue",customValues);
+//                        if(custom == "All"){
+//                            extras.putString("Custom", customPages);
+//                        }else {
+//                            extras.putString("CustomValue",customVal);
+//                            extras.putString("Custom", custom);
+//                        }
                         extras.putBoolean("IsTester",isTester);
-
-                        Log.d("ISTESTER",String.valueOf(isTester));
                         intent.putExtras(extras);
+                        hud.dismiss();
                         startActivity(intent);
                     }
 
-//                }else{
-//
-//                    isTester = false;
-//                if(dataSnapshot.getKey().equals("Stores")) {
-//
-//                    ShopsCnt = (int) dataSnapshot.getChildrenCount();
-//                    for (DataSnapshot ids : dataSnapshot.getChildren()) {
-//                        storeID.add(ids.getKey());
-//                    }
-//
-//                    Log.d("STORENO", String.valueOf(ShopsCnt));
-//                    Intent intent = new Intent(PdfInfo.this, ShopsActivity.class);
-//                    Bundle extras = new Bundle();
-//                    extras.putStringArrayList("URLS", pdfURL);
-////                  extras.putParcelableArrayList("URLS", pdfURL);
-////                    Log.d("COLORTYPE",colour);
-//
-//                    extras.putInt("Pages", numberOfPages);
-//                    extras.putInt("Copies", copy);
-//                    extras.putString("ColorType", colour);
-//                    extras.putInt("ShopCount", ShopsCnt);
-//                    extras.putString("FileType", "application/pdf");
-//                    extras.putStringArrayList("StoreID", storeID);
-//                    extras.putString("PageSize", pagesize);
-//                    extras.putString("Orientation", orientation);
-//                    extras.putInt("RequestCode", requestCode);
-//                    extras.putInt("ResultCode", resultCode);
-//                    extras.putBoolean("BothSides", bothSides);
-//                    extras.putString("Custom", customPages.getText().toString());
-//
-//                    extras.putBoolean("Istester",isTester);
-//                    intent.putExtras(extras);
-//                    startActivity(intent);
-//
-//                    Log.d("SHOPCNT", String.valueOf(ShopsCnt));
-//                    }
-//                }
             }
 
 
@@ -500,7 +537,6 @@ public class findShops extends AsyncTask<Void,Void,Integer>{
 
             }
         });
-//        return ShopsCnt;
     }
 
 }

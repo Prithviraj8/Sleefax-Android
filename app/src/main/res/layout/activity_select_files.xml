@@ -14,160 +14,297 @@
 <!--        android:layout_height="match_parent">-->
 
 
-        <RelativeLayout
-            android:id="@+id/addfilesRL"
+    <RelativeLayout
+        android:id="@+id/addfilesRL"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#3CF2F4F4">
+
+<!--        <androidx.cardview.widget.CardView-->
+<!--            android:id="@+id/cardView"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="229dp"-->
+<!--            android:layout_alignParentTop="true"-->
+<!--            android:layout_marginTop="0dp"-->
+<!--            android:elevation="5dp"-->
+<!--            android:padding="0dp"-->
+<!--            app:cardBackgroundColor="#00FFFFFF"-->
+<!--            app:cardCornerRadius="20dp"-->
+<!--            android:background="@drawable/viewshadow">-->
+<!--        </androidx.cardview.widget.CardView>-->
+
+
+<!--        <View-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="100dp"-->
+<!--            android:id="@+id/ExtraSpaceView"-->
+<!--            android:layout_alignBottom="@+id/addFilesView"-->
+<!--            android:layout_marginTop="0dp"-->
+<!--            android:background="#FFF" />-->
+
+
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/RefreshLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#FFF">
+            android:layout_height="368dp"
+            android:layout_above="@+id/AddFilesButton"
+            android:layout_below="@+id/addFilesView"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="-20dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginBottom="0dp"
+            android:orientation="vertical">
 
-            <View
-                android:id="@+id/addFilesView"
+
+            <ListView
+                android:id="@+id/currentOrderLV"
                 android:layout_width="match_parent"
-                android:layout_height="229dp"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentEnd="true"
-                android:layout_marginStart="0dp"
-                android:layout_marginTop="0dp"
-                android:layout_marginEnd="0dp"
-                android:background="@drawable/mainpageback">
-
-            </View>
-
-            <include
-                android:id="@+id/navaction"
-                layout="@layout/nav_action"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="#00FFFFFF" />
-
-            <RelativeLayout
-                android:id="@+id/addfileRL2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="74dp">
-
-                <Button
-                    android:id="@+id/AddFilesButton"
-                    android:layout_width="75dp"
-                    android:layout_height="75dp"
-                    android:layout_alignParentTop="true"
-                    android:layout_centerInParent="true"
-                    android:background="@drawable/layer2"
-                    android:clickable="true">
-
-                </Button>
-
-                <TextView
-                    android:id="@+id/addfileTV"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/AddFilesButton"
-                    android:layout_marginTop="5dp"
-                    android:text="Add Files"
-                    android:textAlignment="center"
-                    android:textAllCaps="false"
-                    android:textColor="#FFF"
-                    android:textSize="28sp"
-                    android:textStyle="normal" />
-            </RelativeLayout>
-            <TextView
-                android:id="@+id/textView30"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/addFilesView"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="5dp"
-                android:text="Live Orders"
-                android:textAlignment="center"
-                android:textColor="#100101"
-                android:textSize="20sp"
-                android:textStyle="bold" />
-
-            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-                android:id="@+id/RefreshLayout"
-                android:layout_width="match_parent"
-                android:layout_height="564dp"
+                android:layout_height="match_parent"
                 android:layout_above="@+id/YourOrders"
                 android:layout_below="@+id/textView30"
-                android:layout_marginStart="0dp"
                 android:layout_marginTop="0dp"
-                android:layout_marginEnd="0dp"
-                android:layout_marginBottom="5dp"
-                android:orientation="vertical">
+                android:layout_marginBottom="10dp"
+                android:divider="@null"
+                android:dividerHeight="0dp"
+                android:visibility="visible" />
 
-                <ListView
-                    android:id="@+id/currentOrderLV"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_above="@+id/YourOrders"
-                    android:layout_below="@+id/textView30"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="10dp"
-                    android:divider="@null"
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-                    android:dividerHeight="0dp"
-                    android:visibility="visible" />
+        <View
+            android:id="@+id/addFilesView"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="0dp"
+            android:background="@drawable/roundedview" />
 
-            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-            <ImageButton
-                android:id="@+id/settings"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentBottom="true"
-                android:layout_marginStart="52dp"
-                android:layout_marginEnd="30dp"
-                android:layout_marginBottom="25dp"
-                android:background="@drawable/ripple_effect"
-                android:clickable="true"
-                android:src="@drawable/settingsbtn"
-                android:visibility="gone"
-                tools:background="@drawable/ripple_effect" />
 
-            <Button
-                android:id="@+id/YourOrders"
-                android:layout_width="150dp"
-                android:layout_height="45dp"
-                android:layout_alignParentBottom="true"
-                android:layout_centerHorizontal="true"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginBottom="20dp"
-                android:background="@drawable/signin_btn_round"
-                android:clickable="true"
-                android:contentDescription="TODO"
-                android:drawablePadding="5dp"
-                android:text="ORDER HISTORY" />
+        <include
+            android:id="@+id/navaction"
+            layout="@layout/nav_action"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="30dp"
+            android:background="#FFF" />
 
-            <ImageButton
-                android:id="@+id/SideMenu"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:layout_marginStart="25dp"
-                android:layout_marginTop="35dp"
-                android:background="#00FFFFFF"
-                android:scaleType="center"
-                android:visibility="gone"
-                app:srcCompat="@drawable/moreoptions" />
-        </RelativeLayout>
+        <ImageButton
+            android:id="@+id/AddFilesButton"
+            android:layout_width="75dp"
+            android:layout_height="75dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="0dp"
+            android:background="@drawable/addfilebtn1"
+            android:src="@drawable/addfileplus"
+            android:clickable="true">
+
+        </ImageButton>
+
+        <TextView
+            android:id="@+id/addfileTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/AddFilesButton"
+            android:layout_marginTop="5dp"
+            android:text="Add Files"
+            android:textAlignment="center"
+            android:textAllCaps="false"
+            android:textColor="#000000"
+            android:textSize="28sp"
+            android:textStyle="normal" />
+
+        <TextView
+            android:id="@+id/textView30"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/navaction"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/poppins_semibold"
+            android:text="Live Orders"
+            android:textAlignment="center"
+            android:textColor="#100101"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+
+
+        <ImageButton
+            android:id="@+id/settings"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="52dp"
+            android:layout_marginEnd="30dp"
+            android:layout_marginBottom="25dp"
+            android:background="@drawable/ripple_effect"
+            android:clickable="true"
+            android:src="@drawable/settingsbtn"
+            android:visibility="gone"
+            tools:background="@drawable/ripple_effect" />
+
+        <Button
+            android:id="@+id/YourOrders"
+            android:layout_width="150dp"
+            android:layout_height="45dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:background="@drawable/signin_btn_round"
+            android:clickable="true"
+            android:contentDescription="TODO"
+            android:drawablePadding="5dp"
+            android:text="ORDER HISTORY"
+            android:visibility="gone" />
+
+        <ImageButton
+            android:id="@+id/SideMenu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="25dp"
+            android:layout_marginTop="35dp"
+            android:background="#00FFFFFF"
+            android:scaleType="center"
+            android:visibility="gone"
+            app:srcCompat="@drawable/moreoptions" />
+    </RelativeLayout>
+
 
         <com.google.android.material.navigation.NavigationView
             android:id="@+id/NavView"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_gravity="start"
-            android:padding="10dp"
             android:textAlignment="center"
             app:headerLayout="@layout/navheader"
             app:menu="@menu/menu"
             app:theme="@style/NavigationDrawerStyle"
-            tools:ignore="RtlCompat"></com.google.android.material.navigation.NavigationView>
-<!--    </androidx.drawerlayout.widget.DrawerLayout>-->
+            tools:ignore="RtlCompat">
+        </com.google.android.material.navigation.NavigationView>
+
+
+
+    <RelativeLayout
+        android:id="@+id/contactsRelativeL"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:background="#FFF">
+
+
+                <View
+                    android:id="@+id/view8"
+                    android:layout_width="match_parent"
+                    android:layout_height="96dp"
+                    android:layout_alignBottom="@+id/textView27"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginTop="0dp"
+                    android:layout_marginBottom="-14dp"
+                    android:background="@drawable/mainpageback" />
+                <ImageButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:src="@drawable/w"
+                    android:id="@+id/contactspageback"
+                    android:background="#00FFFFFF"/>
+
+                <ImageView
+                    android:id="@+id/imageView14"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="5dp"
+                    app:srcCompat="@drawable/contactuspageicon" />
+
+                <TextView
+                    android:id="@+id/textView27"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/imageView14"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="2dp"
+                    android:text="Contact Us "
+                    android:textColor="#FFFF"
+                    android:textSize="22sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/textView28"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/view8"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="80dp"
+                    android:text="Call us on"
+                    android:textColor="#000000"
+                    android:textSize="26sp"
+                    android:textStyle="bold" />
+
+                <Button
+                    android:id="@+id/num1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/textView28"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="30dp"
+                    android:text="+918299828306 "
+                    android:textColor="#31546E"
+                    android:textSize="20sp" />
+
+                <Button
+                    android:id="@+id/num2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/num1"
+                    android:layout_alignStart="@+id/num1"
+                    android:layout_alignEnd="@+id/num1"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginEnd="0dp"
+                    android:text="+919767610217"
+                    android:textColor="#31546E"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/textView29"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/num2"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="50dp"
+                    android:text="Write to us on"
+                    android:textColor="#000000"
+                    android:textSize="26sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/textView31"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/textView29"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="30dp"
+                    android:text="support@sleefax.com"
+                    android:textColor="#31546E"
+                    android:textSize="25sp" />
+
+
+
+    </RelativeLayout>
+    <!--    </androidx.drawerlayout.widget.DrawerLayout>-->
 
     </androidx.drawerlayout.widget.DrawerLayout>

@@ -8,19 +8,19 @@
     <View
         android:id="@+id/animateView"
         android:layout_width="wrap_content"
-        android:layout_height="215dp"
+        android:layout_height="166dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_centerHorizontal="true"
         android:layout_marginStart="11dp"
-        android:layout_marginTop="21dp"
+        android:layout_marginTop="15dp"
         android:layout_marginEnd="12dp" />
 
     <View
         android:id="@+id/YourOrderView"
-        android:layout_width="348dp"
-        android:layout_height="182dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignStart="@+id/animateView"
         android:layout_alignTop="@+id/animateView"
         android:layout_alignEnd="@+id/animateView"
@@ -28,12 +28,12 @@
         android:layout_marginStart="0dp"
         android:layout_marginTop="0dp"
         android:layout_marginEnd="0dp"
-        android:layout_marginBottom="0dp"
+        android:layout_marginBottom="5dp"
         android:background="@drawable/status_views" />
 
     <TextView
         android:id="@+id/ShopsName"
-        android:layout_width="132dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignStart="@+id/YourOrderView"
         android:layout_alignTop="@+id/YourOrderView"
@@ -61,39 +61,8 @@
         android:paddingLeft="10dp"
         android:text="@string/Location"
         android:textColor="#542B2A2A"
-        android:textSize="12sp"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/Files"
-        android:layout_width="165dp"
-        android:layout_height="32dp"
-        android:layout_below="@+id/view5"
-        android:layout_alignStart="@+id/YourOrderView"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="22dp"
-        android:layout_marginTop="15dp"
-        android:layout_marginEnd="86dp"
-        android:paddingLeft="10dp"
-        android:text="Total Files :"
-        android:textColor="#4D4949"
         android:textSize="14sp"
         android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/Price"
-        android:layout_width="149dp"
-        android:layout_height="32dp"
-        android:layout_alignStart="@+id/paymentModeTV"
-        android:layout_alignTop="@+id/orderDate"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="0dp"
-        android:paddingLeft="10dp"
-        android:text="Price :"
-        android:textColor="#4D4949"
-        android:textSize="14sp"
-        android:textStyle="bold" />
-
 
     <TextView
         android:id="@+id/OrderStatus"
@@ -107,18 +76,61 @@
         android:padding="4dp"
         android:text="@string/OrderStatus"
         android:textAlignment="center"
-        android:textColor="#99333333"
+        android:textColor="#FFFF"
         android:textSize="16sp"
         android:textStyle="bold" />
+
+    <View
+        android:id="@+id/view5"
+        android:layout_width="wrap_content"
+        android:layout_height="3dp"
+        android:layout_below="@+id/orderIDTV"
+        android:layout_alignStart="@+id/YourOrderView"
+        android:layout_alignEnd="@+id/YourOrderView"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="5dp"
+        android:background="@drawable/dottedline" />
+
+    <TextView
+        android:id="@+id/Files"
+        android:layout_width="165dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/view5"
+        android:layout_alignStart="@+id/YourOrderView"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="22dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="86dp"
+        android:paddingLeft="10dp"
+        android:text="Total Files :"
+        android:textColor="#4D4949"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/Price"
+        android:layout_width="149dp"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/paymentModeTV"
+        android:layout_alignTop="@+id/orderDate"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="0dp"
+        android:paddingLeft="10dp"
+        android:text="Price :"
+        android:textColor="#4D4949"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+
 
     <TextView
         android:id="@+id/orderDate"
         android:layout_width="wrap_content"
-        android:layout_height="30dp"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/Files"
         android:layout_alignStart="@+id/Files"
         android:layout_marginStart="0dp"
-        android:layout_marginTop="1dp"
+        android:layout_marginTop="10dp"
         android:paddingLeft="10dp"
         android:text="Date and Time"
         android:textColor="#4D4949"
@@ -128,7 +140,7 @@
     <TextView
         android:id="@+id/paymentModeTV"
         android:layout_width="wrap_content"
-        android:layout_height="30dp"
+        android:layout_height="wrap_content"
         android:layout_alignTop="@+id/Files"
         android:layout_marginStart="-50dp"
         android:layout_marginTop="0dp"
@@ -139,29 +151,17 @@
         android:textSize="14sp"
         android:textStyle="bold" />
 
-    <View
-        android:id="@+id/view5"
-        android:layout_width="wrap_content"
-        android:layout_height="3dp"
-        android:layout_below="@+id/Location"
-        android:layout_alignStart="@+id/YourOrderView"
-        android:layout_alignEnd="@+id/YourOrderView"
-        android:layout_marginStart="15dp"
-        android:layout_marginTop="15dp"
-        android:layout_marginEnd="5dp"
-        android:background="@drawable/dottedline" />
-
     <TextView
         android:id="@+id/orderIDTV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/orderDate"
-        android:layout_alignEnd="@+id/animateView"
-        android:layout_marginTop="15dp"
-        android:layout_marginEnd="15dp"
+        android:layout_below="@+id/OrderStatus"
+        android:layout_alignEnd="@+id/OrderStatus"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="0dp"
         android:text="Order ID"
         android:textColor="#100101"
-        android:textSize="18sp"
+        android:textSize="16sp"
         android:textStyle="bold" />
 
 </RelativeLayout>

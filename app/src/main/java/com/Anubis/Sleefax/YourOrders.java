@@ -53,7 +53,7 @@ public class YourOrders extends AppCompatActivity {
     int orderCnt;
     ListView listView;
     YourOrdersAdapter yourOrdersAdapter;
-
+    TextView noOrdersTV;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +65,10 @@ public class YourOrders extends AppCompatActivity {
 //        Bundle extras = intent.getExtras();
 //        int orders = extras.getInt("Orders Count");
 
+        noOrdersTV = findViewById(R.id.NoOrdersTV);
+
         getOrders();
+        getCurrentOrderDetails();
         back = findViewById(R.id.backBtn);
         back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -79,11 +82,8 @@ public class YourOrders extends AppCompatActivity {
             }
         });
 
+
         pullToRefresh = (SwipeRefreshLayout) findViewById(R.id.RefreshLayout);
-
-
-
-
         pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
@@ -93,11 +93,25 @@ public class YourOrders extends AppCompatActivity {
 
             }
         });
+
     }
+
+     ArrayList<String> orderkey = new ArrayList<>();
+     ArrayList<String> shopKey = new ArrayList<>();
+     ArrayList<String> shopNames = new ArrayList<>();
+     ArrayList<String> locations = new ArrayList<>();
+     ArrayList<String> orderStatus = new ArrayList<>();
+     ArrayList<String> orderDate = new ArrayList<>();
+     ArrayList<String> paymentModes = new ArrayList<>();
+
+     ArrayList<Double> shopLat = new ArrayList<>();
+     ArrayList<Double> shopLong = new ArrayList<>();
+     ArrayList<Integer> files = new ArrayList<>();
+     ArrayList<Double> price = new ArrayList<>();
+     ArrayList<Integer> ids = new ArrayList<>();
+
     public void getOrders(){
 
-        final ArrayList<String> orderkey = new ArrayList<>();
-        final ArrayList<String> shopKey = new ArrayList<>();
 
 //        setProgressForOrder();
 
@@ -106,16 +120,16 @@ public class YourOrders extends AppCompatActivity {
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
-                shopKey.add(dataSnapshot.getKey());
-                for(DataSnapshot orderIDS: dataSnapshot.getChildren()){
-                    Map<String, Object> map = (Map<String, Object>) orderIDS.getValue();
-                    if(String.valueOf(map.get("orderStatus")).equals("Done")){
+//                shopKey.add(dataSnapshot.getKey());
+//                for(DataSnapshot orderIDS: dataSnapshot.getChildren()){
+                    Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
+                    if(String.valueOf(map.get("orderStatus")).equals("Done")) {
 //                        cnt = (int) (dataSnapshot.getChildrenCount()+cnt);
-                        orderCnt = orderCnt + 1;
-                        Log.d("ORDERDONE",String.valueOf(orderCnt));
-                        yourOrderLV();
+//                        orderCnt = orderCnt + 1;
+                        shopKey.add(String.valueOf(map.get("storeId")));
+                        orderkey.add(dataSnapshot.getKey());
                     }
-                }
+//                }
             }
 
             @Override
@@ -139,7 +153,60 @@ public class YourOrders extends AppCompatActivity {
             }
         });
     }
+    public void getCurrentOrderDetails(){
+        ref.child("users").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("Orders").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot orderKeys) {
 
+                files.clear();
+                locations.clear();
+                shopNames.clear();
+                shopLat.clear();
+                shopLong.clear();
+                orderStatus.clear();
+                price.clear();
+                orderDate.clear();
+                paymentModes.clear();
+
+//                Toast.makeText(Select.this,"ORDERID"+orderKeys.getChildrenCount(),Toast.LENGTH_LONG).show();
+                Log.d("NEWORDERMAP",String.valueOf(orderKeys.getValue()));
+                for(DataSnapshot values: orderKeys.getChildren()) {
+                    Map<String, Object> map = (Map<String, Object>) values.getValue();
+
+                    if (map != null) {
+                        Log.d("MAPVAL", String.valueOf(map));
+                        if (String.valueOf(map.get("orderStatus")).equals("Done")) {
+//                            cnt = (int) orderKeys.getChildrenCount();
+
+                            files.add(Integer.parseInt(String.valueOf(map.get("files"))));
+                            locations.add(String.valueOf(map.get("ShopsLocation")));
+                            shopNames.add(String.valueOf(map.get("ShopName")));
+                            shopLat.add(Double.parseDouble(String.valueOf(map.get("ShopLat"))));
+                            shopLong.add(Double.parseDouble(String.valueOf(map.get("ShopLong"))));
+                            orderStatus.add(String.valueOf(map.get("orderStatus")));
+                            price.add(Double.parseDouble(String.valueOf(map.get("price"))));
+                            orderDate.add(String.valueOf(map.get("orderDateTime")));
+                            paymentModes.add(String.valueOf(map.get("paymentMode")));
+                        }
+                    }
+                }
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        yourOrderLV();
+                    }
+                },500);
+
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
     public void yourOrderLV(){
         listView = findViewById(R.id.YourOrderLV);
         yourOrdersAdapter = new YourOrdersAdapter();
@@ -159,7 +226,12 @@ public class YourOrders extends AppCompatActivity {
         @Override
         public int getCount() {
             Log.d("Ordersis", String.valueOf(orderCnt));
-            return  orderCnt;
+
+
+            if(orderkey.size() ==0){
+                noOrdersTV.setVisibility(View.VISIBLE);
+            }
+            return orderkey.size();
         }
 
         @Override
@@ -176,19 +248,7 @@ public class YourOrders extends AppCompatActivity {
         public View getView(final int position, View convertView, ViewGroup parent) {
 
 
-            final ArrayList<String> shopNames = new ArrayList<>();
-            final ArrayList<String> locations = new ArrayList<>();
-            final ArrayList<String> orderStatus = new ArrayList<>();
-            final ArrayList<String> orderkey = new ArrayList<>();
-            final ArrayList<String> orderDate = new ArrayList<>();
-            final ArrayList<String> paymentModes = new ArrayList<>();
 
-            final ArrayList<String> shopKey = new ArrayList<>();
-            final ArrayList<Double> shopLat = new ArrayList<>();
-            final ArrayList<Double> shopLong = new ArrayList<>();
-            final ArrayList<Integer> files = new ArrayList<>();
-            final ArrayList<Double> price = new ArrayList<>();
-            final ArrayList<Integer> ids = new ArrayList<>();
             final ArrayList<Integer>[] custOrderids = new ArrayList[]{new ArrayList<>()};
 
 
@@ -210,221 +270,28 @@ public class YourOrders extends AppCompatActivity {
                 final View contentView = convertView.findViewById(R.id.animateView);
                 final TextView orderIDTV = convertView.findViewById(R.id.orderIDTV);
 
-//                progressBar.setProgress(25);
-
                 final View finalConvertView = convertView;
 
-                ref.child("users").child(userID).child("Orders").addChildEventListener(new ChildEventListener() {
-                    int cnt=0;
-                    @Override
-                    public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
-                        for(DataSnapshot SNAP:dataSnapshot.getChildren()) {
-                            Log.d("ORDERKEY",SNAP.getKey());
-                            shopKey.add(dataSnapshot.getKey());
-                            orderkey.add(SNAP.getKey());
-//                            orderCnt = orderkey.size();
-
-                        }
-//                   }
-                    }
-
-                    @Override
-                    public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-                    }
-
-                    @Override
-                    public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-                    }
-
-                    @Override
-                    public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
 
                 final Handler handler = new Handler();
                 final View finalConvertView1 = convertView;
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        finalConvertView1.setVisibility(View.GONE);
-                        // Retrieve and cache the system's default "short" animation time.
-                        shortAnimationDuration = getResources().getInteger(android.R.integer.config_shortAnimTime);
+//                handler.postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
 
-//                        orderCnt = orderkey.size();
-                        for (int i = 0; i < shopKey.size(); i++) {
-//                            Log.d("SHOPKEY", shopKey.get(i));
+                Location.setText(locations.get(position));
+                ShopsName.setText(shopNames.get(position));
+                Files.setText("Files : " + files.get(position));
+                Price.setText("Price : ₹" + price.get(position));
+                orderDateAndTime.setText(orderDate.get(position));
+                orderIDTV.setText("Order ID : " + orderkey.get(position));
+                paymentModeTV.setText(paymentModes.get(position));
 
-                            ref.child("users").child(userID).child("Orders").child(shopKey.get(i)).addValueEventListener(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot orderKeys) {
-
-                                    for(DataSnapshot info: orderKeys.getChildren()) {
-                                        Map<String, Object> map = (Map<String, Object>) info.getValue();
-                                        if(String.valueOf(map.get("orderStatus")).equals("Done")) {
-                                            files.add(Integer.parseInt(String.valueOf(map.get("files"))));
-                                            locations.add(String.valueOf(map.get("ShopsLocation")));
-                                            shopNames.add(String.valueOf(map.get("ShopName")));
-                                            shopLat.add(Double.parseDouble(String.valueOf(map.get("ShopLat"))));
-                                            shopLong.add(Double.parseDouble(String.valueOf(map.get("ShopLong"))));
-                                            orderStatus.add(String.valueOf(map.get("orderStatus")));
-                                            price.add(Double.parseDouble(String.valueOf(map.get("price"))));
-                                            orderDate.add(String.valueOf(map.get("orderDateTime")));
-                                            paymentModes.add(String.valueOf(map.get("paymentMode")));
-                                            ids.add(Integer.valueOf(String.valueOf(map.get("id"))));
-                                        }
-
-
-//                                        for (DataSnapshot snap : info.getChildren()) {
-//
-//                                            if (snap.getKey().equals("files")) {
-//                                                files.add(Integer.parseInt(snap.getValue().toString()));
-//                                            }
-//
-//                                            if (snap.getKey().equals("ShopsLocation")) {
-//                                                Log.d("LOCATIONS", snap.getValue().toString());
-//                                                locations.add(snap.getValue().toString());
-//                                            }
-//
-//                                            if (snap.getKey().equals("ShopName")) {
-//                                                shopNames.add(snap.getValue().toString());
-//                                            }
-//
-//                                            if (snap.getKey().equals("ShopLat")) {
-//                                                shopLat.add((Double) snap.getValue());
-//                                            }
-//
-//                                            if (snap.getKey().equals("ShopLong")) {
-//                                                shopLong.add((Double) snap.getValue());
-//                                            }
-//
-//                                            if (snap.getKey().equals("orderStatus")) {
-//                                                orderStatus.add(snap.getValue().toString());
-//                                            }
-//
-//                                            if (snap.getKey().equals("price")) {
-//                                                price.add(Double.parseDouble(snap.getValue().toString()));
-//                                            }
-//                                            if (snap.getKey().equals("orderDateTime")) {
-//                                                orderDate.add(snap.getValue().toString());
-//                                            }
-//                                            if (snap.getKey().equals("paymentMode")) {
-//                                                paymentModes.add(snap.getValue().toString());
-//                                                Log.d("PAYMENTMODES", snap.getValue().toString());
-//
-//                                            }
-////                                            if (snap.getKey().equals("id")) {
-////                                                ids.add(Integer.valueOf(snap.getValue().toString()));
-////                                                custOrderids[0].add(Integer.valueOf(snap.getValue().toString()));
-////                                            }
-//                                        }
-                                    }
-
-
-
-                                    final Handler handler1 = new Handler();
-                                    handler1.postDelayed(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            finalConvertView1.setAlpha(0f);
-                                            finalConvertView1.setVisibility(View.VISIBLE);
-                                            finalConvertView1.animate()
-                                                    .alpha(1f)
-                                                    .setDuration(shortAnimationDuration)
-                                                    .setListener(null);
-
-//                                            Collections.reverse(shopNames);
-//                                            Collections.reverse(locations);
-//                                            Collections.reverse(orderStatus);
-//                                            Collections.reverse(files);
-//                                            Collections.reverse(price);
-//                                            Collections.reverse(orderkey);
-//                                            Collections.reverse(shopKey);
-//                                            Collections.reverse(shopLat);
-//                                            Collections.reverse(shopLong);
-//                                            Collections.reverse(paymentModes);
-
-//                                            Log.d("POSITION",String.valueOf(position));
-//                                            Log.d("CUSTORDE",String.valueOf(ids.size()));
-//                                            Collections.sort(ids);
-//                                            for(int i=ids.size()-1;i>=0;i--){
-//                                                for(int j=0;j<custOrderids[0].size();j++){
-//                                                    if(custOrderids[0].get(j).equals(ids.get(i))){
-////                                                        if(orderStatus.get(j).equals("Ready")) {
-//                                                            Location.setText(locations.get(j));
-//                                                            ShopsName.setText(shopNames.get(j));
-//                                                            OrderStatus.setText(orderStatus.get(j));
-//                                                            Files.setText("Files : " + files.get(j));
-//                                                            Price.setText("Price : ₹" + price.get(j));
-//                                                            orderDateAndTime.setText(orderDate.get(j));
-//                                                            orderIDTV.setText("Order ID : " + orderkey.get(j));
-//                                                            paymentModeTV.setText(paymentModes.get(j));
-//                                                            break;
-////                                                        }
-//                                                    }
-//                                                }
-//                                            }
-                                                    Location.setText(locations.get(position));
-                                                    ShopsName.setText(shopNames.get(position));
-                                                    OrderStatus.setText(orderStatus.get(position));
-                                                    Files.setText("Files : " + files.get(position));
-                                                    Price.setText("Price : ₹" + price.get(position));
-                                                    orderDateAndTime.setText(orderDate.get(position));
-                                                    orderIDTV.setText("Order ID : " + orderkey.get(position));
-                                                    paymentModeTV.setText(paymentModes.get(position));
-
-//                                                    if ((orderStatus.get(position)).equals("Placed")) {
-//                                                        OrderStatus.setBackgroundResource(R.drawable.orderstatusview1);
-//                                                    }
-//                                                    if ((orderStatus.get(position)).equals("Retrieved")) {
-//                                                        OrderStatus.setBackgroundResource(R.drawable.orderstatusview2);
-//
-//                                                    }
-//                                                    if ((orderStatus.get(position)).equals("In Progress")) {
-//                                                        OrderStatus.setBackgroundResource(R.drawable.orderstatusview3);
-//
-//                                                    }
-//                                                    if ((orderStatus.get(position)).equals("Ready")){
-//                                                        OrderStatus.setBackgroundResource(R.drawable.orderstatusview4);
-//                                                    }
-                                                    if ((orderStatus.get(position)).equals("Done")){
-                                                        OrderStatus.setBackgroundResource(R.drawable.orderstatusview3);
-                                                    }
-
-                                        }
-                                    }, 10);
-
-
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError databaseError) {
-                                    finalConvertView1.animate()
-                                            .alpha(0f)
-                                            .setDuration(shortAnimationDuration)
-                                            .setListener(new AnimatorListenerAdapter() {
-                                                @Override
-                                                public void onAnimationEnd(Animator animation) {
-                                                    finalConvertView1.setVisibility(View.GONE);
-                                                }
-                                            });
-                                }
-                            });
-
-                        }
-
-                    }
-
-                }, 10);
-
+                if ((orderStatus.get(position)).equals("Done")){
+                    OrderStatus.setText("Completed");
+                    OrderStatus.setBackgroundResource(R.drawable.orderstatusview3);
+                }
 
 
                 convertView.setOnClickListener(new View.OnClickListener() {

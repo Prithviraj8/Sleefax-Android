@@ -42,8 +42,8 @@ public class changeInfoPopUp extends AppCompatActivity {
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(changeInfoPopUp.this,Select.class);
-                startActivity(intent);
+//                Intent intent = new Intent(changeInfoPopUp.this,Select.class);
+//                startActivity(intent);
                 finish();
             }
         });
