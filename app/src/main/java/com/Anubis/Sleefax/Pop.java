@@ -174,7 +174,7 @@ public class Pop extends AppCompatActivity {
 
                 if (mimeType.contains("application")) {
 //                    fileType = mimeType;
-                mimeTypes.add(mimeType);
+                    mimeTypes.add(mimeType);
 
                     if(mimeType.equals("application/pdf")){
                         uri.add(returnUri);

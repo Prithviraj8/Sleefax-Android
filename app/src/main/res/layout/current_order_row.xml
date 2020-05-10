@@ -4,12 +4,12 @@
     android:id="@+id/OrderRelativeL"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_below="@+id/addFilesView">
+    android:layout_below="@+id/liveordersTopView">
 
     <View
         android:id="@+id/view20"
         android:layout_width="wrap_content"
-        android:layout_height="240dp"
+        android:layout_height="226dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
@@ -31,7 +31,7 @@
         android:fontFamily="@font/poppins_semibold"
         android:text="@string/ShopName"
         android:textColor="#000000"
-        android:textSize="14sp"
+        android:textSize="18sp"
         android:textStyle="bold" />
 
     <TextView
@@ -94,11 +94,11 @@
         android:id="@+id/currentOrderDateTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/currentOrderID"
         android:layout_alignStart="@+id/currentOrderID"
+        android:layout_alignTop="@+id/currentOrderShopName"
         android:layout_alignEnd="@+id/currentOrderID"
         android:layout_marginStart="-30dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="0dp"
         android:layout_marginEnd="-30dp"
         android:fontFamily="@font/poppins_semibold"
         android:text="OrderDateTime"
@@ -114,7 +114,7 @@
         android:layout_alignStart="@+id/currentOrderDateTime"
         android:layout_alignEnd="@+id/currentOrderDateTime"
         android:layout_marginStart="0dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="5dp"
         android:layout_marginEnd="0dp"
         android:fontFamily="@font/poppins_semibold"
         android:text="Price"
@@ -127,7 +127,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/currentOrderPrice"
         android:layout_alignStart="@+id/currentOrderShopLoc"
-        android:layout_marginStart="0dp"
+        android:layout_marginStart="10dp"
         android:layout_marginTop="20dp"
         android:layout_marginBottom="0dp"
         android:background="#00FFFFFF">

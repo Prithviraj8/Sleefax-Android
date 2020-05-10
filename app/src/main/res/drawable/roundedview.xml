@@ -3,8 +3,11 @@
 
     <item android:drawable="@drawable/viewshadow"/>
 
+<!--    <item-->
+<!--        android:drawable="@drawable/liveorderwhiteview2"-->
+<!--        android:bottom="10px" />-->
     <item
         android:drawable="@drawable/liveorderwhiteview2"
-        android:bottom="10px" />
+        android:bottom="0px" />
 
 </layer-list>

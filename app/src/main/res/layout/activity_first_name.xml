@@ -15,7 +15,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <View
-            android:id="@+id/addFilesView"
+            android:id="@+id/liveordersTopView"
             android:layout_width="match_parent"
             android:layout_height="169dp"
             android:background="@drawable/storesview" />
@@ -24,8 +24,8 @@
             android:id="@+id/imageView6"
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:layout_below="@+id/addFilesView"
-            android:layout_alignBottom="@+id/addFilesView"
+            android:layout_below="@+id/liveordersTopView"
+            android:layout_alignBottom="@+id/liveordersTopView"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="-50dp"
             android:layout_marginBottom="-50dp"

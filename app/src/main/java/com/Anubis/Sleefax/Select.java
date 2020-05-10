@@ -6,7 +6,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -17,13 +17,10 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.Manifest;
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
-import android.app.ActivityOptions;
-import android.app.AlarmManager;
 import android.app.IntentService;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -45,12 +42,13 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
-import android.os.SystemClock;
+import android.transition.Transition;
+import android.transition.TransitionInflater;
+import android.transition.TransitionManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.LayoutInflater;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -64,7 +62,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.Anubis.Sleefax.CONSTANTS.CONSTANTS;
-import com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -79,27 +76,11 @@ import com.paytm.pgsdk.PaytmPGService;
 //import com.spire.presentation.Presentation;
 //import com.spire.presentation.FileFormat;
 
-import org.apache.poi.xwpf.converter.pdf.PdfConverter;
-import org.apache.poi.xwpf.converter.pdf.PdfOptions;
-import org.apache.poi.xwpf.usermodel.XWPFDocument;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.UUID;
-
-import static android.app.AlarmManager.ELAPSED_REALTIME;
-import static android.os.SystemClock.elapsedRealtime;
 
 public class Select extends AppCompatActivity {
     public String SharedPrefs = "Data";
@@ -121,8 +102,9 @@ public class Select extends AppCompatActivity {
     int shortAnimationDuration;
 
     Button orders,orderPickBtn;
-    ImageButton selectFilesBtn,more ,setting,sideMenu;
-    View pickedUpOrderView,addFileView;
+    ImageButton selectFilesBtn,more ,setting,sideMenu,selectPhotos,selectAttachment;
+
+    View pickedUpOrderView,addFileView,blurrView;
 
     int PICK_IMAGE_MULTIPLE = 1;
     final static int PICK_PDF_CODE = 2342;
@@ -136,7 +118,7 @@ public class Select extends AppCompatActivity {
     boolean network,isTester,newUser;
     PaytmPGService Service = PaytmPGService.getProductionService();
 
-    RelativeLayout contactsRl,addfilePage;
+    RelativeLayout contactsRl,addfilePage,addfileTVRL;
 
     ////// Buttons and items of contacts page /////
     Button num1,num2;
@@ -171,10 +153,19 @@ public class Select extends AppCompatActivity {
         getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
         mScreenHeight = displaymetrics.heightPixels;
 
+        //View that will come from the top of the screen when user clicks on add file btn///
+        addfileTVRL = findViewById(R.id.AddfileTVRL);
+        blurrView = findViewById(R.id.blurr);
 
-        addFileView = findViewById(R.id.addFilesView);
+        //Buttons for image and files
+        selectAttachment = findViewById(R.id.SelectFile);
+        selectPhotos = findViewById(R.id.SelectImage);
+
+        addFileView = findViewById(R.id.liveordersTopView);
         shortAnimationDuration = getResources().getInteger(android.R.integer.config_shortAnimTime);
+
         selectFilesBtn = findViewById(R.id.AddFilesButton);
+
         setting = findViewById(R.id.settings);
         orders = findViewById(R.id.YourOrders);
         sideMenu = findViewById(R.id.SideMenu);
@@ -253,12 +244,47 @@ public class Select extends AppCompatActivity {
 
 
 //        setProgressForOrder();
+        pullToRefresh = (SwipeRefreshLayout) findViewById(R.id.RefreshLayout);
+        pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                Log.i("REFRESHING", "onRefresh called from SwipeRefreshLayout");
+
+//                getOrders();
+                currentOrderLV();
+                pullToRefresh.setRefreshing(false);
+
+            }
+        });
+
         selectFilesBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d("SELECTing", String.valueOf(true));
-//                selectFiles();
-                selectFiles();
+                selectFiles(view);
+
+
+
+                addfileTVRL.setVisibility(View.VISIBLE);
+                blurrView.setVisibility(View.VISIBLE);
+
+                if(addfileTVRL.getHeight() == 0) {
+                    expandView(addfileTVRL, 0, mScreenHeight / 4);
+//                    selectFilesBtn.animate()
+//                            .alpha(0f)
+//                            .setDuration(100)
+//                            .setListener(new AnimatorListenerAdapter() {
+//                                @Override
+//                                public void onAnimationEnd(Animator animation) {
+//                                    super.onAnimationStart(animation);
+//                                    selectFilesBtn.setAlpha(1f);
+//
+//                                }
+//                            });
+                }else{
+//                    selectFilesBtn.setBackgroundResource(R.drawable.addfilebtnshadow);
+                }
+
+
 
             }
         });
@@ -275,24 +301,13 @@ public class Select extends AppCompatActivity {
         });
 
 
-        pullToRefresh = (SwipeRefreshLayout) findViewById(R.id.RefreshLayout);
-        pullToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                Log.i("REFRESHING", "onRefresh called from SwipeRefreshLayout");
 
-//                getOrders();
-                currentOrderLV();
-                pullToRefresh.setRefreshing(false);
-
-            }
-        });
 
         ////setting size of add file view to full page if cnt == 0  ////////
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                setupLayoutParams();
+//                setupLayoutParams();
             }
         },200);
 
@@ -340,6 +355,128 @@ public class Select extends AppCompatActivity {
             }
         }
     };
+    private void selectFiles(final View v) {
+        final CoordinatorLayout mCLayout = (CoordinatorLayout) findViewById(R.id.coordinator_layout);
+        int transitionId;
+        Intent pop = new Intent(Select.this,Pop.class);
+        Bundle bundle = new Bundle();
+        bundle.putBoolean("IsTester",isTester);
+        bundle.putBoolean("NewUser",newUser);
+        pop.putExtras(bundle);
+        startActivity(pop);
+
+
+        if(!isTop1) {
+            selectFilesBtn.setBackgroundResource(R.drawable.addfilebtnshadow2);
+            ObjectAnimator.ofFloat(selectFilesBtn, "rotation", 0f, 45f).start();
+        }
+        transitionId = (R.transition.arc_motion_transition);
+        // Get the transition inflater
+        TransitionInflater inflater = TransitionInflater.from(Select.this);
+        // Inflate the specified transition
+        Transition arcMotionTransition = inflater.inflateTransition(transitionId);
+
+        // Aet the transition duration
+        arcMotionTransition.setDuration(500);
+
+        // Specify the target for the transition
+        arcMotionTransition.addTarget(selectAttachment);
+        arcMotionTransition.addTarget(selectPhotos);
+
+        // Add a listener for the transition
+        arcMotionTransition.addListener(new Transition.TransitionListener() {
+            @Override
+            public void onTransitionStart(Transition transition) {
+
+                selectAttachment.setVisibility(View.VISIBLE);
+                selectPhotos.setVisibility(View.VISIBLE);
+
+
+            }
+
+            @Override
+            public void onTransitionEnd(Transition transition) {
+                // At the end of transition hide the target
+                if(!isTop1 && !isTop2){
+                    TransitionManager.beginDelayedTransition(mCLayout);
+                    selectAttachment.setVisibility(View.INVISIBLE);
+                    selectPhotos.setVisibility(View.INVISIBLE);
+                    ObjectAnimator.ofFloat(v, "rotation", 45f, 0f).start();
+
+                    selectFilesBtn.setBackgroundColor(Color.parseColor("#00FFFFFF"));
+
+                    collapseView(addfileTVRL,mScreenHeight/4,0);
+                    blurrView.setVisibility(View.GONE);
+
+                }
+            }
+
+            @Override
+            public void onTransitionCancel(Transition transition) {
+
+            }
+
+            @Override
+            public void onTransitionPause(Transition transition) {
+
+            }
+
+            @Override
+            public void onTransitionResume(Transition transition) {
+
+            }
+        });
+        // Begin the delayed transition
+        TransitionManager.beginDelayedTransition(mCLayout,arcMotionTransition);
+
+        // Toggle the button position
+        togglePositionBtn1();
+        togglePositionBtn2();
+
+    }
+    protected void togglePositionBtn1(){
+        // Change the button widget location to animate it
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams)selectPhotos.getLayoutParams();
+
+        if(isTop1){
+            // Put the button at the layout bottom horizontal center
+            params.gravity = Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL;
+            isTop1 = false;
+        }else {
+            // Put the button at the layout top left
+            params.gravity = Gravity.TOP| Gravity.LEFT;
+            isTop1 = true;
+        }
+        selectPhotos.setLayoutParams(params);
+    }
+    protected void togglePositionBtn2(){
+        // Change the button widget location to animate it
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams)selectAttachment.getLayoutParams();
+
+        if(isTop2){
+            // Put the button at the layout bottom horizontal center
+            params.gravity = Gravity.BOTTOM|Gravity.CENTER_HORIZONTAL;
+            isTop2 = false;
+        }else {
+            // Put the button at the layout top right
+            params.gravity = Gravity.TOP| Gravity.RIGHT;
+            isTop2 = true;
+        }
+        selectAttachment.setLayoutParams(params);
+    }
+
+    public void disableListViewItemSelection(){
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(Select.this, "GETCHILDC "+cnt, Toast.LENGTH_SHORT).show();
+                for (int i = 0; i < 12; i++){
+                    View v = listView.getChildAt(i);
+                    v.setEnabled(false);
+                }
+            }
+        },500);
+    }
 
     int initialHt;
     public void setupLayoutParams(){
@@ -374,27 +511,27 @@ public class Select extends AppCompatActivity {
 //                        }
 //                    });
 
-            expandView();
+//            expandView(addFileView,initialHt,mScreenHeight);
 
 
         }
     }
 
 
-    public void expandView(){
+    public void expandView(final View v,int initialHt,int finalHt){
 
 
-        ValueAnimator slideAnimator = ValueAnimator.ofInt(initialHt,mScreenHeight).setDuration(shortAnimationDuration);
+        ValueAnimator slideAnimator = ValueAnimator.ofInt(initialHt,finalHt).setDuration(shortAnimationDuration);
         slideAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 // get the value the interpolator is at
                 Integer value = (Integer) animation.getAnimatedValue();
                 // I'm going to set the layout's height 1:1 to the tick
-                addFileView.getLayoutParams().height = value.intValue();
+                v.getLayoutParams().height = value.intValue();
                 // force all layouts to see which ones are affected by
                 // this layouts height change
-                addFileView.requestLayout();
+                v.requestLayout();
 
             }
         });
@@ -406,20 +543,20 @@ public class Select extends AppCompatActivity {
 
     }
 
-    public void collapseView(){
+    public void collapseView(final View v,int initialHt,int finalHt){
 
 
-        ValueAnimator slideAnimator = ValueAnimator.ofInt(mScreenHeight,initialHt).setDuration(shortAnimationDuration);
+        ValueAnimator slideAnimator = ValueAnimator.ofInt(initialHt,finalHt).setDuration(shortAnimationDuration);
         slideAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
                 // get the value the interpolator is at
                 Integer value = (Integer) animation.getAnimatedValue();
                 // I'm going to set the layout's height 1:1 to the tick
-                addFileView.getLayoutParams().height = value.intValue();
+                v.getLayoutParams().height = value.intValue();
                 // force all layouts to see which ones are affected by
                 // this layouts height change
-                addFileView.requestLayout();
+                v.requestLayout();
 
             }
         });
@@ -661,7 +798,7 @@ public class Select extends AppCompatActivity {
 
 
 
-                        setupLayoutParams();
+//                        setupLayoutParams();
                     }
 
 //                }
@@ -832,17 +969,7 @@ public class Select extends AppCompatActivity {
         return haveConnectedWifi || haveConnectedMobile;
     }
 
-
-    //this function will get the pdf from the storage
-    private void selectFiles() {
-        Intent pop = new Intent(Select.this,Pop.class);
-        Bundle bundle = new Bundle();
-        bundle.putBoolean("IsTester",isTester);
-        bundle.putBoolean("NewUser",newUser);
-        pop.putExtras(bundle);
-        startActivity(pop);
-
-    }
+    Boolean isTop1=false,isTop2=false;
 
 
 
@@ -1264,15 +1391,16 @@ public class Select extends AppCompatActivity {
                                 });
                             }
                         }
-//                                            }
+//                       }
 //                    }
 //                }, 100);
 
                 finalConvertView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        moreDetails(shopKey.get(position),orderkey.get(position),shopNames.get(position),shopLat.get(position),shopLong.get(position),locations.get(position), files.get(position),orderStatus.get(position),price.get(position));
-
+                        if (position < locations.size() && position < shopNames.size() && position < orderStatus.size() && position < price.size() && position < orderDate.size() && position < orderkey.size()) {
+                            moreDetails(shopKey.get(position), orderkey.get(position), shopNames.get(position), shopLat.get(position), shopLong.get(position), locations.get(position), files.get(position), orderStatus.get(position), price.get(position));
+                        }
                     }
                 });
 

@@ -6,7 +6,9 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 
+import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.NotificationChannel;
@@ -20,22 +22,31 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
+import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Parcelable;
 import android.transition.TransitionInflater;
+import android.util.DisplayMetrics;
 import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.Anubis.Sleefax.Animations.ProgressBarAnimation;
+import com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar;
 import com.google.android.gms.maps.model.LatLng;
 //import com.paytm.pg.merchant.CheckSumServiceHelper;
 import com.google.android.gms.tasks.Continuation;
@@ -142,9 +153,7 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
     long shopNum;
     int files;
     double price;
-    int copy;
-    int resultCode;
-    int requestCode;
+    int mScreenHeight;
 
     String color,custom,orderDateTime,paymentMode,paymentUPImode;
     String CHANNEL_ID = "UsersChannel",shopType;
@@ -157,7 +166,7 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
     ProgressBar mProgress;
     View view3,orderProcessAnime;
     ImageButton back;
-    RelativeLayout relativeLForUPI;
+    RelativeLayout relativeLForUPI,progressRL;
     ArrayList<String> pageURL = new ArrayList<>();
 
     ArrayList<String> urls = new ArrayList<>();
@@ -177,6 +186,9 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_payments);
 //        getSupportActionBar().hide();
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+        mScreenHeight = displaymetrics.heightPixels;
 
 
         orderProcessAnime = findViewById(R.id.orderProcessAnime);
@@ -186,6 +198,9 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
         back = findViewById(R.id.paymentBackBtn);
         relativeLForUPI = findViewById(R.id.relativeLForUPI);
         gpay = findViewById(R.id.gpay);
+        progressRL = findViewById(R.id.LoadingScreenRL);
+
+
 
         getOrderInfo();
 
@@ -331,7 +346,30 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
 
     }
 
+    public void expandView(final View v,int initialHt,int finalHt){
 
+
+        ValueAnimator slideAnimator = ValueAnimator.ofInt(initialHt,finalHt).setDuration(shortAnimationDuration);
+        slideAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                // get the value the interpolator is at
+                Integer value = (Integer) animation.getAnimatedValue();
+                // I'm going to set the layout's height 1:1 to the tick
+                v.getLayoutParams().height = value.intValue();
+                // force all layouts to see which ones are affected by
+                // this layouts height change
+                v.requestLayout();
+
+            }
+        });
+
+        AnimatorSet set = new AnimatorSet();
+        set.play(slideAnimator);
+        set.setInterpolator(new AccelerateDecelerateInterpolator());
+        set.start();
+
+    }
 
     public void startPayment() {
         /*
@@ -587,64 +625,7 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
 
     }
 
-    public void setVisibilities(){
-        payOnPickup.setVisibility(View.INVISIBLE);
-        upi.setVisibility(View.INVISIBLE);
-        otherPayments.setVisibility(View.INVISIBLE);
-        paytm.setVisibility(View.INVISIBLE);
 
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            getWindow().setEnterTransition(TransitionInflater.from(Payments.this).inflateTransition(R.transition.slide_from_bottom));
-        }
-
-//        view3.setVisibility(View.VISIBLE);
-        view3.setAlpha(0f);
-        view3.setVisibility(View.VISIBLE);
-        view3.animate()
-                .alpha(1f)
-                .setDuration(shortAnimationDuration)
-                .setListener(null);
-
-        orderProcessAnime.setAlpha(0f);
-        orderProcessAnime.setVisibility(View.VISIBLE);
-        orderProcessAnime.animate()
-                .alpha(1f)
-                .setDuration(shortAnimationDuration)
-                .setListener(null);
-
-//        orderProcessAnime.setVisibility(View.VISIBLE);
-
-        Resources res = getResources();
-        Drawable drawable;
-        drawable = res.getDrawable(R.drawable.circular);
-
-
-        mProgress.setAlpha(0f);
-        mProgress.setVisibility(View.VISIBLE);
-        mProgress.animate()
-                .alpha(1f)
-                .setDuration(shortAnimationDuration)
-                .setListener(null);
-
-        tv.setAlpha(0f);
-        tv.setVisibility(View.VISIBLE);
-        tv.animate()
-                .alpha(1f)
-                .setDuration(shortAnimationDuration)
-                .setListener(null);
-
-
-        mProgress.setProgress(0);   // Main Progress
-        mProgress.setSecondaryProgress(100); // Secondary Progress
-        mProgress.setMax(100); // Maximum Progress
-        mProgress.setProgressDrawable(drawable);
-
-
-
-        new uploadFile().execute();
-
-    }
 
 
 
@@ -698,6 +679,9 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
         extras.putDouble("User Lat", userLat);
         extras.putDouble("User Long", userLong);
         extras.putString("PaymentMode",paymentMode);
+        extras.putStringArrayList("FileNames",fileNames);
+
+
         intent.putExtras(extras);
         startActivity(intent);
 
@@ -778,6 +762,78 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
 
     }
 
+
+
+    ImageView rocket;
+    RoundCornerProgressBar roundCornerProgressBar;
+    MediaPlayer ring;
+    public void setVisibilities(){
+        payOnPickup.setVisibility(View.INVISIBLE);
+        upi.setVisibility(View.INVISIBLE);
+        otherPayments.setVisibility(View.INVISIBLE);
+        paytm.setVisibility(View.INVISIBLE);
+
+        rocket = findViewById(R.id.rocket);
+        roundCornerProgressBar = findViewById(R.id.progressBarCenteredCustom);
+
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setEnterTransition(TransitionInflater.from(Payments.this).inflateTransition(R.transition.slide_from_bottom));
+        }
+
+//        view3.setVisibility(View.VISIBLE);
+//        view3.setAlpha(0f);
+//        view3.setVisibility(View.VISIBLE);
+//        view3.animate()
+//                .alpha(1f)
+//                .setDuration(shortAnimationDuration)
+//                .setListener(null);
+//
+//        orderProcessAnime.setAlpha(0f);
+//        orderProcessAnime.setVisibility(View.VISIBLE);
+//        orderProcessAnime.animate()
+//                .alpha(1f)
+//                .setDuration(shortAnimationDuration)
+//                .setListener(null);
+//
+////        orderProcessAnime.setVisibility(View.VISIBLE);
+//
+//        Resources res = getResources();
+//        Drawable drawable;
+//        drawable = res.getDrawable(R.drawable.circular);
+//
+//
+//        mProgress.setAlpha(0f);
+//        mProgress.setVisibility(View.VISIBLE);
+//        mProgress.animate()
+//                .alpha(1f)
+//                .setDuration(shortAnimationDuration)
+//                .setListener(null);
+
+
+
+
+//        mProgress.setProgress(0);   // Main Progress
+//        mProgress.setSecondaryProgress(100); // Secondary Progress
+//        mProgress.setMax(100); // Maximum Progress
+//        mProgress.setProgressDrawable(drawable);
+
+        expandView(progressRL,0,mScreenHeight);
+        ring = MediaPlayer.create(Payments.this, R.raw.rocketlaunchaudio);
+//        tv.setAlpha(0f);
+//        tv.setVisibility(View.VISIBLE);
+//        tv.animate()
+//                .alpha(1f)
+//                .setDuration(shortAnimationDuration)
+//                .setListener(null);
+
+
+        new uploadFile().execute();
+
+    }
+
+
+
     int id = 0,custorderID=0;
     FirebaseStorage storage = FirebaseStorage.getInstance();
     StorageReference storageRef = storage.getReference();
@@ -808,7 +864,7 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
                 }else if(fileTypes.get(i).contains("powerpoint")){
                     filesRef = storageRef.child(uniqueID+".pptx");
                 }else {
-                    filesRef = storageRef.child(uniqueID+".docx");
+                    filesRef = storageRef.child(uniqueID+".pdf");
                 }
 
 //        if (Build.VERSION.SDK_INT < 19) {
@@ -833,9 +889,24 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
 
                         android.util.Log.d("UPLOADPROGRESS ", String.valueOf(progress));
 
-                        progressAnimator[0] = ObjectAnimator.ofInt(mProgress,"Progress", (int) progress, (int) progress);
-                        progressAnimator[0].setDuration(200);
-                        progressAnimator[0].start();
+//                        progressAnimator[0] = ObjectAnimator.ofInt(mProgress,"Progress", (int) progress, (int) progress);
+//                        progressAnimator[0].setDuration(300);
+//                        progressAnimator[0].start();
+
+//                        progressAnimator[0] = ObjectAnimator.ofInt(roundCornerProgressBar,"Progress", (int) progress, (int) progress);
+//                        progressAnimator[0].setDuration(300);
+//                        progressAnimator[0].start();
+
+                        ProgressBarAnimation anim = new ProgressBarAnimation(roundCornerProgressBar, progress, progress);
+                        anim.setDuration(1000);
+
+                        roundCornerProgressBar.startAnimation(anim);
+
+
+
+
+//                        }
+
 
                     }
                 }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -875,7 +946,7 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
                                     if (urls.size() == downloadUrls.size()) {
 
                                         String orderID = UUID.randomUUID().toString();
-                                        orderKey = orderID.substring(orderID.length()-8,orderID.length());
+//                                        orderKey = orderID.substring(orderID.length()-8,orderID.length());
 
                                         if(custOrderIDS != null && custOrderIDS.size()>0){
                                             Collections.sort(custOrderIDS);
@@ -906,13 +977,23 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
                                         info userinfo = new info(username, email, usernum, "android", "Placed", orderDateTime, id,  price, paymentMode,userId,files,false);
 
 
-//                                        storeDb = storeDb.child(shopType).child(storeID).child("Orders").child(userId).child(orderKey);
+
+
+
+//                                        db = db.child("users").child(userId).child("Orders").child(storeID).child(orderKey);
+//                                        db = db.child("users").child(userId).child("Orders").child(orderKey);
+                                        db = db.child("users").child(userId).child("Orders").push();
+                                        db.setValue(orderInfo);
+
+                                        orderKey = db.getKey();
+
+                                        //Savind order on the selected shop
                                         storeDb = storeDb.child(shopType).child(storeID).child("Orders").child(orderKey);
                                         storeDb.setValue(userinfo);
 
-//                                        db = db.child("users").child(userId).child("Orders").child(storeID).child(orderKey);
-                                        db = db.child("users").child(userId).child("Orders").child(orderKey);
-                                        db.setValue(orderInfo);
+//                                        orderKey = orderKey.substring(orderKey.length()-orderKey.length()+1,orderKey.length());
+
+                                        Toast.makeText(Payments.this, "FILENAMES  "+orderKey.substring(orderKey.length()-orderKey.length()+1,orderKey.length()), Toast.LENGTH_SHORT).show();
 
 
                                         for (int k = 0; k < downloadUrls.size(); k++) {
@@ -935,16 +1016,18 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
 
 
                                             if (k == urls.size() - 1) {
+//                                                progressAnimator[0].end();
+                                                ///Starting rocket launch audio countdown
+                                                if (roundCornerProgressBar.getProgress() == 100) {
+//                                                  if(!ring.isPlaying()) {
+                                                    Toast.makeText(Payments.this, "Starting audio", Toast.LENGTH_SHORT).show();
+                                                    ring.start();
+                                                    launchRocket();
+                                                }
 
-
-//                                                Toast.makeText(Payments.this, "Files are being sent", Toast.LENGTH_SHORT).show();
-//                                                Toast.makeText(Payments.this, "FILESREF "+filesRef, Toast.LENGTH_SHORT).show();
-
-                                                progressAnimator[0].end();
-                                                showNotification(orderKey);
-
-
-
+//                                                if(!ring.isPlaying()) {
+//                                                    showNotification(orderKey);
+//                                                }
                                             }
                                         }
                                     }
@@ -963,4 +1046,33 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
 
         }
     }
+
+
+    public void launchRocket(){
+        ValueAnimator valueAnimator = ValueAnimator.ofFloat(0, -mScreenHeight);
+
+        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                float value = (float) animation.getAnimatedValue();
+                rocket.setTranslationY(value);
+            }
+        });
+
+        valueAnimator.setInterpolator(new AccelerateInterpolator(5f));
+//        valueAnimator.setInterpolator(new AccelerateInterpolator(2f));
+        valueAnimator.setDuration(2000);
+        valueAnimator.start();
+
+        /// Proceeding with placing order
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                ring.stop();
+                showNotification(orderKey);
+            }
+        },6000);
+
+    }
+
 }

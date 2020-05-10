@@ -1,0 +1,35 @@
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <layer-list>
+            <item  android:top="5dp">
+                <shape>
+                    <corners android:radius="48dp" />
+<!--                    <solid android:color="#52BAB8B8" />-->
+                    <gradient android:angle="270" android:endColor="#FFF" android:startColor="#3A3A3A" />
+
+                </shape>
+            </item>
+            <item android:bottom="5dp" android:left="0dp" android:right="5dp">
+                <shape>
+
+                    <solid android:color="#00FFFFFF" />
+<!--                    <gradient android:angle="270" android:endColor="#FFF" android:startColor="#FFF" />-->
+                    <!--                    <stroke android:width="2dp" android:color="#6B6767" />-->
+                    <corners android:radius="48dp" />
+                    <padding android:bottom="0dp" />
+
+                </shape>
+            </item>
+
+            <!-- Originally i set the bottom to 10 px but adding an elevation to a relative layout works perfect when
+            bottom is set to 0 px-->
+<!--            <item android:drawable="@drawable/orderstatustopview"  android:bottom="10px" />-->
+            <item android:drawable="@drawable/orderstatustopview"  android:bottom="0px" />
+
+        </layer-list>
+    </item>
+
+</selector>
+
+
+

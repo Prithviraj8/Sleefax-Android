@@ -9,6 +9,8 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
 import android.Manifest;
+import android.animation.AnimatorSet;
+import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
@@ -17,13 +19,19 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -76,7 +84,7 @@ public class OrderPlaced extends AppCompatActivity {
     final String TAG = "PathGoogleMapActivity";
     ImageButton getDirection,call,back,help;
     TextView Files, shopName,Loc,Price,status1,orderStatusTV,status3,status4,statusPercent,orderid;
-
+    Button showFullDetails;
     CircularProgressBar orderProgress;
 
     String name,loc,orderKey,orderStatus,shopKey,fileType,pagesize,orientation,username,email,paymentMode;
@@ -124,9 +132,27 @@ public class OrderPlaced extends AppCompatActivity {
     ArrayList<String> customPages = new ArrayList<>();
     ArrayList<String> customValues = new ArrayList<>();
     double numberOfPages[];
+    ArrayList<String> fileNames = new ArrayList<>();
 
 
 
+    /// Order status views///
+    ImageButton stat1,stat2,stat3,stat4;
+
+
+    //Order Details View
+    TextView file1,file2,file3,file1Price,file2Price,file3Price;
+
+
+    //Order Confirmation Layout
+    RelativeLayout orderConfirmRL,TopViewBtnsRL;
+    Button yes,no;
+
+
+
+
+    //Scroll View Layout
+    ScrollView scrollView;
     @TargetApi(Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -142,6 +168,7 @@ public class OrderPlaced extends AppCompatActivity {
 //        orderProgress.setProgressBarWidth((float) 12.0);
 
         back = findViewById(R.id.backBtn);
+        scrollView = findViewById(R.id.ScrollViewL);
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -164,16 +191,37 @@ public class OrderPlaced extends AppCompatActivity {
         Price = findViewById(R.id.OrderPrice);
         Files = findViewById(R.id.OrderFiles);
 //        orderProgress = findViewById(R.id.OrderProgressBar);
-        status1 = findViewById(R.id.status1);
         orderStatusTV = findViewById(R.id.orderStatus);
-        status3 = findViewById(R.id.status3);
-        status4 = findViewById(R.id.status4);
         getDirection = findViewById(R.id.Directions);
         orderProgress = findViewById(R.id.circularProgressBar);
         statusPercent = findViewById(R.id.orderStatus);
         call = findViewById(R.id.callBtn);
         help = findViewById(R.id.helpbtn);
         orderid = findViewById(R.id.orderID);
+
+        ///Setting up status  views..
+        stat1 = findViewById(R.id.Stat1View);
+        stat2 = findViewById(R.id.Stat2View);
+        stat3 = findViewById(R.id.Stat3View);
+        stat4 = findViewById(R.id.Stat4View);
+
+        // Setting up Order Details //
+        file1 = findViewById(R.id.File1TV);
+        file2 = findViewById(R.id.File2TV);
+        file3 = findViewById(R.id.File3TV);
+        file1Price = findViewById(R.id.FilePrice1);
+        file2Price = findViewById(R.id.FilePrice2);
+        file3Price = findViewById(R.id.FilePrice3);
+
+        //Order Confirmation RL
+        orderConfirmRL = findViewById(R.id.OrderPickedUpConfirmRL);
+        yes = findViewById(R.id.YesConfirm);
+        no = findViewById(R.id.NoConfirm);
+
+        TopViewBtnsRL = findViewById(R.id.TopViewBtnsRL);
+
+
+        yes.setOnClickListener(BtnListener);
 
 
         call.setOnClickListener(BtnListener);
@@ -211,6 +259,7 @@ public class OrderPlaced extends AppCompatActivity {
         bothSides = extras.getBooleanArray("BothSides");
         customPages = extras.getStringArrayList("Custom");
         numberOfPages = extras.getDoubleArray("Pages");
+        fileNames = extras.getStringArrayList("FileNames");
 
 //        fileType = extras.getString("FileType");
 //        pagesize = extras.getString("PageSize");
@@ -229,14 +278,44 @@ public class OrderPlaced extends AppCompatActivity {
         paymentMode = extras.getString("PaymentMode");
 
         /////////////////////////////////////////////Setting Shop Details on screen/////////////////////////
-        shopName.setText("Shop Name : " + name);
-             Loc.setText(loc);
-        Price.setText("Amount : ₹" + price);
-        Files.setText("Files  :  " + files);
-        orderid.setText(extras.getString("OrderKey"));
+//        shopName.setText("Shop Name : " + name);
+//        Loc.setText(loc);
+        Price.setText("₹ " + price);
+//        Files.setText("Files  :  " + files);
+//        orderid.setText(extras.getString("OrderKey"));
 
 
-        Log.d("ISTESTER",String.valueOf(isTester));
+        Rect scrollBounds = new Rect();
+        scrollView.getHitRect(scrollBounds);
+        if (stat1.getLocalVisibleRect(scrollBounds)) {
+            // Any portion of the imageView, even a single pixel, is within the visible window
+            Log.d("INVIEW","YESS");
+        } else {
+            // NONE of the imageView is within the visible window
+        }
+
+
+        if(fileNames != null) {
+            if (fileNames.get(0) != null && fileNames.size() > 0) {
+                file1.setVisibility(View.VISIBLE);
+                file1.setText(fileNames.get(0));
+                file1Price.setVisibility(View.VISIBLE);
+            }
+            if (fileNames.size() > 1 && fileNames.get(1) != null ) {
+                file2.setVisibility(View.VISIBLE);
+                file2.setText(fileNames.get(1));
+                file2Price.setVisibility(View.VISIBLE);
+            }
+            if (fileNames.size() > 2 && fileNames.get(2) != null ) {
+                file3.setVisibility(View.VISIBLE);
+                file3.setText(fileNames.get(2));
+                file3Price.setVisibility(View.VISIBLE);
+            }
+        }
+
+        showFullDetails = (Button) findViewById(R.id.OrderDetailsBtn);
+        showFullDetails.setPaintFlags(showFullDetails.getPaintFlags() | Paint.UNDERLINE_TEXT_FLAG);
+
         if(isTester){
             shopType = "TestStores";
         }else{
@@ -270,14 +349,41 @@ public class OrderPlaced extends AppCompatActivity {
 
         orderDateTime = currentTime +" " +currentDate;
 
+
+
         if(fileTypes != null) {
 //            new uploadFile().execute(urls);
             setProgress(orderKey);
         }else{
-            setProgressForOrder(orderKey);
+            setProgress(orderKey);
+//            setProgressForOrder(orderKey,orderStatus);
             orderid.setText("Order ID: "+orderKey);
         }
 
+
+
+
+        scrollView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                Rect scrollBounds = new Rect();
+                scrollView.getDrawingRect(scrollBounds);
+                if (!stat1.getLocalVisibleRect(scrollBounds)
+                        || scrollBounds.height() < stat1.getHeight()) {
+                    // imageView is not within or only partially within the visible window
+                    Log.d("ISVIEWVIS","false");
+
+//                    TopViewBtnsRL.setBackgroundResource(R.drawable.orderstatusnavbar_shadow);
+                    TopViewBtnsRL.setElevation(10);
+                } else {
+                    // imageView is completely visible
+                    Log.d("ISVIEWVIS","true");
+//                    TopViewBtnsRL.setBackgroundColor(Color.WHITE);
+                    TopViewBtnsRL.setElevation(0);
+
+                }
+            }
+        });
     }
 
     @Override
@@ -286,6 +392,23 @@ public class OrderPlaced extends AppCompatActivity {
         startActivity(intent);
         finish();
 
+    }
+
+    private boolean isViewVisible(View view) {
+        Rect scrollBounds = new Rect();
+        scrollView.getDrawingRect(scrollBounds);
+
+        float top = view.getY();
+        float bottom = top + view.getHeight();
+
+        if (scrollBounds.top < top && scrollBounds.bottom > bottom) {
+            Log.d("ISVIEWVIS","true");
+            return true;
+        } else {
+            Log.d("ISVIEWVIS","false");
+
+            return false;
+        }
     }
     public void alertBox(String message){
         AlertDialog.Builder builder1 = new AlertDialog.Builder(OrderPlaced.this);
@@ -338,6 +461,12 @@ public class OrderPlaced extends AppCompatActivity {
                 Intent intent = new Intent(OrderPlaced.this,settings.class);
                 startActivity(intent);
 //                finish();
+            }else if(v == findViewById(R.id.YesConfirm)){
+                final HashMap<String, Object> orderStatusUpdate = new HashMap<String, Object>();
+                orderStatusUpdate.put("orderStatus", "Done");
+                ref.child("users").child(userId).child("Orders").child(orderKey).updateChildren(orderStatusUpdate);
+
+                expandView(orderConfirmRL,250,0);
             }
         }
     };
@@ -353,21 +482,8 @@ public class OrderPlaced extends AppCompatActivity {
         orderDb.child("users").child(userId).child("Orders").child(orderKey).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Log.d("VAL", dataSnapshot.getKey());
-
-                for (DataSnapshot user : dataSnapshot.getChildren()) {
-
-                    NotificationCompat.Builder builder = new NotificationCompat.Builder(OrderPlaced.this, CHANNEL_ID)
-                            .setSmallIcon(R.drawable.notify)
-                            .setContentTitle("Order Status")
-                            .setContentText(status[0])
-                            .setGroup(CHANNEL_ID)
-//                              .setContentIntent(resultPendingIntent)
-                            .setPriority(NotificationCompat.PRIORITY_HIGH);
-
-//                            notificationManager.notify(1, builder.build());
-
-                    if (user.getKey().equals("orderStatus")) {
+                Log.d("VALLLLLL", dataSnapshot.getKey());
+                Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
 
                         notified.put("P_Notified", true);
                         orderDb.child("users").child(userId).child("Orders").child(orderKey).updateChildren(notified);
@@ -378,93 +494,12 @@ public class OrderPlaced extends AppCompatActivity {
 //                        notified.put("R_Notified", false);
 //                        orderDb.child("users").child(userId).child("Orders").child(shopKey).child(orderKey).updateChildren(notified);
 
-                        Log.d("STATUS", user.getValue().toString());
-
-                        orderStatus = user.getValue().toString();
+                        orderStatus = String.valueOf(map.get("orderStatus"));
+                        Log.d("MAPPPP", String.valueOf(map));
                         Log.d("SHOWINGYOURORDER",orderStatus);
+                Toast.makeText(OrderPlaced.this, "STATUPDATED "+ orderStatus, Toast.LENGTH_SHORT).show();
+                        setProgressForOrder(orderKey,orderStatus);
 
-                        if (orderStatus.equals("Placed")) {
-
-                            status[0] = "Placed";
-                            Log.d("Progress", String.valueOf(obj.progress));
-
-                            while (obj.progress <= 25) {
-                                obj.progress++;
-                                orderProgress.setProgress(obj.progress);
-                                orderProgress.setProgressBarColor(Color.RED);
-
-                            }
-
-                        } else if (orderStatus.equals("Received")) {
-
-                            Log.d("Progress", String.valueOf(obj.progress));
-                            status[0] = "Received";
-
-                            while (obj.progress > 25 && obj.progress < 50) {
-
-                                obj.progress++;
-                                orderProgress.setProgress(obj.progress);
-                                orderProgress.setProgressBarColor(Color.YELLOW);
-
-                            }
-                        } else if (orderStatus.equals("In Progress")) {
-//
-                            Log.d("Progress", String.valueOf(obj.progress));
-                            status[0] = "In Progress";
-
-                            while (obj.progress > 50 && obj.progress < 75) {
-
-                                obj.progress++;
-                                orderProgress.setProgress(obj.progress);
-                                orderProgress.setProgressBarColor(Color.BLUE);
-
-                            }
-                        } else if (orderStatus.equals("Ready")) {
-//
-                            Log.d("Progress", String.valueOf(obj.progress));
-                            status[0] = "Ready";
-
-                            while (obj.progress > 75 && obj.progress < 100) {
-
-                                obj.progress++;
-                                orderProgress.setProgress(obj.progress);
-//                                        orderProgress.setBackgroundResource(R.drawable.colorprogressgreen);
-                                orderProgress.setProgressBarColor(Color.GREEN);
-
-                            }
-                        }
-                    }
-                }
-
-
-                if (obj.progress <= 25) {
-                    orderStatusTV.setVisibility(View.VISIBLE);
-                    orderStatusTV.setText("Order Placed");
-
-
-                }else
-                if (obj.progress >= 25 && obj.progress <= 50) {
-                    Log.d("ORDERPROG", String.valueOf(orderProgress.getProgress()));
-
-                    orderStatusTV.setVisibility(View.VISIBLE);
-                    orderStatusTV.setText("Order Received");
-
-                }else
-                if (obj.progress >= 50 && obj.progress <= 75) {
-                    Log.d("ORDERPROG", String.valueOf(orderProgress.getProgress()));
-
-                    orderStatusTV.setVisibility(View.VISIBLE);
-                    orderStatusTV.setText("Order in Progress");
-
-
-                }else
-                if (obj.progress >= 75 && obj.progress <= 100) {
-                    Log.d("ORDERPROG", String.valueOf(orderProgress.getProgress()));
-
-                    orderStatusTV.setVisibility(View.VISIBLE);
-                    orderStatusTV.setText("Order Ready");
-
-                }
             }
 
             @Override
@@ -475,145 +510,89 @@ public class OrderPlaced extends AppCompatActivity {
     }
 
 
-    public void setProgressForOrder(final String orderKey){
+    public void setProgressForOrder(final String orderKey,String orderStatus){
 
 
         Log.d("SETTING","PROGRESS FOR"+orderKey);
         final HashMap<String, Object> notified = new HashMap<String, Object>();
         final String[] status = {null};
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(OrderPlaced.this, CHANNEL_ID)
-                .setSmallIcon(R.drawable.notify)
-                .setContentTitle("Order Status")
-                .setContentText(orderStatus)
-                .setGroup(CHANNEL_ID)
-//                  .setContentIntent(resultPendingIntent)
-                .setPriority(NotificationCompat.PRIORITY_HIGH);
 
-
-        status1.setVisibility(View.INVISIBLE);
-        status4.setVisibility(View.INVISIBLE);
-
-        status3.setVisibility(View.INVISIBLE);
-
-        orderStatusTV.setVisibility(View.VISIBLE);
-        orderStatusTV.setText("Placing Order");
-//        status1.setVisibility(View.VISIBLE);
-
-        if (orderStatus != null) {
-
-            Log.d("SHOWINGYOURORDER",orderStatus);
 
             if (orderStatus.equals("Placed")) {
 
+                    orderStatusTV.setText("Yayy..Order Placed");
+                stat1.setBackgroundResource(R.drawable.status_shadow1);
+                stat2.setBackgroundResource(R.drawable.status_shadow2);
+                stat3.setBackgroundResource(R.drawable.status_shadow2);
+                stat4.setBackgroundResource(R.drawable.status_shadow2);
 
-                Log.d("Progress", String.valueOf(obj.progress));
-
-                while (obj.progress <= 20) {
-                    obj.progress++;
-                    orderProgress.setProgress(obj.progress);
-                    orderProgress.setProgressBarColor(Color.RED);
-//                                orderProgress.setBackgroundColor(Color.RED);
-//                                orderProgress.
-                }
-//                            notified.put("P_Notified", true);
-//                            orderDb.child("users").child(userId).child("Orders").child(shopKey).child(orderKey).updateChildren(notified);
 
             } else if (orderStatus.equals("Received")) {
 
+                    orderStatusTV.setText("Order sent.\n" + "Take a breather.");
 
-                Log.d("RProgress", String.valueOf(obj.progress));
+                stat1.setBackgroundResource(R.drawable.status_shadow1);
+                stat2.setBackgroundResource(R.drawable.status_shadow2);
+                stat3.setBackgroundResource(R.drawable.status_shadow2);
+                stat4.setBackgroundResource(R.drawable.status_shadow2);
 
-                while (obj.progress >= 0 && obj.progress < 40) {
 
-                    obj.progress++;
-                    orderProgress.setProgress(obj.progress);
-
-//                                orderProgress.setBackgroundResource(R.drawable.colorprogressblue);
-                    orderProgress.setProgressBarColor(Color.YELLOW);
-
-                }
-//                notified.put("RT_Notified", false);
-//                orderDb.child("users").child(userId).child("Orders").child(shopKey).child(orderKey).updateChildren(notified);
             } else if (orderStatus.equals("In Progress")) {
 
-                Log.d("Progress", String.valueOf(obj.progress));
+                    orderStatusTV.setText("Fun fact:\n" + "3D printers can \n" + "now print food.");
+                stat1.setBackgroundResource(R.drawable.status_shadow2);
+                stat2.setBackgroundResource(R.drawable.status_shadow1);
+                stat3.setBackgroundResource(R.drawable.status_shadow2);
+                stat4.setBackgroundResource(R.drawable.status_shadow2);
 
-                while (obj.progress >= 0 && obj.progress < 60) {
 
-                    obj.progress++;
-                    orderProgress.setProgress(obj.progress);
-//                                orderProgress.setBackgroundResource(R.drawable.colorprogressyellow);
-                    orderProgress.setProgressBarColor(Color.YELLOW);
-
-                }
-//                notified.put("IP_Notified", false);
-//                orderDb.child("users").child(userId).child("Orders").child(shopKey).child(orderKey).updateChildren(notified);
             } else if (orderStatus.equals("Ready")) {
 
-                Log.d("Progress", String.valueOf(obj.progress));
+                    orderStatusTV.setText("There's no hurry, \n" + "but your files\n" +"have been printed.");
+                stat1.setBackgroundResource(R.drawable.status_shadow2);
+                stat2.setBackgroundResource(R.drawable.status_shadow2);
+                stat3.setBackgroundResource(R.drawable.status_shadow1);
+                stat4.setBackgroundResource(R.drawable.status_shadow2);
 
-                while (obj.progress >= 0 && obj.progress < 80) {
+                expandView(orderConfirmRL,0,250);
 
-                    obj.progress++;
-                    orderProgress.setProgress(obj.progress);
-//                                orderProgress.setBackgroundResource(R.drawable.colorprogressgreen);
-                    orderProgress.setProgressBarColor(Color.GREEN);
-
-                }
-//                notified.put("R_Notified", false);
-//                orderDb.child("users").child(userId).child("Orders").child(shopKey).child(orderKey).updateChildren(notified);
             }else if (orderStatus.equals("Done")) {
 
 
-                while (obj.progress >= 0 && obj.progress < 100) {
+                    orderStatusTV.setText("We hope we were\n" + "helpful to you 😚");
+                    stat1.setBackgroundResource(R.drawable.status_shadow2);
+                    stat2.setBackgroundResource(R.drawable.status_shadow2);
+                    stat3.setBackgroundResource(R.drawable.status_shadow2);
+                    stat4.setBackgroundResource(R.drawable.status_shadow1);
 
-                    obj.progress++;
-                    orderProgress.setProgress(obj.progress);
-                    orderProgress.setProgressBarColor(Color.parseColor("#ff0099cc"));
-
-                }
-//                notified.put("R_Notified", false);
-//                orderDb.child("users").child(userId).child("Orders").child(shopKey).child(orderKey).updateChildren(notified);
             }
 
-            Log.d("ORDERPROG", String.valueOf(orderProgress.getProgress()));
-
-            if (obj.progress <= 20) {
-                orderStatusTV.setVisibility(View.VISIBLE);
-                orderStatusTV.setText("Order Placed");
-
-
-            }else
-            if (obj.progress >= 20 && obj.progress <= 40) {
-                Log.d("ORDERPROG", String.valueOf(orderProgress.getProgress()));
-
-                orderStatusTV.setVisibility(View.VISIBLE);
-                orderStatusTV.setText("Order Received");
-
-
-            }else
-            if (obj.progress >= 40 && obj.progress <= 60) {
-                Log.d("ORDERPROG", String.valueOf(orderProgress.getProgress()));
-
-                orderStatusTV.setVisibility(View.VISIBLE);
-                orderStatusTV.setText("Order in Progress");
-
-            }else
-            if (obj.progress >= 60 && obj.progress <= 80) {
-                Log.d("ORDERPROG", String.valueOf(orderProgress.getProgress()));
-
-                orderStatusTV.setVisibility(View.VISIBLE);
-                orderStatusTV.setText("Order Ready");
-            }
-            else
-            if (obj.progress >= 80 && obj.progress <= 100) {
-                Log.d("ORDERPROG", String.valueOf(orderProgress.getProgress()));
-
-                orderStatusTV.setVisibility(View.VISIBLE);
-                orderStatusTV.setText("Thank You 😄");
-            }
         }
+
+
+    public void expandView(final View v,int initialHt,int finalHt){
+
+
+        ValueAnimator slideAnimator = ValueAnimator.ofInt(initialHt,finalHt).setDuration(500);
+        slideAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                // get the value the interpolator is at
+                Integer value = (Integer) animation.getAnimatedValue();
+                // I'm going to set the layout's height 1:1 to the tick
+                v.getLayoutParams().height = value.intValue();
+                // force all layouts to see which ones are affected by
+                // this layouts height change
+                v.requestLayout();
+
+            }
+        });
+
+        AnimatorSet set = new AnimatorSet();
+        set.play(slideAnimator);
+        set.setInterpolator(new AccelerateDecelerateInterpolator());
+        set.start();
 
     }
 

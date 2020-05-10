@@ -545,7 +545,6 @@ public class ShopsActivity extends AppCompatActivity {
                         bwPrice.add((int) Double.parseDouble(String.valueOf(map.get("blackAndwhitePrintOutSingleSidePerPage"))));
                         colorPrice.add((int) Double.parseDouble(String.valueOf(map.get("colorPrintOutSingleSidePerPage"))));
 
-                        Log.d("CPPRICE ", String.valueOf(colorPrice.get(0)));
 
                         final Handler handler1 = new Handler();
                         handler1.postDelayed(new Runnable() {
@@ -591,55 +590,6 @@ public class ShopsActivity extends AppCompatActivity {
 
                                 ////// Haven't calculated price yet for selection of multiple orders//////
                                     processOrder(storeID.get(position),locations.get(position),shopLat.get(position),shopLong.get(position),shopNames.get(position),numbers.get(position),urls.size(),1);
-
-                                ;
-//                                if(color.equals("Colors")){
-//                                    processOrder(storeID.get(position),locations.get(position),shopLat.get(position),shopLong.get(position),shopNames.get(position),numbers.get(position),urls.size(),finalPrice);
-//                                }else{
-//                                    processOrder(storeID.get(position),locations.get(position),shopLat.get(position),shopLong.get(position),shopNames.get(position),numbers.get(position),urls.size(),finalPrice);
-//
-//                                }
-
-//                                shortAnimationDuration = getResources().getInteger(android.R.integer.config_shortAnimTime);
-//                                shopRows.setBackgroundColor(Color.GRAY);
-////                                confirmView.setVisibility(View.VISIBLE);
-//                                confirmView.setAlpha(0f);
-//                                confirmView.setVisibility(View.VISIBLE);
-//                                confirmView.animate()
-//                                        .alpha(1f)
-//                                        .setDuration(shortAnimationDuration)
-//                                        .setListener(null);
-//
-//
-//                                confirmOrder.setVisibility(View.VISIBLE);
-//                                no.setVisibility(View.VISIBLE);
-//                                confirm.setVisibility(View.VISIBLE);
-//                                orderPrice.setVisibility(View.VISIBLE);
-//                                paymentModeTV.setVisibility(View.VISIBLE);
-//
-//                                Log.d("PRICE", String.valueOf(price));
-//
-//                                confirm.setOnClickListener(new View.OnClickListener() {
-//                                    @Override
-//                                    public void onClick(View v) {
-//
-//
-//                                    }
-//                                });
-//                                no.setOnClickListener(new View.OnClickListener() {
-//                                    @Override
-//                                    public void onClick(View v) {
-//                                        shopRows.setBackgroundColor(Color.WHITE);
-//                                        confirmOrder.setVisibility(View.INVISIBLE);
-//                                        confirmView.setVisibility(View.INVISIBLE);
-//                                        no.setVisibility(View.INVISIBLE);
-//                                        confirm.setVisibility(View.INVISIBLE);
-//                                        orderPrice.setVisibility(View.INVISIBLE);
-//                                        paymentModeTV.setVisibility(View.INVISIBLE);
-//
-//                                    }
-//                                });
-
 
 
                             }

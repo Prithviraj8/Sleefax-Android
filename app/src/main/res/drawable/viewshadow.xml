@@ -4,15 +4,16 @@
             <item  android:top="5dp">
                 <shape>
                     <corners android:radius="48dp" />
-                    <solid android:color="#52BAB8B8" />
+<!--                    <solid android:color="#52BAB8B8" />-->
+                    <gradient android:angle="270" android:endColor="#FFF" android:startColor="#3A3A3A" />
                 </shape>
             </item>
-            <item android:bottom="2dp" android:left="2dp" android:right="2dp">
+            <item android:bottom="5dp" android:left="0dp" android:right="5dp">
                 <shape>
 
                     <solid android:color="#00FFFFFF" />
-                    <gradient android:angle="270"
-                        android:endColor="#FFF" android:startColor="#FFF" />
+<!--                    <gradient android:angle="270"-->
+<!--                        android:endColor="#FFF" android:startColor="#FFF" />-->
 <!--                    <stroke android:width="2dp" android:color="#6B6767" />-->
                     <corners android:radius="48dp" />
                     <padding android:bottom="0dp" />
