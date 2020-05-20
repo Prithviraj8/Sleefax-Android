@@ -21,13 +21,17 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.IntentService;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.ProgressDialog;
+import android.app.Service;
 import android.app.TaskStackBuilder;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -43,6 +47,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
 import android.transition.Transition;
 import android.transition.TransitionInflater;
 import android.transition.TransitionManager;
@@ -62,6 +67,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.Anubis.Sleefax.CONSTANTS.CONSTANTS;
+import com.Anubis.Sleefax.Services.NotificationService;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -77,6 +83,7 @@ import com.paytm.pgsdk.PaytmPGService;
 //import com.spire.presentation.FileFormat;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -104,7 +111,7 @@ public class Select extends AppCompatActivity {
     Button orders,orderPickBtn;
     ImageButton selectFilesBtn,more ,setting,sideMenu,selectPhotos,selectAttachment;
 
-    View pickedUpOrderView,addFileView,blurrView;
+    View addFileView,blurrView;
 
     int PICK_IMAGE_MULTIPLE = 1;
     final static int PICK_PDF_CODE = 2342;
@@ -118,7 +125,7 @@ public class Select extends AppCompatActivity {
     boolean network,isTester,newUser;
     PaytmPGService Service = PaytmPGService.getProductionService();
 
-    RelativeLayout contactsRl,addfilePage,addfileTVRL;
+    RelativeLayout contactsRl,addfilePage,addfileTVRL,pickedUpOrderView,CurrentOrderRowRL;
 
     ////// Buttons and items of contacts page /////
     Button num1,num2;
@@ -226,10 +233,13 @@ public class Select extends AppCompatActivity {
                     }
 
                 }
-                createNotificationChannel();
+//                createNotificationChannel();
                 //startService(new Intent(Select.this, notificationService.class));
-                new createNotification().execute();
+//                new createNotification().execute();
 
+                ///Creating notification service
+                Intent notificationServiceIntent = new Intent(Select.this, NotificationService.class);
+                startService(notificationServiceIntent);
             }
         }
         Log.d("NEWUSER",String.valueOf(newUser));
@@ -251,8 +261,8 @@ public class Select extends AppCompatActivity {
                 Log.i("REFRESHING", "onRefresh called from SwipeRefreshLayout");
 
 //                getOrders();
-                currentOrderLV();
                 pullToRefresh.setRefreshing(false);
+                currentOrderLV();
 
             }
         });
@@ -311,7 +321,11 @@ public class Select extends AppCompatActivity {
             }
         },200);
 
+        if (checkPermissionREAD_EXTERNAL_STORAGE(this)) {
+            // do your stuff..
+            checkPermissionREAD_EXTERNAL_STORAGE(Select.this);
 
+        }
     }
     //Create an anonymous implementation of OnClickListener
     private View.OnClickListener contactsPageListener = new View.OnClickListener() {
@@ -355,6 +369,56 @@ public class Select extends AppCompatActivity {
             }
         }
     };
+
+    public static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 123;
+
+    public boolean checkPermissionREAD_EXTERNAL_STORAGE(
+            final Context context) {
+        int currentAPIVersion = Build.VERSION.SDK_INT;
+        if (currentAPIVersion >= android.os.Build.VERSION_CODES.M) {
+            if (ContextCompat.checkSelfPermission(context,
+                    Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(
+                        (Activity) context,
+                        Manifest.permission.READ_EXTERNAL_STORAGE)) { 
+                    showDialog("External storage", context,
+                            Manifest.permission.READ_EXTERNAL_STORAGE);
+
+                } else {
+                    ActivityCompat
+                            .requestPermissions(
+                                    (Activity) context,
+                                    new String[] { Manifest.permission.READ_EXTERNAL_STORAGE },
+                                    MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
+                }
+                return false;
+            } else {
+                return true;
+            }
+
+        } else {
+            return true;
+        }
+    }
+
+    public void showDialog(final String msg, final Context context,
+                           final String permission) {
+        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(context);
+        alertBuilder.setCancelable(true);
+        alertBuilder.setTitle("Permission necessary");
+        alertBuilder.setMessage(msg + " permission is necessary");
+        alertBuilder.setPositiveButton(android.R.string.yes,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        ActivityCompat.requestPermissions((Activity) context,
+                                new String[] { permission },
+                                MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE);
+                    }
+                });
+        AlertDialog alert = alertBuilder.create();
+        alert.show();
+    }
+
     private void selectFiles(final View v) {
         final CoordinatorLayout mCLayout = (CoordinatorLayout) findViewById(R.id.coordinator_layout);
         int transitionId;
@@ -725,33 +789,108 @@ public class Select extends AppCompatActivity {
             if (!network) {
                 Toast.makeText(Select.this, "Please check your internet connection.", Toast.LENGTH_LONG).show();
             } else {
-                mProgressDialog = new ProgressDialog(Select.this);
-                // Set progressdialog title
-                mProgressDialog.setTitle("Retreiving Orders");
-                // Set progressdialog message
-                mProgressDialog.setMessage("Loading...");
-                mProgressDialog.setIndeterminate(false);
-                // Show progressdialog
-                mProgressDialog.show();
-                Context context = getApplicationContext();
+                if(v == findViewById(R.id.YourOrders)) {
+                    mProgressDialog = new ProgressDialog(Select.this);
+                    // Set progressdialog title
+                    mProgressDialog.setTitle("Retreiving Orders");
+                    // Set progressdialog message
+                    mProgressDialog.setMessage("Loading...");
+                    mProgressDialog.setIndeterminate(false);
+                    // Show progressdialog
+                    mProgressDialog.show();
+                    Context context = getApplicationContext();
 //                CharSequence text = "No order history to show.";
-                CharSequence text = "Order Cnt"+orderCnt;
-                int duration = Toast.LENGTH_SHORT;
-                Toast toast = Toast.makeText(context, text, duration);
+                    CharSequence text = "Order Cnt" + orderCnt;
+                    int duration = Toast.LENGTH_SHORT;
+                    Toast toast = Toast.makeText(context, text, duration);
 
-                Intent orderHistoryIntent = new Intent(Select.this, YourOrders.class);
-                startActivity(orderHistoryIntent);
-                finish();
-                mProgressDialog.dismiss();
+                    Intent orderHistoryIntent = new Intent(Select.this, YourOrders.class);
+                    startActivity(orderHistoryIntent);
+                    finish();
+                    mProgressDialog.dismiss();
+                }else if(v == findViewById(R.id.selectphotos)){
+                    Intent intent = new Intent(Select.this,Pop.class);
+                    startActivity(intent);
+
+                }else if(v == findViewById(R.id.selectattachment)){
+                    Intent intent = new Intent(Select.this,Pop.class);
+                    startActivity(intent);
+
+
+                }
+
+
+
+
 
             }
+
+
         }
     };
 
 
+//    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+//    public void uploadFile(ArrayList uri){
+//
+//        Intent goToPdfInfo = new Intent(Pop.this, PdfInfo.class);
+//        Bundle extras = new Bundle();
+//
+//        extras.putDoubleArray("Pages",numberOfPages);
+//        extras.putStringArrayList("FileNames",fileNames);
+//        Log.d("SOZEEE",String.valueOf(fileSizes.size()));
+//        extras.putStringArrayList("FileSizes",fileSizes);
+//        ArrayList<String> files = new ArrayList<>();
+//
+//        for (int i=0;i<uri.size();i++){
+////                        Toast.makeText(Pop.this,"NOP "+numberOfPages[i],Toast.LENGTH_LONG).show();
+//
+//            files.add(uri.get(i).toString());
+//            if(i == uri.size()-1){
+//                extras.putStringArrayList("URLS", files);
+//                extras.putStringArrayList("FileType", mimeTypes);
+//                extras.putBoolean("IsTester",isTester);
+//                extras.putBoolean("NewUser",newUser);
+//
+//                goToPdfInfo.putExtras(extras);
+//                startActivity(goToPdfInfo);
+//                finish();
+//
+//            }
+//        }
+//
+//
+//    }
+//
+//
+//    public void uploadImg(Intent data, ArrayList<Uri> uri){
+//        Intent goToPageInfo = new Intent(Select.this, PageInfo.class);
+//        Bundle extras = new Bundle();
+//        extras.putStringArrayList("FileType", mimeTypes);
+//        ArrayList<String> images = new ArrayList<>();
+//        int i;
+//
+//        for(i=0;i<uri.size();i++){
+//            images.add(uri.get(i).toString());
+//
+//            if(i == uri.size()-1) {
+////                Log.d("URISIZE", String.valueOf(uri.size()));
+//                extras.putStringArrayList("URLS", images);
+//                extras.putParcelable("Data",data);
+//                extras.putBoolean("IsTester",isTester);
+//                extras.putBoolean("NewUser",newUser);
+//
+////            extras.putParcelableArrayList("URLS", uri);
+//                goToPageInfo.putExtras(extras);
+//                startActivity(goToPageInfo);
+//            }
+//        }
+//    }
 
      ArrayList<String> orderkey = new ArrayList<>();
-     ArrayList<String> shopKey = new ArrayList<>();
+    ArrayList<String> orderID = new ArrayList<>();
+
+    ArrayList<String> shopKey = new ArrayList<>();
      ArrayList<String> shopNames = new ArrayList<>();
      ArrayList<String> locations = new ArrayList<>();
      ArrayList<String> orderStatus = new ArrayList<>();
@@ -786,7 +925,9 @@ public class Select extends AppCompatActivity {
                     Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
                     if(!String.valueOf(map.get("orderStatus")).equals("Done")){
                         cnt = cnt + 1;
+
                         orderkey.add(dataSnapshot.getKey());
+                        orderID.add(String.valueOf(map.get("orderID")));
                         shopKey.add(String.valueOf(map.get("storeId")));
 
 
@@ -796,9 +937,9 @@ public class Select extends AppCompatActivity {
                         CONSTANTS obj = new CONSTANTS();
                         obj.cnt = cnt;
 
-
-
 //                        setupLayoutParams();
+//                        currentOrderLV();
+
                     }
 
 //                }
@@ -872,18 +1013,18 @@ public class Select extends AppCompatActivity {
                     @Override
                     public void run() {
 
-//                        Collections.reverse(orderkey);
-//                        Collections.reverse(shopKey);
-//
-//                        Collections.reverse(files);
-//                        Collections.reverse(locations);
-//                        Collections.reverse(shopNames);
-//                        Collections.reverse(shopLat);
-//                        Collections.reverse(shopLong);
-//                        Collections.reverse(paymentModes);
-//                        Collections.reverse(price);
-//                        Collections.reverse(orderDate);
-//                        Collections.reverse(orderStatus);
+                        Collections.reverse(orderkey);
+                        Collections.reverse(shopKey);
+
+                        Collections.reverse(files);
+                        Collections.reverse(locations);
+                        Collections.reverse(shopNames);
+                        Collections.reverse(shopLat);
+                        Collections.reverse(shopLong);
+                        Collections.reverse(paymentModes);
+                        Collections.reverse(price);
+                        Collections.reverse(orderDate);
+                        Collections.reverse(orderStatus);
 
 
                         currentOrderLV();
@@ -981,17 +1122,7 @@ public class Select extends AppCompatActivity {
 
     private void createNotificationChannel() {
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = CHANNEL_ID;
-            String description = "Order Notifications";
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
-            channel.setDescription(description);
 
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
-
-        }
     }
 
 
@@ -1002,49 +1133,6 @@ public class Select extends AppCompatActivity {
 //    boolean fromYourOrders = false;
 
     int notifyCnt = 0;
-    public class notificationService extends IntentService{
-
-        /**
-         * Creates an IntentService.  Invoked by your subclass's constructor.
-         *
-//         * @param name Used to name the worker thread, important only for debugging.
-         */
-
-        public notificationService() {
-            super("notificationService");
-        }
-
-//        @Override
-        public int onStartCommand(final Intent intent,
-                                  final int flags,
-                                  final int startId) {
-
-            //your code
-//            startService(new Intent(this, notificationService.class));
-            return START_STICKY;
-        }
-
-        @Override
-        protected void onHandleIntent(@Nullable Intent intent) {
-            new createNotification().execute();
-        }
-
-
-//        @Override
-//        public void onTaskRemoved(Intent rootIntent){
-//            Intent restartServiceTask = new Intent(getApplicationContext(),this.getClass());
-//            restartServiceTask.setPackage(getPackageName());
-//            PendingIntent restartPendingIntent =PendingIntent.getService(getApplicationContext(), 1,restartServiceTask, PendingIntent.FLAG_ONE_SHOT);
-//            AlarmManager myAlarmService = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
-//            myAlarmService.set(
-//                    AlarmManager.ELAPSED_REALTIME,
-//                    SystemClock.elapsedRealtime() + 1000,
-//                    restartPendingIntent);
-//
-//            super.onTaskRemoved(rootIntent);
-//        }
-
-    }
 
 
     private class createNotification extends AsyncTask<Void,Void,Void> {
@@ -1074,17 +1162,6 @@ public class Select extends AppCompatActivity {
                             boolean RnotifyStatus = true,doneNotifyStatus = true;
 
                             Map<String, Object> map = (Map<String, Object>) orderKeys.getValue();
-
-//                            orderDateTime = String.valueOf(map.get("orderDateTime"));
-//                            price = Double.parseDouble(String.valueOf(map.get("price")));
-//                            shopName = String.valueOf(map.get("ShopName"));
-//                            shopLat = Double.parseDouble(String.valueOf(map.get("ShopLat")));
-//                            shopLong = Double.parseDouble(String.valueOf(map.get("ShopLong")));
-//                            loc = String.valueOf(map.get("ShopsLocation"));
-//                            files = Integer.parseInt(String.valueOf(map.get("files")));
-
-
-
                             String orderStatus;
                             Double price;
                             String orderDateTime;
@@ -1281,13 +1358,16 @@ public class Select extends AppCompatActivity {
 
 
                 ///////////////////// Initializing views for current order layout   //////////////////////
+                CurrentOrderRowRL = convertView.findViewById(R.id.CurrentOrderRowRL);
                 currentOrderLayout = convertView.findViewById(R.id.OrderRelativeL);
+
                 currentOrderShopName = convertView.findViewById(R.id.currentOrderShopName);
                 currentOrderShopLoc = convertView.findViewById(R.id.currentOrderShopLoc);
                 currentOrderStatus = convertView.findViewById(R.id.currentOrderStatus);
                 currentOrderDateTime = convertView.findViewById(R.id.currentOrderDateTime);
                 currentOrderID = convertView.findViewById(R.id.currentOrderID);
                 currentOrderPrice = convertView.findViewById(R.id.currentOrderPrice);
+
                 pickedUpOrderView = convertView.findViewById(R.id.PickedUpOrderRL);
                 orderPickBtn = convertView.findViewById(R.id.pickedOrderYes);
                 orderPickedTV = convertView.findViewById(R.id.orderPickedTV);
@@ -1324,45 +1404,55 @@ public class Select extends AppCompatActivity {
                         if (position < locations.size() && position < shopNames.size() && position < orderStatus.size() && position < price.size() && position < orderDate.size() && position < orderkey.size()) {
 
 
-                            currentOrderID.setText("ID " + orderkey.get(position));
+                            currentOrderID.setText("ID: " + orderID.get(position));
                             currentOrderShopLoc.setText(locations.get(position));
                             currentOrderShopName.setText(shopNames.get(position));
                             currentOrderPrice.setText("Price : ₹ " + price.get(position));
                             currentOrderDateTime.setText(orderDate.get(position));
                             currentOrderStatus.setText(orderStatus.get(position));
 
+//                            currentOrderID.setText("ID " + orderkey.get(orderkey.size()-(position+1)));
+//                            currentOrderShopLoc.setText(locations.get(locations.size()-(position+1)));
+//                            currentOrderShopName.setText(shopNames.get(shopNames.size()-(1+position)));
+//                            currentOrderPrice.setText("Price : ₹ " + price.get(price.size()-(1+position)));
+//                            currentOrderDateTime.setText(orderDate.get(orderDate.size()-(1+position)));
+//                            currentOrderStatus.setText(orderStatus.get(orderStatus.size()-(1+position)));
+
                             if ((orderStatus.get(position)).equals("Placed")) {
 //                                currentOrderStatus.setBackgroundResource(R.drawable.orderstatusview1);
 
                             }
+
                             if ((orderStatus.get(position)).equals("Received")) {
 //                                currentOrderStatus.setBackgroundResource(R.drawable.orderstatusview2);
                                 stat1.setTextColor(Color.parseColor("#227093"));
                                 stat1view.setBackgroundResource(R.drawable.orderstatballs);
 
                             }
+
                             if ((orderStatus.get(position)).equals("In Progress")) {
 //                                currentOrderStatus.setBackgroundResource(R.drawable.orderstatusview3);
                                 stat2.setTextColor(Color.parseColor("#227093"));
                                 stat2view.setBackgroundResource(R.drawable.orderstatballs);
-
-
                             }
+
                             if ((orderStatus.get(position)).equals("Ready")) {
 //                                currentOrderStatus.setBackgroundResource(R.drawable.orderstatusview4);
                                 stat3.setTextColor(Color.parseColor("#227093"));
                                 stat3view.setBackgroundResource(R.drawable.orderstatballs);
 
 
+                                Log.d("HEIGHTIS ",String.valueOf(CurrentOrderRowRL.getHeight()));
+                                expandView(CurrentOrderRowRL,0,900);
+                                expandView(pickedUpOrderView,0,300);
 
-                                shortAnimationDuration = getResources().getInteger(android.R.integer.config_shortAnimTime);
-
-                                pickedUpOrderView.setAlpha(0f);
-                                pickedUpOrderView.setVisibility(View.VISIBLE);
-                                pickedUpOrderView.animate()
-                                        .alpha(1f)
-                                        .setDuration(shortAnimationDuration)
-                                        .setListener(null);
+//                                shortAnimationDuration = getResources().getInteger(android.R.integer.config_shortAnimTime);
+//                                pickedUpOrderView.setAlpha(0f);
+//                                pickedUpOrderView.setVisibility(View.VISIBLE);
+//                                pickedUpOrderView.animate()
+//                                        .alpha(1f)
+//                                        .setDuration(shortAnimationDuration)
+//                                        .setListener(null);
 
                                 orderPickBtn.setOnClickListener(new View.OnClickListener() {
                                     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -1409,5 +1499,7 @@ public class Select extends AppCompatActivity {
             return convertView;
         }
     }
+
+
 }
 

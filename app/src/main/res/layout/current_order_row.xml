@@ -6,53 +6,277 @@
     android:layout_height="match_parent"
     android:layout_below="@+id/liveordersTopView">
 
-    <View
-        android:id="@+id/view20"
+    <RelativeLayout
+        android:id="@+id/CurrentOrderRowRL"
         android:layout_width="wrap_content"
-        android:layout_height="226dp"
+        android:layout_height="220dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_marginStart="9dp"
         android:layout_marginTop="30dp"
         android:layout_marginEnd="5dp"
-        android:background="@drawable/liveorderview"
+        android:background="@drawable/liveorderview">
 
-        />
+        <TextView
+            android:id="@+id/currentOrderID"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="25dp"
+            android:layout_marginEnd="30dp"
+            android:fontFamily="@font/poppins_semibold"
+            android:text="Order id"
+            android:textColor="#227093"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/currentOrderShopName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/currentOrderID"
-        android:layout_alignStart="@+id/view20"
-        android:layout_marginStart="15dp"
-        android:layout_marginTop="0dp"
-        android:fontFamily="@font/poppins_semibold"
-        android:text="@string/ShopName"
-        android:textColor="#000000"
-        android:textSize="18sp"
-        android:textStyle="bold" />
+        <TextView
+            android:id="@+id/currentOrderDateTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/currentOrderID"
+            android:layout_alignStart="@+id/currentOrderID"
+            android:layout_alignEnd="@+id/currentOrderID"
+            android:layout_marginStart="-30dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="-30dp"
+            android:fontFamily="@font/poppins_semibold"
+            android:text="OrderDateTime"
+            android:textAlignment="center"
+            android:textColor="#4D4949"
+            android:textSize="12sp" />
 
-    <TextView
-        android:id="@+id/currentOrderShopLoc"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/currentOrderShopName"
-        android:layout_alignStart="@+id/currentOrderShopName"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="2dp"
-        android:fontFamily="@font/poppins_semibold"
-        android:text="@string/Location"
-        android:textColor="#4D4949"
-        android:textSize="12sp" />
+        <TextView
+            android:id="@+id/currentOrderShopName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/currentOrderID"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="-2dp"
+            android:fontFamily="@font/poppins_semibold"
+            android:text="@string/ShopName"
+            android:textColor="#000000"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/currentOrderShopLoc"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/currentOrderShopName"
+            android:layout_alignStart="@+id/currentOrderShopName"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp"
+            android:fontFamily="@font/poppins_semibold"
+            android:text="@string/Location"
+            android:textColor="#4D4949"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/currentOrderPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/currentOrderDateTime"
+            android:layout_alignStart="@+id/currentOrderDateTime"
+            android:layout_alignEnd="@+id/currentOrderDateTime"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="0dp"
+            android:fontFamily="@font/poppins_semibold"
+            android:text="Price"
+            android:textAlignment="center"
+            android:textColor="#000000" />
+
+        <View
+            android:id="@+id/view21"
+            android:layout_width="357dp"
+            android:layout_height="2dp"
+            android:layout_alignStart="@+id/Stat1RL"
+            android:layout_alignTop="@+id/Stat1RL"
+            android:layout_alignEnd="@+id/Stat4RL"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="35dp"
+            android:layout_marginEnd="30dp"
+            android:background="@drawable/grayline"
+            android:visibility="visible" />
+
+        <View
+            android:id="@+id/view20"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_below="@+id/currentOrderShopLoc"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="5dp"
+            android:background="#00FFFFFF" />
+
+        <RelativeLayout
+            android:id="@+id/PickedUpOrderRL"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_below="@+id/Stat2RL"
+            android:layout_marginTop="25dp"
+            android:visibility="visible">
+
+            <TextView
+                android:id="@+id/orderPickedTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:fontFamily="@font/poppins_semibold"
+                android:text="Have you collected your order ?"
+                android:textAlignment="center"
+                android:textSize="20sp" />
+
+            <Button
+                android:id="@+id/pickedOrderYes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/orderPickedTV"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/confirmbtnshadow"
+                android:text="Yes"
+                android:textColor="#FFFFFF" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/Stat1RL"
+            android:layout_width="75dp"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/view20"
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="15dp"
+            android:layout_marginBottom="0dp"
+            android:layout_toStartOf="@+id/Stat2RL"
+            android:background="#00FFFFFF">
+
+            <TextView
+                android:id="@+id/stat1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="0dp"
+                android:text="Received"
+                android:textColor="#E9E9E9" />
+
+            <View
+                android:id="@+id/statball1"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_below="@+id/stat1"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/graystatballs" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/Stat2RL"
+            android:layout_width="75dp"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/Stat1RL"
+            android:layout_alignBottom="@+id/Stat1RL"
+            android:layout_marginTop="0dp"
+            android:layout_marginEnd="7.5dp"
+            android:layout_marginBottom="0dp"
+            android:layout_toStartOf="@+id/view20"
+            android:background="#00FFFFFF">
+
+            <TextView
+                android:id="@+id/stat2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="0dp"
+                android:text="Processing"
+                android:textColor="#E9E9E9" />
+
+            <View
+                android:id="@+id/statball2"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_below="@+id/stat2"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/graystatballs" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/Stat3RL"
+            android:layout_width="75dp"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/view20"
+            android:layout_alignBottom="@+id/Stat2RL"
+            android:layout_marginStart="7.5dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="0dp"
+            android:layout_toEndOf="@+id/view20"
+            android:background="#00FFFFFF">
+
+            <TextView
+                android:id="@+id/stat3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="0dp"
+                android:text="Ready"
+                android:textColor="#E9E9E9" />
+
+            <View
+                android:id="@+id/statball3"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_below="@+id/stat3"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/graystatballs" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/Stat4RL"
+            android:layout_width="75dp"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/Stat3RL"
+            android:layout_alignBottom="@+id/Stat3RL"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="0dp"
+            android:layout_toEndOf="@+id/Stat3RL"
+            android:background="#00FFFFFF">
+
+            <TextView
+                android:id="@+id/stat4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="0dp"
+                android:text="Completed"
+                android:textColor="#E9E9E9" />
+
+            <View
+                android:id="@+id/statball4"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_below="@+id/stat4"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="5dp"
+                android:background="@drawable/graystatballs" />
+        </RelativeLayout>
+    </RelativeLayout>
 
     <TextView
         android:id="@+id/currentOrderStatus"
         android:layout_width="120dp"
         android:layout_height="30dp"
-        android:layout_alignEnd="@+id/view20"
-        android:layout_alignBottom="@+id/view20"
+        android:layout_alignEnd="@+id/CurrentOrderRowRL"
+        android:layout_alignBottom="@+id/CurrentOrderRowRL"
         android:layout_marginEnd="30dp"
         android:layout_marginBottom="0dp"
         android:background="@drawable/orderstatusview1"
@@ -63,231 +287,18 @@
         android:textStyle="bold"
         android:visibility="gone" />
 
-    <TextView
-        android:id="@+id/currentOrderID"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/view20"
-        android:layout_alignEnd="@+id/view20"
-        android:layout_marginTop="25dp"
-        android:layout_marginEnd="50dp"
-        android:fontFamily="@font/poppins_semibold"
-        android:text="Order id"
-        android:textColor="#227093"
-        android:textSize="18sp"
-        android:textStyle="bold" />
-
-    <View
-        android:id="@+id/view21"
-        android:layout_width="357dp"
-        android:layout_height="2dp"
-        android:layout_alignStart="@+id/Stat1RL"
-        android:layout_alignTop="@+id/Stat1RL"
-        android:layout_alignEnd="@+id/Stat4RL"
-        android:layout_marginStart="30dp"
-        android:layout_marginTop="35dp"
-        android:layout_marginEnd="30dp"
-        android:background="@drawable/grayline"
-        android:visibility="visible" />
-
-    <TextView
-        android:id="@+id/currentOrderDateTime"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/currentOrderID"
-        android:layout_alignTop="@+id/currentOrderShopName"
-        android:layout_alignEnd="@+id/currentOrderID"
-        android:layout_marginStart="-30dp"
-        android:layout_marginTop="0dp"
-        android:layout_marginEnd="-30dp"
-        android:fontFamily="@font/poppins_semibold"
-        android:text="OrderDateTime"
-        android:textAlignment="center"
-        android:textColor="#4D4949"
-        android:textSize="12sp" />
-
-    <TextView
-        android:id="@+id/currentOrderPrice"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/currentOrderDateTime"
-        android:layout_alignStart="@+id/currentOrderDateTime"
-        android:layout_alignEnd="@+id/currentOrderDateTime"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="0dp"
-        android:fontFamily="@font/poppins_semibold"
-        android:text="Price"
-        android:textAlignment="center"
-        android:textColor="#000000" />
-
-    <RelativeLayout
-        android:id="@+id/Stat1RL"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/currentOrderPrice"
-        android:layout_alignStart="@+id/currentOrderShopLoc"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="0dp"
-        android:background="#00FFFFFF">
-
-        <TextView
-            android:id="@+id/stat1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="0dp"
-            android:text="Received"
-            android:textColor="#E9E9E9" />
-
-        <View
-            android:id="@+id/statball1"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_below="@+id/stat1"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="5dp"
-            android:background="@drawable/graystatballs" />
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/Stat2RL"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/Stat1RL"
-        android:layout_alignBottom="@+id/Stat1RL"
-        android:layout_marginStart="30dp"
-        android:layout_marginTop="0dp"
-        android:layout_marginBottom="0dp"
-        android:layout_toEndOf="@+id/Stat1RL"
-        android:background="#00FFFFFF">
-
-        <TextView
-            android:id="@+id/stat2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="0dp"
-            android:text="Processing"
-            android:textColor="#E9E9E9" />
-
-        <View
-            android:id="@+id/statball2"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_below="@+id/stat2"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="5dp"
-            android:background="@drawable/graystatballs" />
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/Stat3RL"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/Stat2RL"
-        android:layout_alignBottom="@+id/Stat2RL"
-        android:layout_marginStart="30dp"
-        android:layout_marginTop="0dp"
-        android:layout_marginBottom="0dp"
-        android:layout_toEndOf="@+id/Stat2RL"
-        android:background="#00FFFFFF">
-
-        <TextView
-            android:id="@+id/stat3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="0dp"
-            android:text="Ready"
-            android:textColor="#E9E9E9" />
-
-        <View
-            android:id="@+id/statball3"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_below="@+id/stat3"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="5dp"
-            android:background="@drawable/graystatballs" />
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/Stat4RL"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/Stat3RL"
-        android:layout_alignBottom="@+id/Stat3RL"
-        android:layout_marginStart="30dp"
-        android:layout_marginTop="0dp"
-        android:layout_marginBottom="0dp"
-        android:layout_toEndOf="@+id/Stat3RL"
-        android:background="#00FFFFFF">
-
-        <TextView
-            android:id="@+id/stat4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="0dp"
-            android:text="Completed"
-            android:textColor="#E9E9E9" />
-
-        <View
-            android:id="@+id/statball4"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_below="@+id/stat4"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="5dp"
-            android:background="@drawable/graystatballs" />
-    </RelativeLayout>
-
     <ImageButton
         android:id="@+id/more"
         android:layout_width="32dp"
         android:layout_height="32dp"
-        android:layout_alignEnd="@+id/view20"
-        android:layout_alignBottom="@+id/view20"
+        android:layout_alignEnd="@+id/CurrentOrderRowRL"
+        android:layout_alignBottom="@+id/CurrentOrderRowRL"
         android:layout_marginEnd="30dp"
         android:layout_marginBottom="0dp"
         android:background="#00000000"
         android:src="@drawable/more"
         android:text="View details"
         android:visibility="gone" />
-
-    <RelativeLayout
-        android:id="@+id/PickedUpOrderRL"
-        android:layout_width="match_parent"
-        android:layout_height="128dp"
-        android:layout_below="@+id/view20"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="0dp"
-        android:visibility="gone">
-
-        <TextView
-            android:id="@+id/orderPickedTV"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="10dp"
-            android:text="Hi there, have you picked up the order yet?" />
-
-        <Button
-            android:id="@+id/pickedOrderYes"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/orderPickedTV"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="15dp"
-            android:text="Yes" />
-    </RelativeLayout>
 
 
 </RelativeLayout>

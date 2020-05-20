@@ -14,6 +14,7 @@ import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -21,10 +22,14 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -88,10 +93,7 @@ public class OrderPlaced extends AppCompatActivity {
     CircularProgressBar orderProgress;
 
     String name,loc,orderKey,orderStatus,shopKey,fileType,pagesize,orientation,username,email,paymentMode;
-    LatLng shopLoc, userLoc;
-    double shopLat;
-    double shopLong;
-    double userLat,userLong;
+
     int files;
     double price;
     int copy;
@@ -149,7 +151,16 @@ public class OrderPlaced extends AppCompatActivity {
     Button yes,no;
 
 
-
+    // Location Variables
+    public static final int REQUEST_LOCATION = 1;
+    LocationManager locationManager;
+    protected LocationListener locationListener;
+    protected double latitude;
+    protected double longitude;
+    LatLng shopLoc, userLoc;
+    double shopLat;
+    double shopLong;
+    double userLat,userLong;
 
     //Scroll View Layout
     ScrollView scrollView;
@@ -321,26 +332,26 @@ public class OrderPlaced extends AppCompatActivity {
         }else{
             shopType = "Stores";
         }
-//        shopType = "TestStores";
-
-        Log.d("STORETYPE",shopType);
-        Log.d("REQUEST", String.valueOf(requestCode));
-        Log.d("RESULT",String.valueOf(resultCode));
-//        Log.d("PAGES",String.valueOf(numberOfPages));
 
 
-        userLoc = new LatLng(userLat,userLong);
+        getLocation();
+
+        if(userLat > 0 && userLong > 0) {
+            userLoc = new LatLng(userLat, userLong);
+        }else{
+            getLocation();
+        }
+
         shopLoc = new LatLng(shopLat,shopLong);
 
         getDirection.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent1 = new Intent(Intent.ACTION_VIEW,
-                        Uri.parse("http://maps.google.com/maps?saddr="+userLat+","+userLong+"&daddr="+shopLat+","+shopLong));
+                        Uri.parse("http://maps.google.com/maps?saddr="+userLoc.latitude+","+userLoc.longitude+"&daddr="+shopLat+","+shopLong));
                 startActivity(intent1);
             }
         });
-//        new uploadFile().execute(pdfs);
 
         String currentDate = new SimpleDateFormat("dd/MM/yy", Locale.getDefault()).format(new Date());
         String currentTime = new SimpleDateFormat("HH:mm a", Locale.getDefault()).format(new Date());
@@ -392,6 +403,79 @@ public class OrderPlaced extends AppCompatActivity {
         startActivity(intent);
         finish();
 
+    }
+
+    protected void buildAlertMessageNoGps() {
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Please Turn ON your GPS Connection")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, final int id) {
+                        startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+                    }
+                });
+
+        final AlertDialog alert = builder.create();
+        alert.show();
+    }
+    public void getLocation() {
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            buildAlertMessageNoGps();
+        } else if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+
+
+            if (ActivityCompat.checkSelfPermission(OrderPlaced.this, Manifest.permission.ACCESS_FINE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission
+                    (OrderPlaced.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+                ActivityCompat.requestPermissions(OrderPlaced.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
+                Log.d("INNN HEREEEE", "YESS");
+            } else {
+                Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                Log.d("INNN HEREEEE", "YESS");
+
+                Location location1 = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+                Location location2 = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+//            Log.d("LAT IS ", String.valueOf(location.getLatitude()));
+
+                if (location != null) {
+
+                    userLat = location.getLatitude();
+                    userLong = location.getLongitude();
+
+                    Log.d("LAT IS ", String.valueOf(userLat));
+                    Log.d("Long is ", String.valueOf(userLong));
+                    userLoc = new LatLng(userLat, userLong);
+
+                } else if (location1 != null) {
+                    userLat = location1.getLatitude();
+                    userLong = location1.getLongitude();
+                    userLoc = new LatLng(userLat, userLong);
+
+
+                    Log.d("LAT1 IS ", String.valueOf(latitude));
+                    Log.d("Long1 is ", String.valueOf(longitude));
+
+
+                } else if (location2 != null) {
+                    userLat = location2.getLatitude();
+                    userLong = location2.getLongitude();
+                    userLoc = new LatLng(userLat, userLong);
+
+                    Log.d("LAT2 IS ", String.valueOf(latitude));
+                    Log.d("Long2 is ", String.valueOf(longitude));
+
+
+                } else {
+
+                    Toast.makeText(this, "Unble to Trace your location", Toast.LENGTH_SHORT).show();
+
+                }
+            }
+        }
     }
 
     private boolean isViewVisible(View view) {
@@ -597,6 +681,8 @@ public class OrderPlaced extends AppCompatActivity {
     }
 
 
+
+
     ArrayList<Bitmap> images = new ArrayList<Bitmap>();
 
 
@@ -604,157 +690,6 @@ public class OrderPlaced extends AppCompatActivity {
     DatabaseReference ref = database.getReference();
     ArrayList<Integer> ids = new ArrayList<>();
     ArrayList<Integer> custOrderIDS = new ArrayList<>();
-
-
-
-
-//    public class uploadFile extends AsyncTask<ArrayList<String>,Void,Void>{
-//        final int[] uploadCnt = {0};
-//
-//        @SuppressLint("WrongThread")
-//        @Override
-//        protected Void doInBackground(ArrayList<String>... arrayLists) {
-//
-//
-//            Uri uri;
-//            orderProgress.setProgress(15);
-////            statusPercent.setText("15%");
-//
-//
-//
-//            for(int i =0;i<urls.size();i++) {
-//                String file = urls.get(i);
-//                uri = Uri.parse(file);
-//
-//                final String uniqueID = UUID.randomUUID().toString();
-//                final StorageReference filesRef = storageRef.child(uniqueID);
-//
-//
-//
-////        if (Build.VERSION.SDK_INT < 19) {
-//
-////      getContext().getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-//                final UploadTask uploadTask = filesRef.putFile(uri);
-////        final UploadTask uploadTask = filesRef.putFile(changeExtension(new File(file.getPath()),"pdf"));
-//                final int finalI = i;
-//                final Uri finalUri = uri;
-//                uploadTask.addOnFailureListener(new OnFailureListener() {
-//                    @Override
-//                    public void onFailure(@NonNull Exception exception) {
-//                        // Handle unsuccessful uploads
-//                        Log.d("UPLOAD", "Not successfull");
-//                    }
-//                }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-//                    @Override
-//                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-//                        // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
-//                        Log.d("UPLOAD", "SUCCESSFULL");
-//                        Toast.makeText(OrderPlaced.this, "Files are being sent", Toast.LENGTH_SHORT).show();
-//
-//                        Log.d("UNIQUE", uniqueID);
-//                        Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
-//                            @Override
-//                            public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
-//                                if (!task.isSuccessful()) {
-//                                    throw task.getException();
-//                                }
-//                                Log.d("URIID", String.valueOf(finalUri));
-//
-//                                uploadCnt[0]++;
-//                                // Continue with the task to get the download URL
-//                                return filesRef.getDownloadUrl();
-//                            }
-//                        }).addOnCompleteListener(new OnCompleteListener<Uri>() {
-//
-//                            @RequiresApi(api = Build.VERSION_CODES.N)
-//                            @Override
-//                            public void onComplete(@NonNull Task<Uri> task) {
-//
-//                                if (task.isSuccessful()) {
-//                                    String url;
-//                                    Uri downloadUri = task.getResult();
-//                                    url = String.valueOf(downloadUri);
-//                                    downloadUrls.add(url);
-//                                    Log.d("DOWNLOADURL", String.valueOf(url));
-//
-//                                    if(urls.size() == downloadUrls.size()) {
-//
-//
-//                                        Log.d("PAGESIZEGEE",pagesize);
-//                                        Log.d("CUSTOM",custom);
-//                                        Log.d("ORIENTATION",orientation);
-//                                        Log.d("COLOR",color);
-//                                        Log.d("COPY", String.valueOf(copy));
-//                                        String orderID = UUID.randomUUID().toString();
-//
-//
-//                                        int id = 0,custorderID=0;
-//                                        if(ids.size()>0 && custOrderIDS.size()>0){
-////                                            Log.d("IDS",String.valueOf(ids.get(2)));
-//                                            id = ids.get(ids.size()-1)+1;
-//                                            custorderID = custOrderIDS.get(ids.size()-1)+1;
-//
-//                                        }
-//
-//
-//                                        if(custom == "" || custom == null){
-//                                            custom = "All";
-//                                        }
-//
-//                                        DatabaseReference db = FirebaseDatabase.getInstance().getReference();
-//                                        Log.d("CUSTORDERID", String.valueOf(custorderID));
-//                                        shopinfo orderInfo = new shopinfo(loc, name, "Placed", shopLat, shopLong, shopNum, files, fileType, pagesize, orientation, price, custom, orderDateTime, true, false, false, false,false,paymentMode,custorderID);
-//                                        info userinfo = new info(username, email, usernum, "android", "Placed", fileType, copy, orderDateTime, id,custom,price,bothSides,paymentMode);
-//
-//                                        String storeID = shopKey;
-//
-//                                        storeDb = storeDb.child(shopType).child(storeID).child("Orders").child(userId).child(orderID);
-//                                        storeDb.setValue(userinfo);
-//                                        db = db.child("users").child(userId).child("Orders").child(storeID).child(orderID);
-//                                        db.setValue(orderInfo);
-//                                        orderid.setText("Order ID: "+orderID);
-//
-//
-//
-//
-//                                        for(int k =0;k<downloadUrls.size();k++) {
-//
-//                                            singlePageInfo single = new singlePageInfo(downloadUrls.get(k), color, copy, fileType, pagesize, orientation);
-//                                            db.push().setValue(single);
-//                                            storeDb.push().setValue(single);
-//                                            orderKey = orderID;
-//
-//
-//
-//                                            if (k == downloadUrls.size() - 1) {
-//                                                Toast.makeText(OrderPlaced.this, "Files are being sent", Toast.LENGTH_SHORT).show();
-////                                                new setProgressForOrder().execute(orderKey);
-//                                                setProgressForOrder(orderKey);
-//
-//                                            }
-//                                        }
-//                                    }
-//                                } else {
-//                                    // Handle failures
-//                                    // ...
-//                                }
-//                            }
-//                        });
-//                        // ...
-//                    }
-//                });
-//
-//            }
-//            return null;
-//
-//        }
-//
-////        @Override
-////        protected void onPostExecute(Void aVoid) {
-////            super.onPostExecute(aVoid);
-////            Toast.makeText(getApplicationContext(),"Thank you!😁",Toast.LENGTH_SHORT).show();
-////        }
-//    }
 
 
 

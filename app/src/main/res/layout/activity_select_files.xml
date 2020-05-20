@@ -243,9 +243,7 @@
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="20dp"
                 android:background="@drawable/addfileseebtnback"
-                app:srcCompat="@drawable/addfileimage"
-
-                />
+                app:srcCompat="@drawable/addfileimage" />
 
             <ImageButton
                 android:id="@+id/pgsettingSeeBtn"

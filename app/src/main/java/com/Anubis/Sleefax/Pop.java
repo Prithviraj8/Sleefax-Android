@@ -22,16 +22,31 @@ import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.github.barteksc.pdfviewer.PDFView;
 import com.github.barteksc.pdfviewer.listener.OnLoadCompleteListener;
 import com.github.barteksc.pdfviewer.listener.OnPageErrorListener;
 import com.github.barteksc.pdfviewer.scroll.DefaultScrollHandle;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 import static com.aspose.words.LoadFormat.DOC;
 
@@ -147,8 +162,11 @@ public class Pop extends AppCompatActivity {
         selectPhotos.setVisibility(View.GONE);
     }
 
-    String mimeType;
+    String mimeType,fileName,fileSize;
     ArrayList<String> mimeTypes = new ArrayList<>();
+    ArrayList<String> fileSizes = new ArrayList<>();
+    ArrayList<String> fileNames = new ArrayList<>();
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
@@ -168,32 +186,47 @@ public class Pop extends AppCompatActivity {
                 Uri returnUri = data.getData();
 //                file = returnUri;
 
-
                 mimeType = getContentResolver().getType(returnUri);
 
+                ///Running Pagecount api
+//                startPageCountApi(returnUri,mimeType);
+
+                Log.d("MIMETYPE1",String.valueOf(mimeType));
+
+                Cursor returnCursor = getContentResolver().query(returnUri, null, null, null, null);
+                int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                int sizeIndex = returnCursor.getColumnIndex(OpenableColumns.SIZE);
+                returnCursor.moveToFirst();
+
+                fileName = (returnCursor.getString(nameIndex));
+                fileNames.add(fileName);
+
+
+                if(Long.toString(returnCursor.getLong(sizeIndex)).length() >= 7) {
+                    fileSize = (Long.toString((long) ((returnCursor.getLong(sizeIndex)) * 0.000001)));
+                    fileSizes.add(fileSize);
+
+                }else{
+                    fileSize = (Long.toString((long) ((returnCursor.getLong(sizeIndex)) * 00.001)));
+                    fileSizes.add(fileSize);
+                }
+                Log.d("FNAME1",fileName);
+                Log.d("FSIZE1", String.valueOf(fileSize));
 
                 if (mimeType.contains("application")) {
-//                    fileType = mimeType;
                     mimeTypes.add(mimeType);
+
 
                     if(mimeType.equals("application/pdf")){
                         uri.add(returnUri);
                         numberOfPages = new double[uri.size()];
-
-                        try {
-                            java.net.URI juri = new java.net.URI(returnUri.toString());
-                            File file = new File(juri.getPath());
-                            Log.d("FILESIZE",String.valueOf(file.length()));
-                        } catch (URISyntaxException e) {
-                            e.printStackTrace();
-                        }
-
 
                         ViewPDF(uri);
 
                     }else {
                         uri.add(returnUri);
 //                        ViewDoc(uri);
+
                         uploadFile(uri);
                     }
                 } else {
@@ -214,6 +247,7 @@ public class Pop extends AppCompatActivity {
 //                        uri.add(returnUri);
 //                        uploadImg(requestCode, resultCode, data, uri);
                     }else{
+
                         uri.add(returnUri);
                         uploadImg(data,uri);
                     }
@@ -232,13 +266,30 @@ public class Pop extends AppCompatActivity {
                                 uri.add(data.getClipData().getItemAt(i).getUri());
                                 mimeTypes.add(getContentResolver().getType(data.getClipData().getItemAt(i).getUri()));
 
+                                Cursor returnCursor = getContentResolver().query(data.getClipData().getItemAt(i).getUri(), null, null, null, null);
+                                int sizeIndex = returnCursor.getColumnIndex(OpenableColumns.SIZE);
+                                int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                                returnCursor.moveToFirst();
+
+
+                                if(Long.toString(returnCursor.getLong(sizeIndex)).length() >= 7) {
+                                    fileSizes.add(Long.toString((long) ((returnCursor.getLong(sizeIndex)) * 0.000001)));
+                                }else{
+                                    fileSizes.add(Long.toString((long) ((returnCursor.getLong(sizeIndex)) * 00.001)));
+                                }
+                                fileNames.add(returnCursor.getString(nameIndex));
+
+                                Log.d("FNAME3",fileNames.get(i));
+                                Log.d("FSIZE3",String.valueOf(fileSizes.get(i)));
+
 //                                Toast.makeText(this, "FILE " + uri.get(i).toString(), Toast.LENGTH_LONG).show();
 //                                Toast.makeText(this, "MIME " + mimeTypes.get(i), Toast.LENGTH_LONG).show();
 
                                 if (i == data.getClipData().getItemCount() - 1) {
-                                    numberOfPages = new double[uri.size()];
-                                    ViewPDF(uri);
-//                                    uploadFile(uri);
+                                    numberOfPages = new double[uri.size()];uploadFile(uri);
+                                    if(mimeTypes.get(i).equals("application/pdf")) {
+                                        ViewPDF(uri);
+                                    }
                                 }
                             }
                         }
@@ -260,14 +311,13 @@ public class Pop extends AppCompatActivity {
         }
     }
 
-    ArrayList<String> fileNames = new ArrayList<>();
 
     public void ViewPDF(ArrayList<Uri> files){
 
         setVisibilities();
 
-        String fileName = getFileName(files.get(cnt));
-        fileNames.add(cnt,fileName);
+//        String fileName = getFileName(files.get(cnt));
+//        fileNames.add(cnt,fileName);
 
         pdfView.fromUri(files.get(cnt))
                 .enableSwipe(true)
@@ -344,7 +394,8 @@ public class Pop extends AppCompatActivity {
 
         extras.putDoubleArray("Pages",numberOfPages);
         extras.putStringArrayList("FileNames",fileNames);
-
+        Log.d("SOZEEE",String.valueOf(fileSizes.size()));
+        extras.putStringArrayList("FileSizes",fileSizes);
         ArrayList<String> files = new ArrayList<>();
 
         for (int i=0;i<uri.size();i++){
@@ -390,8 +441,9 @@ public class Pop extends AppCompatActivity {
                 startActivity(goToPageInfo);
             }
         }
-
     }
+
+
     protected void alertMessage(String message, final boolean isImage) {
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -421,4 +473,89 @@ public class Pop extends AppCompatActivity {
         final AlertDialog alert = builder.create();
         alert.show();
     }
+
+
+    ProgressDialog progress;
+
+    public void startPageCountApi(final Uri returnUri, final String contentType){
+        progress = new ProgressDialog(Pop.this);
+        progress.setTitle("Uploading");
+        progress.setMessage("Please wait...");
+        progress.show();
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                Log.d("STARTINGAPI","YES");
+                File f  = new File(returnUri.getPath());
+//                    Toast.makeText(MainActivity.this, "PATH "+FilePickerActivity.RESULT_FILE_PATH, Toast.LENGTH_SHORT).show();
+//                    File f= new File(data.getDataString());
+                String content_type  = contentType;
+//                    String content_type  = getMimeType(data.getData().toString());
+
+                String file_path = f.getAbsolutePath();
+                OkHttpClient client = new OkHttpClient();
+                RequestBody file_body = RequestBody.create(MediaType.parse(content_type),f);
+
+                RequestBody request_body = new MultipartBody.Builder()
+                        .setType(MultipartBody.FORM)
+                        .addFormDataPart("type",content_type)
+                        .addFormDataPart("uploaded_file",file_path.substring(file_path.lastIndexOf("/")+1), file_body)
+                        .build();
+
+                Request request = new Request.Builder()
+                        .url("https://www.sleefax.com/test/upload.php")
+                        .post(request_body)
+                        .build();
+
+                try {
+                    Response response = client.newCall(request).execute();
+
+                    if(!response.isSuccessful()){
+                        throw new IOException("Error : "+response);
+                    }
+
+                    progress.dismiss();
+                    sendjsonrequest();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+
+            }
+        });
+
+        t.start();
+
+    }
+
+    String url = "https://www.sleefax.com/test/page_count.php";
+    String count;
+    RequestQueue rq;
+
+    public void sendjsonrequest(){
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(com.android.volley.Request.Method.POST, url, null, new com.android.volley.Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try{
+                    count = response.getString("PageCount");
+                    Log.i("PageCount",count);
+//                    countText.setText(count);
+                    Log.d("COUNTIS ",String.valueOf(count));
+                    Log.d("RESPONSE ",String.valueOf(response));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new com.android.volley.Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                count = error.getMessage();
+
+            }
+        });
+    };
+
+
 }

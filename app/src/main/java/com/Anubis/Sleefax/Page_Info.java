@@ -23,11 +23,10 @@ class page_INFO {
 }
 class eachFileInfo{
 
-    public String url;
-    public String colorType,fileType,pageSize,orientation,custom,fileName;
+    public String url, colorType,fileType,pageSize,orientation,custom,fileName,fileSize;
     public int copies;
 
-    public eachFileInfo(String url, String colorType, int copies, String fileType, String pagesize, String orientation, String fileName, String custom){
+    public eachFileInfo(String url, String colorType, int copies, String fileType, String pagesize, String orientation, String fileName, String custom,String fileSize){
         this.url = url;
         this.colorType = colorType;
         this.copies = copies;
@@ -36,5 +35,6 @@ class eachFileInfo{
         this.orientation = orientation;
         this.fileName = fileName;
         this.custom = custom;
+        this.fileSize = fileSize;
     }
 }

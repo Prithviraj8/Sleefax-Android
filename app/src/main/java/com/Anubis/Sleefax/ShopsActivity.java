@@ -114,6 +114,7 @@ public class ShopsActivity extends AppCompatActivity {
     ArrayList<String> customValues = new ArrayList<>();
     double numberOfPages[];
     ArrayList<String> fileNames = new ArrayList<>();
+    ArrayList<String> fileSizes = new ArrayList<>();
 
     //    private FusedLocationProviderClient fusedLocationClient;
     LocationManager locationManager;
@@ -191,6 +192,7 @@ public class ShopsActivity extends AppCompatActivity {
         newUser = extras.getBoolean("NewUser");
         customValues = extras.getStringArrayList("CustomValue");
         fileNames = extras.getStringArrayList("FileNames");
+        fileSizes = extras.getStringArrayList("FileSizes");
 
         if(!newUser){
             userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -671,6 +673,7 @@ public class ShopsActivity extends AppCompatActivity {
         extras.putStringArrayList("Orientation", orientations);
         extras.putDoubleArray("Pages", numberOfPages);
         extras.putStringArrayList("FileNames",fileNames);
+        extras.putStringArrayList("FileSizes",fileSizes);
 
         extras.putBoolean("IsTester", isTester);
         extras.putLong("ShopNum", shopNum);

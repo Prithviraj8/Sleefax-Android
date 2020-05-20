@@ -81,5 +81,10 @@ dependencies {
     implementation 'com.razorpay:checkout:1.5.13'
 //    implementation 'com.github.mohammadatif:Animatoo:master'
 
+
+    //Api connecting
+    implementation 'com.android.volley:volley:1.1.1'
+
+
 }
 apply plugin: 'com.google.gms.google-services'

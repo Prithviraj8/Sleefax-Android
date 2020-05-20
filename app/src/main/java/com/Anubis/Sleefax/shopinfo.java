@@ -1,7 +1,7 @@
 package com.Anubis.Sleefax;
 
 public class shopinfo {
-    public String storeId, ShopsLocation, ShopName, orderStatus, fileType, pageSize, orientation, custom, orderDateTime, paymentMode;
+    public String storeId, ShopsLocation, ShopName, orderStatus, fileType, pageSize, orientation, custom, orderDateTime, paymentMode,orderID;
     public Double ShopLat, ShopLong;
     public int files, id;
     public double price;
@@ -32,7 +32,7 @@ public class shopinfo {
 //        this.id = id;
 //
 //    }
-    public shopinfo(String storeId, String shopsLocation, String shopName, String orderStatus, Double ShopLat, Double ShopLong, long num, int files, double price, String orderDateTime, boolean P_Notified, boolean RT_Notified, boolean IP_Notified, boolean R_Notified, boolean D_Notified, String paymentMode, int id){
+    public shopinfo(String storeId, String shopsLocation, String shopName, String orderStatus, Double ShopLat, Double ShopLong, long num, int files, double price, String orderDateTime, boolean P_Notified, boolean RT_Notified, boolean IP_Notified, boolean R_Notified, boolean D_Notified, String paymentMode, int id,String orderID){
         this.storeId = storeId;
         ShopsLocation = shopsLocation;
         ShopName = shopName;
@@ -54,5 +54,6 @@ public class shopinfo {
         this.D_Notified = D_Notified;
         this.paymentMode = paymentMode;
         this.id = id;
+        this.orderID = orderID;
     }
 }

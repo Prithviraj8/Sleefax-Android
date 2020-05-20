@@ -13,6 +13,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -47,6 +48,9 @@ import android.widget.Toast;
 
 import com.Anubis.Sleefax.Animations.ProgressBarAnimation;
 import com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar;
+import com.android.volley.RequestQueue;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.maps.model.LatLng;
 //import com.paytm.pg.merchant.CheckSumServiceHelper;
 import com.google.android.gms.tasks.Continuation;
@@ -75,8 +79,11 @@ import com.shreyaspatil.EasyUpiPayment.EasyUpiPayment;
 import com.shreyaspatil.EasyUpiPayment.listener.PaymentStatusListener;
 import com.shreyaspatil.EasyUpiPayment.model.TransactionDetails;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -88,16 +95,23 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.UUID;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
 class info{
 
     public String name,orderStatus;
-    public String email,device,orderDateTime,paymentMode,userId;
+    public String email,device,orderDateTime,paymentMode,userId,orderID;
     public long num;
     public int id,files;
     public double price;
     public boolean confirm;
 
-    public info(String name, String email, long num, String device, String orderStatus,String orderDateTime, int id, double price,String paymentMode, String userId, int files,boolean confirm){
+    public info(String name, String email, long num, String device, String orderStatus,String orderDateTime, int id, double price,String paymentMode, String userId, int files,boolean confirm,String orderID){
         this.email = email;
         this.name = name;
         this.num = num;
@@ -110,6 +124,7 @@ class info{
         this.userId = userId;
         this.files = files;
         this.confirm = confirm;
+        this.orderID = orderID;
     }
 //    public info(String name, String email, long num, String device, String placed, String fileType, int copy, String orderDateTime, int id, String custom, double price, boolean bothSides, String paymentMode,String userId){
 //        this.email = email;
@@ -180,6 +195,7 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
     ArrayList<String> customValues = new ArrayList<>();
     double numberOfPages[];
     ArrayList<String> fileNames = new ArrayList<>();
+    ArrayList<String> fileSizes = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -329,6 +345,7 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
 
         shopNum = extras.getLong("ShopNum");
         fileNames = extras.getStringArrayList("FileNames");
+        fileSizes = extras.getStringArrayList("FileSizes");
 
         urls = extras.getStringArrayList("URLS");
         fileTypes = extras.getStringArrayList("FileType");
@@ -680,6 +697,7 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
         extras.putDouble("User Long", userLong);
         extras.putString("PaymentMode",paymentMode);
         extras.putStringArrayList("FileNames",fileNames);
+        extras.putStringArrayList("FileSizes",fileSizes);
 
 
         intent.putExtras(extras);
@@ -859,9 +877,10 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
                 final String uniqueID = UUID.randomUUID().toString();
                 final StorageReference filesRef;
 
-                if(fileTypes.get(i).contains("msword")){
-                    filesRef = storageRef.child(uniqueID+".doc");
+                if(fileTypes.get(i).contains("document")){
+                    filesRef = storageRef.child(uniqueID+".docx");
                 }else if(fileTypes.get(i).contains("powerpoint")){
+
                     filesRef = storageRef.child(uniqueID+".pptx");
                 }else {
                     filesRef = storageRef.child(uniqueID+".pdf");
@@ -901,9 +920,6 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
                         anim.setDuration(1000);
 
                         roundCornerProgressBar.startAnimation(anim);
-
-
-
 
 //                        }
 
@@ -967,14 +983,12 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
                                         }
 
                                         DatabaseReference db = FirebaseDatabase.getInstance().getReference();
-                                        android.util.Log.d("ORDERPBOTHSIDES", String.valueOf(bothSides));
                                         String storeID = shopKey;
+                                        orderID = uniqueID.substring(uniqueID.length()-8);
+                                        shopinfo orderInfo = new shopinfo(storeID,loc, shopName, "Placed", shopLat, shopLong, shopNum, files, price, orderDateTime, false, false, false, false, false, paymentMode, custorderID,orderID);
 
-//                                        shopinfo orderInfo = new shopinfo(storeID,loc, shopName, "Placed", shopLat, shopLong, shopNum, files, fileType, pagesize, orientation, price, custom, orderDateTime, false, false, false, false, false, paymentMode, custorderID);
-                                        shopinfo orderInfo = new shopinfo(storeID,loc, shopName, "Placed", shopLat, shopLong, shopNum, files, price, orderDateTime, false, false, false, false, false, paymentMode, custorderID);
-
-//                                        info userinfo = new info(username, email, usernum, "android", "Placed", fileType, copy, orderDateTime, id, custom, price, bothSides, paymentMode,userId);
-                                        info userinfo = new info(username, email, usernum, "android", "Placed", orderDateTime, id,  price, paymentMode,userId,files,false);
+                                        android.util.Log.d("ORDERIDSAVED",(uniqueID.substring(uniqueID.length()-8)));
+                                        info userinfo = new info(username, email, usernum, "android", "Placed", orderDateTime, id,  price, paymentMode,userId,files,false,orderID);
 
 
 
@@ -993,22 +1007,27 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
 
 //                                        orderKey = orderKey.substring(orderKey.length()-orderKey.length()+1,orderKey.length());
 
-                                        Toast.makeText(Payments.this, "FILENAMES  "+orderKey.substring(orderKey.length()-orderKey.length()+1,orderKey.length()), Toast.LENGTH_SHORT).show();
-
 
                                         for (int k = 0; k < downloadUrls.size(); k++) {
 
                                             eachFileInfo single;
                                             page_INFO pageInfo;
+
+
                                             if(fileTypes.get(0).contains("image")){
                                                  pageInfo = new page_INFO(downloadUrls.get(k), colors.get(0), copies.get(0), fileTypes.get(0), pageSize.get(0), orientations.get(0));
                                                 db.push().setValue(pageInfo);
                                                 storeDb.push().setValue(pageInfo);
                                             }else{
-                                                if(fileNames.size() <= k){
-                                                    single = new eachFileInfo(downloadUrls.get(k), colors.get(k), copies.get(k), fileTypes.get(k), pageSize.get(k), orientations.get(k),"Unknown name",customPages.get(k));
+                                                if(fileSizes.get(k).length()>=4){
+                                                    fileSizes.set(k,fileSizes.get(k)+"MB");
                                                 }else {
-                                                    single = new eachFileInfo(downloadUrls.get(k), colors.get(k), copies.get(k), fileTypes.get(k), pageSize.get(k), orientations.get(k), fileNames.get(k), customPages.get(k));
+                                                    fileSizes.set(k,fileSizes.get(k)+"KB");
+                                                }
+                                                if(fileNames.size() <= k){
+                                                    single = new eachFileInfo(downloadUrls.get(k), colors.get(k), copies.get(k), fileTypes.get(k), pageSize.get(k), orientations.get(k),"Unknown File Name",customPages.get(k),fileSizes.get(k));
+                                                }else {
+                                                    single = new eachFileInfo(downloadUrls.get(k), colors.get(k), copies.get(k), fileTypes.get(k), pageSize.get(k), orientations.get(k), fileNames.get(k), customPages.get(k),fileSizes.get(k));
                                                 }
                                                 db.push().setValue(single);
                                                 storeDb.push().setValue(single);
@@ -1021,7 +1040,7 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
                                                 if (roundCornerProgressBar.getProgress() == 100) {
 //                                                  if(!ring.isPlaying()) {
                                                     Toast.makeText(Payments.this, "Starting audio", Toast.LENGTH_SHORT).show();
-                                                    ring.start();
+//                                                    ring.start();
                                                     launchRocket();
                                                 }
 
@@ -1068,11 +1087,95 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                ring.stop();
+//                ring.stop();
                 showNotification(orderKey);
             }
         },6000);
 
     }
+
+
+    ProgressDialog progress;
+
+    public void startPageCountApi(final Uri returnUri, final String contentType){
+        progress = new ProgressDialog(Payments.this);
+        progress.setTitle("Uploading");
+        progress.setMessage("Please wait...");
+        progress.show();
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                android.util.Log.d("STARTINGAPI","YES");
+                File f  = new File(returnUri.getPath());
+//                    Toast.makeText(MainActivity.this, "PATH "+FilePickerActivity.RESULT_FILE_PATH, Toast.LENGTH_SHORT).show();
+//                    File f= new File(data.getDataString());
+                String content_type  = contentType;
+//                    String content_type  = getMimeType(data.getData().toString());
+
+                String file_path = f.getAbsolutePath();
+                OkHttpClient client = new OkHttpClient();
+                RequestBody file_body = RequestBody.create(MediaType.parse(content_type),f);
+
+                RequestBody request_body = new MultipartBody.Builder()
+                        .setType(MultipartBody.FORM)
+                        .addFormDataPart("type",content_type)
+                        .addFormDataPart("uploaded_file",file_path.substring(file_path.lastIndexOf("/")+1), file_body)
+                        .build();
+
+                Request request = new Request.Builder()
+                        .url("https://www.sleefax.com/test/upload.php")
+                        .post(request_body)
+                        .build();
+
+                try {
+                    Response response = client.newCall(request).execute();
+
+                    if(!response.isSuccessful()){
+                        throw new IOException("Error : "+response);
+                    }
+
+                    progress.dismiss();
+                    sendjsonrequest();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+
+            }
+        });
+
+        t.start();
+
+    }
+
+    String url = "https://www.sleefax.com/test/page_count.php";
+    String count;
+    RequestQueue rq;
+
+    public void sendjsonrequest(){
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(com.android.volley.Request.Method.POST, url, null, new com.android.volley.Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try{
+                    count = response.getString("PageCount");
+                    android.util.Log.i("PageCount",count);
+//                    countText.setText(count);
+                    android.util.Log.d("COUNTIS ",String.valueOf(count));
+                    android.util.Log.d("RESPONSE ",String.valueOf(response));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new com.android.volley.Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                count = error.getMessage();
+
+            }
+        });
+    };
+
 
 }

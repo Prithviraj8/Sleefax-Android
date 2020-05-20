@@ -81,6 +81,7 @@ public class PdfInfo extends AppCompatActivity {
     ArrayList<String> customValues = new ArrayList<>();
     double numberOfPages[];
     ArrayList<String> fileNames = new ArrayList<>();
+    ArrayList<String> fileSizes = new ArrayList<>();
 
 
     EditText copiesTV,pageCount;
@@ -145,7 +146,7 @@ public class PdfInfo extends AppCompatActivity {
         isTester = extras.getBoolean("IsTester");
         newUser = extras.getBoolean("NewUser");
         fileNames = extras.getStringArrayList("FileNames");
-
+        fileSizes = extras.getStringArrayList("FileSizes");
 
         bothSides = new boolean[pdfURL.size()];
 
@@ -498,6 +499,7 @@ public class findShops extends AsyncTask<Void,Void,Integer>{
                         extras.putStringArrayList("PageSize", pageSize);
                         extras.putStringArrayList("Orientation", orientations);
                         extras.putStringArrayList("FileNames",fileNames);
+                        extras.putStringArrayList("FileSizes",fileSizes);
                         extras.putBoolean("NewUser",newUser);
 
                         extras.putStringArrayList("Custom",customPages);

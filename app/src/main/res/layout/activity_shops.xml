@@ -90,7 +90,8 @@
             android:layout_width="302dp"
             android:layout_height="147dp"
             android:layout_centerInParent="true"
-            android:background="#FFFFFF" />
+            android:background="#FFFFFF"
+            tools:visibility="gone" />
 
         <TextView
             android:id="@+id/ConfirmOrderTV"
@@ -103,7 +104,8 @@
             android:textAlignment="center"
             android:textColor="#000000"
             android:textSize="18sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            tools:visibility="gone" />
 
         <TextView
             android:id="@+id/paymentTV"
@@ -118,7 +120,8 @@
             android:padding="2dp"
             android:text=" Payment mode: Pay On Pickup. Other modes of payment coming soon."
             android:textColor="#252424"
-            android:textSize="12sp" />
+            android:textSize="12sp"
+            tools:visibility="gone" />
 
         <TextView
             android:id="@+id/OrderPrice"
@@ -133,7 +136,8 @@
             android:text="Amount"
             android:textAlignment="center"
             android:textColor="#2196F3"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            tools:visibility="gone" />
 
         <Button
             android:id="@+id/confirmBtn"
@@ -143,7 +147,8 @@
             android:layout_alignEnd="@+id/ConfirmOrderTV"
             android:layout_marginTop="11dp"
             android:layout_marginEnd="0dp"
-            android:text="Yes,sure." />
+            android:text="Yes,sure."
+            tools:visibility="gone" />
 
         <Button
             android:id="@+id/noBtn"
@@ -153,7 +158,8 @@
             android:layout_alignTop="@+id/confirmBtn"
             android:layout_marginStart="0dp"
             android:layout_marginTop="0dp"
-            android:text="No" />
+            android:text="No"
+            tools:visibility="gone" />
 
 
 
