@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:drawable="@drawable/shop_bg"/>
+    <item android:drawable="@drawable/shopblue"
+        android:width="44dp"
+        android:height="44dp"
+        android:top="22dp"
+        android:left="22dp"/>
+
+</layer-list>

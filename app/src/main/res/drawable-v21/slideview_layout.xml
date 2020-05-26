@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/bg"
+        android:drawable="@drawable/slideview_bg"
+        android:width="290dp"
+        android:height="60dp"/>
+    <item android:drawable="@drawable/slideview_circle_blue"
+        android:height="50dp"
+        android:width="50dp"
+        android:gravity="center_vertical"
+        android:left="220dp"
+        />
+   <item android:drawable="@drawable/slide_to_pay"
+       android:width="100dp"
+       android:height="25dp"
+       android:left="90dp"
+       android:top="17dp"/>
+
+
+
+
+
+</layer-list>

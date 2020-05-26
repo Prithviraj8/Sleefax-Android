@@ -6,6 +6,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.NotificationCompat;
 
+
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
@@ -95,6 +96,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.UUID;
 
+import ng.max.slideview.SlideView;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
@@ -176,7 +178,9 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
     ArrayList<String> downloadUrls = new ArrayList<>();
 
     long usernum;
-    Button paytm,otherPayments,payOnPickup,upi,gpay;
+    RelativeLayout paytm,otherPayments,payOnPickup,upi,gpay,phonepay;
+    RelativeLayout slidelayout;
+    int idOfPaymentMode;
     TextView amount,tv;
     ProgressBar mProgress;
     View view3,orderProcessAnime;
@@ -207,14 +211,16 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
         mScreenHeight = displaymetrics.heightPixels;
 
 
-        orderProcessAnime = findViewById(R.id.orderProcessAnime);
-        view3 = findViewById(R.id.view3);
+    //    orderProcessAnime = findViewById(R.id.orderProcessAnime);
+       // view3 = findViewById(R.id.view3);
         mProgress = (ProgressBar) findViewById(R.id.circularProgressbar);
         tv = findViewById(R.id.tv);
         back = findViewById(R.id.paymentBackBtn);
-        relativeLForUPI = findViewById(R.id.relativeLForUPI);
+      //  relativeLForUPI = findViewById(R.id.relativeLForUPI);
         gpay = findViewById(R.id.gpay);
         progressRL = findViewById(R.id.LoadingScreenRL);
+
+        phonepay = findViewById(R.id.phonepay_upi);
 
 
 
@@ -241,15 +247,15 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
         }
 
         paytm = findViewById(R.id.paytm);
-        upi = findViewById(R.id.upi);
+      //  upi = findViewById(R.id.upi);
         payOnPickup = findViewById(R.id.pickup);
-        otherPayments = findViewById(R.id.otherPayments);
+       //    otherPayments = findViewById(R.id.otherPayments);
         amount = findViewById(R.id.amount);
-        amount.setText(("₹"+price));
+        amount.setText(""+price);
 
         shortAnimationDuration = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
-        upi.setOnClickListener(new View.OnClickListener() {
+       /* upi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
@@ -263,17 +269,44 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
 
 
             }
-        });
+        });*/
+
+
 
 
         payOnPickup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                paymentMode = "Pay on Pickup";
-                setVisibilities();
+                idOfPaymentMode = 1;
+
+                slidelayout.setVisibility(View.VISIBLE);
+                Drawable drawable = getResources().getDrawable(R.drawable.outline);
+                payOnPickup.setBackground(drawable);
+                Drawable drawable1 = getResources().getDrawable(R.drawable.white_bg_layout);
+                phonepay.setBackground(drawable1);
+                paytm.setBackground(drawable1);
+                gpay.setBackground(drawable1);
+
+               // paymentMode = "Pay on Pickup";
+               // setVisibilities();
             }
         });
+       phonepay.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View v) {
+               idOfPaymentMode = 2;
+
+               slidelayout.setVisibility(View.VISIBLE);
+               Drawable drawable = getResources().getDrawable(R.drawable.outline);
+               phonepay.setBackground(drawable);
+               Drawable drawable1 = getResources().getDrawable(R.drawable.white_bg_layout);
+               payOnPickup.setBackground(drawable1);
+               paytm.setBackground(drawable1);
+               gpay.setBackground(drawable1);
+
+           }
+       });
 
 
         back.setOnClickListener(new View.OnClickListener() {
@@ -288,18 +321,71 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
         paytm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                paymentUPImode = "paytm";
-                payUsingUpi(String.valueOf(price),"7875210665"+"@paytm","Order","");
+                idOfPaymentMode = 3;
+
+                slidelayout.setVisibility(View.VISIBLE);
+                Drawable drawable = getResources().getDrawable(R.drawable.outline);
+                paytm.setBackground(drawable);
+                Drawable drawable1 = getResources().getDrawable(R.drawable.white_bg_layout);
+                payOnPickup.setBackground(drawable1);
+                phonepay.setBackground(drawable1);
+                gpay.setBackground(drawable1);
+               // paymentUPImode = "paytm";
+                //payUsingUpi(String.valueOf(price),"7875210665"+"@paytm","Order","");
             }
         });
 
         gpay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                paymentUPImode = "com.google.android.apps.nbu.paisa.user";
-                payUsingUpi(String.valueOf(price),"7875210665"+"@paytm","Order","");
+                idOfPaymentMode = 4;
+                slidelayout.setVisibility(View.VISIBLE);
+                Drawable drawable = getResources().getDrawable(R.drawable.outline);
+                gpay.setBackground(drawable);
+                Drawable drawable1 = getResources().getDrawable(R.drawable.white_bg_layout);
+                payOnPickup.setBackground(drawable1);
+                paytm.setBackground(drawable1);
+                phonepay.setBackground(drawable1);
+
+                // paymentUPImode = "com.google.android.apps.nbu.paisa.user";
+                //payUsingUpi(String.valueOf(price),"7875210665"+"@paytm","Order","");
             }
         });
+
+
+        slidelayout = findViewById(R.id.slideviewlayout);
+
+        SlideView slideView = findViewById(R.id.slideView);
+        slideView.setOnSlideCompleteListener(new SlideView.OnSlideCompleteListener() {
+            @Override
+            public void onSlideComplete(SlideView slideView) {
+
+                switch (idOfPaymentMode){
+                    case 1:
+                        paymentMode = "Pay on Pickup";
+                        setVisibilities();
+                        break;
+                    case 2:
+                        Toast.makeText(Payments.this, "PhonePay to be added sson..", Toast.LENGTH_SHORT).show();
+                        break;
+                    case 3:
+                        paymentUPImode = "paytm";
+                        payUsingUpi(String.valueOf(price),"7875210665"+"@paytm","Order","");
+                        break;
+                    case 4:
+                        paymentUPImode = "com.google.android.apps.nbu.paisa.user";
+                        payUsingUpi(String.valueOf(price),"7875210665"+"@paytm","Order","");
+                        break;
+
+
+
+                }
+
+            }
+        });
+
+
+
 
 //        Checkout.preload(getApplicationContext());
 //        otherPayments.setOnClickListener(new View.OnClickListener() {

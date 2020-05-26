@@ -9,7 +9,9 @@ import androidx.core.app.ActivityCompat;
 import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -30,16 +32,19 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.Continuation;
@@ -89,6 +94,10 @@ public class ShopsActivity extends AppCompatActivity {
 
 
 
+    RelativeLayout relativeLayoutUpper;
+
+
+
 
     View confirmView;
     TextView orderPrice,confirmOrder,paymentModeTV,tv;
@@ -102,6 +111,10 @@ public class ShopsActivity extends AppCompatActivity {
     long usernum;
     Intent data;
     Boolean isTester,newUser;
+
+    int mScreenHeight;
+
+    RelativeLayout proceedLayout;
 
     ArrayList<String> pdfURL = new ArrayList<>();
     ArrayList<String> fileTypes = new ArrayList<>();
@@ -133,6 +146,15 @@ public class ShopsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shops);
 
+
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+        mScreenHeight = displaymetrics.heightPixels;
+
+        relativeLayoutUpper = findViewById(R.id.view6);
+        if(relativeLayoutUpper.getHeight() == 0)
+            expandView(relativeLayoutUpper,0,mScreenHeight/4 );
+
 //        getCurrentUserInfo();
         ActivityCompat.requestPermissions(ShopsActivity.this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
 
@@ -162,6 +184,8 @@ public class ShopsActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
+
+        proceedLayout = findViewById(R.id.proceed_for_payment);
 
 
 
@@ -512,6 +536,7 @@ public class ShopsActivity extends AppCompatActivity {
                     final TextView Files = convertView.findViewById(R.id.Files);
                     final TextView Price = convertView.findViewById(R.id.Price);
                     final TextView Distance = convertView.findViewById(R.id.Distance);
+                    final RelativeLayout ShopLayout = convertView.findViewById(R.id.shop);
 //                    ImageButton button = convertView.findViewById(R.id.ShopsLVButton);
                     Files.setText("Files: "+urls.size());
 
@@ -542,10 +567,10 @@ public class ShopsActivity extends AppCompatActivity {
                         numbers.add(Long.parseLong(String.valueOf(map.get("num"))));
 
                         ////Getting prices of various types of print from db .///
-                        bwBothSidesPrice.add((int) Double.parseDouble(String.valueOf(map.get("blackAndwhitePrintOutBothSidesPerPage"))));
-                        colorBothSidesPrice.add((int) Double.parseDouble(String.valueOf(map.get("colorPrintOutBothSidesPerPage"))));
-                        bwPrice.add((int) Double.parseDouble(String.valueOf(map.get("blackAndwhitePrintOutSingleSidePerPage"))));
-                        colorPrice.add((int) Double.parseDouble(String.valueOf(map.get("colorPrintOutSingleSidePerPage"))));
+                      //  bwBothSidesPrice.add((int) Double.parseDouble(String.valueOf(map.get("blackAndwhitePrintOutBothSidesPerPage"))));
+                       // colorBothSidesPrice.add((int) Double.parseDouble(String.valueOf(map.get("colorPrintOutBothSidesPerPage"))));
+                       // bwPrice.add((int) Double.parseDouble(String.valueOf(map.get("blackAndwhitePrintOutSingleSidePerPage"))));
+                       // colorPrice.add((int) Double.parseDouble(String.valueOf(map.get("colorPrintOutSingleSidePerPage"))));
 
 
                         final Handler handler1 = new Handler();
@@ -586,12 +611,26 @@ public class ShopsActivity extends AppCompatActivity {
 
 
                         finalConvertView.setOnClickListener(new View.OnClickListener() {
+                            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
                             @Override
                             public void onClick(View v) {
                                 Log.d("VIEW ","Tapped");
+                                //Drawable drawable = getDrawable(R.drawable.outline);
+                                Drawable drawable = getDrawable(R.drawable.outline);
+                                ShopLayout.setBackground(drawable);
+                                proceedLayout.setVisibility(View.VISIBLE);
+
+                                proceedLayout.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+
+                                        processOrder(storeID.get(position),locations.get(position),shopLat.get(position),shopLong.get(position),shopNames.get(position),numbers.get(position),urls.size(),1);
+
+                                    }
+                                });
 
                                 ////// Haven't calculated price yet for selection of multiple orders//////
-                                    processOrder(storeID.get(position),locations.get(position),shopLat.get(position),shopLong.get(position),shopNames.get(position),numbers.get(position),urls.size(),1);
+                                 //   processOrder(storeID.get(position),locations.get(position),shopLat.get(position),shopLong.get(position),shopNames.get(position),numbers.get(position),urls.size(),1);
 
 
                             }
@@ -748,6 +787,33 @@ public class ShopsActivity extends AppCompatActivity {
 //            }
 //        }).start();
 //    }
+
+    public void expandView(final View v, int initialHt, int finalHt){
+
+
+
+
+        ValueAnimator slideAnimator = ValueAnimator.ofInt(initialHt,finalHt + 50).setDuration(1000);
+        slideAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                // get the value the interpolator is at
+                Integer value = (Integer) animation.getAnimatedValue();
+                // I'm going to set the layout's height 1:1 to the tick
+                v.getLayoutParams().height = value.intValue();
+                // force all layouts to see which ones are affected by
+                // this layouts height change
+                v.requestLayout();
+
+            }
+        });
+
+        AnimatorSet set = new AnimatorSet();
+        set.play(slideAnimator);
+        set.setInterpolator(new AccelerateDecelerateInterpolator());
+        set.start();
+
+    }
 
 
 

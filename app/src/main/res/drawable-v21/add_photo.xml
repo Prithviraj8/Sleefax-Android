@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:drawable="@drawable/bluebg_addfiles"
+        android:width="57dp"
+        android:height="57dp"/>
+    <item android:drawable="@drawable/camera"
+        android:height="23dp"
+        android:width="23dp"
+        android:gravity="center"/>
+
+</layer-list>

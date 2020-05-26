@@ -1,233 +1,263 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".Payments">
 
+
+
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <View
+        <RelativeLayout
             android:id="@+id/view"
             android:layout_width="match_parent"
-            android:layout_height="121dp"
+            android:layout_height="172dp"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="0dp"
-            android:background="@drawable/storesview" />
+            android:elevation="5dp"
+            android:background="@drawable/payments_upper_blue_layout">
 
-        <ImageView
-            android:id="@+id/imageView8"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="0dp"
-            app:srcCompat="@drawable/paymentimg" />
+            <ImageView
+                android:id="@+id/imageView8"
+                android:layout_width="142dp"
+                android:layout_height="28dp"
+                android:layout_marginTop="58dp"
+                android:layout_marginLeft="75dp"
+                app:srcCompat="@drawable/totalamount_text" />
 
-        <TextView
-            android:id="@+id/textView25"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/imageView8"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="0dp"
-            android:text="Payment"
-            android:textColor="#FFFFFF"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            <TextView
+                android:id="@+id/amount"
+                android:layout_width="64dp"
+                android:layout_height="35dp"
+                android:text=""
+                android:fontFamily="@font/poppins_semibold"
+                android:textStyle="bold"
+                android:textSize="25dp"
+                android:layout_marginTop="106dp"
+                android:textColor="#FFFFFF"
+                android:layout_marginLeft="104dp" />
 
-        <View
-            android:id="@+id/view17"
-            android:layout_width="350dp"
-            android:layout_height="125dp"
-            android:layout_below="@+id/view"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="60dp"
-            android:background="@drawable/paymentback" />
+            <ImageView
+                android:id="@+id/rupee_symbol"
+                android:layout_width="21dp"
+                android:layout_height="20dp"
+                android:layout_marginTop="114dp"
+                android:layout_marginLeft="75dp"
+                android:src="@drawable/rupee_symbol" />
 
-        <TextView
-            android:id="@+id/amount"
-            android:layout_width="99dp"
-            android:layout_height="20dp"
-            android:layout_alignTop="@+id/view17"
-            android:layout_alignBottom="@+id/view17"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="35dp"
-            android:layout_marginBottom="35dp"
-            android:padding="7dp"
-            android:text="200"
-            android:textAlignment="center"
-            android:textColor="#000000"
-            android:textSize="28sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/textView26"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/amount"
-            android:layout_marginStart="0dp"
-            android:layout_marginBottom="20dp"
-            android:layout_toEndOf="@+id/amount"
-            android:text="(with taxes)" />
-
-        <Button
-            android:id="@+id/pickup"
-            android:layout_width="320dp"
-            android:layout_height="60dp"
-            android:layout_below="@+id/view17"
-            android:layout_alignStart="@+id/upi"
-            android:layout_alignEnd="@+id/upi"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="30dp"
-            android:layout_marginEnd="0dp"
-            android:background="@drawable/status_views"
-            android:text="Pay on pickup"
-            android:textSize="18sp"
-            android:visibility="visible" />
-
-        <Button
-            android:id="@+id/upi"
-            android:layout_width="320dp"
-            android:layout_height="60dp"
-            android:layout_below="@id/pickup"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="40dp"
-            android:background="@drawable/status_views"
-            android:text="Pay with UPI "
-            android:textSize="18sp"
-            android:visibility="visible" />
-
-
-        <RelativeLayout
-            android:id="@+id/relativeLForUPI"
-            android:layout_width="match_parent"
-            android:layout_height="133dp"
-            android:layout_below="@+id/upi"
-            android:layout_marginTop="0dp"
-            android:visibility="gone">
-
-            <Button
-                android:id="@+id/paytm"
-                android:layout_width="144dp"
+            <ImageButton
+                android:id="@+id/paymentBackBtn"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:layout_centerVertical="false"
-                android:background="@drawable/status_views"
-                android:text="Paytm Upi"
-                android:visibility="visible" />
-
-            <Button
-                android:id="@+id/gpay"
-                android:layout_width="131dp"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="10dp"
-                android:background="@drawable/status_views"
-                android:text="GPay"
-                android:visibility="gone" />
+                android:layout_marginTop="61dp"
+                android:layout_marginLeft="23dp"
+                android:background="@android:color/transparent"
+                android:src="@drawable/icon_arrow_left"/>
         </RelativeLayout>
 
-        <Button
-            android:id="@+id/otherPayments"
-            android:layout_width="316dp"
-            android:layout_height="58dp"
-            android:layout_below="@+id/pickup"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="30dp"
-            android:background="#4A161414"
-            android:text="Other Payment Options"
-            android:visibility="gone" />
-
-        <ImageView
-            android:id="@+id/imageView15"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignStart="@+id/pickup"
-            android:layout_alignTop="@+id/pickup"
-            android:layout_alignBottom="@+id/pickup"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
-            app:srcCompat="@drawable/pickupimg" />
-
-        <ImageView
-            android:id="@+id/imageView13"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignStart="@+id/upi"
-            android:layout_alignTop="@+id/upi"
-            android:layout_alignBottom="@+id/upi"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="0dp"
-            android:layout_marginBottom="0dp"
-            android:background="#FFFFFF"
-            app:srcCompat="@drawable/upiimg" />
-
-        <View
-            android:id="@+id/view3"
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
+            android:layout_below="@+id/view">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginTop="-10dp"
+                android:orientation="vertical">
+
+                <RelativeLayout
+
+                    android:layout_width="350dp"
+                    android:layout_height="87dp"
+                    android:elevation="5dp"
+                    android:id="@+id/pickup"
+                    android:layout_marginTop="30dp"
+                    android:background="@drawable/white_bg_layout">
+
+                    <ImageView
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:src="@drawable/wallet_image"
+                        android:layout_centerVertical="true"
+                        android:id="@+id/wallet_image"
+                        android:layout_marginLeft="29dp"/>
+
+                    <TextView
+                        android:id="@+id/pickup_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="95dp"
+                        android:layout_centerVertical="true"
+                        android:textSize="18sp"
+                        android:background="@drawable/pay_on_pickup"
+                        android:visibility="visible" />
+                    <Button
+                        android:layout_width="10dp"
+                        android:layout_height="22dp"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="277dp"
+                        android:background="@drawable/icon_arrow_right"
+                        />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/phonepay_upi"
+                    android:layout_width="350dp"
+                    android:layout_height="87dp"
+                    android:layout_marginTop="20dp"
+                    android:elevation="5dp"
+                    android:background="@drawable/white_bg_layout">
+
+                    <ImageView
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:src="@drawable/phonepe_logo"
+                        android:layout_centerVertical="true"
+                        android:id="@+id/phonpe_logo"
+                        android:layout_marginLeft="35dp"/>
+                    <TextView
+                        android:id="@+id/phonepay_upi_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="99dp"
+                        android:layout_centerVertical="true"
+                        android:textSize="18sp"
+                        android:background="@drawable/phonepay_upi"
+                        android:visibility="visible" />
+                    <Button
+                        android:layout_width="10dp"
+                        android:layout_height="22dp"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="280dp"
+                        android:background="@drawable/icon_arrow_right"
+                        />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/paytm"
+                    android:layout_width="350dp"
+                    android:layout_height="87dp"
+                    android:layout_marginTop="20dp"
+                    android:elevation="5dp"
+                    android:background="@drawable/white_bg_layout">
+
+                    <ImageView
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:src="@drawable/paytm_logo"
+                        android:layout_centerVertical="true"
+                        android:id="@+id/paytm_logo"
+                        android:layout_marginLeft="35dp"/>
+                    <TextView
+                        android:id="@+id/paytm_upi_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="99dp"
+                        android:layout_centerVertical="true"
+                        android:textSize="18sp"
+                        android:background="@drawable/paytm_upi"
+                        android:visibility="visible" />
+                    <Button
+                        android:layout_width="10dp"
+                        android:layout_height="22dp"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="280dp"
+                        android:background="@drawable/icon_arrow_right"
+                        />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/gpay"
+                    android:layout_width="350dp"
+                    android:layout_height="87dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="100dp"
+                    android:elevation="5dp"
+                    android:background="@drawable/white_bg_layout">
+
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@id/google_pay_logo"
+                        android:layout_marginLeft="35dp"
+                        android:layout_centerVertical="true">
+
+                        <ImageView
+                            android:layout_width="35dp"
+                            android:layout_height="35dp"
+                            android:src="@drawable/circlular_view"
+                            android:layout_centerVertical="true"
+                            android:layout_centerHorizontal="true" />
+
+                        <ImageView
+                            android:layout_width="17dp"
+                            android:layout_height="17dp"
+                            android:src="@drawable/google_pay_logo"
+                            android:layout_centerVertical="true"
+                            android:layout_centerHorizontal="true"
+                            android:id="@+id/google_pay_logo"
+                            android:layout_marginLeft="20dp"/>
+                    </RelativeLayout>
+
+                    <TextView
+                        android:id="@+id/gpay_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="99dp"
+                        android:layout_marginTop="30dp"
+                        android:textSize="18sp"
+                        android:background="@drawable/gpay_upi"
+                        android:visibility="visible" />
+                    <Button
+                        android:layout_width="10dp"
+                        android:layout_height="22dp"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="280dp"
+                        android:background="@drawable/icon_arrow_right"
+                        />
+
+
+                </RelativeLayout>
+            </LinearLayout>
+
+        </ScrollView>
+        <RelativeLayout
+            android:layout_width="290dp"
+            android:layout_height="60dp"
             android:layout_alignParentBottom="true"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="0dp"
-            android:layout_marginEnd="0dp"
-            android:layout_marginBottom="0dp"
-            android:background="#FFFFFF"
-            android:visibility="gone" />
+            android:layout_centerHorizontal="true"
+            android:visibility="gone"
+            android:id="@+id/slideviewlayout"
+            android:background="@drawable/slideview_layout"
+            android:layout_marginBottom="20dp">
 
-        <View
-            android:id="@+id/orderProcessAnime"
-            android:layout_width="match_parent"
-            android:layout_height="720dp"
-            android:layout_alignTop="@+id/imageView4"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="0dp"
-            android:layout_marginBottom="0dp"
-            android:background="@drawable/circular"
-            android:visibility="gone" />
+            <ng.max.slideview.SlideView
+                android:id="@+id/slideView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:sv_animateSlideText="true"
+                app:sv_reverseSlide="false"
+                app:sv_buttonBackgroundColor="@android:color/transparent"
+                app:sv_buttonImage="@drawable/slideview_button"
+                app:sv_slideBackgroundColor="@android:color/transparent"
+                app:sv_slideTextColor="#FFF"
+                android:elevation="10dp"
+                />
+        </RelativeLayout>
 
-        <ProgressBar
-            android:id="@+id/circularProgressbar"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="350dp"
-            android:layout_height="350dp"
-            android:layout_centerInParent="true"
-            android:indeterminate="false"
-            android:max="100"
-            android:progress="50"
-            android:progressDrawable="@drawable/circular"
-            android:secondaryProgress="100"
-            android:visibility="gone" />
 
-        <!--    <ImageView-->
-        <!--        android:layout_width="100dp"-->
-        <!--        android:layout_height="100dp"-->
-        <!--        android:background="@drawable/whitecircle"-->
-        <!--        android:layout_centerInParent="true"/>-->
 
-        <ImageButton
-            android:id="@+id/paymentBackBtn"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="5dp"
-            android:background="#00FFFFFF"
-            app:srcCompat="@drawable/w" />
+
+
+
 
         <RelativeLayout
             android:id="@+id/LoadingScreenRL"
@@ -242,7 +272,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:fontFamily="@font/poppins_semibold"
                 android:text="Placing order."
                 android:textColor="#227093"
                 android:textSize="26sp"
@@ -277,12 +306,11 @@
                     android:id="@+id/rocket"
                     android:layout_width="57dp"
                     android:layout_height="60dp"
-                    android:layout_gravity="bottom|center"
-                    app:srcCompat="@drawable/rocket" />
+                    android:layout_gravity="bottom|center" />
 
             </FrameLayout>
         </RelativeLayout>
 
     </RelativeLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>
