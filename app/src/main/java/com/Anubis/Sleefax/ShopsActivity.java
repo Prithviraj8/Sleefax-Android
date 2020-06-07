@@ -125,7 +125,7 @@ public class ShopsActivity extends AppCompatActivity {
     boolean bothSides[];
     ArrayList<String> customPages = new ArrayList<>();
     ArrayList<String> customValues = new ArrayList<>();
-    double numberOfPages[];
+    ArrayList<Integer> numberOfPages = new ArrayList<>();
     ArrayList<String> fileNames = new ArrayList<>();
     ArrayList<String> fileSizes = new ArrayList<>();
 
@@ -212,7 +212,7 @@ public class ShopsActivity extends AppCompatActivity {
         data = extras.getParcelable("Data");
         bothSides = extras.getBooleanArray("BothSides");
         customPages = extras.getStringArrayList("Custom");
-        numberOfPages = extras.getDoubleArray("Pages");
+        numberOfPages = extras.getIntegerArrayList("Pages");
         newUser = extras.getBoolean("NewUser");
         customValues = extras.getStringArrayList("CustomValue");
         fileNames = extras.getStringArrayList("FileNames");
@@ -246,7 +246,7 @@ public class ShopsActivity extends AppCompatActivity {
 
     double finalPrice = 0.0;
     public void calculatePrice(){
-        ArrayList<Double> cnt = new ArrayList<>();
+        ArrayList<Integer> cnt = new ArrayList<>();
 
         for(int i =0;i<urls.size();i++) {
 
@@ -274,19 +274,21 @@ public class ShopsActivity extends AppCompatActivity {
                 Log.d("CV ",String.valueOf(customValues.get(i)));
 
                 if (bothSides[i]) {
-                    cnt.add(Double.parseDouble(customValues.get(i)) / 2);
+                    cnt.add((int) (Double.parseDouble(customValues.get(i)) / 2));
                 } else {
-                    cnt.add(Double.parseDouble(customValues.get(i)));
+                    cnt.add((int) Double.parseDouble(customValues.get(i)));
                 }
 
             }
 
             if(cnt.size()>0) {
                 if (cnt.get(i) > 0) {
-                    numberOfPages[i] = (cnt.get(i));
+//                    numberOfPages[i] = (cnt.get(i));
+                    numberOfPages.add(i,cnt.get(i));
                 } else {
                     if (bothSides[i]) {
-                        numberOfPages[i] = numberOfPages[i] / 2;
+//                        numberOfPages[i] = numberOfPages[i] / 2;
+                        numberOfPages.add(i,numberOfPages.get(i)/2);
                     }
                 }
             }
@@ -298,15 +300,15 @@ public class ShopsActivity extends AppCompatActivity {
                         Log.d("PRICE FOR PDF", String.valueOf(bothSides));
 
                         if (bothSides[i]) {
-                            price.add(i,((5 * urls.size()) * numberOfPages[i] * copies.get(i)));
+                            price.add(i, (double) ((5 * urls.size()) * numberOfPages.get(i) * copies.get(i)));
                         } else {
-                            price.add(i,((5 * urls.size()) * numberOfPages[i] * copies.get(i)));
+                            price.add(i, (double) ((5 * urls.size()) * numberOfPages.get(i) * copies.get(i)));
                         }
                     } else {
                         if (bothSides[i]) {
-                            price.add(i,((urls.size()) * numberOfPages[i] * copies.get(i)));
+                            price.add(i, (double) ((urls.size()) * numberOfPages.get(i) * copies.get(i)));
                         } else {
-                            price.add(i,((urls.size()) * numberOfPages[i] * copies.get(i)));
+                            price.add(i, (double) ((urls.size()) * numberOfPages.get(i) * copies.get(i)));
                         }
 
                     }
@@ -560,17 +562,17 @@ public class ShopsActivity extends AppCompatActivity {
                         Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
 
                         ///Getting shop details///
-                        shopNames.add(String.valueOf(map.get("ShopName")));
-                        locations.add(String.valueOf(map.get("area")));
-                        shopLat.add(Double.parseDouble(String.valueOf(map.get("latitude"))));
-                        shopLong.add(Double.parseDouble(String.valueOf(map.get("longitude"))));
-                        numbers.add(Long.parseLong(String.valueOf(map.get("num"))));
+                        shopNames.add(String.valueOf(map.get("ShopName") != null ? map.get("ShopName") : "Shop Name NA"));
+                        locations.add(String.valueOf(map.get("area") != null ? map.get("area") : "Area NA"));
+                        shopLat.add(Double.parseDouble(String.valueOf(map.get("latitude") != null ?  map.get("latitude") : 0.00)));
+                        shopLong.add(Double.parseDouble(String.valueOf(map.get("longitude") != null ? map.get("longitude"): 0.00)));
+                        numbers.add(Long.parseLong(String.valueOf(map.get("shopNo") != null ? map.get("shopNo"): 000)));
 
                         ////Getting prices of various types of print from db .///
-                      //  bwBothSidesPrice.add((int) Double.parseDouble(String.valueOf(map.get("blackAndwhitePrintOutBothSidesPerPage"))));
-                       // colorBothSidesPrice.add((int) Double.parseDouble(String.valueOf(map.get("colorPrintOutBothSidesPerPage"))));
-                       // bwPrice.add((int) Double.parseDouble(String.valueOf(map.get("blackAndwhitePrintOutSingleSidePerPage"))));
-                       // colorPrice.add((int) Double.parseDouble(String.valueOf(map.get("colorPrintOutSingleSidePerPage"))));
+                        bwBothSidesPrice.add((int) Double.parseDouble(String.valueOf(map.get("blackAndwhitePrintOutBothSidesPerPage") != null ? map.get("blackAndwhitePrintOutBothSidesPerPage"): 0)));
+                        colorBothSidesPrice.add((int) Double.parseDouble(String.valueOf(map.get("colorPrintOutBothSidesPerPage") != null ? map.get("colorPrintOutBothSidesPerPage") : 0)));
+                        bwPrice.add((int) Double.parseDouble(String.valueOf(map.get("blackAndwhitePrintOutSingleSidePerPage") != null ? map.get("blackAndwhitePrintOutSingleSidePerPage") : 0)));
+                        colorPrice.add((int) Double.parseDouble(String.valueOf(map.get("colorPrintOutSingleSidePerPage") != null ? map.get("colorPrintOutSingleSidePerPage") : 0)));
 
 
                         final Handler handler1 = new Handler();
@@ -710,7 +712,7 @@ public class ShopsActivity extends AppCompatActivity {
         extras.putStringArrayList("FileType", fileTypes);
         extras.putStringArrayList("PageSize", pageSize);
         extras.putStringArrayList("Orientation", orientations);
-        extras.putDoubleArray("Pages", numberOfPages);
+        extras.putIntegerArrayList("Pages", numberOfPages);
         extras.putStringArrayList("FileNames",fileNames);
         extras.putStringArrayList("FileSizes",fileSizes);
 

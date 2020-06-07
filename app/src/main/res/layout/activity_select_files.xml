@@ -119,14 +119,15 @@
             android:layout_alignParentTop="true"
             android:layout_marginTop="0dp"
             android:background="@drawable/roundedview"
-            android:elevation="10dp">
+            android:elevation="10dp"
+            android:visibility="visible">
 
-<!--            <View-->
-<!--                android:id="@+id/liveordersTopView"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="136dp"-->
-<!--                android:layout_centerInParent="false"-->
-<!--                android:background="@drawable/roundedview" />-->
+            <!--            <View-->
+            <!--                android:id="@+id/liveordersTopView"-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="136dp"-->
+            <!--                android:layout_centerInParent="false"-->
+            <!--                android:background="@drawable/roundedview" />-->
 
             <include
                 android:id="@+id/navaction"
@@ -212,14 +213,13 @@
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 
-
         <RelativeLayout
             android:id="@+id/AddfileTVRL"
             android:layout_width="match_parent"
             android:layout_height="170dp"
             android:layout_alignParentTop="true"
             android:layout_marginTop="0dp"
-            android:background="@drawable/addfiletvrlroundview"
+            android:background="@drawable/liveorderwhiteview2"
             android:visibility="gone">
 
             <TextView

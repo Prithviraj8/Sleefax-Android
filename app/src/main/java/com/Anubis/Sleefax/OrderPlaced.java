@@ -133,7 +133,7 @@ public class OrderPlaced extends AppCompatActivity {
     boolean bothSides[];
     ArrayList<String> customPages = new ArrayList<>();
     ArrayList<String> customValues = new ArrayList<>();
-    double numberOfPages[];
+    ArrayList<Integer> numberOfPages = new ArrayList<>();
     ArrayList<String> fileNames = new ArrayList<>();
 
 
@@ -269,7 +269,7 @@ public class OrderPlaced extends AppCompatActivity {
         colors = extras.getStringArrayList("ColorType");
         bothSides = extras.getBooleanArray("BothSides");
         customPages = extras.getStringArrayList("Custom");
-        numberOfPages = extras.getDoubleArray("Pages");
+        numberOfPages = extras.getIntegerArrayList("Pages");
         fileNames = extras.getStringArrayList("FileNames");
 
 //        fileType = extras.getString("FileType");

@@ -106,7 +106,7 @@ public class Select extends AppCompatActivity {
     String userId;
     SwipeRefreshLayout pullToRefresh;
 
-    int shortAnimationDuration;
+    int shortAnimationDuration,liveOrderRLInitHT;
 
     Button orders,orderPickBtn;
     ImageButton selectFilesBtn,more ,setting,sideMenu,selectPhotos,selectAttachment;
@@ -125,7 +125,7 @@ public class Select extends AppCompatActivity {
     boolean network,isTester,newUser;
     PaytmPGService Service = PaytmPGService.getProductionService();
 
-    RelativeLayout contactsRl,addfilePage,addfileTVRL,pickedUpOrderView,CurrentOrderRowRL;
+    RelativeLayout contactsRl,addfilePage,addfileTVRL,pickedUpOrderView,CurrentOrderRowRL,liveOrderRL;
 
     ////// Buttons and items of contacts page /////
     Button num1,num2;
@@ -180,6 +180,12 @@ public class Select extends AppCompatActivity {
         contactsRl = findViewById(R.id.contactsRelativeL);
         addfilePage = findViewById(R.id.addfilesRL);
         back = findViewById(R.id.contactspageback);
+
+
+        //Live Orders Top Relative Layour
+        liveOrderRL = findViewById(R.id.LiveOrderTopRL);
+        liveOrderRLInitHT = liveOrderRL.getLayoutParams().height;
+
 
         notificationManager = NotificationManagerCompat.from(this);
 
@@ -272,8 +278,6 @@ public class Select extends AppCompatActivity {
             public void onClick(View view) {
                 selectFiles(view);
 
-
-
                 addfileTVRL.setVisibility(View.VISIBLE);
                 blurrView.setVisibility(View.VISIBLE);
 
@@ -310,7 +314,9 @@ public class Select extends AppCompatActivity {
             }
         });
 
+        selectAttachment.setOnClickListener(Listener);
 
+        selectPhotos.setOnClickListener(Listener);
 
 
         ////setting size of add file view to full page if cnt == 0  ////////
@@ -370,6 +376,69 @@ public class Select extends AppCompatActivity {
         }
     };
 
+
+
+    //     Create an anonymous implementation of OnClickListener
+    private View.OnClickListener Listener = new View.OnClickListener() {
+        @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+        public void onClick(View v) {
+            // do something when the button is clicked
+            Log.d("GETTING", "ORDERS");
+
+            if (!network) {
+                Toast.makeText(Select.this, "Please check your internet connection.", Toast.LENGTH_LONG).show();
+            } else {
+                if(v == findViewById(R.id.YourOrders)) {
+                    mProgressDialog = new ProgressDialog(Select.this);
+                    // Set progressdialog title
+                    mProgressDialog.setTitle("Retreiving Orders");
+                    // Set progressdialog message
+                    mProgressDialog.setMessage("Loading...");
+                    mProgressDialog.setIndeterminate(false);
+                    // Show progressdialog
+                    mProgressDialog.show();
+                    Context context = getApplicationContext();
+//                CharSequence text = "No order history to show.";
+                    CharSequence text = "Order Cnt" + orderCnt;
+                    int duration = Toast.LENGTH_SHORT;
+                    Toast toast = Toast.makeText(context, text, duration);
+
+                    Intent orderHistoryIntent = new Intent(Select.this, YourOrders.class);
+                    startActivity(orderHistoryIntent);
+                    finish();
+                    mProgressDialog.dismiss();
+                }else if(v == findViewById(R.id.SelectFile)){
+                    Log.d("SELECTINGPHOTOS","TRUE");
+                    Intent intent = new Intent(Select.this,Pop.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putBoolean("IsTester",isTester);
+                    bundle.putBoolean("NewUser",newUser);
+                    bundle.putBoolean("File",true);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+
+
+                }else if(v == findViewById(R.id.SelectImage)){
+                    Log.d("SELECTINGPHOTOS","FALSE");
+
+                    Intent intent = new Intent(Select.this,Pop.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putBoolean("IsTester",isTester);
+                    bundle.putBoolean("NewUser",newUser);
+                    bundle.putBoolean("File",false);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+
+
+                }
+
+            }
+
+
+        }
+    };
+
+
     public static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 123;
 
     public boolean checkPermissionREAD_EXTERNAL_STORAGE(
@@ -426,9 +495,10 @@ public class Select extends AppCompatActivity {
         Bundle bundle = new Bundle();
         bundle.putBoolean("IsTester",isTester);
         bundle.putBoolean("NewUser",newUser);
-        pop.putExtras(bundle);
-        startActivity(pop);
+//        pop.putExtras(bundle);
+//        startActivity(pop);
 
+        collapseView(liveOrderRL,liveOrderRL.getLayoutParams().height,0);
 
         if(!isTop1) {
             selectFilesBtn.setBackgroundResource(R.drawable.addfilebtnshadow2);
@@ -472,6 +542,7 @@ public class Select extends AppCompatActivity {
                     collapseView(addfileTVRL,mScreenHeight/4,0);
                     blurrView.setVisibility(View.GONE);
 
+                    expandView(liveOrderRL,0,liveOrderRLInitHT);
                 }
             }
 
@@ -779,56 +850,6 @@ public class Select extends AppCompatActivity {
     }
 
 
-    //     Create an anonymous implementation of OnClickListener
-    private View.OnClickListener Listener = new View.OnClickListener() {
-        @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-        public void onClick(View v) {
-            // do something when the button is clicked
-            Log.d("GETTING", "ORDERS");
-
-            if (!network) {
-                Toast.makeText(Select.this, "Please check your internet connection.", Toast.LENGTH_LONG).show();
-            } else {
-                if(v == findViewById(R.id.YourOrders)) {
-                    mProgressDialog = new ProgressDialog(Select.this);
-                    // Set progressdialog title
-                    mProgressDialog.setTitle("Retreiving Orders");
-                    // Set progressdialog message
-                    mProgressDialog.setMessage("Loading...");
-                    mProgressDialog.setIndeterminate(false);
-                    // Show progressdialog
-                    mProgressDialog.show();
-                    Context context = getApplicationContext();
-//                CharSequence text = "No order history to show.";
-                    CharSequence text = "Order Cnt" + orderCnt;
-                    int duration = Toast.LENGTH_SHORT;
-                    Toast toast = Toast.makeText(context, text, duration);
-
-                    Intent orderHistoryIntent = new Intent(Select.this, YourOrders.class);
-                    startActivity(orderHistoryIntent);
-                    finish();
-                    mProgressDialog.dismiss();
-                }else if(v == findViewById(R.id.selectphotos)){
-                    Intent intent = new Intent(Select.this,Pop.class);
-                    startActivity(intent);
-
-                }else if(v == findViewById(R.id.selectattachment)){
-                    Intent intent = new Intent(Select.this,Pop.class);
-                    startActivity(intent);
-
-
-                }
-
-
-
-
-
-            }
-
-
-        }
-    };
-
 
 //    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
 //    public void uploadFile(ArrayList uri){
@@ -1013,18 +1034,18 @@ public class Select extends AppCompatActivity {
                     @Override
                     public void run() {
 
-                        Collections.reverse(orderkey);
-                        Collections.reverse(shopKey);
-
-                        Collections.reverse(files);
-                        Collections.reverse(locations);
-                        Collections.reverse(shopNames);
-                        Collections.reverse(shopLat);
-                        Collections.reverse(shopLong);
-                        Collections.reverse(paymentModes);
-                        Collections.reverse(price);
-                        Collections.reverse(orderDate);
-                        Collections.reverse(orderStatus);
+//                        Collections.reverse(orderkey);
+//                        Collections.reverse(shopKey);
+//
+//                        Collections.reverse(files);
+//                        Collections.reverse(locations);
+//                        Collections.reverse(shopNames);
+//                        Collections.reverse(shopLat);
+//                        Collections.reverse(shopLong);
+//                        Collections.reverse(paymentModes);
+//                        Collections.reverse(price);
+//                        Collections.reverse(orderDate);
+//                        Collections.reverse(orderStatus);
 
 
                         currentOrderLV();
@@ -1411,6 +1432,7 @@ public class Select extends AppCompatActivity {
                             currentOrderDateTime.setText(orderDate.get(position));
                             currentOrderStatus.setText(orderStatus.get(position));
 
+
 //                            currentOrderID.setText("ID " + orderkey.get(orderkey.size()-(position+1)));
 //                            currentOrderShopLoc.setText(locations.get(locations.size()-(position+1)));
 //                            currentOrderShopName.setText(shopNames.get(shopNames.size()-(1+position)));
@@ -1491,6 +1513,7 @@ public class Select extends AppCompatActivity {
                         if (position < locations.size() && position < shopNames.size() && position < orderStatus.size() && position < price.size() && position < orderDate.size() && position < orderkey.size()) {
                             moreDetails(shopKey.get(position), orderkey.get(position), shopNames.get(position), shopLat.get(position), shopLong.get(position), locations.get(position), files.get(position), orderStatus.get(position), price.get(position));
                         }
+
                     }
                 });
 

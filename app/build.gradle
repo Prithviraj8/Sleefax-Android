@@ -5,12 +5,16 @@ android {
     buildToolsVersion '28.0.3'
     defaultConfig {
         applicationId "com.Anubis.Sleefax"
-        minSdkVersion 19
+        minSdkVersion 24
         targetSdkVersion 28
         multiDexEnabled true
         versionCode 7
         versionName "1.0"
+
+        renderscriptTargetApi 19
+        renderscriptSupportModeEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
     }
 
 //    viewBinding.enabled = true
@@ -83,7 +87,33 @@ dependencies {
         transitive = true;
     }
     implementation 'com.shreyaspatil:EasyUpiPayment:2.0'
-    implementation files('libs/org.apache.poi.xwpf.converter.pdf-1.0.0.jar')
+
+    //Apache POI dependencies
+//    implementation files('libs/org.apache.poi.xwpf.converter.pdf-1.0.0.jar')
+    implementation files('libs/org.apache.poi.xwpf.converter.core-gae-1.0.6.jar')
+    implementation files('libs/org.apache.poi.xwpf.converter.xhtml-gae-1.0.6.jar')
+    implementation files('libs/sfntly-1.0.0.jar')
+    implementation files('libs/xml-apis-1.0.b2.jar')
+    implementation files('libs/xmlbeans-2.3.0.jar')
+    implementation files('libs/poi-ooxml-3.10-FINAL.jar')
+    implementation files('libs/poi-3.10-FINAL.jar')
+    implementation files('libs/ooxml-schemas-1.1.jar')
+    implementation files('libs/itext-gae-4.2.0-1.jar')
+    implementation files('libs/icu4j-4.8.1.1.jar')
+    implementation files('libs/dom4j-1.6.1.jar')
+    implementation files('libs/appengine-awt-1.0.0.jar')
+    implementation files('libs/commons-codec-1.5.jar')
+    implementation files('libs/stax-api-1.0.1.jar')
+//    implementation files('libs/poi-3.8-beta3.jar')
+    implementation files('libs/poi-scratchpad-3.8-beta3.jar')
+    implementation files('libs/avalon-framework-4.1.3.jar')
+    implementation files('libs/commons-logging-1.1.jar')
+    implementation files('libs/log4j-1.2.13.jar')
+    implementation files('libs/logkit-1.0.1.jar')
+    implementation files('libs/servlet-api-2.3.jar')
+
+
+
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'com.razorpay:checkout:1.5.13'
@@ -94,6 +124,8 @@ dependencies {
     //Api connecting
     implementation 'com.android.volley:volley:1.1.1'
 
+
+    implementation 'com.github.MAXDeliveryNG:slideview:1.1.0'
 
 }
 apply plugin: 'com.google.gms.google-services'

@@ -186,7 +186,7 @@
                     <RelativeLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:id="@id/google_pay_logo"
+                        android:id="@+id/google_pay_logo"
                         android:layout_marginLeft="35dp"
                         android:layout_centerVertical="true">
 
@@ -203,7 +203,6 @@
                             android:src="@drawable/google_pay_logo"
                             android:layout_centerVertical="true"
                             android:layout_centerHorizontal="true"
-                            android:id="@+id/google_pay_logo"
                             android:layout_marginLeft="20dp"/>
                     </RelativeLayout>
 

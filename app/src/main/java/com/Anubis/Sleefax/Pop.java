@@ -11,11 +11,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.OpenableColumns;
 import android.provider.Settings;
+import android.text.method.ScrollingMovementMethod;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
@@ -33,10 +35,21 @@ import com.github.barteksc.pdfviewer.listener.OnLoadCompleteListener;
 import com.github.barteksc.pdfviewer.listener.OnPageErrorListener;
 import com.github.barteksc.pdfviewer.scroll.DefaultScrollHandle;
 
+import org.apache.poi.hslf.HSLFSlideShow;
+import org.apache.poi.hslf.model.Slide;
+import org.apache.poi.hslf.model.TextRun;
+import org.apache.poi.hslf.usermodel.SlideShow;
+import org.apache.poi.hwpf.HWPFDocument;
+import org.apache.poi.hwpf.extractor.WordExtractor;
+import org.apache.poi.xslf.extractor.XSLFPowerPointExtractor;
+import org.apache.poi.xslf.usermodel.XMLSlideShow;
+import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -52,17 +65,32 @@ import static com.aspose.words.LoadFormat.DOC;
 
 public class Pop extends AppCompatActivity {
 
+    static {
+        System.setProperty(
+                "org.apache.poi.javax.xml.stream.XMLInputFactory",
+                "com.fasterxml.aalto.stax.InputFactoryImpl"
+        );
+        System.setProperty(
+                "org.apache.poi.javax.xml.stream.XMLOutputFactory",
+                "com.fasterxml.aalto.stax.OutputFactoryImpl"
+        );
+        System.setProperty(
+                "org.apache.poi.javax.xml.stream.XMLEventFactory",
+                "com.fasterxml.aalto.stax.EventFactoryImpl"
+        );
+    }
+
+
     private static final String GOOGLE_PHOTOS_PACKAGE_NAME = "com.google.android.apps.photos";
-
     int shortAnimationDuration,cnt = 0;
-    double[] numberOfPages;
+//    double[] numberOfPages;
+    ArrayList<Integer> numberOfPages = new ArrayList<>();
 
-    Boolean isTester,newUser;
+    Boolean isTester,newUser,selectingFile;
     PDFView pdfView;
     Button nextActivity,dismissViewPDF,selectPhotos,selectAttachment;
     View bottomNavView;
     RelativeLayout pdfViewRL;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +119,23 @@ public class Pop extends AppCompatActivity {
         Bundle bundle = intent.getExtras();
         isTester = bundle.getBoolean("IsTester");
         newUser = bundle.getBoolean("NewUser");
+        selectingFile = bundle.getBoolean("File");
+        Toast.makeText(this, "Selecting File "+ selectingFile, Toast.LENGTH_LONG).show();
+
+        if(selectingFile){
+            Intent fileIntent = new Intent();
+            fileIntent.setType("application/*");
+            fileIntent.setAction(Intent.ACTION_OPEN_DOCUMENT);
+            fileIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+            startActivityForResult(Intent.createChooser(fileIntent, "Select files"), 1);
+        }else{
+            Intent imageIntent = new Intent();
+            imageIntent.setType("image/*");
+            imageIntent.setAction(Intent.ACTION_GET_CONTENT);
+            imageIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+            startActivityForResult(Intent.createChooser(imageIntent, "Select Images"), 1);
+
+        }
 
         selectPhotos.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -216,18 +261,56 @@ public class Pop extends AppCompatActivity {
                 if (mimeType.contains("application")) {
                     mimeTypes.add(mimeType);
 
-
+                    uri.add(returnUri);
+//                    numberOfPages = new double[uri.size()];
                     if(mimeType.equals("application/pdf")){
-                        uri.add(returnUri);
-                        numberOfPages = new double[uri.size()];
 
                         ViewPDF(uri);
 
                     }else {
-                        uri.add(returnUri);
-//                        ViewDoc(uri);
+//                        uri.add(returnUri);
+                        try {
+                            FileInputStream inputStream = (FileInputStream) getContentResolver().openInputStream(data.getData());
 
-                        uploadFile(uri);
+                            if(fileName.contains("docx")) {
+
+                                XWPFDocument document;
+                                assert inputStream != null;
+                                document = new XWPFDocument(inputStream);
+                                XWPFWordExtractor extractor = new XWPFWordExtractor(document);
+                                int pages = document.getProperties().getExtendedProperties().getUnderlyingProperties().getPages();
+                                numberOfPages.add(pages);
+                                Toast.makeText(this, "NOPOF DOCX " + pages, Toast.LENGTH_SHORT).show();
+
+                            }else if(fileName.contains("doc")){
+                                HWPFDocument document = new HWPFDocument(inputStream);
+                                int pages = document.getSummaryInformation().getPageCount();
+                                numberOfPages.add(pages);
+                                Toast.makeText(this, "NOPOF DOC " + pages, Toast.LENGTH_SHORT).show();
+                            }else if(fileName.contains("ppt")){
+
+                                HSLFSlideShow show = new HSLFSlideShow(inputStream);
+                                SlideShow ss = new SlideShow(show);
+                                Slide[] slides = ss.getSlides();
+
+                                int slide_count = ss.getSlides().length;
+                                numberOfPages.add(slide_count);
+                                Toast.makeText(this, "NOPOF PPT " + slide_count, Toast.LENGTH_SHORT).show();
+                                Log.d("PPTSLIDES ",String.valueOf(slide_count));
+
+                            }else if(fileName.contains("pptx")){
+                                XMLSlideShow slideShow = new XMLSlideShow(inputStream);
+                                int slides = slideShow.getSlides().length;
+                                numberOfPages.add(slides);
+
+                            }
+                        }catch (IOException e){
+                            e.printStackTrace();
+                        }
+
+
+                        ViewDoc(uri,mimeType);
+//                        uploadFile(uri);
                     }
                 } else {
 
@@ -247,7 +330,6 @@ public class Pop extends AppCompatActivity {
 //                        uri.add(returnUri);
 //                        uploadImg(requestCode, resultCode, data, uri);
                     }else{
-
                         uri.add(returnUri);
                         uploadImg(data,uri);
                     }
@@ -279,16 +361,41 @@ public class Pop extends AppCompatActivity {
                                 }
                                 fileNames.add(returnCursor.getString(nameIndex));
 
-                                Log.d("FNAME3",fileNames.get(i));
-                                Log.d("FSIZE3",String.valueOf(fileSizes.get(i)));
 
-//                                Toast.makeText(this, "FILE " + uri.get(i).toString(), Toast.LENGTH_LONG).show();
-//                                Toast.makeText(this, "MIME " + mimeTypes.get(i), Toast.LENGTH_LONG).show();
+                                try {
+                                    FileInputStream inputStream = (FileInputStream) getContentResolver().openInputStream(data.getClipData().getItemAt(i).getUri());
+                                    if(fileNames.get(i).contains("docx")) {
+                                        XWPFDocument document;
+                                         document = new XWPFDocument();
+                                        XWPFWordExtractor extractor = new XWPFWordExtractor(document);
+                                        int pages = document.getProperties().getExtendedProperties().getUnderlyingProperties().getPages();
+                                        numberOfPages.add(pages);
+                                        Log.d("DOCXPAGES",String.valueOf(pages));
+                                        Toast.makeText(this, "NOPOF DOC "+ pages, Toast.LENGTH_SHORT).show();
+                                    }else if(fileNames.get(i).contains("doc")){
+                                        HWPFDocument document = new HWPFDocument(inputStream);
+                                        int pages = document.getSummaryInformation().getPageCount();
+                                        numberOfPages.add(pages);
+                                        Log.d("DOCPAGES",String.valueOf(pages));
+
+                                        Toast.makeText(this, "NOPOF DOC " + pages, Toast.LENGTH_SHORT).show();
+
+                                    }else if(fileNames.get(i).contains("ppt")){
+
+                                    }else if(fileNames.get(i).contains("pptx")){
+
+                                    }
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
 
                                 if (i == data.getClipData().getItemCount() - 1) {
-                                    numberOfPages = new double[uri.size()];uploadFile(uri);
+//                                    numberOfPages = new double[uri.size()];
+//                                    uploadFile(uri);
                                     if(mimeTypes.get(i).equals("application/pdf")) {
                                         ViewPDF(uri);
+                                    }else if(mimeTypes.get(i).contains("document") || mimeTypes.get(i).contains("powerpoint")){
+                                        ViewDoc(uri,mimeType);
                                     }
                                 }
                             }
@@ -343,23 +450,15 @@ public class Pop extends AppCompatActivity {
                                 .setDuration(shortAnimationDuration)
                                 .setListener(null);
 
-                        numberOfPages[cnt]=(pdfView.getPageCount());
+                        numberOfPages.add(cnt,pdfView.getPageCount());
                     }
                 })
                 .load();
     }
 
-    public void ViewDoc(Uri word) {
+    public void ViewDoc(ArrayList<Uri> word, String mimeType) {
 
-        Log.d("FILETYPESELE",fileType);
         uploadFile(uri);
-//        File file = new File(Environment.getExternalStorageDirectory(), "Report.pdf");
-//        Intent intent = new Intent(Intent.ACTION_VIEW);
-//        intent.setDataAndType(word, mimeType);
-//        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-////        this.startActivity(intent);
-//        startActivity(Intent.createChooser(intent, "Choose an Application:"));
-
 
     }
 
@@ -386,13 +485,77 @@ public class Pop extends AppCompatActivity {
     }
 
 
+//    public class uploadFiles extends AsyncTask<Void,Void,Void>{
+//
+//        @Override
+//        protected Void doInBackground(Void... voids) {
+//            Intent goToPdfInfo = new Intent(Pop.this, PdfInfo.class);
+//            Bundle extras = new Bundle();
+//
+//            extras.putDoubleArray("Pages",numberOfPages);
+//            extras.putStringArrayList("FileNames",fileNames);
+//            Log.d("SOZEEE",String.valueOf(fileSizes.size()));
+//            extras.putStringArrayList("FileSizes",fileSizes);
+//            ArrayList<String> files = new ArrayList<>();
+//
+//            for (int i=0;i<uri.size();i++){
+////                        Toast.makeText(Pop.this,"NOP "+numberOfPages[i],Toast.LENGTH_LONG).show();
+//
+//                files.add(uri.get(i).toString());
+//                if(i == uri.size()-1){
+//                    extras.putStringArrayList("URLS", files);
+//                    extras.putStringArrayList("FileType", mimeTypes);
+//                    extras.putBoolean("IsTester",isTester);
+//                    extras.putBoolean("NewUser",newUser);
+//
+//                    goToPdfInfo.putExtras(extras);
+//                    startActivity(goToPdfInfo);
+//                    finish();
+//
+//                }
+//            }
+//
+//            return null;
+//        }
+//    }
+//    public class uploadImages extends AsyncTask<Void,Void,Void>{
+//
+//        @Override
+//        protected Void doInBackground(Void... voids) {
+//            Intent goToPageInfo = new Intent(Pop.this, PageInfo.class);
+//            Bundle extras = new Bundle();
+//            extras.putStringArrayList("FileType", mimeTypes);
+//            ArrayList<String> images = new ArrayList<>();
+//            int i;
+//
+//            for(i=0;i<uri.size();i++){
+//                images.add(uri.get(i).toString());
+//
+//                if(i == uri.size()-1) {
+////                Log.d("URISIZE", String.valueOf(uri.size()));
+//                    extras.putStringArrayList("URLS", images);
+////                    extras.putParcelable("Data",data);
+//                    extras.putBoolean("IsTester",isTester);
+//                    extras.putBoolean("NewUser",newUser);
+//
+////            extras.putParcelableArrayList("URLS", uri);
+//                    goToPageInfo.putExtras(extras);
+//                    startActivity(goToPageInfo);
+//                }
+//            }
+//
+//            return null;
+//        }
+//    }
+
+
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public void uploadFile(ArrayList uri){
 
         Intent goToPdfInfo = new Intent(Pop.this, PdfInfo.class);
         Bundle extras = new Bundle();
 
-        extras.putDoubleArray("Pages",numberOfPages);
+        extras.putIntegerArrayList("Pages",numberOfPages);
         extras.putStringArrayList("FileNames",fileNames);
         Log.d("SOZEEE",String.valueOf(fileSizes.size()));
         extras.putStringArrayList("FileSizes",fileSizes);
@@ -474,88 +637,6 @@ public class Pop extends AppCompatActivity {
         alert.show();
     }
 
-
-    ProgressDialog progress;
-
-    public void startPageCountApi(final Uri returnUri, final String contentType){
-        progress = new ProgressDialog(Pop.this);
-        progress.setTitle("Uploading");
-        progress.setMessage("Please wait...");
-        progress.show();
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-
-                Log.d("STARTINGAPI","YES");
-                File f  = new File(returnUri.getPath());
-//                    Toast.makeText(MainActivity.this, "PATH "+FilePickerActivity.RESULT_FILE_PATH, Toast.LENGTH_SHORT).show();
-//                    File f= new File(data.getDataString());
-                String content_type  = contentType;
-//                    String content_type  = getMimeType(data.getData().toString());
-
-                String file_path = f.getAbsolutePath();
-                OkHttpClient client = new OkHttpClient();
-                RequestBody file_body = RequestBody.create(MediaType.parse(content_type),f);
-
-                RequestBody request_body = new MultipartBody.Builder()
-                        .setType(MultipartBody.FORM)
-                        .addFormDataPart("type",content_type)
-                        .addFormDataPart("uploaded_file",file_path.substring(file_path.lastIndexOf("/")+1), file_body)
-                        .build();
-
-                Request request = new Request.Builder()
-                        .url("https://www.sleefax.com/test/upload.php")
-                        .post(request_body)
-                        .build();
-
-                try {
-                    Response response = client.newCall(request).execute();
-
-                    if(!response.isSuccessful()){
-                        throw new IOException("Error : "+response);
-                    }
-
-                    progress.dismiss();
-                    sendjsonrequest();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-
-            }
-        });
-
-        t.start();
-
-    }
-
-    String url = "https://www.sleefax.com/test/page_count.php";
-    String count;
-    RequestQueue rq;
-
-    public void sendjsonrequest(){
-
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(com.android.volley.Request.Method.POST, url, null, new com.android.volley.Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                try{
-                    count = response.getString("PageCount");
-                    Log.i("PageCount",count);
-//                    countText.setText(count);
-                    Log.d("COUNTIS ",String.valueOf(count));
-                    Log.d("RESPONSE ",String.valueOf(response));
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        }, new com.android.volley.Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                count = error.getMessage();
-
-            }
-        });
-    };
 
 
 }

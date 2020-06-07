@@ -59,7 +59,7 @@ import com.kaopiz.kprogresshud.KProgressHUD;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
-import static org.bouncycastle.crypto.tls.ContentType.alert;
+//import static org.bouncycastle.crypto.tls.ContentType.alert;
 
 public class SignInActivity extends AppCompatActivity {
     private static final String  TAG = "SignInActivity";
