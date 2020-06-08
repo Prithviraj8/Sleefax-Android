@@ -14,71 +14,340 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="136dp"
-            android:background="@drawable/storesview"></View>
 
-
-        <ImageView
-            android:id="@+id/w_vote"
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="13dp"
-            android:src="@drawable/w_vote" />
-        <TextView
-            android:id="@+id/vote_tv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/w_vote"
-            android:text="Submit Your Feedback"
-            android:layout_centerHorizontal="true"
-            android:textColor="#FFF"
-            android:textStyle="bold"
-            android:textAlignment="center"
-            android:textSize="20dp"
-            android:layout_marginTop="10dp">
-
-        </TextView>
-
-        <EditText
-            android:id="@+id/feedbackTV"
-            android:layout_width="302dp"
-            android:layout_height="140dp"
-            android:layout_below="@+id/vote_tv"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="98dp"
-            android:background="@drawable/border"
-            android:autofillHints=""
-            android:ems="10"
-            android:gravity="start|top"
-            android:hint="@string/your_feedback_here"
-            android:inputType="textLongMessage|textMultiLine" />
-
-        <Button
-            android:id="@+id/submitFeedback"
-            android:layout_width="156dp"
-            android:layout_height="50dp"
-            android:layout_below="@+id/feedbackTV"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="63dp"
-            android:background="@drawable/mainpageback"
-            android:text="@string/submit"
-            android:textColor="#FFF"
-            android:textSize="20dp" />
+            android:text="Send Feedback"
+            android:textColor="#000000"
+            android:id="@+id/text_send"
+            android:fontFamily="@font/poppins_semibold"
+            android:layout_toRightOf="@id/backBtn"
+            android:textSize="26sp"
+            android:layout_marginTop="30dp"
+            android:layout_marginLeft="35dp"/>
 
         <ImageButton
             android:id="@+id/backBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginStart="15dp"
-            android:layout_marginTop="25dp"
-            android:background="#00FFFFFF"
-            app:srcCompat="@drawable/w" />
+            android:background="@android:color/transparent"
+            android:src="@drawable/arrow_left_black"
+            android:layout_alignTop="@id/text_send"
+            android:layout_alignBottom="@id/text_send"
+            android:layout_marginVertical="10dp"
+            android:layout_marginLeft="20dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/backBtn"
+            android:layout_marginTop="20dp"
+            android:textSize="15sp"
+            android:id="@+id/textview1"
+            android:fontFamily="@font/poppins_semibold"
+            android:textColor="#227093"
+            android:text="Studies have shown that those who \nactively provide their feedback are \nusually more proactive in life."
+            android:layout_centerHorizontal="true"
+            android:gravity="center"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textview1"
+            android:layout_marginTop="20dp"
+            android:textSize="15sp"
+            android:layout_alignStart="@id/textview1"
+            android:layout_marginLeft="-10dp"
+            android:id="@+id/textview2"
+            android:fontFamily="@font/poppins_semibold"
+            android:textColor="#000000"
+            android:text="How likely are you to recommend \nSleefax to a friend?"
+            />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textview2"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="15dp"
+            android:id="@+id/ratingLV"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:layout_width="23dp"
+                android:layout_height="23dp"
+                android:id="@+id/rating1"
+                android:background="@drawable/rating_bg">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="1"
+                    android:id="@+id/tv1"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:textColor="#227093"
+                    android:textSize="15sp"
+                    android:fontFamily="@font/poppins_medium"/></RelativeLayout>
+            <RelativeLayout
+                android:layout_width="23dp"
+                android:layout_height="23dp"
+                android:id="@+id/rating2"
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/rating_bg">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2"
+                    android:id="@+id/tv2"
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true"
+                    android:textColor="#227093"
+                    android:textSize="15sp"
+                    android:fontFamily="@font/poppins_medium"/></RelativeLayout>
+            <RelativeLayout
+                android:layout_width="23dp"
+                android:layout_height="23dp"
+                android:id="@+id/rating3"
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/rating_bg">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="3"
+                    android:id="@+id/tv3"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:textColor="#227093"
+                    android:textSize="15sp"
+                    android:fontFamily="@font/poppins_medium"/></RelativeLayout>
+            <RelativeLayout
+                android:layout_width="23dp"
+                android:layout_height="23dp"
+                android:layout_marginLeft="10dp"
+                android:id="@+id/rating4"
+                android:background="@drawable/rating_bg">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="4"
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true"
+                    android:textColor="#227093"
+                    android:id="@+id/tv4"
+                    android:textSize="15sp"
+                    android:fontFamily="@font/poppins_medium"/></RelativeLayout>
+            <RelativeLayout
+                android:layout_width="23dp"
+                android:layout_height="23dp"
+                android:layout_marginLeft="10dp"
+                android:id="@+id/rating5"
+                android:background="@drawable/rating_bg">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="5"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:textColor="#227093"
+                    android:id="@+id/tv5"
+                    android:textSize="15sp"
+                    android:fontFamily="@font/poppins_medium"/></RelativeLayout>
+            <RelativeLayout
+                android:layout_width="23dp"
+                android:layout_height="23dp"
+                android:layout_marginLeft="10dp"
+                android:id="@+id/rating6"
+                android:background="@drawable/rating_bg">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:fontFamily="@font/poppins_medium"
+                    android:text="6"
+                    android:id="@+id/tv6"
+                    android:textColor="#227093"
+                    android:textSize="15sp" /></RelativeLayout>
+            <RelativeLayout
+                android:layout_width="23dp"
+                android:layout_marginLeft="10dp"
+                android:layout_height="23dp"
+                android:id="@+id/rating7"
+                android:background="@drawable/rating_bg">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="7"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:textColor="#227093"
+                    android:id="@+id/tv7"
+                    android:textSize="15sp"
+                    android:fontFamily="@font/poppins_medium"/></RelativeLayout>
+            <RelativeLayout
+                android:layout_width="23dp"
+                android:layout_height="23dp"
+                android:layout_marginLeft="10dp"
+                android:id="@+id/rating8"
+                android:background="@drawable/rating_bg">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="8"
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true"
+                    android:textColor="#227093"
+                    android:id="@+id/tv8"
+                    android:textSize="15sp"
+                    android:fontFamily="@font/poppins_medium"/></RelativeLayout>
+            <RelativeLayout
+                android:layout_width="23dp"
+                android:layout_height="23dp"
+                android:layout_marginLeft="10dp"
+                android:id="@+id/rating9"
+                android:background="@drawable/rating_bg">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="9"
+                    android:id="@+id/tv9"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:textColor="#227093"
+                    android:textSize="15sp"
+                    android:fontFamily="@font/poppins_medium"/></RelativeLayout>
+            <RelativeLayout
+                android:layout_width="23dp"
+                android:layout_height="23dp"
+                android:id="@+id/rating10"
+                android:layout_marginLeft="10dp"
+                android:background="@drawable/rating_bg">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="10"
+                    android:id="@+id/tv10"
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true"
+                    android:textColor="#227093"
+                    android:textSize="15sp"
+                    android:fontFamily="@font/poppins_medium"/></RelativeLayout>
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/ratingLV"
+            android:layout_marginTop="30dp"
+            android:textSize="15sp"
+            android:layout_alignStart="@id/textview1"
+            android:layout_marginLeft="-10dp"
+            android:id="@+id/textview3"
+            android:fontFamily="@font/poppins_semibold"
+            android:textColor="#000000"
+            android:text="Any suggestions you have for us?"
+            />
+
+
+
+
+
+
+
+
+
+        <EditText
+            android:id="@+id/feedbackTV"
+            android:layout_width="322dp"
+            android:layout_height="168dp"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/edit_layout"
+            android:layout_below="@id/textview3"
+            android:layout_marginTop="10dp"
+            android:textSize="11sp"
+            android:padding="15dp"
+            android:gravity="top"
+            android:fontFamily="@font/poppins_semibold"
+            android:hint="(Suggest feature ideas, problem reports, and \ngeneral comments.)"/>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/send_feedback"
+            android:layout_below="@id/feedbackTV"
+            android:layout_marginTop="20dp"
+            android:id="@+id/sendFeedback_grey"
+            android:layout_alignStart="@id/feedbackTV"
+            android:layout_alignEnd="@id/feedbackTV"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:textSize="19sp"
+            android:textColor="#B5B5B5"
+            android:visibility="invisible"
+            android:clickable="false"
+            android:textAllCaps="false"
+            android:text="Send Feedback"
+            android:fontFamily="@font/poppins"/>
+
+        <Button
+            android:id="@+id/submitFeedback"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/edit_profile_buttons"
+            android:layout_below="@id/feedbackTV"
+            android:layout_marginTop="20dp"
+            android:layout_alignStart="@id/feedbackTV"
+            android:layout_alignEnd="@id/feedbackTV"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:textSize="19sp"
+            android:visibility="gone"
+            android:textColor="#FFFFFF"
+            android:textAllCaps="false"
+            android:text="Send Feedback"
+            android:fontFamily="@font/poppins_semibold" />
+
+
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/rate_us_RL"
+            android:layout_marginTop="5dp"
+            android:visibility="gone"
+            android:layout_marginLeft="20dp"
+            android:layout_below="@id/sendFeedback_grey"
+            android:layout_alignStart="@id/sendFeedback_grey"
+            android:layout_alignEnd="@id/sendFeedback_grey">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Rate us on Play Store?"
+                android:textSize="12sp"
+                android:id="@+id/rate_ps_tv"
+                android:fontFamily="@font/poppins_medium"
+                android:textColor="#000000"
+                android:layout_marginLeft="30dp"/>
+            <TextView
+                android:layout_width="55.5dp"
+                android:layout_height="15dp"
+                android:background="@drawable/clickhere"
+                android:layout_toRightOf="@id/rate_ps_tv"
+                android:layout_alignTop="@id/rate_ps_tv"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="5dp"/>
+        </RelativeLayout>
+
+
+
+
+
+
     </RelativeLayout>
+
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

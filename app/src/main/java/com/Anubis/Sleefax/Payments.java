@@ -93,7 +93,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Random;
 import java.util.TreeMap;
 import java.util.UUID;
 
@@ -108,13 +107,13 @@ import okhttp3.Response;
 class info{
 
     public String name,orderStatus;
-    public String email,device,orderDateTime,paymentMode,userId,orderID,otp;
+    public String email,device,orderDateTime,paymentMode,userId,orderID;
     public long num;
     public int id,files;
     public double price;
-    public boolean confirm,otpUsed;
+    public boolean confirm;
 
-    public info(String name, String email, long num, String device, String orderStatus,String orderDateTime, int id, double price,String paymentMode, String userId, int files,boolean confirm,String orderID, String otp, boolean otpUsed){
+    public info(String name, String email, long num, String device, String orderStatus,String orderDateTime, int id, double price,String paymentMode, String userId, int files,boolean confirm,String orderID){
         this.email = email;
         this.name = name;
         this.num = num;
@@ -128,8 +127,6 @@ class info{
         this.files = files;
         this.confirm = confirm;
         this.orderID = orderID;
-        this.otp = otp;
-        this.otpUsed = otpUsed;
     }
 //    public info(String name, String email, long num, String device, String placed, String fileType, int copy, String orderDateTime, int id, String custom, double price, boolean bothSides, String paymentMode,String userId){
 //        this.email = email;
@@ -181,7 +178,8 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
     ArrayList<String> downloadUrls = new ArrayList<>();
 
     long usernum;
-    RelativeLayout paytm,otherPayments,payOnPickup,upi,gpay,phonepay,topView;
+    RelativeLayout paytm,otherPayments,payOnPickup,upi,gpay,phonepay;
+    RelativeLayout upperBlueLayout;
     RelativeLayout slidelayout;
     int idOfPaymentMode;
     TextView amount,tv;
@@ -200,8 +198,7 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
     boolean bothSides[];
     ArrayList<String> customPages = new ArrayList<>();
     ArrayList<String> customValues = new ArrayList<>();
-    ArrayList<Integer> numberOfPages = new ArrayList<>();
-
+    double numberOfPages[];
     ArrayList<String> fileNames = new ArrayList<>();
     ArrayList<String> fileSizes = new ArrayList<>();
 
@@ -215,17 +212,18 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
         mScreenHeight = displaymetrics.heightPixels;
 
 
-        //    orderProcessAnime = findViewById(R.id.orderProcessAnime);
-        // view3 = findViewById(R.id.view3);
+    //    orderProcessAnime = findViewById(R.id.orderProcessAnime);
+       // view3 = findViewById(R.id.view3);
         mProgress = (ProgressBar) findViewById(R.id.circularProgressbar);
         tv = findViewById(R.id.tv);
         back = findViewById(R.id.paymentBackBtn);
-        //  relativeLForUPI = findViewById(R.id.relativeLForUPI);
+      //  relativeLForUPI = findViewById(R.id.relativeLForUPI);
         gpay = findViewById(R.id.gpay);
         progressRL = findViewById(R.id.LoadingScreenRL);
 
         phonepay = findViewById(R.id.phonepay_upi);
-        topView = findViewById(R.id.view);
+
+        upperBlueLayout = findViewById(R.id.view);
 
 
 
@@ -252,9 +250,9 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
         }
 
         paytm = findViewById(R.id.paytm);
-        //  upi = findViewById(R.id.upi);
+      //  upi = findViewById(R.id.upi);
         payOnPickup = findViewById(R.id.pickup);
-        //    otherPayments = findViewById(R.id.otherPayments);
+       //    otherPayments = findViewById(R.id.otherPayments);
         amount = findViewById(R.id.amount);
         amount.setText(""+price);
 
@@ -293,25 +291,25 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
                 paytm.setBackground(drawable1);
                 gpay.setBackground(drawable1);
 
-                // paymentMode = "Pay on Pickup";
-                // setVisibilities();
+               // paymentMode = "Pay on Pickup";
+               // setVisibilities();
             }
         });
-        phonepay.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                idOfPaymentMode = 2;
+       phonepay.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View v) {
+               idOfPaymentMode = 2;
 
-                slidelayout.setVisibility(View.VISIBLE);
-                Drawable drawable = getResources().getDrawable(R.drawable.outline);
-                phonepay.setBackground(drawable);
-                Drawable drawable1 = getResources().getDrawable(R.drawable.white_bg_layout);
-                payOnPickup.setBackground(drawable1);
-                paytm.setBackground(drawable1);
-                gpay.setBackground(drawable1);
+               slidelayout.setVisibility(View.VISIBLE);
+               Drawable drawable = getResources().getDrawable(R.drawable.outline);
+               phonepay.setBackground(drawable);
+               Drawable drawable1 = getResources().getDrawable(R.drawable.white_bg_layout);
+               payOnPickup.setBackground(drawable1);
+               paytm.setBackground(drawable1);
+               gpay.setBackground(drawable1);
 
-            }
-        });
+           }
+       });
 
 
         back.setOnClickListener(new View.OnClickListener() {
@@ -335,7 +333,7 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
                 payOnPickup.setBackground(drawable1);
                 phonepay.setBackground(drawable1);
                 gpay.setBackground(drawable1);
-                // paymentUPImode = "paytm";
+               // paymentUPImode = "paytm";
                 //payUsingUpi(String.valueOf(price),"7875210665"+"@paytm","Order","");
             }
         });
@@ -364,6 +362,8 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
         slideView.setOnSlideCompleteListener(new SlideView.OnSlideCompleteListener() {
             @Override
             public void onSlideComplete(SlideView slideView) {
+
+                collapseView(upperBlueLayout,upperBlueLayout.getHeight(),0);
 
                 switch (idOfPaymentMode){
                     case 1:
@@ -446,7 +446,7 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
         colors = extras.getStringArrayList("ColorType");
         bothSides = extras.getBooleanArray("BothSides");
         customPages = extras.getStringArrayList("Custom");
-        numberOfPages = extras.getIntegerArrayList("Pages");
+        numberOfPages = extras.getDoubleArray("Pages");
 
         isTester = extras.getBoolean("IsTester");
         newUser = extras.getBoolean("NewUser");
@@ -593,7 +593,7 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
                 Intent chooserIntent=Intent.createChooser(targetShareIntents.remove(0), "Choose app to pay");
                 chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, targetShareIntents.toArray(new Parcelable[]{}));
 //                startActivity(chooserIntent);
-                startActivityForResult(chooserIntent, UPI_PAYMENT);
+            startActivityForResult(chooserIntent, UPI_PAYMENT);
 
             }else{
                 System.out.println("Do not Have Intent");
@@ -676,7 +676,7 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
                 android.util.Log.d("UPI", "responseStr: "+approvalRefNo);
                 paymentMode = "UPI";
 
-                /////////////////////////////Placing order////////////////////
+               /////////////////////////////Placing order////////////////////
                 setVisibilities();
             }
 
@@ -738,6 +738,10 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
 
 
     public void sendData(){
+//        view3.setVisibility(View.GONE);
+//        orderProcessAnime.setVisibility(View.GONE);
+//        mProgress.setVisibility(View.GONE);
+//        tv.setVisibility(View.GONE);
 
         Intent intent;
         Bundle extras = new Bundle();
@@ -769,7 +773,7 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
         }
 
         extras.putStringArrayList("URLS", urls);
-        extras.putIntegerArrayList("Pages", numberOfPages);
+        extras.putDoubleArray("Pages", numberOfPages);
         extras.putBooleanArray("BothSides", bothSides);
         extras.putIntegerArrayList("Copies", copies);
         extras.putStringArrayList("ColorType", colors);
@@ -806,12 +810,12 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
 
 //                for(DataSnapshot orders: dataSnapshot.getChildren()){
-                Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
-                if(map != null) {
-                    if(map.get("id")!=null){
-                        ids.add(Integer.parseInt(String.valueOf(map.get("id"))));
+                    Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
+                    if(map != null) {
+                        if(map.get("id")!=null){
+                            ids.add(Integer.parseInt(String.valueOf(map.get("id"))));
+                        }
                     }
-                }
             }
 
             @Override
@@ -838,6 +842,7 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
             @Override
             public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
                 Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
+//                custOrderIDS.add(Integer.parseInt(String.valueOf(map != null ? map.get("id") : 0)));
                 if(map.get("id")!=null) {
                     custOrderIDS.add(Integer.parseInt(String.valueOf(map.get("id"))));
                 }
@@ -872,13 +877,9 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
     RoundCornerProgressBar roundCornerProgressBar;
     MediaPlayer ring;
     public void setVisibilities(){
-
-        int topViewInitHT = topView.getLayoutParams().height;
-        collapseView(topView,topViewInitHT,0);
-
         payOnPickup.setVisibility(View.INVISIBLE);
-//        upi.setVisibility(View.INVISIBLE);
-//        otherPayments.setVisibility(View.INVISIBLE);
+       // upi.setVisibility(View.INVISIBLE);
+       // otherPayments.setVisibility(View.INVISIBLE);
         paytm.setVisibility(View.INVISIBLE);
 
         rocket = findViewById(R.id.rocket);
@@ -940,36 +941,13 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
 
     }
 
-    public void collapseView(final View v,int initialHt,int finalHt){
 
-
-        ValueAnimator slideAnimator = ValueAnimator.ofInt(initialHt,finalHt).setDuration(shortAnimationDuration);
-        slideAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator animation) {
-                // get the value the interpolator is at
-                Integer value = (Integer) animation.getAnimatedValue();
-                // I'm going to set the layout's height 1:1 to the tick
-                v.getLayoutParams().height = value.intValue();
-                // force all layouts to see which ones are affected by
-                // this layouts height change
-                v.requestLayout();
-
-            }
-        });
-
-        AnimatorSet set = new AnimatorSet();
-        set.play(slideAnimator);
-        set.setInterpolator(new AccelerateDecelerateInterpolator());
-        set.start();
-
-    }
 
     int id = 0,custorderID=0;
     FirebaseStorage storage = FirebaseStorage.getInstance();
     StorageReference storageRef = storage.getReference();
     public class uploadFile extends AsyncTask<ArrayList<String>,Void,Void> {
-        final int[] uploadCnt = {0};
+    final int[] uploadCnt = {0};
 
 
         @SuppressLint("WrongThread")
@@ -982,29 +960,28 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
 
             final ObjectAnimator[] progressAnimator = new ObjectAnimator[1];
             Uri uri;
+
             for (int i = 0; i < urls.size(); i++) {
                 final String file = urls.get(i);
                 uri = Uri.parse(file);
 
                 final String uniqueID = UUID.randomUUID().toString();
                 final StorageReference filesRef;
-                Log.d("FILETYPESELECTED",String.valueOf(fileTypes.get(0)));
+
                 if(fileTypes.get(i).contains("document")){
                     filesRef = storageRef.child(uniqueID+".docx");
-                    fileTypes.add(i,"DOCX");
                 }else if(fileTypes.get(i).contains("powerpoint")){
-                    fileTypes.add(i,"PowerPoint");
+
                     filesRef = storageRef.child(uniqueID+".pptx");
-                }else if(fileTypes.get(i).equals("application/msword")){
-                    fileTypes.add(i,"Word");
-                    filesRef = storageRef.child(uniqueID+".doc");
-                } else {
-                    fileTypes.add(i,"PDF");
+                }else {
                     filesRef = storageRef.child(uniqueID+".pdf");
                 }
 
+//        if (Build.VERSION.SDK_INT < 19) {
 
+//      getContext().getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                 final UploadTask uploadTask = filesRef.putFile(uri);
+//        final UploadTask uploadTask = filesRef.putFile(changeExtension(new File(file.getPath()),"pdf"));
                 final int finalI = i;
                 final Uri finalUri = uri;
 
@@ -1101,10 +1078,8 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
                                         orderID = uniqueID.substring(uniqueID.length()-8);
                                         shopinfo orderInfo = new shopinfo(storeID,loc, shopName, "Placed", shopLat, shopLong, shopNum, files, price, orderDateTime, false, false, false, false, false, paymentMode, custorderID,orderID);
 
-                                        Random random = new Random();
-                                        String otp = String.format("%04d", random.nextInt(10000));
-
-                                        info userinfo = new info(username, email, usernum, "android", "Placed", orderDateTime, id,  price, paymentMode,userId,files,false,orderID,otp,false);
+                                        android.util.Log.d("ORDERIDSAVED",(uniqueID.substring(uniqueID.length()-8)));
+                                        info userinfo = new info(username, email, usernum, "android", "Placed", orderDateTime, id,  price, paymentMode,userId,files,false,orderID);
 
 
 
@@ -1131,7 +1106,7 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
 
 
                                             if(fileTypes.get(0).contains("image")){
-                                                pageInfo = new page_INFO(downloadUrls.get(k), colors.get(0), copies.get(0), "Image", pageSize.get(0), orientations.get(0));
+                                                 pageInfo = new page_INFO(downloadUrls.get(k), colors.get(0), copies.get(0), fileTypes.get(0), pageSize.get(0), orientations.get(0));
                                                 db.push().setValue(pageInfo);
                                                 storeDb.push().setValue(pageInfo);
                                             }else{
@@ -1180,6 +1155,32 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
             return null;
 
         }
+    }
+
+
+    public void collapseView(final View v,int initialHt,int finalHt){
+
+
+        ValueAnimator slideAnimator = ValueAnimator.ofInt(initialHt,finalHt).setDuration(shortAnimationDuration);
+        slideAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                // get the value the interpolator is at
+                Integer value = (Integer) animation.getAnimatedValue();
+                // I'm going to set the layout's height 1:1 to the tick
+                v.getLayoutParams().height = value.intValue();
+                // force all layouts to see which ones are affected by
+                // this layouts height change
+                v.requestLayout();
+
+            }
+        });
+
+        AnimatorSet set = new AnimatorSet();
+        set.play(slideAnimator);
+        set.setInterpolator(new AccelerateDecelerateInterpolator());
+        set.start();
+
     }
 
 

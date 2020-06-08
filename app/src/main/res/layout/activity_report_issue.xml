@@ -15,88 +15,178 @@
         app:layout_constraintTop_toTopOf="parent">
 
 
-        <View
-            android:id="@+id/view23"
-            android:layout_width="match_parent"
-            android:layout_height="136dp"
-            android:layout_alignBottom="@+id/vote_tv"
-            android:layout_alignParentTop="true"
-            android:layout_marginTop="0dp"
-            android:layout_marginBottom="-10dp"
-            android:background="@drawable/storesview" />
-
-        <ImageView
-            android:id="@+id/w_vote"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="17dp"
-            android:src="@drawable/w_warning" />
-
-        <TextView
-            android:id="@+id/vote_tv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/w_vote"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="5dp"
-            android:text="UH OH !"
-            android:textAlignment="center"
-            android:textColor="#FFF"
-            android:textSize="20dp"
-            android:textStyle="bold">
-
-        </TextView>
-
-        <TextView
-            android:id="@+id/textview"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/vote_tv"
-            android:layout_centerHorizontal="true"
-            android:layout_marginStart="1dp"
-            android:layout_marginTop="65dp"
-            android:text="So sorry to hear you \nhave issues with our app.\n Let us know and we will fix it."
-            android:textAlignment="center"
-            android:textColor="#696969"
-            android:textSize="20sp" />
-
-        <EditText
-            android:id="@+id/IssueTV"
-            android:layout_width="302dp"
-            android:layout_height="140dp"
-            android:layout_below="@id/textview"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="20dp"
-            android:autofillHints=""
-            android:background="@drawable/border"
-            android:ems="10"
-            android:gravity="start|top"
-            android:hint="Your issues here."
-            android:inputType="textLongMessage|textMultiLine" />
-
-        <Button
-            android:id="@+id/submitIssue"
-            android:layout_width="156dp"
-            android:layout_height="50dp"
-            android:layout_below="@id/IssueTV"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="54dp"
-            android:background="@drawable/mainpageback"
-            android:text="@string/submit"
-            android:textColor="#FFF"
-            android:textSize="20dp" />
-
         <ImageButton
             android:id="@+id/backBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginStart="15dp"
-            android:layout_marginTop="25dp"
-            android:background="#00FFFFFF"
-            app:srcCompat="@drawable/w" />
+            android:background="@android:color/transparent"
+            android:src="@drawable/arrow_left_black"
+            android:layout_alignTop="@id/text_report"
+            android:layout_alignBottom="@id/text_report"
+            android:layout_marginVertical="10dp"
+            android:layout_marginLeft="20dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Report An Issue"
+            android:textColor="#000000"
+            android:id="@+id/text_report"
+            android:fontFamily="@font/poppins_semibold"
+            android:layout_toRightOf="@id/backBtn"
+            android:textSize="26sp"
+            android:layout_marginTop="30dp"
+            android:layout_marginLeft="35dp"/>
+
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/backBtn"
+            android:layout_marginTop="20dp"
+            android:elevation="5dp"
+            android:background="@drawable/toggle_bg_report_an_issue"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/toggleLeftRL">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="15dp"
+                android:paddingVertical="10dp"
+                android:elevation="10dp"
+                android:background="@drawable/toggle_bg_report_an_issue"
+                android:id="@+id/crashes">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/impact"
+                    android:layout_centerHorizontal="true"
+                    android:id="@+id/crash_icon"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_below="@id/crash_icon"
+                    android:layout_marginTop="5dp"
+                    android:textSize="11sp"
+                    android:gravity="center"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:textColor="#227093"
+                    android:text="App Crashes &amp; \nBugs"/>
+
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingHorizontal="15dp"
+                android:paddingVertical="10dp"
+                android:layout_alignTop="@id/crashes"
+                android:layout_alignBottom="@id/crashes"
+                android:layout_toRightOf="@id/crashes"
+                android:id="@+id/exp">
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/bad"
+                    android:layout_marginTop="10dp"
+                    android:layout_centerHorizontal="true"
+                    android:id="@+id/exp_icon"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_below="@id/exp_icon"
+                    android:layout_marginTop="8dp"
+                    android:textSize="11sp"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:textColor="#227093"
+                    android:text="Bad Experience"/>
+
+            </RelativeLayout>
+
+
+
+
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/toggleLeftRL"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="40dp"
+            android:textSize="15sp"
+            android:id="@+id/issue_tv"
+            android:gravity="center"
+            android:textColor="#227093"
+            android:fontFamily="@font/poppins_medium"
+            android:text="We really tried our best to humanize this. \n We hate that it broke down like a robot."/>
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <EditText
+            android:id="@+id/IssueTV"
+            android:layout_width="322dp"
+            android:layout_height="168dp"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/edit_layout"
+            android:layout_below="@id/issue_tv"
+            android:layout_marginTop="20dp"
+            android:textSize="11sp"
+            android:padding="15dp"
+            android:gravity="top"
+            android:fontFamily="@font/poppins_semibold"
+            android:hint="Tell us more about the issue.."
+
+            />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/send_feedback"
+            android:layout_below="@id/IssueTV"
+            android:layout_marginTop="30dp"
+            android:layout_alignStart="@id/IssueTV"
+            android:layout_alignEnd="@id/IssueTV"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:textAllCaps="false"
+            android:visibility="gone"
+            android:text="Submit"
+            android:textColor="#B5B5B5"
+            android:clickable="false"
+            android:textSize="19sp"
+            android:fontFamily="@font/poppins_semibold"/>
+
+        <Button
+            android:id="@+id/submitIssue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/edit_profile_buttons"
+            android:layout_below="@id/IssueTV"
+            android:layout_marginTop="30dp"
+            android:layout_alignStart="@id/IssueTV"
+            android:layout_alignEnd="@id/IssueTV"
+            android:layout_marginLeft="20dp"
+            android:visibility="invisible"
+            android:layout_marginRight="20dp"
+            android:textAllCaps="false"
+            android:text="Submit"
+            android:textColor="#FFFFFF"
+            android:textSize="19sp"
+            android:fontFamily="@font/poppins_semibold" />
+
+
     </RelativeLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

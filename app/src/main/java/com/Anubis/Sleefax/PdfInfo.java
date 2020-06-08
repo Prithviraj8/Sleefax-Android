@@ -5,6 +5,8 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.animation.AnimatorSet;
+import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -15,9 +17,13 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewTreeObserver;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
 import android.widget.ArrayAdapter;
@@ -25,6 +31,7 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -45,6 +52,8 @@ import com.kaopiz.kprogresshud.KProgressHUD;
 
 import java.util.ArrayList;
 
+import static com.google.android.material.internal.ViewUtils.dpToPx;
+
 public class PdfInfo extends AppCompatActivity {
     ProgressDialog mProgressDialog;
     final FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -54,7 +63,7 @@ public class PdfInfo extends AppCompatActivity {
 
 //    String colorType;
 
-    Button done,viewPdf;
+    RelativeLayout done,viewPdf;
     Spinner pageSizeSpinner, orientSpinner;
     View colorsTV,bwTV,h,v;
     ToggleButton bothSidePrint;
@@ -63,11 +72,16 @@ public class PdfInfo extends AppCompatActivity {
     PDFView pdfView;
     WebView webView;
     EditText customValue1,customValue2;
+    RelativeLayout bottomRelativeView;
+    RelativeLayout rootLayout;
+    RelativeLayout upperLayout;
     int copy,custValue1,custValue2;
 
     //    String pdf_url;
     String pdf_url,pdf_uri;
     int resultCode,requestCode;
+    int mScreenHeight;
+
     String colour, pagesize;
 
     ArrayList<String> pdfURL = new ArrayList<>();
@@ -97,6 +111,29 @@ public class PdfInfo extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pdf_info);
+
+        bottomRelativeView = findViewById(R.id.bottomView);
+
+        DisplayMetrics displaymetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
+        mScreenHeight = displaymetrics.heightPixels;
+
+        upperLayout = findViewById(R.id.pdfsettingsRL2);
+        if(upperLayout.getHeight() == 0)
+            expandView(upperLayout,0,mScreenHeight/3);
+
+        rootLayout = findViewById(R.id.pdfsettingsRL);
+        rootLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                int diff = rootLayout.getRootView().getHeight() - rootLayout.getHeight();
+                if(diff > dpToPx(getApplicationContext(),200)){
+                    bottomRelativeView.setVisibility(View.INVISIBLE);
+                }
+                else
+                    bottomRelativeView.setVisibility(View.VISIBLE);
+            }
+        });
 //        getSupportActionBar().hide();
 
         pdfCnt = 0;
@@ -559,6 +596,39 @@ public class findShops extends AsyncTask<Void,Void,Integer>{
 
             }
         });
+    }
+
+    public void expandView(final View v, int initialHt, int finalHt){
+
+
+
+
+        ValueAnimator slideAnimator = ValueAnimator.ofInt(initialHt,finalHt + 20).setDuration(1000);
+        slideAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                // get the value the interpolator is at
+                Integer value = (Integer) animation.getAnimatedValue();
+                // I'm going to set the layout's height 1:1 to the tick
+                v.getLayoutParams().height = value.intValue();
+                // force all layouts to see which ones are affected by
+                // this layouts height change
+                v.requestLayout();
+
+            }
+        });
+
+        AnimatorSet set = new AnimatorSet();
+        set.play(slideAnimator);
+        set.setInterpolator(new AccelerateDecelerateInterpolator());
+        set.start();
+
+    }
+
+
+    public static float dpToPx(Context context, float valueInDp) {
+        DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, valueInDp, metrics);
     }
 
 }

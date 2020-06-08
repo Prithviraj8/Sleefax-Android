@@ -1,15 +1,24 @@
 package com.Anubis.Sleefax;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,7 +33,9 @@ class issue {
     }
 }
 public class ReportIssue extends AppCompatActivity {
-    TextView issueTV;
+    RelativeLayout crashes,exp;
+    TextView issue_tv;
+    EditText issueTV;
     Button submit;
     ImageButton back;
 
@@ -37,9 +48,44 @@ public class ReportIssue extends AppCompatActivity {
         setContentView(R.layout.activity_report_issue);
 //        getSupportActionBar().hide();
 
+        crashes = findViewById(R.id.crashes);
+        exp = findViewById(R.id.exp);
+        issue_tv = findViewById(R.id.issue_tv);
+
         issueTV = findViewById(R.id.IssueTV);
         submit = findViewById(R.id.submitIssue);
         back = findViewById(R.id.backBtn);
+
+        issueTV.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                Drawable drawable = getResources().getDrawable(R.drawable.edit_layout);
+                issueTV.setBackground(drawable);
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                Drawable drawable = getResources().getDrawable(R.drawable.edit_layout_blue);
+                issueTV.setBackground(drawable);
+
+                submit.setVisibility(View.VISIBLE);
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+                Drawable drawable = getResources().getDrawable(R.drawable.edit_layout_blue);
+                issueTV.setBackground(drawable);
+
+
+                submit.setVisibility(View.VISIBLE);
+
+            }
+        });
 
         back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -86,6 +132,51 @@ public class ReportIssue extends AppCompatActivity {
                 }
             }
         });
+
+        crashes.setOnClickListener(new View.OnClickListener() {
+
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+            @Override
+            public void onClick(View v) {
+
+                Drawable drawable = getResources().getDrawable(R.drawable.toggle_bg_report_an_issue);
+
+                crashes.setBackground(drawable);
+                Resources r = getResources();
+                int elevation = (int) TypedValue.applyDimension(
+                        TypedValue.COMPLEX_UNIT_DIP,
+                        10,
+                        r.getDisplayMetrics());
+                crashes.setElevation(elevation);
+                issue_tv.setText("We really tried our best to humanize this. \n We hate that it broke down like a robot.");
+
+                exp.setBackground(null);
+            }
+        });
+
+        exp.setOnClickListener(new View.OnClickListener() {
+
+            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+            @Override
+            public void onClick(View v) {
+
+                Drawable drawable = getResources().getDrawable(R.drawable.toggle_bg_report_an_issue);
+
+                exp.setBackground(drawable);
+                Resources r = getResources();
+                int elevation = (int) TypedValue.applyDimension(
+                        TypedValue.COMPLEX_UNIT_DIP,
+                        10,
+                        r.getDisplayMetrics());
+                exp.setElevation(elevation);
+                issue_tv.setText("Aw, Snap! This wasn't part of the plan.\n But working on your feedback is gonna be.");
+
+                crashes.setBackground(null);
+
+
+            }
+        });
+
 
     }
 

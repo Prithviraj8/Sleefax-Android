@@ -69,8 +69,10 @@
             android:clickable="true"
             android:contentDescription="TODO"
             android:drawablePadding="5dp"
+            android:elevation="5dp"
+            android:layout_centerVertical="true"
             android:text="ORDER HISTORY"
-            android:visibility="gone" />
+            android:visibility="visible" />
 
         <ImageButton
             android:id="@+id/SideMenu"

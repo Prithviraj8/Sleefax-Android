@@ -5,422 +5,642 @@
     android:id="@+id/pdfsettingsRL"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#F2F4F4"
     tools:context=".PdfInfo">
 
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/pdfsettingsRL2">
 
-        <View
-            android:id="@+id/view19"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:layout_alignParentTop="true"
-            android:layout_marginTop="0dp"
-            android:background="@drawable/storesview" />
+            android:layout_height="0dp"
+            android:background="@drawable/pagesettingupper"
+            android:elevation="5dp"
+            android:id="@+id/pdfsettingsRL2">
 
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="wrap_content"
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/page_settings" />
+
+            <ImageButton
+                android:id="@+id/back"
+                android:layout_width="10dp"
+                android:layout_height="21dp"
+                android:layout_marginTop="34dp"
+                android:layout_marginLeft="20dp"
+                android:background="@drawable/arrow_left_black"
+                />
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="90dp"
+                android:layout_marginLeft="50dp"
+                android:elevation="10dp">
+                <ImageView
+                    android:layout_width="63dp"
+                    android:layout_height="63dp"
+                    android:src="@drawable/circlewhite"/>
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/add_image"
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true"/>
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="91dp"
+                android:layout_centerHorizontal="true"
+                android:elevation="10dp">
+                <ImageView
+                    android:layout_width="63dp"
+                    android:layout_height="63dp"
+                    android:src="@drawable/circleblue"/>
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/website"
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true"/>
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="89dp"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="50dp"
+                android:elevation="10dp">
+                <ImageView
+                    android:layout_width="63dp"
+                    android:layout_height="63dp"
+                    android:src="@drawable/circlewhite"
+                    />
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:src="@drawable/checkout"
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true"/>
+            </RelativeLayout>
+
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:layout_height="19dp"
+                android:layout_marginTop="182dp"
+                android:layout_marginLeft="295dp"
+                android:id="@+id/apply_to_all" />
+            <TextView
+                android:layout_width="231dp"
+                android:layout_height="17dp"
+                android:layout_marginLeft="53dp"
+                android:layout_marginTop="183dp"
+                android:background="@drawable/apply_these_settings_for_all_documents"/>
+
+
+        </RelativeLayout>
+
+
+        <ScrollView
+            android:id="@+id/scrollViewPdfs"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="@string/file_settings"
-            android:textAlignment="center"
-            android:textColor="#FFF"
-            android:textSize="25sp"
-            android:textStyle="bold"
-            app:layout_constraintHorizontal_bias="0.498" />
+            android:layout_marginTop="-10dp"
+            android:layout_below="@+id/pdfsettingsRL2"
+            >
 
-        <ImageButton
-            android:id="@+id/back"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_alignTop="@+id/textView"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="20dp"
-            android:background="#00FFFFFF"
-            app:srcCompat="@drawable/w" />
-    </RelativeLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:layout_width="333dp"
+                    android:layout_height="89dp"
+                    android:elevation="5dp"
+                    android:id="@+id/color"
+                    android:layout_marginTop="30dp"
+                    android:background="@drawable/white_bg_layout">
+
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/Pdf_Black_White"
+                        android:layout_marginLeft="70dp"
+                        android:background="@drawable/smallcirclewhite"
+                        android:layout_marginTop="14dp">
+
+                        <ImageView
+                            android:layout_width="13dp"
+                            android:layout_height="13dp"
+                            android:layout_marginLeft="6dp"
+                            android:layout_marginTop="6dp"
+                            android:id="@+id/bw_selected"
+                            android:background="@drawable/circleblue" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/Pdf_Colors"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="70dp"
+                        android:background="@drawable/smallcirclewhite"
+                        android:layout_marginTop="14dp">
+                        <ImageView
+                            android:layout_width="13dp"
+                            android:layout_height="13dp"
+                            android:background="@drawable/circleblue"
+                            android:elevation="10dp"
+                            android:visibility="gone"
+                            android:layout_marginLeft="6dp"
+                            android:layout_marginTop="6dp"
+                            android:id="@+id/color_selected" />
+                    </RelativeLayout>
 
 
-    <ScrollView
-        android:id="@+id/scrollViewPdfs"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/pdfsettingsRL2"
-        android:layout_marginTop="0dp">
+
+                    <TextView
+                        android:layout_width="39dp"
+                        android:layout_height="25dp"
+                        android:layout_marginLeft="64dp"
+                        android:layout_marginTop="9dp"
+                        android:layout_below="@id/Pdf_Black_White"
+                        android:background="@drawable/black_white"/>
+
+                    <TextView
+                        android:layout_width="49dp"
+                        android:layout_height="25dp"
+                        android:layout_below="@id/Pdf_Colors"
+                        android:layout_marginTop="9dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="64dp"
+                        android:background="@drawable/color_text" />
+
+
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="333dp"
+                    android:layout_height="89dp"
+                    android:elevation="5dp"
+                    android:id="@+id/copies"
+                    android:background="@drawable/white_bg_layout"
+                    android:layout_marginTop="20dp">
+
+                    <TextView
+                        android:layout_width="113dp"
+                        android:layout_height="25dp"
+                        android:background="@drawable/totalcopies"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentLeft="true"
+                        android:layout_marginLeft="50dp"/>
+                    <EditText
+                        android:layout_width="73dp"
+                        android:layout_height="30dp"
+                        android:background="@drawable/blue_background_texts"
+                        android:layout_centerVertical="true"
+                        android:elevation="10dp"
+                        android:id="@+id/PDF_copies"
+                        android:text="0"
+                        android:inputType="number"
+                        android:focusable="auto"
+                        android:focusedByDefault="false"
+                        android:textColor="#FFFFFF"
+                        android:textStyle="bold"
+                        android:textSize="18sp"
+                        android:gravity="center"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="50dp"/>
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="333dp"
+                    android:layout_height="89dp"
+                    android:elevation="5dp"
+                    android:id="@+id/pagesize"
+                    android:background="@drawable/white_bg_layout"
+                    android:layout_marginTop="20dp">
+
+                    <TextView
+                        android:layout_width="102dp"
+                        android:layout_height="25dp"
+                        android:text="Page Size"
+                        android:textSize="20dp"
+                        android:layout_centerVertical="true"
+                        android:textColor="#000000"
+                        android:layout_alignParentLeft="true"
+                        android:layout_marginLeft="55dp"/>
+                    <RelativeLayout
+                        android:layout_width="100dp"
+                        android:layout_height="37dp"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="40dp"
+                        android:elevation="10dp"
+                        android:background="@drawable/blue_background_texts">
+                        <Spinner
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@android:color/transparent"
+                            android:id="@+id/sizeSpinner"
+                            android:popupBackground="@drawable/blue_background_texts"
+                            android:spinnerMode="dropdown"
+                            /></RelativeLayout>
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="333dp"
+                    android:layout_height="89dp"
+                    android:elevation="5dp"
+                    android:id="@+id/orientation"
+                    android:background="@drawable/white_bg_layout"
+                    android:layout_marginTop="20dp">
+
+                    <TextView
+                        android:layout_width="102dp"
+                        android:layout_height="25dp"
+                        android:layout_alignParentLeft="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="50dp"
+                        android:background="@drawable/orientation_text" />
+                    <RelativeLayout
+                        android:layout_width="100dp"
+                        android:layout_height="37dp"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="40dp"
+                        android:elevation="10dp"
+                        android:background="@drawable/blue_background_texts">
+
+                        <Spinner
+                            android:id="@+id/orientationSpinner"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@android:color/transparent"
+                            android:popupBackground="@drawable/blue_background_texts"
+                            android:spinnerMode="dropdown" /></RelativeLayout>
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="333dp"
+                    android:layout_height="89dp"
+                    android:elevation="5dp"
+                    android:id="@+id/sides"
+                    android:background="@drawable/white_bg_layout"
+                    android:layout_marginTop="20dp">
+
+                    <TextView
+                        android:layout_width="102dp"
+                        android:layout_height="25dp"
+                        android:text="Both Sides"
+                        android:textSize="20dp"
+                        android:textColor="#000000"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentLeft="true"
+                        android:layout_marginLeft="50dp"/>
+                    <RelativeLayout
+                        android:layout_width="100dp"
+                        android:layout_height="37dp"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="40dp"
+                        android:elevation="10dp"
+                        android:background="@drawable/blue_background_texts">
+                        <ToggleButton
+                            android:layout_width="match_parent"
+                            android:id="@+id/bothSidesToggle"
+                            android:layout_height="match_parent"
+                            android:background="@android:color/transparent"
+                            android:textColor="#FFFFFF"
+                            /></RelativeLayout>
+                </RelativeLayout>
+
+
+
+                <RelativeLayout
+                    android:layout_width="333dp"
+                    android:layout_height="89dp"
+                    android:elevation="5dp"
+                    android:id="@+id/custompages"
+                    android:background="@drawable/white_bg_layout"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="70dp">
+
+                    <TextView
+                        android:layout_width="72dp"
+                        android:layout_height="25dp"
+                        android:background="@drawable/custom_text"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentLeft="true"
+                        android:layout_marginLeft="55dp"/>
+                    <EditText
+                        android:layout_width="38dp"
+                        android:layout_height="22dp"
+                        android:background="@drawable/blue_background_texts"
+                        android:layout_centerVertical="true"
+                        android:elevation="10dp"
+                        android:text="1"
+                        android:inputType="number"
+                        android:textColor="#FFFFFF"
+                        android:textStyle="bold"
+                        android:textSize="15sp"
+                        android:gravity="center"
+                        android:focusable="auto"
+                        android:focusedByDefault="false"
+                        android:id="@+id/customValue1"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="100dp"/>
+                    <TextView
+                        android:layout_width="18dp"
+                        android:layout_height="25dp"
+                        android:background="@drawable/to"
+                        android:layout_centerVertical="true"
+                        android:elevation="10dp"
+                        android:textColor="#FFFFFF"
+                        android:textStyle="bold"
+                        android:textSize="15sp"
+                        android:gravity="center"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="70dp"/>
+                    <EditText
+                        android:layout_width="38dp"
+                        android:layout_height="22dp"
+                        android:background="@drawable/blue_background_texts"
+                        android:layout_centerVertical="true"
+                        android:elevation="10dp"
+                        android:text="1"
+                        android:focusedByDefault="false"
+                        android:inputType="number"
+                        android:id="@+id/customValue2"
+                        android:textColor="#FFFFFF"
+                        android:textStyle="bold"
+                        android:focusable="auto"
+                        android:textSize="15sp"
+                        android:gravity="center"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="20dp"/>
+                </RelativeLayout>
+
+
+
+
+
+
+                <ImageButton
+                    android:id="@+id/scrollDownPdf"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_alignTop="@+id/PageCount"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="0dp"
+                    android:layout_toEndOf="@+id/PageCount"
+                    android:visibility="gone"
+                    />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                <EditText
+                    android:id="@+id/PageCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignStart="@+id/customValue1"
+                    android:layout_alignTop="@+id/viewPdfBtn"
+                    android:layout_alignEnd="@+id/bothSidesToggle"
+                    android:layout_alignBottom="@+id/viewPdfBtn"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginTop="0dp"
+                    android:layout_marginEnd="0dp"
+                    android:layout_marginBottom="0dp"
+                    android:ems="10"
+                    android:hint="Page Count"
+                    android:inputType="number"
+                    android:textAlignment="center"
+                    android:textColor="#000000"
+                    android:textSize="14sp"
+                    android:visibility="gone" />
+
+
+
+
+
+            </LinearLayout>
+        </ScrollView>
+
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"
+            android:background="#FFFFFF"
+            android:id="@+id/bottomView"
+            android:layout_alignParentBottom="true"
+            >
 
-
-            <ImageButton
-                android:id="@+id/scrollDownPdf"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:layout_alignTop="@+id/PageCount"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="0dp"
-                android:layout_toEndOf="@+id/PageCount"
-                android:background="@drawable/ripple_effect"
-                android:visibility="gone"
-                app:srcCompat="@drawable/downarrow" />
-
-
-            <Button
-                android:id="@+id/pdfDone"
-                android:layout_width="160dp"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/viewPdfBtn"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="14dp"
-                android:text="@string/DonePageBtn"
-                android:textColor="#000000"
-                android:textSize="22sp"
-                android:textStyle="bold" />
-
-            <ImageView
-                android:id="@+id/imageView11"
+            <RelativeLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignStart="@+id/Pdf_Black_White"
-                android:layout_alignTop="@+id/Pdf_Black_White"
-                android:layout_alignEnd="@+id/Pdf_Black_White"
-                android:layout_alignBottom="@id/Pdf_Black_White"
-                android:layout_marginStart="0dp"
-                android:layout_marginTop="0dp"
-                android:layout_marginEnd="0dp"
-                android:layout_marginBottom="0dp"
-                app:srcCompat="@drawable/bwimg" />
-
-            <ImageView
-                android:id="@+id/imageView12"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignStart="@+id/Pdf_Colors"
-                android:layout_alignTop="@+id/Pdf_Colors"
-                android:layout_alignEnd="@id/Pdf_Colors"
-                android:layout_alignBottom="@id/Pdf_Colors"
-                android:layout_marginStart="0dp"
-                android:layout_marginTop="0dp"
-                android:layout_marginEnd="0dp"
-                android:layout_marginBottom="0dp"
-                app:srcCompat="@drawable/colorimg" />
-
-            <TextView
-                android:id="@+id/textView3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="false"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="30dp"
-                android:text="@string/select_color_format"
-                android:textColor="#85000000"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <View
-                android:id="@+id/Pdf_Black_White"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_below="@+id/textView3"
-                android:layout_alignStart="@+id/textView3"
-                android:layout_marginStart="0dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginEnd="0dp"
-                android:textAlignment="center"
-                android:textSize="26sp"
-                app:layout_constraintBottom_toBottomOf="@+id/Pdf_Colors"
-                app:layout_constraintEnd_toStartOf="@+id/textView3"
-                app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView3" />
-
-            <View
-                android:id="@+id/Pdf_Colors"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_below="@+id/textView3"
-                android:layout_alignEnd="@+id/textView3"
-                android:layout_marginStart="0dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginEnd="0dp"
-                android:textAlignment="center"
-                android:textSize="26sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toEndOf="@+id/textView3" />
-
-            <TextView
-                android:id="@+id/Copies"
-                android:layout_width="160dp"
-                android:layout_height="40dp"
-                android:layout_below="@+id/Pdf_Black_White"
-                android:layout_alignEnd="@+id/Pdf_Black_White"
+                android:layout_height="34dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:paddingLeft="10dp"
+                android:id="@+id/name_price"
                 android:layout_alignParentStart="true"
-                android:layout_marginStart="24dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginEnd="1dp"
-                android:background="@drawable/orderinfoviews"
-                android:padding="5dp"
-                android:text="@string/copies"
-                android:textAlignment="center"
-                android:textColor="#3D3D3D"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="@+id/PDF_copies"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/Pdf_Black_White" />
+                android:paddingRight="10dp"
+                android:background="@drawable/blue_background_texts">
 
-            <EditText
-                android:id="@+id/PDF_copies"
-                android:layout_width="110dp"
-                android:layout_height="40dp"
-                android:layout_below="@+id/Pdf_Colors"
-                android:layout_alignStart="@+id/Pdf_Colors"
-                android:layout_marginStart="0dp"
-                android:layout_marginTop="20dp"
-                android:ems="10"
-                android:hint="@string/Copies"
-                android:inputType="number"
-                android:text="1"
-                android:textAlignment="center"
-                android:textColor="#000000"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.601"
-                app:layout_constraintStart_toEndOf="@+id/Copies"
-                app:layout_constraintTop_toBottomOf="@+id/Pdf_Colors" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:text="Book.pdf"
+                    android:id="@+id/pdf_name"
+                    android:textSize="13dp"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:textStyle="bold"
+                    android:textColor="#FFFFFF"/>
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="16dp"
+                    android:src="@drawable/line"
+                    android:id="@+id/line"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@id/pdf_name"
+                    android:layout_marginLeft="8dp"/>
+                <ImageView
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:src="@drawable/rupee_symbol"
+                    android:layout_centerVertical="true"
+                    android:id="@+id/rupee_symbol"
+                    android:layout_toRightOf="@id/line"
+                    android:layout_marginLeft="5dp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/pdf_price"
+                    android:textColor="#FFFFFF"
+                    android:textSize="13dp"
+                    android:textStyle="bold"
+                    android:text="24"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@id/rupee_symbol"
+                    android:layout_marginLeft="5dp"/>
 
-            <TextView
-                android:id="@+id/textView7"
-                android:layout_width="160dp"
-                android:layout_height="35dp"
-                android:layout_below="@+id/Copies"
-                android:layout_alignStart="@+id/Copies"
-                android:layout_alignEnd="@+id/Copies"
-                android:layout_marginStart="0dp"
-                android:layout_marginTop="14dp"
-                android:layout_marginEnd="0dp"
-                android:background="@drawable/orderinfoviews"
-                android:padding="5dp"
-                android:text="Select Page Size"
-                android:textAlignment="center"
-                android:textColor="#3D3D3D"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="@+id/Copies"
-                app:layout_constraintStart_toStartOf="@+id/Copies"
-                app:layout_constraintTop_toBottomOf="@+id/Copies" />
+            </RelativeLayout>
 
-            <Spinner
-                android:id="@+id/sizeSpinner"
-                android:layout_width="120dp"
-                android:layout_height="35dp"
-                android:layout_alignStart="@+id/PDF_copies"
-                android:layout_alignTop="@+id/textView7"
-                android:layout_marginStart="0dp"
-                android:layout_marginTop="0dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.494"
-                app:layout_constraintStart_toEndOf="@+id/textView7"
-                app:layout_constraintTop_toBottomOf="@+id/PDF_copies" />
-
-            <Spinner
-                android:id="@+id/orientationSpinner"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignStart="@+id/sizeSpinner"
-                android:layout_alignTop="@+id/textView8"
-                android:layout_alignEnd="@+id/sizeSpinner"
-                android:layout_alignBottom="@+id/textView8"
-                android:layout_marginStart="0dp"
-                android:layout_marginTop="0dp"
-                android:layout_marginEnd="0dp"
-                android:layout_marginBottom="0dp" />
-
-            <TextView
-                android:id="@+id/textView8"
-                android:layout_width="160dp"
-                android:layout_height="40dp"
-                android:layout_below="@+id/textView7"
-                android:layout_alignStart="@+id/textView7"
-                android:layout_alignEnd="@+id/textView7"
-                android:layout_marginStart="0dp"
-                android:layout_marginTop="14dp"
-                android:layout_marginEnd="0dp"
-                android:background="@drawable/orderinfoviews"
-                android:padding="5dp"
-                android:text="Orientation"
-                android:textAlignment="center"
-                android:textColor="#3D3D3D"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="@+id/textView7"
-                app:layout_constraintStart_toStartOf="@+id/textView7"
-                app:layout_constraintTop_toBottomOf="@+id/textView7"
-                app:layout_constraintVertical_bias="0.56"
-                tools:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/textView20"
-                android:layout_width="160dp"
-                android:layout_height="35dp"
-                android:layout_below="@+id/textView8"
-                android:layout_alignStart="@+id/textView8"
-                android:layout_alignEnd="@+id/textView8"
-                android:layout_marginStart="0dp"
-                android:layout_marginTop="14dp"
-                android:layout_marginEnd="0dp"
-                android:background="@drawable/orderinfoviews"
-                android:padding="5dp"
-                android:text="Both Sides"
-                android:textAlignment="center"
-                android:textColor="#3D3D3D"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="@+id/textView12"
-                app:layout_constraintStart_toStartOf="@+id/textView12"
-                app:layout_constraintTop_toBottomOf="@+id/textView12" />
-
-            <ToggleButton
-                android:id="@+id/bothSidesToggle"
-                android:layout_width="110dp"
-                android:layout_height="35dp"
-                android:layout_alignStart="@+id/sizeSpinner"
-                android:layout_alignTop="@+id/textView20"
-                android:layout_alignEnd="@+id/orientationSpinner"
-                android:layout_alignBottom="@+id/textView20"
-                android:layout_marginStart="0dp"
-                android:layout_marginTop="0dp"
-                android:layout_marginEnd="0dp"
-                android:layout_marginBottom="0dp"
-                android:text="ToggleButton"
-                android:textSize="12sp"
-                app:layout_constraintBottom_toBottomOf="@+id/textView20"
-                app:layout_constraintStart_toStartOf="@+id/customValue1"
-                app:layout_constraintTop_toTopOf="@+id/textView20" />
-
-            <TextView
-                android:id="@+id/textView12"
-                android:layout_width="160dp"
-                android:layout_height="35dp"
-                android:layout_below="@+id/textView20"
-                android:layout_alignStart="@+id/textView20"
-                android:layout_alignEnd="@+id/textView20"
-                android:layout_marginStart="0dp"
-                android:layout_marginTop="14dp"
-                android:layout_marginEnd="0dp"
-                android:background="@drawable/orderinfoviews"
-                android:padding="5dp"
-                android:text="Custom"
-                android:textAlignment="center"
-                android:textColor="#3D3D3D"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:visibility="visible"
-                app:layout_constraintEnd_toEndOf="@+id/textView8"
-                app:layout_constraintStart_toStartOf="@+id/textView8"
-                app:layout_constraintTop_toBottomOf="@+id/textView8" />
-
-
-            <EditText
-                android:id="@+id/customValue1"
-                android:layout_width="40dp"
-                android:layout_height="37dp"
-                android:layout_alignStart="@+id/bothSidesToggle"
-                android:layout_alignTop="@+id/textView12"
-                android:layout_alignBottom="@+id/textView12"
-                android:layout_marginStart="0dp"
-                android:layout_marginTop="0dp"
-                android:layout_marginBottom="0dp"
-                android:digits="0123456789,-"
-                android:ems="10"
-                android:hint="1,4,6,etc."
-                android:inputType="number"
-                android:textSize="12sp"
-                android:visibility="visible"
-                app:layout_constraintBottom_toBottomOf="@+id/textView12"
-                app:layout_constraintStart_toStartOf="@+id/sizeSpinner"
-                app:layout_constraintTop_toTopOf="@+id/textView12"
-                app:layout_constraintVertical_bias="1.0" />
-
-            <Button
-                android:id="@+id/viewPdfBtn"
+            <RelativeLayout
                 android:layout_width="wrap_content"
-                android:layout_height="35dp"
-                android:layout_below="@+id/textView12"
-                android:layout_alignStart="@+id/textView20"
-                android:layout_alignEnd="@+id/textView12"
-                android:layout_marginStart="0dp"
-                android:layout_marginTop="14dp"
-                android:layout_marginEnd="0dp"
-                android:background="@drawable/ripple_effect"
-                android:text="View Pdf" />
+                android:layout_height="34dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:background="@drawable/blue_background_texts"
+                android:layout_centerVertical="true"
+                android:id="@+id/previous"
+                android:layout_toRightOf="@id/name_price"
+                android:layout_marginLeft="10dp"
+                >
 
-            <EditText
-                android:id="@+id/PageCount"
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/arrow_left_white"
+                    android:layout_centerVertical="true"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:text="Previous"
+                    android:textColor="#FFFFFF"
+                    android:textSize="13dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="20dp"/>
+
+            </RelativeLayout>
+
+            <RelativeLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignStart="@+id/customValue1"
-                android:layout_alignTop="@+id/viewPdfBtn"
-                android:layout_alignEnd="@+id/bothSidesToggle"
-                android:layout_alignBottom="@+id/viewPdfBtn"
-                android:layout_marginStart="0dp"
-                android:layout_marginTop="0dp"
-                android:layout_marginEnd="0dp"
-                android:layout_marginBottom="0dp"
-                android:ems="10"
-                android:hint="Page Count"
-                android:inputType="number"
-                android:textAlignment="center"
-                android:textColor="#000000"
-                android:textSize="14sp"
-                android:visibility="gone" />
+                android:layout_height="34dp"
+                android:background="@drawable/blue_background_texts"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:layout_toRightOf="@id/previous"
+                android:layout_centerVertical="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginRight="10dp"
+                android:layout_marginLeft="10dp"
+                android:id="@+id/next">
 
-            <EditText
-                android:id="@+id/customValue2"
-                android:layout_width="40dp"
-                android:layout_height="wrap_content"
-                android:layout_alignTop="@+id/customValue1"
-                android:layout_alignEnd="@+id/bothSidesToggle"
-                android:layout_alignBottom="@+id/customValue1"
-                android:layout_marginTop="0dp"
-                android:layout_marginEnd="0dp"
-                android:layout_marginBottom="1dp"
-                android:ems="10"
-                android:hint="1,3,4,5,etc"
-                android:inputType="number"
-                android:textSize="12sp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Next"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:textColor="#FFFFFF"
+                    android:textSize="13dp"
+                    android:id="@+id/textviewnext"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true" />
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/textviewnext"
+                    android:layout_marginLeft="10dp"
+                    android:src="@drawable/arrow"
+                    android:layout_centerVertical="true" />
 
-            <TextView
-                android:id="@+id/textView19"
-                android:layout_width="25dp"
-                android:layout_height="wrap_content"
-                android:layout_alignTop="@+id/customValue1"
-                android:layout_alignBottom="@+id/customValue1"
-                android:layout_marginStart="0dp"
-                android:layout_marginTop="0dp"
-                android:layout_marginEnd="4dp"
-                android:layout_marginBottom="0dp"
-                android:layout_toStartOf="@id/customValue2"
-                android:layout_toEndOf="@+id/customValue1"
-                android:padding="5dp"
-                android:text="to"
-                android:textAlignment="center" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:paddingLeft="30dp"
+                android:paddingRight="30dp"
+                android:layout_height="34dp"
+                android:background="@drawable/blue_background_texts"
+                android:layout_centerVertical="true"
+                android:id="@+id/pdfDone"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:visibility="gone"
+                android:layout_alignParentEnd="true"
+                android:layout_toRightOf="@id/previous"
+                >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="13dp"
+                    android:textStyle="bold"
+                    android:text="Done"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:textColor="#FFFFFF"
+                    android:gravity="center"
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true"/>
+
+            </RelativeLayout>
+
+
+
 
 
         </RelativeLayout>
-    </ScrollView>
+        <RelativeLayout
+            android:layout_width="61dp"
+            android:layout_height="60dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginBottom="70dp"
+            android:elevation="10dp"
+            android:id="@+id/viewPdfBtn"
+            android:background="@drawable/circlered">
+
+            <TextView
+                android:layout_width="20dp"
+                android:layout_height="12dp"
+                android:background="@drawable/view_text"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"/>
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:src="@drawable/pdf"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="25dp"/>
+
+        </RelativeLayout>
+
     <com.github.barteksc.pdfviewer.PDFView
         android:id="@+id/viewPDF"
         android:layout_width="match_parent"
@@ -429,4 +649,6 @@
         android:layout_marginTop="0dp"
         android:visibility="invisible" />
 
-</RelativeLayout>
+
+    </RelativeLayout>
+

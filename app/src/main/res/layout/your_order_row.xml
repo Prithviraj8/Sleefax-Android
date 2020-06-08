@@ -5,6 +5,213 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:paddingVertical="10dp"
+        android:background="@drawable/your_orders_background"
+        android:elevation="5dp">
+
+        <RelativeLayout
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginTop="10dp"
+            android:layout_alignParentStart="true"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/shop_bg"
+            android:elevation="5dp"
+            android:id="@+id/shop_layout1">
+            <ImageView
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:src="@drawable/shopblue"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"    />
+        </RelativeLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="17sp"
+            android:textColor="#000000"
+            android:id="@+id/ShopsName"
+            android:fontFamily="@font/poppins_medium"
+            android:layout_toRightOf="@id/shop_layout1"
+            android:layout_alignTop="@id/shop_layout1"
+            android:layout_marginLeft="10dp"
+            android:text="MIT Print Shop"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="13sp"
+            android:textColor="#B5B5B5"
+            android:layout_below="@id/ShopsName"
+            android:id="@+id/Location"
+            android:fontFamily="@font/poppins_medium"
+            android:layout_alignStart="@id/ShopsName"
+            android:text="Kothrud, Pune"/>
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/newi"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="20dp"
+            android:id="@+id/info"
+            android:layout_alignTop="@id/shop_layout1"/>
+
+        <TextView
+            android:id="@+id/textview1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/shop_layout1"
+            android:layout_alignStart="@id/shop_layout1"
+            android:layout_marginLeft="10dp"
+            android:fontFamily="@font/poppins_medium"
+            android:text="Ordered On"
+            android:textColor="#B5B5B5"
+            android:textSize="11sp" />
+        <TextView
+            android:id="@+id/orderDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textview1"
+            android:layout_alignStart="@id/textview1"
+            android:fontFamily="@font/poppins_medium"
+            android:text="10 May, 2020 at 02:15 PM"
+            android:textColor="#000000"
+            android:textSize="10sp" />
+        <TextView
+            android:id="@+id/textview2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textview1"
+            android:layout_alignStart="@id/textview1"
+            android:fontFamily="@font/poppins_medium"
+            android:text="Total Amount"
+            android:layout_marginTop="30dp"
+            android:textColor="#B5B5B5"
+            android:textSize="11sp" />
+        <TextView
+            android:id="@+id/rupeeSymbol"
+            android:layout_width="8dp"
+            android:layout_height="8dp"
+            android:layout_below="@id/textview2"
+            android:layout_marginTop="4dp"
+            android:layout_alignStart="@id/textview2"
+            android:fontFamily="@font/poppins_medium"
+            android:background="@drawable/india_rupee"
+            android:textColor="#000000"
+            android:textSize="10sp" />
+        <TextView
+            android:id="@+id/Price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textview2"
+            android:layout_toRightOf="@id/rupeeSymbol"
+            android:fontFamily="@font/poppins_medium"
+            android:layout_marginLeft="4dp"
+            android:text= "89"
+            android:textColor="#000000"
+            android:textSize="10sp" />
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/rate_this_order"
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="5dp"
+            android:layout_marginRight="20dp"
+            android:layout_alignTop="@+id/textview1"
+            android:layout_alignParentEnd="true"
+            android:background="@drawable/rate_this_order_bg">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textview3"
+                android:text="Rate This Order"
+                android:layout_centerVertical="true"
+                android:textSize="12sp"
+                android:textColor="#FFFFFF"
+                android:fontFamily="@font/poppins_medium"/>
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/order_rated"
+            android:paddingHorizontal="20dp"
+            android:paddingVertical="5dp"
+            android:layout_marginRight="20dp"
+            android:layout_alignStart="@id/rate_this_order"
+            android:layout_alignEnd="@id/rate_this_order"
+            android:layout_alignTop="@+id/textview1"
+            android:layout_alignParentEnd="true"
+            android:visibility="gone"
+            android:background="@drawable/order_rated_bg">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/orderRated_tv"
+                android:text="Order Rated"
+                android:layout_centerVertical="true"
+                android:textSize="12sp"
+                android:textColor="#FFFFFF"
+                android:fontFamily="@font/poppins_medium"/>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/tick"
+                android:layout_toRightOf="@+id/orderRated_tv"
+                android:layout_alignTop="@id/orderRated_tv"
+                android:layout_alignBottom="@id/orderRated_tv"
+                android:layout_marginLeft="10dp"/>
+        </RelativeLayout>
+
+
+        <TextView
+            android:id="@+id/OrderStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textview1"
+            android:layout_alignParentEnd="true"
+            android:layout_alignTop="@id/Price"
+            android:layout_marginTop="-5dp"
+            android:layout_marginRight="20dp"
+            android:fontFamily="@font/poppins_semibold"
+            android:text="Recieved Successfully"
+            android:textColor="#B5B5B5"
+            android:textSize="13sp" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@id/OrderStatus"
+            android:id="@+id/divider"
+            android:layout_marginTop="10dp"
+            android:background="#ACACAC"/>
+        <ImageButton
+            android:layout_width="75dp"
+            android:layout_height="15dp"
+            android:layout_below="@id/divider"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/repeat_order"
+            android:layout_alignStart="@id/textview1"/>
+        <ImageButton
+            android:layout_width="105dp"
+            android:layout_height="15dp"
+            android:layout_below="@id/divider"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/view_order_details"
+            android:layout_alignEnd="@id/OrderStatus"/>
+
+
+
+
+
+
+
+
+    </RelativeLayout>
+
+
     <View
         android:id="@+id/animateView"
         android:layout_width="wrap_content"
@@ -15,6 +222,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginStart="11dp"
         android:layout_marginTop="15dp"
+        android:visibility="gone"
         android:layout_marginEnd="12dp" />
 
     <View
@@ -28,57 +236,11 @@
         android:layout_marginStart="0dp"
         android:layout_marginTop="0dp"
         android:layout_marginEnd="0dp"
+        android:visibility="gone"
         android:layout_marginBottom="5dp"
         android:background="@drawable/status_views" />
 
-    <TextView
-        android:id="@+id/ShopsName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/YourOrderView"
-        android:layout_alignTop="@+id/YourOrderView"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="15dp"
-        android:layout_marginEnd="80dp"
-        android:paddingLeft="10dp"
-        android:text="ShopName :"
-        android:textColor="#255270"
-        android:textSize="20sp"
-        android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/Location"
-        android:layout_width="252dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/ShopsName"
-        android:layout_alignStart="@+id/YourOrderView"
-        android:layout_alignEnd="@+id/ShopsName"
-        android:layout_alignParentStart="true"
-        android:layout_marginStart="21dp"
-        android:layout_marginTop="1dp"
-        android:layout_marginEnd="0dp"
-        android:paddingLeft="10dp"
-        android:text="@string/Location"
-        android:textColor="#542B2A2A"
-        android:textSize="14sp"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/OrderStatus"
-        android:layout_width="120dp"
-        android:layout_height="30dp"
-        android:layout_alignTop="@+id/ShopsName"
-        android:layout_alignEnd="@+id/animateView"
-        android:layout_marginTop="0dp"
-        android:layout_marginEnd="20dp"
-        android:background="@drawable/orderstatusview1"
-        android:padding="4dp"
-        android:text="@string/OrderStatus"
-        android:textAlignment="center"
-        android:textColor="#FFFF"
-        android:textSize="16sp"
-        android:textStyle="bold" />
 
     <View
         android:id="@+id/view5"
@@ -89,6 +251,7 @@
         android:layout_alignEnd="@+id/YourOrderView"
         android:layout_marginStart="15dp"
         android:layout_marginTop="10dp"
+        android:visibility="gone"
         android:layout_marginEnd="5dp"
         android:background="@drawable/dottedline" />
 
@@ -105,37 +268,14 @@
         android:paddingLeft="10dp"
         android:text="Total Files :"
         android:textColor="#4D4949"
-        android:textSize="14sp"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/Price"
-        android:layout_width="149dp"
-        android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/paymentModeTV"
-        android:layout_alignTop="@+id/orderDate"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="0dp"
-        android:paddingLeft="10dp"
-        android:text="Price :"
-        android:textColor="#4D4949"
+        android:visibility="gone"
         android:textSize="14sp"
         android:textStyle="bold" />
 
 
-    <TextView
-        android:id="@+id/orderDate"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/Files"
-        android:layout_alignStart="@+id/Files"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="10dp"
-        android:paddingLeft="10dp"
-        android:text="Date and Time"
-        android:textColor="#4D4949"
-        android:textSize="14sp"
-        android:textStyle="bold" />
+
+
+
 
     <TextView
         android:id="@+id/paymentModeTV"
@@ -148,6 +288,7 @@
         android:paddingLeft="10dp"
         android:text="Payment Mode"
         android:textColor="#4D4949"
+        android:visibility="gone"
         android:textSize="14sp"
         android:textStyle="bold" />
 
@@ -155,12 +296,11 @@
         android:id="@+id/orderIDTV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/OrderStatus"
-        android:layout_alignEnd="@+id/OrderStatus"
         android:layout_marginTop="5dp"
         android:layout_marginEnd="0dp"
         android:text="Order ID"
         android:textColor="#100101"
+        android:visibility="gone"
         android:textSize="16sp"
         android:textStyle="bold" />
 

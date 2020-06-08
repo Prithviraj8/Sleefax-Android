@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:drawable="@drawable/alideview_circle_white"
-        android:height="50dp"
-        android:width="50dp"/>
+        android:drawable="@drawable/alideview_circle_white" />
     <item
-        android:drawable="@drawable/icon_arrow_right"
-        android:width="6dp"
-        android:height="13dp"
+        android:drawable="@drawable/icon_slide"
+        android:width="8dp"
+        android:height="16dp"
         android:gravity="center"/>
 
 </layer-list>
