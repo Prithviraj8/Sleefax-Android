@@ -101,7 +101,7 @@
             android:fontFamily="@font/poppins_semibold"
             android:textSize="8sp"
             android:layout_marginTop="5dp"
-            android:id="@+id/closing_time1" />
+            android:id="@+id/closing_time" />
 
         <ImageView
             android:layout_width="9dp"
@@ -140,7 +140,7 @@
             android:layout_toRightOf="@+id/shop_layout1">
 
             <TextView
-                android:id="@+id/ShopsName1"
+                android:id="@+id/ShopsName"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Shop Name"
@@ -149,11 +149,11 @@
                 android:textSize="15sp"
                 android:textStyle="bold" />
             <TextView
-                android:id="@+id/Location1"
+                android:id="@+id/Location"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:layout_below="@+id/ShopsName1"
+                android:layout_below="@+id/ShopsName"
                 android:text="Location"
                 android:fontFamily="@font/poppins_semibold"
                 android:textColor="#858585"
@@ -163,7 +163,7 @@
                 android:id="@+id/Files1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/Location1"
+                android:layout_below="@+id/Location"
                 android:textColor="#000000"
                 android:textSize="10sp"
                 android:layout_marginTop="2dp"
@@ -176,11 +176,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:layout_below="@id/ShopsName1"
+                android:layout_below="@id/ShopsName"
                 android:text="6 km"
-                android:layout_alignTop="@id/Location1"
+                android:layout_alignTop="@id/Location"
                 android:fontFamily="@font/poppins_semibold"
-                android:layout_alignEnd="@id/ShopsName1"
+                android:layout_alignEnd="@id/ShopsName"
                 android:textSize="8sp"
                 android:textColor="#818181" />
 

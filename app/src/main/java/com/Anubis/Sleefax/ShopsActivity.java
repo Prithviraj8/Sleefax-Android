@@ -200,6 +200,7 @@ public class ShopsActivity extends AppCompatActivity {
         paymentModeTV = findViewById(R.id.paymentTV);
 
         urls = extras.getStringArrayList("URLS");
+        Toast.makeText(this, "URLSIZE "+urls.size(), Toast.LENGTH_SHORT).show();
 //        copy = extras.getInt("Copies");
         copies = extras.getIntegerArrayList("Copies");
         colors = extras.getStringArrayList("ColorType");
@@ -540,7 +541,7 @@ public class ShopsActivity extends AppCompatActivity {
                     final TextView Distance = convertView.findViewById(R.id.Distance);
                     final RelativeLayout ShopLayout = convertView.findViewById(R.id.shop);
 //                    ImageButton button = convertView.findViewById(R.id.ShopsLVButton);
-                    Files.setText("Files: "+urls.size());
+//                    Files.setText("Files: "+urls.size());
 
 //                    ShopsName.setText("Shops1");
             userLoc.setLatitude(user_loc.latitude);
@@ -604,7 +605,7 @@ public class ShopsActivity extends AppCompatActivity {
                                 if(position<shopNames.size()) {
                                     ShopsName.setText(shopNames.get(position));
                                     Location.setText(locations.get(position));
-                                    Files.setText("Files : " + urls.size());
+//                                    Files.setText("Files : " + urls.size());
                                     Distance.setText("~" + (distances.get(position)) + "km");
                                 }
                             }

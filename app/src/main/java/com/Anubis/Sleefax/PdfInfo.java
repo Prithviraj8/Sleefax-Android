@@ -169,16 +169,12 @@ public class PdfInfo extends AppCompatActivity {
 
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
-//        pdf_url = extras.getString("PdfURL");
-//        pdf_url = extras.getParcelable("PdfURL");
         pdfURL = extras.getStringArrayList("URLS");
-//        pdf_url = extras.getString("PdfURL");
         fileType = extras.getStringArrayList("FileType");
         username = extras.getString("username");
         email = extras.getString("email");
         requestCode = extras.getInt("RequestCode");
         resultCode = extras.getInt("ResultCode");
-//        numberOfPages = new double[pdfURL.size()];
         numberOfPages = extras.getIntegerArrayList("Pages");
         isTester = extras.getBoolean("IsTester");
         newUser = extras.getBoolean("NewUser");
@@ -225,6 +221,12 @@ public class PdfInfo extends AppCompatActivity {
 
             }
         });
+
+//        if(pdfURL.size() == 1){
+//            done.setVisibility(View.VISIBLE);
+//        }else{
+//            done.setVisibility(View.GONE);
+//        }
 
         colorsTV.setOnTouchListener(touchListener);
         bwTV.setOnTouchListener(touchListener);
@@ -326,9 +328,14 @@ public class PdfInfo extends AppCompatActivity {
                 }
                 colors.add(pdfCnt,colour);
 
-                if(custValue2 == (int) numberOfPages.get(pdfCnt) && custValue1 == 1){
-                  custom = "All";
-                  customPages.add(pdfCnt,custom);
+                if(custValue1 == 1){
+                    if(pdfCnt < numberOfPages.size() && custValue2 == (int) numberOfPages.get(pdfCnt)){
+                        custom = "All";
+                        customPages.add(pdfCnt,custom);
+                    }else {
+                        custom = "All";
+                        customPages.add(pdfCnt,custom);
+                    }
 
                 }else if(custValue1 != 1 && custValue2 != (int) numberOfPages.get(pdfCnt)){
 
@@ -383,12 +390,13 @@ public class PdfInfo extends AppCompatActivity {
                 }
                 Toast.makeText(PdfInfo.this, "CUSV2 "+customValue2.getText(), Toast.LENGTH_SHORT).show();
                 pdfCnt = pdfCnt + 1;
-                    if(pdfCnt < pdfURL.size()) {
-                        customValue2.setText(String.valueOf((int) numberOfPages.get(pdfCnt)));
+                    if(pdfCnt < pdfURL.size() ) {
+                        if(pdfCnt < numberOfPages.size()) {
+                            customValue2.setText(String.valueOf((int) numberOfPages.get(pdfCnt)));
+                        }else{
+                            customValue2.setText(String.valueOf(1));
+                        }
                     }
-//                    if(pdfCnt == pdfURL.size()) {
-//                        new findShops().execute();
-//                    }
 
 
             }
