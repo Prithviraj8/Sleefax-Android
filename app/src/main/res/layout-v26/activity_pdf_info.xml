@@ -74,6 +74,7 @@
             android:layout_marginTop="89dp"
             android:layout_alignParentRight="true"
             android:layout_marginRight="50dp"
+            android:id="@+id/checkoutIV"
             android:elevation="10dp">
             <ImageView
                 android:layout_width="63dp"
@@ -92,14 +93,22 @@
             android:layout_width="wrap_content"
             android:layout_height="19dp"
             android:layout_marginTop="182dp"
-            android:layout_marginLeft="295dp"
+            android:buttonTint="#227093"
+            android:layout_alignEnd="@+id/checkoutIV"
             android:id="@+id/apply_to_all" />
         <TextView
-            android:layout_width="231dp"
-            android:layout_height="17dp"
-            android:layout_marginLeft="53dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@id/apply_to_all"
+            android:layout_marginRight="11dp"
             android:layout_marginTop="183dp"
-            android:background="@drawable/apply_these_settings_for_all_documents"/>
+            android:textColor="#000000"
+            android:gravity="center"
+            android:fontFamily="@font/poppins_medium"
+            android:textSize="12sp"
+            android:id="@+id/applytv"
+            android:text="Apply these settings for all documents"
+            />
 
 
     </RelativeLayout>
@@ -117,6 +126,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
+            android:focusableInTouchMode="true"
             android:orientation="vertical">
 
             <RelativeLayout
@@ -166,21 +176,27 @@
 
 
                 <TextView
-                    android:layout_width="39dp"
-                    android:layout_height="25dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_marginLeft="64dp"
                     android:layout_marginTop="9dp"
                     android:layout_below="@id/Pdf_Black_White"
-                    android:background="@drawable/black_white"/>
+                    android:textSize="18sp"
+                    android:text="B/W"
+                    android:fontFamily="@font/poppins_medium"
+                    android:textColor="#000000"/>
 
                 <TextView
-                    android:layout_width="49dp"
-                    android:layout_height="25dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_below="@id/Pdf_Colors"
                     android:layout_marginTop="9dp"
                     android:layout_alignParentRight="true"
                     android:layout_marginRight="64dp"
-                    android:background="@drawable/color_text" />
+                    android:textSize="18sp"
+                    android:text="Color"
+                    android:fontFamily="@font/poppins_medium"
+                    android:textColor="#000000" />
 
 
             </RelativeLayout>
@@ -194,9 +210,12 @@
                 android:layout_marginTop="20dp">
 
                 <TextView
-                    android:layout_width="113dp"
-                    android:layout_height="25dp"
-                    android:background="@drawable/totalcopies"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Total Copies"
+                    android:textColor="#000000"
+                    android:textSize="18sp"
+                    android:fontFamily="@font/poppins_medium"
                     android:layout_centerVertical="true"
                     android:layout_alignParentLeft="true"
                     android:layout_marginLeft="50dp"/>
@@ -212,6 +231,7 @@
                     android:focusable="auto"
                     android:focusedByDefault="false"
                     android:textColor="#FFFFFF"
+                    android:fontFamily="@font/poppins_medium"
                     android:textStyle="bold"
                     android:textSize="18sp"
                     android:gravity="center"
@@ -228,10 +248,12 @@
                 android:layout_marginTop="20dp">
 
                 <TextView
-                    android:layout_width="102dp"
-                    android:layout_height="25dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:text="Page Size"
-                    android:textSize="20dp"
+                    android:gravity="center"
+                    android:textSize="18sp"
+                    android:fontFamily="@font/poppins_medium"
                     android:layout_centerVertical="true"
                     android:textColor="#000000"
                     android:layout_alignParentLeft="true"
@@ -263,12 +285,15 @@
                 android:layout_marginTop="20dp">
 
                 <TextView
-                    android:layout_width="102dp"
-                    android:layout_height="25dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
                     android:layout_marginLeft="50dp"
-                    android:background="@drawable/orientation_text" />
+                    android:textSize="18sp"
+                    android:text="Orientation"
+                    android:fontFamily="@font/poppins_medium"
+                    android:textColor="#000000"/>
                 <RelativeLayout
                     android:layout_width="100dp"
                     android:layout_height="37dp"
@@ -296,10 +321,11 @@
                 android:layout_marginTop="20dp">
 
                 <TextView
-                    android:layout_width="102dp"
-                    android:layout_height="25dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
                     android:text="Both Sides"
-                    android:textSize="20dp"
+                    android:fontFamily="@font/poppins_medium"
                     android:textColor="#000000"
                     android:layout_centerVertical="true"
                     android:layout_alignParentLeft="true"
@@ -316,6 +342,7 @@
                         android:layout_width="match_parent"
                         android:id="@+id/bothSidesToggle"
                         android:layout_height="match_parent"
+                        android:fontFamily="@font/poppins_medium"
                         android:background="@android:color/transparent"
                         android:textColor="#FFFFFF"
                         /></RelativeLayout>
@@ -333,9 +360,12 @@
                 android:layout_marginBottom="70dp">
 
                 <TextView
-                    android:layout_width="72dp"
-                    android:layout_height="25dp"
-                    android:background="@drawable/custom_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:text="Custom"
+                    android:fontFamily="@font/poppins_medium"
+                    android:textColor="#000000"
                     android:layout_centerVertical="true"
                     android:layout_alignParentLeft="true"
                     android:layout_marginLeft="55dp"/>
@@ -351,20 +381,20 @@
                     android:textStyle="bold"
                     android:textSize="15sp"
                     android:gravity="center"
+                    android:fontFamily="@font/poppins_medium"
                     android:focusable="auto"
                     android:focusedByDefault="false"
                     android:id="@+id/customValue1"
                     android:layout_alignParentRight="true"
                     android:layout_marginRight="100dp"/>
                 <TextView
-                    android:layout_width="18dp"
-                    android:layout_height="25dp"
-                    android:background="@drawable/to"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:text="to"
+                    android:fontFamily="@font/poppins_medium"
+                    android:textColor="#000000"
                     android:layout_centerVertical="true"
-                    android:elevation="10dp"
-                    android:textColor="#FFFFFF"
-                    android:textStyle="bold"
-                    android:textSize="15sp"
                     android:gravity="center"
                     android:layout_alignParentRight="true"
                     android:layout_marginRight="70dp"/>
@@ -378,6 +408,7 @@
                     android:focusedByDefault="false"
                     android:inputType="number"
                     android:id="@+id/customValue2"
+                    android:fontFamily="@font/poppins_medium"
                     android:textColor="#FFFFFF"
                     android:textStyle="bold"
                     android:focusable="auto"
@@ -455,165 +486,175 @@
         </LinearLayout>
     </ScrollView>
 
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
         android:background="#FFFFFF"
-        android:id="@+id/bottomView"
+        android:id="@+id/bottom_view"
         android:layout_alignParentBottom="true"
         >
 
         <RelativeLayout
             android:layout_width="wrap_content"
-            android:layout_height="34dp"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp"
-            android:paddingLeft="10dp"
-            android:id="@+id/name_price"
-            android:layout_alignParentStart="true"
-            android:paddingRight="10dp"
-            android:background="@drawable/blue_background_texts">
+            android:layout_centerHorizontal="true"
+            android:layout_height="wrap_content">
 
-            <TextView
+            <RelativeLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="34dp"
                 android:layout_centerVertical="true"
-                android:text="Book.pdf"
-                android:id="@+id/pdf_name"
-                android:textSize="13dp"
-                android:fontFamily="@font/poppins_semibold"
-                android:textStyle="bold"
-                android:textColor="#FFFFFF"/>
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="16dp"
-                android:src="@drawable/line"
-                android:id="@+id/line"
-                android:layout_centerVertical="true"
-                android:layout_toRightOf="@id/pdf_name"
-                android:layout_marginLeft="8dp"/>
-            <ImageView
-                android:layout_width="12dp"
-                android:layout_height="12dp"
-                android:src="@drawable/rupee_symbol"
-                android:layout_centerVertical="true"
-                android:id="@+id/rupee_symbol"
-                android:layout_toRightOf="@id/line"
-                android:layout_marginLeft="5dp"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/pdf_price"
-                android:textColor="#FFFFFF"
-                android:textSize="13dp"
-                android:textStyle="bold"
-                android:text="24"
-                android:fontFamily="@font/poppins_semibold"
-                android:layout_centerVertical="true"
-                android:layout_toRightOf="@id/rupee_symbol"
-                android:layout_marginLeft="5dp"/>
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="34dp"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:background="@drawable/blue_background_texts"
-            android:layout_centerVertical="true"
-            android:id="@+id/previous"
-            android:layout_toRightOf="@id/name_price"
-            android:layout_marginLeft="10dp"
-            >
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/arrow_left_white"
-                android:layout_centerVertical="true"
-                />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/poppins_semibold"
-                android:text="Previous"
-                android:textColor="#FFFFFF"
-                android:textSize="13dp"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="20dp"/>
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="34dp"
-            android:background="@drawable/blue_background_texts"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:layout_toRightOf="@id/previous"
-            android:layout_centerVertical="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginRight="10dp"
-            android:layout_marginLeft="10dp"
-            android:id="@+id/next">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Next"
-                android:fontFamily="@font/poppins_semibold"
-                android:textColor="#FFFFFF"
-                android:textSize="13dp"
-                android:id="@+id/textviewnext"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true" />
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_toRightOf="@id/textviewnext"
                 android:layout_marginLeft="10dp"
-                android:src="@drawable/arrow"
-                android:layout_centerVertical="true" />
+                android:paddingLeft="10dp"
+                android:id="@+id/name_price"
+                android:layout_alignParentStart="true"
+                android:paddingRight="10dp"
+                android:background="@drawable/blue_background_texts">
 
-        </RelativeLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:text="Book.pdf"
+                    android:id="@+id/pdf_name"
+                    android:textSize="13dp"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:textStyle="bold"
+                    android:textColor="#FFFFFF"/>
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="16dp"
+                    android:src="@drawable/line"
+                    android:id="@+id/line"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@id/pdf_name"
+                    android:layout_marginLeft="8dp"/>
+                <ImageView
+                    android:layout_width="12dp"
+                    android:layout_height="12dp"
+                    android:src="@drawable/rupee_symbol"
+                    android:layout_centerVertical="true"
+                    android:id="@+id/rupee_symbol"
+                    android:layout_toRightOf="@id/line"
+                    android:layout_marginLeft="5dp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/pdf_price"
+                    android:textColor="#FFFFFF"
+                    android:textSize="13dp"
+                    android:textStyle="bold"
+                    android:text="24"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@id/rupee_symbol"
+                    android:layout_marginLeft="5dp"/>
 
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:paddingLeft="30dp"
-            android:paddingRight="30dp"
-            android:layout_height="34dp"
-            android:background="@drawable/blue_background_texts"
-            android:layout_centerVertical="true"
-            android:id="@+id/pdfDone"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:visibility="visible"
-            android:layout_alignParentEnd="true"
-            android:layout_toRightOf="@id/previous">
+            </RelativeLayout>
 
-            <TextView
+            <RelativeLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="13dp"
-                android:textStyle="bold"
-                android:text="Done"
-                android:fontFamily="@font/poppins_semibold"
-                android:textColor="#FFFFFF"
-                android:gravity="center"
+                android:layout_height="34dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:background="@drawable/blue_background_texts"
                 android:layout_centerVertical="true"
-                android:layout_centerHorizontal="true"/>
+                android:id="@+id/previous"
+                android:layout_toRightOf="@id/name_price"
+                android:layout_marginLeft="10dp"
+                >
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/arrow_left_white"
+                    android:layout_centerVertical="true"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:text="Previous"
+                    android:textColor="#FFFFFF"
+                    android:textSize="13dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="20dp"/>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="34dp"
+                android:background="@drawable/blue_background_texts"
+                android:paddingHorizontal="10dp"
+                android:layout_toRightOf="@id/previous"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="10dp"
+                android:layout_marginLeft="10dp"
+                android:id="@+id/next">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Next"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:textColor="#FFFFFF"
+                    android:textSize="13dp"
+                    android:id="@+id/textviewnext"
+                    android:layout_marginLeft="20dp"
+                    android:layout_centerVertical="true" />
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/textviewnext"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:src="@drawable/arrow"
+                    android:layout_centerVertical="true" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="34dp"
+                android:paddingHorizontal="30dp"
+                android:background="@drawable/blue_background_texts"
+                android:layout_centerVertical="true"
+                android:id="@+id/pdfDone"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:visibility="gone"
+                android:layout_toRightOf="@id/previous"
+                >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="13dp"
+                    android:textStyle="bold"
+                    android:text="Done"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:textColor="#FFFFFF"
+                    android:gravity="center"
+                    android:layout_centerVertical="true"
+                    android:layout_centerHorizontal="true"/>
+
+            </RelativeLayout>
+
 
         </RelativeLayout>
+
 
 
 
 
 
     </RelativeLayout>
+
+
+
+
+
     <RelativeLayout
         android:layout_width="61dp"
         android:layout_height="60dp"

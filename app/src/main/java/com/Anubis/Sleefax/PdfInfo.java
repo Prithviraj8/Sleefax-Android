@@ -28,9 +28,11 @@ import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
@@ -59,13 +61,15 @@ public class PdfInfo extends AppCompatActivity {
     final FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference ref = database.getReference();
     String userId;
+
+    ImageView bw_selected,color_selected;
     int ShopsCnt=0,pdfCnt=0;
 
 //    String colorType;
 
-    RelativeLayout done,viewPdf;
+    RelativeLayout done,viewPdf,next;
     Spinner pageSizeSpinner, orientSpinner;
-    View colorsTV,bwTV,h,v;
+    RelativeLayout colorsTV,bwTV,h,v;
     ToggleButton bothSidePrint;
     ImageButton back,scrollDown;
     ScrollView scrollView;
@@ -76,6 +80,12 @@ public class PdfInfo extends AppCompatActivity {
     RelativeLayout rootLayout;
     RelativeLayout upperLayout;
     int copy,custValue1,custValue2;
+
+    CheckBox applyToAll;
+
+    TextView applyTv;
+
+  //  RelativeLayout bw,color;
 
     //    String pdf_url;
     String pdf_url,pdf_uri;
@@ -112,7 +122,33 @@ public class PdfInfo extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pdf_info);
 
-        bottomRelativeView = findViewById(R.id.bottomView);
+        applyTv = findViewById(R.id.applytv); // to change the text left to checkbox
+
+        bwTV = findViewById(R.id.Pdf_Black_White);
+        colorsTV = findViewById(R.id.Pdf_Colors);
+
+        bw_selected = findViewById(R.id.bw_selected);
+        color_selected = findViewById(R.id.color_selected);
+
+
+        bwTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bw_selected.setVisibility(View.VISIBLE);
+                color_selected.setVisibility(View.INVISIBLE);
+            }
+        });
+
+        colorsTV.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                color_selected.setVisibility(View.VISIBLE);
+                bw_selected.setVisibility(View.INVISIBLE);
+            }
+        });
+
+
+        bottomRelativeView = findViewById(R.id.bottom_view);
 
         DisplayMetrics displaymetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
@@ -138,8 +174,8 @@ public class PdfInfo extends AppCompatActivity {
 
         pdfCnt = 0;
 
-        colorsTV = findViewById(R.id.Pdf_Colors);
-        bwTV = findViewById(R.id.Pdf_Black_White);
+        // colorsTV = findViewById(R.id.Pdf_Colors);
+       //  bwTV = findViewById(R.id.Pdf_Black_White);
         done = findViewById(R.id.pdfDone);
         copiesTV = findViewById(R.id.PDF_copies);
         pageSizeSpinner = findViewById(R.id.sizeSpinner);
@@ -150,14 +186,36 @@ public class PdfInfo extends AppCompatActivity {
         pageCount = findViewById(R.id.PageCount);
         pdfView = findViewById(R.id.viewPDF);
 
+        next = findViewById(R.id.next);
+
+        applyToAll = findViewById(R.id.apply_to_all);
+
+        applyToAll.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                if(applyToAll.isChecked()) {
+                    applyTv.setText("Settings are applied for all documents");
+                    next.setVisibility(View.INVISIBLE);
+                  done.setVisibility(View.VISIBLE);}
+                else
+                {
+                    applyTv.setText("Apply these settings for all documents");
+                   done.setVisibility(View.INVISIBLE);
+                   next.setVisibility(View.VISIBLE);
+                }
+
+            }
+        });
+
 //        pdfView.setVisibility(View.INVISIBLE);
 //        h = findViewById(R.id.h);
 //        v = findViewById(R.id.v);
         final String[] sizes = new String[]{"A4", "A3", "A2"};
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, sizes);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.spinner_text, sizes);//custom  color of spinner
 
         final String[] orientations = new String[]{"Portrait", "Landscape"};
-        ArrayAdapter<String> orientationsAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, orientations);
+        ArrayAdapter<String> orientationsAdapter = new ArrayAdapter<>(this, R.layout.spinner_text, orientations);
 
         pageSizeSpinner.setAdapter(adapter);
         orientSpinner.setAdapter(orientationsAdapter);
@@ -246,16 +304,16 @@ public class PdfInfo extends AppCompatActivity {
                 colour = ("Black/White");
                 colors.add(pdfCnt,colour);
 
-                bwTV.setBackgroundResource(R.drawable.b_w_border);
-                colorsTV.setBackgroundResource(R.drawable.black_white_view_backgroud);
+              //  bwTV.setBackgroundResource(R.drawable.b_w_border);
+              //  colorsTV.setBackgroundResource(R.drawable.black_white_view_backgroud);
             }
             if(view == findViewById(R.id.Pdf_Colors)){
 
                 colour = "Colors";
                 colors.add(pdfCnt,colour);
 
-                colorsTV.setBackgroundResource(R.drawable.colors_border);
-                bwTV.setBackgroundResource(R.drawable.black_white_view_backgroud);
+               // colorsTV.setBackgroundResource(R.drawable.colors_border);
+              //  bwTV.setBackgroundResource(R.drawable.black_white_view_backgroud);
 
             }
 
@@ -292,8 +350,8 @@ public class PdfInfo extends AppCompatActivity {
 
 //                custom = customPages.getText().toString();
                 final String[] sizes = new String[]{"A4", "A3", "A2"};
-                pagesize = sizes[pageSizeSpinner.getSelectedItemPosition()];
-                pageSize.add(pdfCnt,pagesize);
+               pagesize = sizes[pageSizeSpinner.getSelectedItemPosition()];
+               pageSize.add(pdfCnt,pagesize);
 
                 final String[] ots = new String[]{"Portrait", "Landscape"};
                 orientation = ots[orientSpinner.getSelectedItemPosition()];
