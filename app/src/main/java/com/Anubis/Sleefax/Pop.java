@@ -275,7 +275,6 @@ public class Pop extends AppCompatActivity {
                             if(fileName.contains("docx")) {
 
                                 XWPFDocument document;
-                                assert inputStream != null;
                                 document = new XWPFDocument(inputStream);
                                 XWPFWordExtractor extractor = new XWPFWordExtractor(document);
                                 int pages = document.getProperties().getExtendedProperties().getUnderlyingProperties().getPages();
@@ -555,9 +554,9 @@ public class Pop extends AppCompatActivity {
         Intent goToPdfInfo = new Intent(Pop.this, PdfInfo.class);
         Bundle extras = new Bundle();
 
+        System.out.print("NUMBER OF PAGES SIZE "+numberOfPages.size());
         extras.putIntegerArrayList("Pages",numberOfPages);
         extras.putStringArrayList("FileNames",fileNames);
-        Log.d("SOZEEE",String.valueOf(fileSizes.size()));
         extras.putStringArrayList("FileSizes",fileSizes);
         ArrayList<String> files = new ArrayList<>();
 

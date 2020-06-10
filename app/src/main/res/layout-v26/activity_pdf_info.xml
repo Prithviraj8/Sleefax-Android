@@ -271,6 +271,7 @@
                         android:layout_height="match_parent"
                         android:background="@android:color/transparent"
                         android:id="@+id/sizeSpinner"
+                        android:gravity="center"
                         android:popupBackground="@drawable/blue_background_texts"
                         android:spinnerMode="dropdown"
                         /></RelativeLayout>
@@ -307,6 +308,7 @@
                         android:id="@+id/orientationSpinner"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:gravity="center"
                         android:background="@android:color/transparent"
                         android:popupBackground="@drawable/blue_background_texts"
                         android:spinnerMode="dropdown" /></RelativeLayout>
@@ -342,7 +344,7 @@
                         android:layout_width="match_parent"
                         android:id="@+id/bothSidesToggle"
                         android:layout_height="match_parent"
-                        android:fontFamily="@font/poppins_medium"
+                        android:fontFamily="@font/poppins_semibold"
                         android:background="@android:color/transparent"
                         android:textColor="#FFFFFF"
                         /></RelativeLayout>
@@ -371,7 +373,7 @@
                     android:layout_marginLeft="55dp"/>
                 <EditText
                     android:layout_width="38dp"
-                    android:layout_height="22dp"
+                    android:layout_height="wrap_content"
                     android:background="@drawable/blue_background_texts"
                     android:layout_centerVertical="true"
                     android:elevation="10dp"
@@ -400,11 +402,12 @@
                     android:layout_marginRight="70dp"/>
                 <EditText
                     android:layout_width="38dp"
-                    android:layout_height="22dp"
+                    android:layout_height="wrap_content"
                     android:background="@drawable/blue_background_texts"
                     android:layout_centerVertical="true"
-                    android:elevation="10dp"
+                    android:elevation="15dp"
                     android:text="1"
+                    android:paddingHorizontal="10dp"
                     android:focusedByDefault="false"
                     android:inputType="number"
                     android:id="@+id/customValue2"
@@ -663,7 +666,7 @@
         android:layout_marginLeft="20dp"
         android:layout_marginBottom="70dp"
         android:elevation="10dp"
-        android:id="@+id/viewPdfBtn"
+        android:id="@+id/viewFileBtnRL"
         android:background="@drawable/circlered">
 
         <TextView
@@ -679,6 +682,13 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="25dp"/>
 
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/viewPdfBtn"
+            android:background="#00FFFFFF"/>
+
     </RelativeLayout>
 
     <com.github.barteksc.pdfviewer.PDFView
@@ -688,6 +698,47 @@
         android:layout_centerInParent="true"
         android:layout_marginTop="0dp"
         android:visibility="invisible" />
+
+
+
+    <ScrollView
+        android:id="@+id/ViewerScollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#FFF">
+
+
+            <LinearLayout
+                android:id="@+id/ViewerLinearLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#FFF"
+                android:orientation="vertical"
+                android:visibility="visible" />
+
+
+
+        </RelativeLayout>
+
+    </ScrollView>
+
+    <Button
+        android:id="@+id/DismissViewer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/viewFileBtnRL"
+
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="10dp"
+        android:layout_marginBottom="10dp"
+        android:text="Dissmiss"
+        android:textColor="#000000"
+        android:visibility="gone" />
 
 
 </RelativeLayout>
