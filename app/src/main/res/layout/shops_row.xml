@@ -26,7 +26,7 @@
             android:layout_height="23dp"
             android:layout_alignParentEnd="true"
             android:background="@drawable/open_bg"
-            android:layout_alignTop="@+id/shop_info1"
+            android:layout_alignTop="@+id/shop_layout1"
             android:id="@+id/open1">
 
             <TextView
@@ -40,8 +40,6 @@
                 android:fontFamily="@font/poppins_semibold">
 
             </TextView></RelativeLayout>
-
-
         <RelativeLayout
             android:layout_width="77dp"
             android:layout_height="23dp"
@@ -112,20 +110,20 @@
             android:layout_marginTop="7dp"
             android:layout_alignParentEnd="true"
             android:src="@drawable/clock" />
-
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/view_in_maps1"
+            android:layout_marginBottom="6dp"
             android:layout_alignBottom="@id/shop_info1"
             android:layout_toLeftOf="@id/imagemap"
-            android:layout_marginBottom="-5dp"
-            android:background="@drawable/viewinmaps"/>
-         <ImageView
+            android:background="@android:color/transparent"
+            android:src="@drawable/viewinmaps"/>
+        <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:layout_marginBottom="-7dp"
+            android:layout_marginBottom="4dp"
             android:layout_alignBottom="@id/shop_info1"
             android:id="@+id/imagemap"
             android:src="@drawable/technology"/>
@@ -137,6 +135,7 @@
             android:layout_marginLeft="10dp"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="15dp"
+            android:layout_alignTop="@id/shop_layout1"
             android:layout_toRightOf="@+id/shop_layout1">
 
             <TextView
@@ -144,6 +143,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Shop Name"
+                android:layout_marginTop="-5dp"
                 android:fontFamily="@font/poppins_semibold"
                 android:textColor="#227093"
                 android:textSize="15sp"
@@ -157,16 +157,16 @@
                 android:text="Location"
                 android:fontFamily="@font/poppins_semibold"
                 android:textColor="#858585"
-                android:textSize="8sp" />
+                android:textSize="9sp" />
 
             <TextView
-                android:id="@+id/Files1"
+                android:id="@+id/Files"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/Location"
                 android:textColor="#000000"
-                android:textSize="10sp"
-                android:layout_marginTop="2dp"
+                android:textSize="9sp"
+                android:layout_marginTop="4dp"
                 android:gravity="center_vertical"
                 android:fontFamily="@font/poppins_semibold"
                 android:textStyle="bold"
@@ -181,7 +181,7 @@
                 android:layout_alignTop="@id/Location"
                 android:fontFamily="@font/poppins_semibold"
                 android:layout_alignEnd="@id/ShopsName"
-                android:textSize="8sp"
+                android:textSize="9sp"
                 android:textColor="#818181" />
 
 
@@ -189,7 +189,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/showtime1"
-                android:layout_below="@id/Files1"
+                android:layout_below="@id/Files"
                 android:layout_marginLeft="8dp"
                 android:layout_marginTop="8dp"
                 android:background="@drawable/show_text"/> </RelativeLayout>

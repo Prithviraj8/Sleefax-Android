@@ -5,7 +5,8 @@
     android:layout_height="match_parent"
     android:padding="10dp"
     android:textColor="#FFFFFF"
-    android:textSize="15dp"
+    android:textSize="15sp"
+    android:fontFamily="@font/poppins_medium"
     android:gravity="center"
     android:textStyle="bold"
      />
