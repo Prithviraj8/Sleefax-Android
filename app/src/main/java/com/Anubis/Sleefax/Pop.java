@@ -315,11 +315,11 @@ public class Pop extends AppCompatActivity {
                 } else {
 
                     Log.d("FILE", "Image");
-                    fileType = mimeType;
+                     mimeTypes.add("Image");
 
                     if(data.getClipData() != null) {
                         for (int i = 0; i < data.getClipData().getItemCount(); i++) {
-                            mimeTypes.add(fileType);
+                            mimeTypes.add("Image");
                             if (data.getClipData().getItemAt(i).getUri() != null) {
                                 uri.add(data.getClipData().getItemAt(i).getUri());
                                 if (i == data.getClipData().getItemCount() - 1) {
@@ -404,7 +404,7 @@ public class Pop extends AppCompatActivity {
                         fileType = "image/png";
 
                         for (int i = 0; i < data.getClipData().getItemCount(); i++) {
-                            mimeTypes.add(fileType);
+                            mimeTypes.add("Image");
                             if (data.getClipData().getItemAt(i).getUri() != null) {
                                 uri.add(data.getClipData().getItemAt(i).getUri());
                                 if (i == data.getClipData().getItemCount() - 1) {

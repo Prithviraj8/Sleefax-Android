@@ -449,9 +449,6 @@
                 android:visibility="gone" />
 
 
-
-
-
         </LinearLayout>
     </ScrollView>
 
@@ -609,11 +606,9 @@
 
         </RelativeLayout>
 
-
-
-
-
     </RelativeLayout>
+
+
     <RelativeLayout
         android:layout_width="61dp"
         android:layout_height="60dp"
@@ -622,7 +617,6 @@
         android:layout_marginLeft="20dp"
         android:layout_marginBottom="70dp"
         android:elevation="10dp"
-        android:id="@+id/viewPdfBtn"
         android:background="@drawable/circlered">
 
         <TextView
@@ -638,6 +632,12 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="25dp"/>
 
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/viewPdfBtn"
+            android:background="#00FFFFFF"/>
+
     </RelativeLayout>
 
     <com.github.barteksc.pdfviewer.PDFView
@@ -648,6 +648,40 @@
         android:layout_marginTop="0dp"
         android:visibility="invisible" />
 
+    <ScrollView
+        android:id="@+id/ViewerScollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#FFF">
+
+
+            <LinearLayout
+                android:id="@+id/ViewerLinearLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#FFF"
+                android:orientation="vertical"
+                android:visibility="visible" />
+
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Dissmiss"
+                android:textColor="#000000"
+                android:id="@+id/DismissViewer"
+                android:layout_marginBottom="10dp"
+                android:layout_below="@+id/ViewerLinearLayout"
+                />
+
+        </RelativeLayout>
+
+    </ScrollView>
 
 </RelativeLayout>
 

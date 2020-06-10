@@ -969,11 +969,16 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
                 final StorageReference filesRef;
 
                 if(fileTypes.get(i).contains("document")){
+                    fileTypes.add(i,"Docx");
                     filesRef = storageRef.child(uniqueID+".docx");
                 }else if(fileTypes.get(i).contains("powerpoint")){
-
+                    fileTypes.add(i,"PowerPoint");
                     filesRef = storageRef.child(uniqueID+".pptx");
-                }else {
+                }else if(fileTypes.get(i).equals("application/msword")){
+                    fileTypes.add(i,"Word");
+                    filesRef = storageRef.child(uniqueID+".doc");
+                }else{
+                    fileTypes.add(i,"PDF");
                     filesRef = storageRef.child(uniqueID+".pdf");
                 }
 
@@ -1082,9 +1087,6 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
                                         info userinfo = new info(username, email, usernum, "android", "Placed", orderDateTime, id,  price, paymentMode,userId,files,false,orderID);
 
 
-
-
-
 //                                        db = db.child("users").child(userId).child("Orders").child(storeID).child(orderKey);
 //                                        db = db.child("users").child(userId).child("Orders").child(orderKey);
                                         db = db.child("users").child(userId).child("Orders").push();
@@ -1105,7 +1107,7 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
                                             page_INFO pageInfo;
 
 
-                                            if(fileTypes.get(0).contains("image")){
+                                            if(fileTypes.get(0).contains("IMAGE")){
                                                  pageInfo = new page_INFO(downloadUrls.get(k), colors.get(0), copies.get(0), fileTypes.get(0), pageSize.get(0), orientations.get(0));
                                                 db.push().setValue(pageInfo);
                                                 storeDb.push().setValue(pageInfo);

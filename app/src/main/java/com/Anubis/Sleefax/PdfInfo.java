@@ -13,13 +13,20 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.style.UnderlineSpan;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -31,6 +38,8 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
@@ -50,7 +59,27 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.kaopiz.kprogresshud.KProgressHUD;
 
+import org.apache.poi.xwpf.usermodel.IBodyElement;
+import org.apache.poi.xwpf.usermodel.IRunElement;
+import org.apache.poi.xwpf.usermodel.UnderlinePatterns;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFHyperlinkRun;
+import org.apache.poi.xwpf.usermodel.XWPFParagraph;
+import org.apache.poi.xwpf.usermodel.XWPFPicture;
+import org.apache.poi.xwpf.usermodel.XWPFPictureData;
+import org.apache.poi.xwpf.usermodel.XWPFRun;
+import org.apache.poi.xwpf.usermodel.XWPFSDT;
+import org.apache.poi.xwpf.usermodel.XWPFTable;
+import org.apache.poi.xwpf.usermodel.XWPFTableCell;
+import org.apache.poi.xwpf.usermodel.XWPFTableRow;
+
+import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 import static com.google.android.material.internal.ViewUtils.dpToPx;
 
@@ -63,11 +92,12 @@ public class PdfInfo extends AppCompatActivity {
 
 //    String colorType;
 
-    RelativeLayout done,viewPdf;
+    RelativeLayout done;
     Spinner pageSizeSpinner, orientSpinner;
     View colorsTV,bwTV,h,v;
     ToggleButton bothSidePrint;
     ImageButton back,scrollDown;
+    Button viewPdf;
     ScrollView scrollView;
     PDFView pdfView;
     WebView webView;
@@ -76,6 +106,7 @@ public class PdfInfo extends AppCompatActivity {
     RelativeLayout rootLayout;
     RelativeLayout upperLayout;
     int copy,custValue1,custValue2;
+
 
     //    String pdf_url;
     String pdf_url,pdf_uri;
@@ -441,7 +472,13 @@ public class PdfInfo extends AppCompatActivity {
                             })
                             .load();
 
-                }else if(fileType.get(pdfCnt).contains("document") || fileType.get(pdfCnt).contains("powerpoint")){
+                }else if(fileType.get(pdfCnt).contains("document")){
+                    Toast.makeText(PdfInfo.this, "OPENING DOCX ", Toast.LENGTH_SHORT).show();
+                    OpenDocFile obj = new OpenDocFile(findViewById(R.id.ViewerLinearLayout),findViewById(R.id.ViewerScollView),Uri.parse(pdfURL.get(pdfCnt)),"DOCX");
+
+
+                }
+                else if(fileType.get(pdfCnt).contains("document") || fileType.get(pdfCnt).contains("powerpoint") || fileType.get(pdfCnt).contains("msword")){
                     Toast.makeText(PdfInfo.this, "YUP "+fileType.get(pdfCnt), Toast.LENGTH_SHORT).show();
                     ViewDoc(pdfURL,fileType.get(pdfCnt));
                 }
@@ -457,8 +494,9 @@ public class PdfInfo extends AppCompatActivity {
             done.setVisibility(View.VISIBLE);
             pdfView.setVisibility(View.INVISIBLE);
         }
-
     }
+
+
 
     public void ViewDoc(ArrayList<String> word, String mimeType) {
         Intent intent = new Intent();
@@ -638,6 +676,364 @@ public class findShops extends AsyncTask<Void,Void,Integer>{
         DisplayMetrics metrics = context.getResources().getDisplayMetrics();
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, valueInDp, metrics);
     }
+
+
+
+    public class OpenDocFile{
+        /// Creating In-App Document and PowerPoint Viewer
+        LinearLayout mainUI;
+        List<XWPFPictureData> picList;
+        ScrollView viewerScollView;
+        Uri file;
+        String whatFile;
+
+        public OpenDocFile(View mainUI, View viewerScollView, Uri file, String whatFile) {
+            this.mainUI = (LinearLayout) mainUI;
+            this.viewerScollView = (ScrollView) viewerScollView;
+            this.file = file;
+            this.whatFile = whatFile;
+
+            openDocxViewer(file);
+
+        }
+
+
+
+        {
+            System.setProperty(
+                    "org.apache.poi.javax.xml.stream.XMLInputFactory",
+                    "com.fasterxml.aalto.stax.InputFactoryImpl"
+            );
+            System.setProperty(
+                    "org.apache.poi.javax.xml.stream.XMLOutputFactory",
+                    "com.fasterxml.aalto.stax.OutputFactoryImpl"
+            );
+            System.setProperty(
+                    "org.apache.poi.javax.xml.stream.XMLEventFactory",
+                    "com.fasterxml.aalto.stax.EventFactoryImpl"
+            );
+        }
+
+
+        public void openDocxViewer(Uri file){
+
+//            ScrollView viewerScollView = findViewById(R.id.ViewerScollView);
+//            mainUI = findViewById(R.id.ViewerLinearLayout);
+            upperLayout.setVisibility(View.GONE);
+
+
+            try {
+                //this is action performed after openDocumentFromFileManager() when doc is selected
+
+                FileInputStream inputStream = (FileInputStream) getContentResolver().openInputStream(file);
+
+                if(whatFile.equals("DOCX")) {
+                    XWPFDocument docx = new XWPFDocument(inputStream);
+                    traverseBodyElements(docx.getBodyElements());
+                    picList = docx.getAllPackagePictures();
+                }
+                viewerScollView.setVisibility(View.VISIBLE);
+
+
+
+
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            TextView textView;
+        }
+
+
+        private void textViews(XWPFParagraph paragraph, List<IRunElement> runElements) {
+            String paragraphText = paragraph.getParagraphText();
+
+            int size;
+            UnderlinePatterns u;
+            Boolean b;
+            String ff;
+
+            for (IRunElement runElement : runElements) {
+                if (runElement instanceof XWPFRun) {
+                    XWPFRun run = (XWPFRun) runElement;
+                    System.out.println("runClassName " + run.getClass().getName());
+                    System.out.println("run " + run);
+
+                    //Appending text to paragraph
+                    para.append(run);
+                    paras.add(para);
+
+                    size = run.getFontSize();
+                    u = run.getUnderline();
+                    b = run.isBold();
+                    ff = run.getFontFamily();
+
+                    if (paragraphText.length() > 1) {
+                        addTextViews(paragraphText, size, b, u, ff);
+                    }
+
+                }
+            }
+
+        }
+
+        public void traversePictures(List<XWPFPicture> pictures)  {
+            for (XWPFPicture picture : pictures) {
+
+                System.out.println("Picture "+picture);
+                XWPFPictureData pictureData = picture.getPictureData();
+                Log.i("PictureData ", pictureData.toString());
+
+                long w = picture.getCTPicture().getSpPr().getXfrm().getExt().getCx();
+                long h = picture.getCTPicture().getSpPr().getXfrm().getExt().getCy();
+
+                DisplayMetrics displayMetrics = new DisplayMetrics();
+                getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+                int height = displayMetrics.heightPixels;
+                int width = displayMetrics.widthPixels;
+
+                addElements(pictureData,w,h,height,width);
+//            addElementsUI(null,pictureData);
+            }
+
+        }
+
+        StringBuilder para = new StringBuilder();
+        private  ArrayList<StringBuilder> paras = new ArrayList<>();
+        private  int paraIndex = 0;
+
+        public void traverseRunElements(List<IRunElement> runElements) throws Exception {
+
+            System.out.println("PARAINDICES"+ paras.size());
+            System.out.println("TRAVERSE RUN ELEMENTS");
+
+            for (IRunElement runElement : runElements) {
+//            if (runElement instanceof XWPFFieldRun) {
+//                XWPFFieldRun fieldRun = (XWPFFieldRun)runElement;
+//                System.out.println("fieldRunClassName "+fieldRun.getClass().getName());
+//                System.out.println("fieldName "+fieldRun);
+//                traversePictures(fieldRun.getEmbeddedPictures());
+//            }
+//            else if (runElement instanceof XWPFHyperlinkRun) {
+//                XWPFHyperlinkRun hyperlinkRun = (XWPFHyperlinkRun)runElement;
+//                System.out.println("hyperLinkRunClassName "+ hyperlinkRun.getClass().getName());
+//                System.out.println("hyperlinkRun "+hyperlinkRun);
+//                traversePictures(hyperlinkRun.getEmbeddedPictures());
+//            } else
+                if (runElement instanceof XWPFRun) {
+                    XWPFRun run = (XWPFRun)runElement;
+                    System.out.println("runClassName "+run.getClass().getName());
+                    System.out.println("run "+run);
+
+                    //Appending text to paragraph
+//                paras.get(paraIndex).append(run);
+                    para.append(run);
+                    paras.add(para);
+//                System.out.println("PARA1TEXT "+para.toString());
+                    Log.i("font family",run.getFontFamily());
+
+//                addTextViews(run.toString(),run.getFontSize(),run.isBold(),run.getUnderline(),run.getFontFamily());
+
+                    traversePictures(run.getEmbeddedPictures());
+
+                } else if (runElement instanceof XWPFSDT) {
+                    XWPFSDT sDT = (XWPFSDT)runElement;
+                    System.out.println("sDT"+sDT);
+                    System.out.println("SDT_CONTENT "+sDT.getContent());
+                    //ToDo: The SDT may have traversable content too.
+                }
+            }
+        }
+
+//    public void traverseTableCells(List<ICell> tableICells) throws Exception {
+//        for (ICell tableICell : tableICells) {
+//            if (tableICell instanceof XWPFSDTCell) {
+//                XWPFSDTCell sDTCell = (XWPFSDTCell)tableICell;
+//                System.out.println("sDTCELL "+sDTCell);
+//                //ToDo: The SDTCell may have traversable content too.
+//            } else if (tableICell instanceof XWPFTableCell) {
+//                XWPFTableCell tableCell = (XWPFTableCell)tableICell;
+//                System.out.println("TableCell "+tableCell);
+//                traverseBodyElements(tableCell.getBodyElements());
+//            }
+//        }
+//    }
+
+        public void traverseTableRows(List<XWPFTableRow> tableRows) throws Exception {
+            for (XWPFTableRow tableRow : tableRows) {
+                System.out.println("TableRow "+tableRow);
+//            traverseTableCells(tableRow.getTableICells());
+            }
+        }
+
+        public void traverseBodyElements(List<IBodyElement> bodyElements) throws Exception {
+            System.out.println("TRAVERSE BODY ELEMENTS");
+
+            for (IBodyElement bodyElement : bodyElements) {
+                if (bodyElement instanceof XWPFParagraph) {
+                    XWPFParagraph paragraph = (XWPFParagraph)bodyElement;
+                    System.out.println("PARA "+paragraph);
+
+                    //Creating textView & paragraph using String Builder
+                    paras.add(new StringBuilder());
+                    textViews(paragraph,paragraph.getIRuns());
+                    traverseRunElements(paragraph.getIRuns());
+                    paraIndex = paraIndex + 1;
+
+                } else if (bodyElement instanceof XWPFSDT) {
+                    XWPFSDT sDT = (XWPFSDT)bodyElement;
+                    System.out.println("SDT"+sDT);
+                    System.out.println("SDT_CONTENT "+sDT.getContent());
+                    //ToDo: The SDT may have traversable content too.
+                } else if (bodyElement instanceof XWPFTable) {
+                    XWPFTable table = (XWPFTable)bodyElement;
+                    System.out.println("TABLE"+table);
+                    traverseTableRows(table.getRows());
+                }
+            }
+        }
+        public  void addElements(XWPFPictureData pictureData,long w,long h,int height,int width){
+
+            ArrayList<ImageView> imageViews = new ArrayList<>();
+//
+            ImageView image = new ImageView(PdfInfo.this);
+
+            if((int)w > width){
+                w = width - 100;
+                h = h / (5 *(width-100));
+            }
+
+            image.setForegroundGravity(Gravity.CENTER);
+            image.setPadding(100,30,50,30);
+            image.setLayoutParams(new RelativeLayout.LayoutParams((int)(w),(int)(h)));
+            image.setMaxHeight((int)h/2800);
+            image.setMaxWidth((int)w/2800);
+//        image.setAdjustViewBounds(true);
+//        image.setScaleType(ImageView.ScaleType.MATRIX);
+            InputStream inputStream = new ByteArrayInputStream(pictureData.getData());
+            Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+
+//        Matrix matrix = new Matrix();
+//        matrix.postScale(1/2800, 1/2800);
+//        Bitmap scaledBitmap = Bitmap.createBitmap(bitmap,0,0,(int)w,(int)h,matrix,true);
+
+            image.setImageBitmap(bitmap);
+            mainUI.addView(image);
+
+
+            // Adds the view to the layout
+            LinearLayout imageLayout = new LinearLayout(getApplicationContext());
+            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+            params.addRule(RelativeLayout.BELOW, image.getId());
+            imageLayout.setLayoutParams(params);
+            mainUI.addView(imageLayout);
+
+            //Calling to add textview below image view
+//        addTextViews();
+
+//        for (int i = 0; i < 15; i++) {
+//            final ImageView imageView = new ImageView(this);
+//            InputStream inputStream = new ByteArrayInputStream(pictureData.getData());
+//            Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+//            imageView.setImageBitmap(bitmap);
+//            Log.d("IMAGEDATA ",String.valueOf(bitmap));
+//        }
+        }
+
+        int TagCnt = 0;
+        public void addTextViews(String content, int s, Boolean b, UnderlinePatterns u,String f){
+
+
+            TextView text = new TextView(PdfInfo.this);
+            text.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT,RelativeLayout.LayoutParams.WRAP_CONTENT));
+            SpannableString c = new SpannableString(content);
+            c.setSpan(new UnderlineSpan(),0,content.length(),0);
+            text.setTag(TagCnt);
+
+            ArrayList<TextView> textViews = new ArrayList<>();
+//        TextView myText = (TextView) mainUI.findViewWithTag(TagCnt - i); // get the element
+
+            for (int i=TagCnt - 1;i >= 0;i--){
+
+                TextView myText = (TextView) mainUI.findViewWithTag(i); // get the element
+                if(myText != null) {
+                    Log.d("CONT ",String.valueOf(content));
+                    if((content.equals(myText.getText().toString()))){
+                        Log.d("MYTXT ",myText.getText().toString());
+                        Log.d("ICNT ",String.valueOf(i));
+                        break;
+
+                    }else{
+                        setProperText(text, content, s, b, u, f);
+                        break;
+                    }
+                }else{
+                    Log.d("NTAGCNT ",String.valueOf(TagCnt));
+                    Log.d("NICNT ",String.valueOf(i));
+                    Log.d("NULLTXT ",content);
+                }
+            }
+            if(TagCnt == 0 ){
+                setProperText(text, content, s, b, u, f);
+            }
+            TagCnt = TagCnt + 1;
+
+        }
+
+        public void setProperText(TextView text,String content, int s, Boolean b, UnderlinePatterns u,String fontFamily){
+            SpannableString c = new SpannableString(content);
+            c.setSpan(new UnderlineSpan(),0,content.length(),0);
+            text.setPadding(60, 10, 50, 10);
+
+            if (b) {
+                text.setTextColor(Color.BLACK);
+                text.setTextSize((int) ((3 * s) / 2));
+                //text.setTypeface(null, FontStyle.fontFamily);
+                text.setTypeface(null, Typeface.BOLD);
+
+                if (u == UnderlinePatterns.NONE) {
+                    text.setText(content);
+                } else {
+                    //text.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                    text.setText(c);
+                    text.setGravity(Gravity.CENTER);
+                }
+//                if(!c.equals(myText.getText().toString()) || !content.equals(myText.getText().toString())) {
+                mainUI.addView(text);
+//                }
+            } else {
+                text.setTextColor(Color.BLACK);
+                text.setTextSize((int) ((3 * s) / 2));
+
+                if (u == UnderlinePatterns.NONE) {
+                    text.setText(content);
+                } else {
+                    //               text.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                    text.setText(c);
+                    text.setGravity(Gravity.CENTER);
+                }
+//                if(!c.equals(myText.getText().toString()) || !content.equals(myText.getText().toString())) {
+                mainUI.addView(text);
+//                }
+            }
+
+
+            // Adds the view to the layout
+            LinearLayout textLayout = new LinearLayout(getApplicationContext());
+            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+            params.addRule(RelativeLayout.BELOW, text.getId());
+            textLayout.setLayoutParams(params);
+            mainUI.addView(textLayout);
+
+
+        }
+    }
+
+
 
 }
 
