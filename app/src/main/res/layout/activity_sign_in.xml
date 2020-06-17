@@ -1,208 +1,268 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFF"
+    android:paddingHorizontal="30dp"
+    android:id="@+id/rootlayout"
+    android:background="#FFFFFF"
     tools:context=".SignInActivity">
 
+
     <RelativeLayout
-        android:id="@+id/relativeLayout3"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0">
-
-        <View
-            android:id="@+id/view4"
-            android:layout_width="match_parent"
-            android:layout_height="159dp"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="0dp"
-            android:background="@drawable/storesview" />
-
-        <Button
-            android:id="@+id/back"
-            style="?android:attr/borderlessButtonStyle"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginStart="25dp"
-            android:layout_marginTop="23dp"
-            android:background="@null"
-            android:drawableTop="@drawable/w" />
-
-        <ImageView
-            android:id="@+id/userimg"
-            android:layout_width="113dp"
-            android:layout_height="94dp"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="18dp"
-            android:src="@drawable/w_user"
-            app:srcCompat="@drawable/userimg" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/relativeLayoutLogin"
+        android:fitsSystemWindows="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="160dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/userimg"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="10dp"
-            android:text="Enter Details"
-            android:textColor="#FFF"
-            android:textSize="20dp"
-            android:textStyle="bold" />
+            android:text="Namaste,"
+            android:layout_marginTop="0dp"
+            android:textColor="#000000"
+            android:textSize="35sp"
+            android:layout_marginBottom="-10dp"
+            android:fontFamily="@font/poppins_semibold"
+            android:id="@+id/namasteText"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Login to Continue."
+            android:layout_below="@id/namasteText"
+            android:layout_marginTop="-10dp"
+            android:textColor="#000000"
+            android:textSize="25sp"
+            android:fontFamily="@font/poppins"
+            android:id="@+id/loginText"/>
+
+    </RelativeLayout>
+
+
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:paddingVertical="11dp"
+        android:id="@+id/phoneRL"
+        android:layout_marginTop="67dp"
+        android:background="@drawable/login_page_phone_text"
+        android:layout_below="@id/relativeLayoutLogin">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/phoneblue"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="20dp"
+            android:id="@+id/phoneIV"/>
 
         <EditText
             android:id="@+id/phoneNumber"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/SignIn_Up"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="10dp"
-            android:ems="10"
-            android:inputType="number"
-            android:hint="Phone Number"
-            />
+            android:layout_height="match_parent"
+            android:layout_alignTop="@id/phoneIV"
+            android:layout_alignBottom="@id/phoneIV"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="-1dp"
+            android:layout_toRightOf="@id/phoneIV"
+            android:fontFamily="@font/poppins"
+            android:gravity="center"
+            android:hint="Continue with Mobile"
+            android:textColor="#818181"
+            android:textSize="18sp" />
 
-        <TextView
-            android:id="@+id/textView32"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/phoneNumber"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="10dp"
-            android:text="@string/or"
-            android:textColor="#000"
-            android:textSize="25sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/SignIn_Up"
-            android:layout_width="255dp"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/view4"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="30dp"
-            android:text="Sign up with"
-            android:textAlignment="center"
-            android:textColor="#000"
-            android:textSize="28sp"
-            android:textStyle="bold" />
-
-        <com.google.android.gms.common.SignInButton
-            android:id="@+id/GoogleSignIn"
-            android:layout_width="260dp"
-            android:layout_height="45dp"
-            android:layout_below="@+id/textView32"
-            android:layout_alignStart="@+id/SignIn_Up"
-            android:layout_alignEnd="@+id/SignIn_Up"
-            android:layout_marginStart="1dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="0dp" />
-
-        <TextView
-            android:id="@+id/textView16"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/GoogleSignIn"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="10dp"
-            android:text="@string/or"
-            android:textAlignment="center"
-            android:textColor="#000"
-            android:textSize="25sp"
-            android:textStyle="bold"
-            android:visibility="visible" />
-
-        <AutoCompleteTextView
-            android:id="@+id/EmailTV"
-            android:layout_width="260dp"
-            android:layout_height="46dp"
-            android:layout_below="@+id/textView16"
-            android:layout_alignStart="@+id/GoogleSignIn"
-            android:layout_alignEnd="@+id/GoogleSignIn"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="0dp"
-            android:background="@drawable/textfield"
-            android:hint="@string/email"
-            android:inputType="textEmailAddress"
-            android:paddingLeft="20dp"
-            android:textColor="#000000"
-            android:textColorHint="#808080"
-            android:visibility="visible" />
-
-        <AutoCompleteTextView
-            android:id="@+id/PasswordTV"
-            android:layout_width="260dp"
-            android:layout_height="46dp"
-            android:layout_below="@+id/EmailTV"
-            android:layout_alignStart="@+id/EmailTV"
-            android:layout_alignEnd="@+id/EmailTV"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="15dp"
-            android:layout_marginEnd="0dp"
-            android:background="@drawable/textfield"
-            android:hint="@string/password"
-            android:inputType="textPassword"
-            android:paddingLeft="20dp"
-            android:textColor="#000000"
-            android:textColorHint="#808080"
-            android:visibility="visible" />
-
-        <Button
-            android:id="@+id/forgotPasswordBtn"
-            style="?android:attr/borderlessButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="28dp"
-            android:layout_below="@+id/PasswordTV"
-            android:layout_alignStart="@+id/PasswordTV"
-            android:layout_alignEnd="@+id/PasswordTV"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="2dp"
-            android:layout_marginEnd="0dp"
-            android:background="@null"
-            android:text="Forgot Password ?"
-            android:textAllCaps="false"
-            android:textColor="#000"
-            android:visibility="visible" />
-
-        <Button
-            android:id="@+id/SignIn"
-            android:layout_width="152dp"
-            android:layout_height="50dp"
-            android:layout_below="@+id/forgotPasswordBtn"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/signin_btn_round"
-            android:backgroundTint="#FFF"
-            android:text="@string/done"
-            android:textColor="#000"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-
-        <ImageButton
-            android:id="@+id/showPassword"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_alignTop="@+id/PasswordTV"
-            android:layout_alignBottom="@+id/PasswordTV"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="0dp"
-            android:layout_marginBottom="0dp"
-            android:layout_toEndOf="@+id/PasswordTV"
-            android:background="@drawable/roundbutton"
-            android:visibility="gone"
-            app:srcCompat="@drawable/eye" />
     </RelativeLayout>
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:paddingVertical="10dp"
+        android:layout_alignStart="@id/phoneRL"
+        android:layout_alignEnd="@id/phoneRL"
+        android:layout_alignTop="@id/phoneRL"
+        android:layout_alignBottom="@id/phoneRL"
+        android:id="@+id/login_with_phoneBtn"
+        android:background="#00FFFFFF" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:textColor="#000000"
+        android:text="+91"
+        android:gravity="center"
+        android:background="@drawable/login_page_edit_text"
+        android:paddingHorizontal="15dp"
+        android:layout_alignStart="@id/phoneRL"
+        android:layout_alignTop="@id/phoneRL"
+        android:layout_alignBottom="@id/phoneRL"
+        android:textSize="18sp"
+        android:visibility="gone"
+        android:id="@+id/country_codeTV"
+        android:fontFamily="@font/poppins"/>
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:textColor="#000000"
+        android:textColorHint="#000000"
+        android:background="@drawable/phone_et"
+        android:paddingHorizontal="15dp"
+        android:visibility="gone"
+        android:inputType="phone"
+        android:gravity="center_vertical"
+        android:id="@+id/PhoneNumber"
+        android:layout_toRightOf="@id/country_codeTV"
+        android:layout_alignBottom="@id/country_codeTV"
+        android:layout_marginLeft="-2dp"
+        android:layout_alignEnd="@id/phoneRL"
+        android:layout_alignTop="@id/country_codeTV"
+        android:textSize="18sp"
+        android:fontFamily="@font/poppins"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Please Enter a valid Mobile Number"
+        android:layout_below="@id/phoneRL"
+        android:layout_centerHorizontal="true"
+        android:visibility="gone"
+        android:gravity="center_vertical"
+        android:textColor="#C44848"
+        android:textSize="11sp"
+        android:id="@+id/valid_text"
+        android:fontFamily="@font/poppins" />
+
+    <TextView
+        android:id="@+id/mobilenumTV"
+        android:layout_width="wrap_content"
+        android:layout_height="17dp"
+        android:layout_alignStart="@id/phoneRL"
+        android:layout_alignTop="@id/phoneRL"
+        android:layout_marginLeft="150dp"
+        android:background="#FFFFFF"
+        android:fontFamily="@font/poppins"
+        android:gravity="center_vertical"
+        android:text="Mobile Number"
+        android:textColor="#227093"
+        android:textSize="12sp"
+        android:layout_marginTop="15dp"
+        android:visibility="gone"/>
+
+
+
+
+
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="51dp"
+        android:background="@drawable/login_buttons"
+        android:layout_below="@id/phoneRL"
+        android:layout_marginTop="40dp"
+        android:text="Continue"
+        android:textAllCaps="false"
+        android:fontFamily="@font/poppins_semibold"
+        android:textColor="#FFFFFF"
+        android:textSize="27sp"
+        android:id="@+id/SignIn"
+        android:elevation="5dp"
+        android:visibility="gone" />
+
+
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/SignIn"
+        android:id="@+id/signinRL"
+        android:layout_marginTop="38dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="Or Sign In using :"
+            android:textColor="#000000"
+            android:textSize="15sp"
+            android:fontFamily="@font/poppins"
+            android:id="@+id/signinTV"/>
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/signinTV"
+            android:background="@drawable/signin_bg"
+            android:src="@drawable/facebook_icon"
+            android:paddingVertical="8dp"
+            android:paddingHorizontal="15dp"
+            android:elevation="5dp"
+            android:id="@+id/facebookBtn"
+            android:layout_marginTop="20dp"
+            android:layout_alignStart="@id/signinTV" />
+
+
+<!--        <ImageButton-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:background="@drawable/signin_bg"-->
+<!--            android:src="@drawable/google_icon"-->
+<!--            android:paddingVertical="10dp"-->
+<!--            android:paddingHorizontal="9dp"-->
+<!--            android:layout_marginTop="20dp"-->
+<!--            android:elevation="5dp"-->
+<!--            android:layout_alignBottom="@id/facebookBtn"-->
+<!--            android:id="@+id/googleBtn"-->
+<!--            android:layout_below="@id/signinTV"-->
+<!--            android:layout_alignEnd="@id/signinTV" />-->
+        <View
+            android:layout_width="1dp"
+            android:layout_height="57dp"
+            android:background="#707070"
+            android:id="@+id/div1"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/signinTV"
+            android:layout_marginTop="15dp"/></RelativeLayout>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/Terms"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="20dp"
+        android:textColor="#000000"
+        android:id="@+id/TermsTV"
+        android:textSize="12sp"
+        android:fontFamily="@font/poppins" />
+
+
+    <com.google.android.gms.common.SignInButton
+        android:id="@+id/GoogleSignIn"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_alignEnd="@+id/signinRL"
+        android:layout_alignBottom="@+id/signinRL"
+        android:layout_marginEnd="0dp"
+        android:layout_marginBottom="8dp"
+        android:background="#00FFFFFF">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/signin_bg"
+            android:elevation="5dp"
+            android:paddingHorizontal="9dp"
+            android:paddingVertical="10dp"
+            android:src="@drawable/google_icon" />
+    </com.google.android.gms.common.SignInButton>
+
+
+
+</RelativeLayout>

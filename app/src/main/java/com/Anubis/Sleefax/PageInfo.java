@@ -127,6 +127,7 @@ public class PageInfo extends AppCompatActivity {
         email = extras.getString("email");
         num = extras.getLong("num");
         fileTypes = extras.getStringArrayList("FileType");
+        Log.d("FILETYPEIMAGE",fileTypes.get(0));
         images = extras.getParcelableArrayList("Images");
         newUser = extras.getBoolean("NewUser");
         if(!newUser){

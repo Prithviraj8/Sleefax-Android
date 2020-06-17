@@ -93,6 +93,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Random;
 import java.util.TreeMap;
 import java.util.UUID;
 
@@ -107,13 +108,13 @@ import okhttp3.Response;
 class info{
 
     public String name,orderStatus;
-    public String email,device,orderDateTime,paymentMode,userId,orderID;
+    public String email,device,orderDateTime,paymentMode,userId,orderID,otp;
     public long num;
     public int id,files;
     public double price;
-    public boolean confirm;
+    public boolean confirm,otpUsed;
 
-    public info(String name, String email, long num, String device, String orderStatus,String orderDateTime, int id, double price,String paymentMode, String userId, int files,boolean confirm,String orderID){
+    public info(String name, String email, long num, String device, String orderStatus,String orderDateTime, int id, double price,String paymentMode, String userId, int files,boolean confirm,String orderID, String otp, boolean otpUsed){
         this.email = email;
         this.name = name;
         this.num = num;
@@ -127,6 +128,9 @@ class info{
         this.files = files;
         this.confirm = confirm;
         this.orderID = orderID;
+        this.otp = otp;
+        this.otpUsed = otpUsed;
+
     }
 //    public info(String name, String email, long num, String device, String placed, String fileType, int copy, String orderDateTime, int id, String custom, double price, boolean bothSides, String paymentMode,String userId){
 //        this.email = email;
@@ -1071,8 +1075,6 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
                                             id = ((ids.get(ids.size()-1)) + 1);
                                         }
 
-//                                        Toast.makeText(Payments.this, "IDSIZE "+id, Toast.LENGTH_SHORT).show();
-//                                        Toast.makeText(Payments.this, "CUSORDERIDSIZE "+custOrderIDS.size(), Toast.LENGTH_SHORT).show();
 
                                         if (custom == "" || custom == null) {
                                             custom = "All";
@@ -1080,11 +1082,18 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
 
                                         DatabaseReference db = FirebaseDatabase.getInstance().getReference();
                                         String storeID = shopKey;
+
+                                        Random random = new Random();
+                                        String randomNumber = String.valueOf(random.nextInt());
+                                        String otp = (randomNumber.substring(randomNumber.length()-4));
+
+                                        android.util.Log.d("OTPCREATED",(otp));
+
                                         orderID = uniqueID.substring(uniqueID.length()-8);
-                                        shopinfo orderInfo = new shopinfo(storeID,loc, shopName, "Placed", shopLat, shopLong, shopNum, files, price, orderDateTime, false, false, false, false, false, paymentMode, custorderID,orderID);
+                                        shopinfo orderInfo = new shopinfo(storeID,loc, shopName, "Placed", shopLat, shopLong, shopNum, files, price, orderDateTime, false, false, false, false, false, paymentMode, custorderID,orderID,otp,false);
 
                                         android.util.Log.d("ORDERIDSAVED",(uniqueID.substring(uniqueID.length()-8)));
-                                        info userinfo = new info(username, email, usernum, "android", "Placed", orderDateTime, id,  price, paymentMode,userId,files,false,orderID);
+                                        info userinfo = new info(username, email, usernum, "android", "Placed", orderDateTime, id,  price, paymentMode,userId,files,false,orderID,otp,false);
 
 
 //                                        db = db.child("users").child(userId).child("Orders").child(storeID).child(orderKey);
@@ -1107,7 +1116,7 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
                                             page_INFO pageInfo;
 
 
-                                            if(fileTypes.get(0).contains("IMAGE")){
+                                            if(fileTypes.get(0).equals("Image")){
                                                  pageInfo = new page_INFO(downloadUrls.get(k), colors.get(0), copies.get(0), fileTypes.get(0), pageSize.get(0), orientations.get(0));
                                                 db.push().setValue(pageInfo);
                                                 storeDb.push().setValue(pageInfo);

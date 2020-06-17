@@ -21,6 +21,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.text.SpannableString;
 import android.text.style.UnderlineSpan;
 import android.util.DisplayMetrics;
@@ -113,6 +114,7 @@ public class PdfInfo extends AppCompatActivity {
     ScrollView scrollView,viewFileScrollView;
     PDFView pdfView;
     WebView webView;
+    TextView fileNameTV;
     EditText customValue1,customValue2;
     RelativeLayout bottomRelativeView;
     RelativeLayout rootLayout;
@@ -190,6 +192,7 @@ public class PdfInfo extends AppCompatActivity {
         scrollView = findViewById(R.id.scrollViewPdfs);
         scrollDown = findViewById(R.id.scrollDownPdf);
 
+        fileNameTV = findViewById(R.id.fileNameTV);
         viewFileRL = findViewById(R.id.viewFileBtnRL);
         viewPdf = findViewById(R.id.viewPdfBtn);
         pageCount = findViewById(R.id.PageCount);
@@ -229,6 +232,7 @@ public class PdfInfo extends AppCompatActivity {
 
         bothSides = new boolean[pdfURL.size()];
 
+        fileNameTV.setText(fileNames.get(pdfCnt));
         customValue1.setText("1");
         if(numberOfPages == null){
             numberOfPages.add(pdfCnt,10);
@@ -494,13 +498,22 @@ public class PdfInfo extends AppCompatActivity {
 
                     mainUI.removeAllViewsInLayout();
                     Toast.makeText(PdfInfo.this, "OPENING DOCX ", Toast.LENGTH_SHORT).show();
-                    new OpenDocFile(findViewById(R.id.ViewerLinearLayout),findViewById(R.id.ViewerScollView),Uri.parse(pdfURL.get(pdfCnt)),"DOCX");
+                    alertBoxForViewer("DOCX");
+
+
+                    ////// Call to open file in our in app viewer
+//                    new OpenDocFile(findViewById(R.id.ViewerLinearLayout),findViewById(R.id.ViewerScollView),Uri.parse(pdfURL.get(pdfCnt)),"DOCX");
 
 
                 }else if(fileType.get(pdfCnt).contains("msword")){
                     mainUI.removeAllViewsInLayout();
                     Toast.makeText(PdfInfo.this, "OPENING WORD ", Toast.LENGTH_SHORT).show();
-                    new OpenDocFile(findViewById(R.id.ViewerLinearLayout),findViewById(R.id.ViewerScollView),Uri.parse(pdfURL.get(pdfCnt)),"WORD");
+                    alertBoxForViewer("WORD");
+
+
+
+                    ////// Call to open file in our in app viewer
+//                    new OpenDocFile(findViewById(R.id.ViewerLinearLayout),findViewById(R.id.ViewerScollView),Uri.parse(pdfURL.get(pdfCnt)),"WORD");
 
                 }
                 else if(fileType.get(pdfCnt).contains("powerpoint") || fileType.get(pdfCnt).contains("msword")){
@@ -528,7 +541,29 @@ public class PdfInfo extends AppCompatActivity {
         }
     }
 
+    protected void alertBoxForViewer(final String whatFile) {
 
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Use In-App Viewer ? ")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, final int id) {
+                        new OpenDocFile(findViewById(R.id.ViewerLinearLayout),findViewById(R.id.ViewerScollView),Uri.parse(pdfURL.get(pdfCnt)),whatFile);
+                    }
+                }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                dismissViewer.setVisibility(View.GONE);
+                viewFileRL.setVisibility(View.VISIBLE);
+
+                ViewFileFromAnotherApp(pdfURL.get(pdfCnt),fileType.get(pdfCnt));
+            }
+        });
+
+        final AlertDialog alert = builder.create();
+        alert.show();
+    }
 
     public void ViewFileFromAnotherApp(String word, String mimeType) {
         Intent intent = new Intent();
@@ -729,7 +764,7 @@ public class findShops extends AsyncTask<Void,Void,Integer>{
             this.file = file;
             this.whatFile = whatFile;
 
-            openDocxViewer(file);
+            openViewer(file);
 
         }
 
@@ -751,10 +786,8 @@ public class findShops extends AsyncTask<Void,Void,Integer>{
         }
 
 
-        public void openDocxViewer(Uri file){
+        public void openViewer(Uri file){
 
-//            ScrollView viewerScollView = findViewById(R.id.ViewerScollView);
-//            mainUI = findViewById(R.id.ViewerLinearLayout);
             upperLayout.setVisibility(View.GONE);
 
 
@@ -765,7 +798,7 @@ public class findShops extends AsyncTask<Void,Void,Integer>{
                 setUpDocx docxObj = new setUpDocx();
                 setUpWord wordObj = new setUpWord();
 
-                if(whatFile.equals("DOCX") || whatFile.contains("WORD")) {
+                if(whatFile.equals("DOCX")) {
 
                     Toast.makeText(PdfInfo.this,"SETUP WORD",Toast.LENGTH_LONG).show();
 
@@ -774,59 +807,59 @@ public class findShops extends AsyncTask<Void,Void,Integer>{
                     docxObj.traverseBodyElements(docx.getBodyElements());
                     picList = docx.getAllPackagePictures();
                 }
-//                else if(whatFile.equals("WORD")){
-//                        Toast.makeText(PdfInfo.this,"SETUP DOCX",Toast.LENGTH_LONG).show();
+                else if(whatFile.equals("WORD")){
+                        Toast.makeText(PdfInfo.this,"SETUP DOCX",Toast.LENGTH_LONG).show();
+
+                    HWPFDocument wordDoc = new HWPFDocument(inputStream);
+                    WordExtractor extractor = new WordExtractor(wordDoc);
+
+
+                    Range range = wordDoc.getRange();
+                    String[] paragraphs = extractor.getParagraphText();
+
+                    PicturesTable picturesTable = wordDoc.getPicturesTable();
+                    List<Picture> all = picturesTable.getAllPictures();
+
+                    for(int i =0;i < paragraphs.length;i++){
+                        Paragraph pr = range.getParagraph(i);
+
+//                            Log.i("text",pr.text());
+                        int j =0 ;
+
+                        while(true){
+                            CharacterRun run = pr.getCharacterRun(j++);
+
+                            StyleDescription style = wordDoc.getStyleSheet().getStyleDescription(run.getSubSuperScriptIndex());
+                            String styleName = style.getName();
+                            String font = run.getFontName();
+                            int size = run.getFontSize();
+                            String paraText = pr.text();
+                            Boolean b = run.isBold();
+                            int u = run.getUnderlineCode();
+
+                            wordObj.addTextViews(paraText,size,b,u,font);
+
+                            if(picturesTable.hasPicture(run)){
+                                Picture p = picturesTable.extractPicture(run,true);
+                                wordObj.traversePictures(p);
+                            }
+
+                            Log.i("name",styleName);
+                            Log.i("font",Integer.toString(size));
+                            Log.i("family",font);
+                            Log.i("text",paraText);
+
+
 //
-//                    HWPFDocument wordDoc = new HWPFDocument(inputStream);
-//                    WordExtractor extractor = new WordExtractor(wordDoc);
-//
-//
-//                    Range range = wordDoc.getRange();
-//                    String[] paragraphs = extractor.getParagraphText();
-//
-//                    PicturesTable picturesTable = wordDoc.getPicturesTable();
-//                    List<Picture> all = picturesTable.getAllPictures();
-//
-//                    for(int i =0;i < paragraphs.length;i++){
-//                        Paragraph pr = range.getParagraph(i);
-//
-////                            Log.i("text",pr.text());
-//                        int j =0 ;
-//
-//                        while(true){
-//                            CharacterRun run = pr.getCharacterRun(j++);
-//
-//                            StyleDescription style = wordDoc.getStyleSheet().getStyleDescription(run.getSubSuperScriptIndex());
-//                            String styleName = style.getName();
-//                            String font = run.getFontName();
-//                            int size = run.getFontSize();
-//                            String paraText = pr.text();
-//                            Boolean b = run.isBold();
-//                            int u = run.getUnderlineCode();
-//
-//                            wordObj.addTextViews(paraText,size,b,u,font);
-//
-//                            if(picturesTable.hasPicture(run)){
-//                                Picture p = picturesTable.extractPicture(run,true);
-//                                wordObj.traversePictures(p);
-//                            }
-//
-//                            Log.i("name",styleName);
-//                            Log.i("font",Integer.toString(size));
-//                            Log.i("family",font);
-//                            Log.i("text",paraText);
-//
-//
-////
-////                                List<Picture> pictures = wordDoc.getPicturesTable().getAllPictures();
-////                                traversePictures(pictures);
-//
-//                            if (run.getEndOffset() == pr.getEndOffset()) {
-//                                break;
-//                            }
-//                        }
-//                    }
-//                }
+//                                List<Picture> pictures = wordDoc.getPicturesTable().getAllPictures();
+//                                traversePictures(pictures);
+
+                            if (run.getEndOffset() == pr.getEndOffset()) {
+                                break;
+                            }
+                        }
+                    }
+                }
                 viewerScollView.setVisibility(View.VISIBLE);
 
 

@@ -88,6 +88,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Random;
 
 public class Select extends AppCompatActivity {
     public String SharedPrefs = "Data";
@@ -155,6 +156,11 @@ public class Select extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_files);
+
+
+        Random random = new Random();
+        String randomNumber = String.valueOf(random.nextInt());
+        Log.d("RANDOM ",String.valueOf(randomNumber.substring(randomNumber.length()-4)));
 
         DisplayMetrics displaymetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);

@@ -313,12 +313,11 @@ public class Pop extends AppCompatActivity {
                     }
                 } else {
 
-                    Log.d("FILE", "Image");
-                     mimeTypes.add("Image");
+//                     mimeTypes.add("Image");
 
                     if(data.getClipData() != null) {
                         for (int i = 0; i < data.getClipData().getItemCount(); i++) {
-                            mimeTypes.add("Image");
+//                            mimeTypes.add("Image");
                             if (data.getClipData().getItemAt(i).getUri() != null) {
                                 uri.add(data.getClipData().getItemAt(i).getUri());
                                 if (i == data.getClipData().getItemCount() - 1) {
@@ -403,7 +402,7 @@ public class Pop extends AppCompatActivity {
                         fileType = "image/png";
 
                         for (int i = 0; i < data.getClipData().getItemCount(); i++) {
-                            mimeTypes.add("Image");
+//                            mimeTypes.add("Image");
                             if (data.getClipData().getItemAt(i).getUri() != null) {
                                 uri.add(data.getClipData().getItemAt(i).getUri());
                                 if (i == data.getClipData().getItemCount() - 1) {
@@ -584,15 +583,14 @@ public class Pop extends AppCompatActivity {
     public void uploadImg(Intent data, ArrayList<Uri> uri){
         Intent goToPageInfo = new Intent(Pop.this, PageInfo.class);
         Bundle extras = new Bundle();
-        extras.putStringArrayList("FileType", mimeTypes);
+
         ArrayList<String> images = new ArrayList<>();
         int i;
-
         for(i=0;i<uri.size();i++){
             images.add(uri.get(i).toString());
-
+            mimeTypes.add("Image");
             if(i == uri.size()-1) {
-//                Log.d("URISIZE", String.valueOf(uri.size()));
+                extras.putStringArrayList("FileType", mimeTypes);
                 extras.putStringArrayList("URLS", images);
                 extras.putParcelable("Data",data);
                 extras.putBoolean("IsTester",isTester);

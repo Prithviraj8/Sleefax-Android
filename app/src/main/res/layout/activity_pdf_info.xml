@@ -516,22 +516,24 @@
                 android:background="@drawable/blue_background_texts">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="70dp"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:text="Book.pdf"
-                    android:id="@+id/pdf_name"
+                    android:id="@+id/fileNameTV"
                     android:textSize="13dp"
                     android:fontFamily="@font/poppins_semibold"
                     android:textStyle="bold"
-                    android:textColor="#FFFFFF"/>
+                    android:textColor="#FFFFFF"
+                   />
+
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="16dp"
                     android:src="@drawable/line"
                     android:id="@+id/line"
                     android:layout_centerVertical="true"
-                    android:layout_toRightOf="@id/pdf_name"
+                    android:layout_toRightOf="@id/fileNameTV"
                     android:layout_marginLeft="8dp"/>
                 <ImageView
                     android:layout_width="12dp"
@@ -626,7 +628,7 @@
                 android:id="@+id/pdfDone"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:visibility="gone"
+                android:visibility="visible"
                 android:layout_toRightOf="@id/previous"
                 >
 

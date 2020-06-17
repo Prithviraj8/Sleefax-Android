@@ -8,25 +8,36 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.text.Editable;
 import android.text.InputType;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewTreeObserver;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -59,6 +70,8 @@ import com.kaopiz.kprogresshud.KProgressHUD;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
+import static com.Anubis.Sleefax.PdfInfo.dpToPx;
+
 //import static org.bouncycastle.crypto.tls.ContentType.alert;
 
 public class SignInActivity extends AppCompatActivity {
@@ -70,12 +83,17 @@ public class SignInActivity extends AppCompatActivity {
     DatabaseReference ref = database.getReference();
 //    String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
+    RelativeLayout signinRL,rootLayout, phoneRL, loginRL;
+    Button forgotPassword,back,Login, SignInButton;
+    ImageButton showPass;
+
     private AutoCompleteTextView emailTV;
     private EditText passwordTV;
     private FirebaseAuth mAuth;
     GoogleSignInClient mGoogleSignInClient;
-    TextView signUp_InTV;
-    EditText phoneNum;
+    TextView signUp_InTV,phoneNum,Terms,loginTV,mobileTv, ccTv,mtv, validTv;
+    EditText Phone;
+    ImageView phoneIv;
 
 
 
@@ -94,13 +112,13 @@ public class SignInActivity extends AppCompatActivity {
     boolean FromYourOrders =false, bothSides,isTester,newUser;
     ArrayList<String> urls = new ArrayList<>();
     Boolean signUp,isShowPassword = false;
-    Button forgotPassword,back;
-    ImageButton showPass;
 
+    int top,left;
 
     Intent otpIntent;
     Bundle otpBundle;
 
+    @SuppressLint("CutPasteId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -110,60 +128,47 @@ public class SignInActivity extends AppCompatActivity {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.INTERNET, Manifest.permission.INTERNET}, 1);
         }
-        emailTV = findViewById(R.id.EmailTV);
-        passwordTV = findViewById(R.id.PasswordTV);
-        Button SignInButton = findViewById(R.id.SignIn);
-        signUp_InTV = findViewById(R.id.SignIn_Up);
-        forgotPassword = findViewById(R.id.forgotPasswordBtn);
-        back = findViewById(R.id.back);
-        showPass = findViewById(R.id.showPassword);
-        phoneNum = findViewById(R.id.phoneNumber);
+//        emailTV = findViewById(R.id.EmailTV);
+//        passwordTV = findViewById(R.id.PasswordTV);
+//        signUp_InTV = findViewById(R.id.SignIn_Up);
+//        forgotPassword = findViewById(R.id.forgotPasswordBtn);
+//        back = findViewById(R.id.back);
+//        showPass = findViewById(R.id.showPassword);
 
+        SignInButton = findViewById(R.id.SignIn);
+        phoneNum = findViewById(R.id.phoneNumber);
+        rootLayout = findViewById(R.id.rootlayout);
+        signinRL = findViewById(R.id.signinRL);
+        phoneRL = findViewById(R.id.phoneRL);
+        loginRL = findViewById(R.id.relativeLayoutLogin);
+        Terms = findViewById(R.id.TermsTV);
+        Phone = findViewById(R.id.PhoneNumber);
+
+        Login = findViewById(R.id.login_with_phoneBtn);
+        loginTV = findViewById(R.id.loginText);
+        mobileTv = findViewById(R.id.mobilenumTV);
+        ccTv = findViewById(R.id.country_codeTV);
+        phoneIv = findViewById(R.id.phoneIV);
+        mtv = findViewById(R.id.phoneNumber);
+
+        validTv = findViewById(R.id.valid_text);
+
+
+        setupInitialViews();
 
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
         signUp = extras.getBoolean("SignUp");
         newUser = extras.getBoolean("NewUser");
 
-        if(signUp){
-            signUp_InTV.setText("Sign Up with");
-            forgotPassword.setVisibility(View.INVISIBLE);
-            forgotPassword.setEnabled(false);
-
-        }else{
-            signUp_InTV.setText("Sign in with");
-            forgotPassword.setVisibility(View.VISIBLE);
-            forgotPassword.setEnabled(true);
-        }
-
         if(newUser){
             getNewUserOrderDetails();
         }
 
 
-
-        emailTV.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-
-                if (id == 200 || id == EditorInfo.IME_NULL) {
-                    attemptRegistration();
-
-                    return true;
-                }
-
-                return false;
-            }
-        });
-
-
         //TODO: Get a hold of an instance of firebase auth.
         mAuth = FirebaseAuth.getInstance();
-
         SignInButton.setOnClickListener(Listener);
-        back.setOnClickListener(Listener);
-
-
 
 
         // Configure Google Sign In
@@ -183,15 +188,147 @@ public class SignInActivity extends AppCompatActivity {
             }
         });
 
-
-
-        forgotPassword.setOnClickListener(Listener);
-        showPass.setOnClickListener(Listener);
-
         otpIntent = new Intent(SignInActivity.this,verifyOTPActivity.class);
         otpBundle = new Bundle();
 
+
+
+
     }
+
+
+    public void setupInitialViews(){
+        rootLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                int diff = rootLayout.getRootView().getHeight() - rootLayout.getHeight();
+                if(diff > dpToPx(getApplicationContext(),200)){
+
+
+                    Resources r = getResources();
+                    int margin = (int) TypedValue.applyDimension(
+                            TypedValue.COMPLEX_UNIT_DIP,
+                            50,
+                            r.getDisplayMetrics());
+
+
+
+                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                    params.topMargin = margin;
+                    loginRL.setLayoutParams(params);
+
+
+                    Terms.setVisibility(View.INVISIBLE);
+                    signinRL.setVisibility(View.INVISIBLE);
+                }
+
+
+                if(diff < dpToPx(getApplicationContext(),200))
+                {
+
+                    Resources r = getResources();
+                    int margin = (int) TypedValue.applyDimension(
+                            TypedValue.COMPLEX_UNIT_DIP,
+                            60,
+                            r.getDisplayMetrics());
+
+
+                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                    params.topMargin = margin;
+                    loginRL.setLayoutParams(params);
+
+                    Terms.setVisibility(View.VISIBLE);
+                    signinRL.setVisibility(View.VISIBLE);
+
+                }
+
+
+            }
+        });
+
+
+        Resources r = getResources();
+        top = (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                25,
+                r.getDisplayMetrics());
+        left = (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                120,
+                r.getDisplayMetrics());
+
+        Login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ccTv.setVisibility(View.VISIBLE);
+//                Phone.setVisibility(View.VISIBLE);
+                mobileTv.setVisibility(View.VISIBLE);
+
+                Animation animation1 = new AlphaAnimation(1.0f,0.0f);
+                animation1.setDuration(500);
+
+
+                phoneIv.startAnimation(animation1);
+                phoneNum.startAnimation(animation1);
+
+
+                Animation animation2 = new AlphaAnimation(0.1f,1.0f);
+                animation2.setDuration(500);
+
+
+                mobileTv.startAnimation(animation2);
+                ccTv.startAnimation(animation2);
+                Phone.startAnimation(animation2);
+
+
+
+
+                Animation animation = new TranslateAnimation(0,-left,0,-top);
+                animation.setDuration(500);
+                animation.setFillEnabled(true);
+                animation.setFillAfter(true);
+
+                mobileTv.startAnimation(animation);
+
+                Login.setVisibility(View.INVISIBLE);
+
+
+
+            }
+        });
+
+
+
+
+        Phone.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                SignInButton.setVisibility(View.VISIBLE);
+                signinRL.setVisibility(View.VISIBLE);
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+                SignInButton.setVisibility(View.VISIBLE);
+                signinRL.setVisibility(View.VISIBLE);
+
+            }
+        });
+
+
+        System.out.print("PHONENUM "+ phoneNum.getText().toString());
+    }
+
+
+
     public void getNewUserOrderDetails(){
 
 
@@ -304,50 +441,51 @@ public class SignInActivity extends AppCompatActivity {
             // do something when the button is clicked
             if(v == findViewById(R.id.SignIn)) {
                 if(phoneNum.getText().length() == 0) {
-                    attemptRegistration();
+//                    attemptRegistration();
                 }else{
                     Toast.makeText(SignInActivity.this, "PHONE "+phoneNum.getText(), Toast.LENGTH_SHORT).show();
-                    attemptPhoneAuth("+1"+phoneNum.getText().toString().trim());
+                    attemptPhoneAuth("+91"+phoneNum.getText().toString().trim());
                 }
-            }else
-            if(v == findViewById(R.id.forgotPasswordBtn)){
-                // Check for a valid email address.
-
-                emailTV.setError(null);
-
-                // Store values at the time of the login attempt.
-                String email = emailTV.getText().toString();
-                if (!TextUtils.isEmpty(email)) {
-
-                    FirebaseAuth.getInstance().sendPasswordResetEmail(email)
-                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.isSuccessful()) {
-                                        Log.d(TAG, "Email sent.");
-                                        Toast.makeText(getApplicationContext(),"Reset Password email sent to the registered email.\n * Check your spam and promotions folder as well *",Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            });
-                     }else{
-                        emailTV.setError(getString(R.string.error_field_required));
-                    }
-                }else
-                    if(v == findViewById(R.id.back)){
-                        finish();
-                    }else
-                        if(v == findViewById(R.id.showPassword)){
-                            if(!isShowPassword){
-                                passwordTV.setInputType(InputType.TYPE_CLASS_TEXT);
-                                isShowPassword = true;
-                                Log.d("SHOWI", String.valueOf(isShowPassword));
-                            }else{
-                                passwordTV.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-                                isShowPassword = false;
-                                Log.d("SHOWING", String.valueOf(isShowPassword));
-
-                            }
-                        }
+            }
+//            else
+//            if(v == findViewById(R.id.forgotPasswordBtn)){
+//                // Check for a valid email address.
+//
+//                emailTV.setError(null);
+//
+//                // Store values at the time of the login attempt.
+//                String email = emailTV.getText().toString();
+//                if (!TextUtils.isEmpty(email)) {
+//
+//                    FirebaseAuth.getInstance().sendPasswordResetEmail(email)
+//                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+//                                @Override
+//                                public void onComplete(@NonNull Task<Void> task) {
+//                                    if (task.isSuccessful()) {
+//                                        Log.d(TAG, "Email sent.");
+//                                        Toast.makeText(getApplicationContext(),"Reset Password email sent to the registered email.\n * Check your spam and promotions folder as well *",Toast.LENGTH_SHORT).show();
+//                                    }
+//                                }
+//                            });
+//                     }else{
+//                        emailTV.setError(getString(R.string.error_field_required));
+//                    }
+//                }else
+//                    if(v == findViewById(R.id.back)){
+//                        finish();
+//                    }else
+//                        if(v == findViewById(R.id.showPassword)){
+//                            if(!isShowPassword){
+//                                passwordTV.setInputType(InputType.TYPE_CLASS_TEXT);
+//                                isShowPassword = true;
+//                                Log.d("SHOWI", String.valueOf(isShowPassword));
+//                            }else{
+//                                passwordTV.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+//                                isShowPassword = false;
+//                                Log.d("SHOWING", String.valueOf(isShowPassword));
+//
+//                            }
+//                        }
 
             }
 

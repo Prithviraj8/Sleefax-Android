@@ -15,11 +15,19 @@
       },
       "oauth_client": [
         {
-          "client_id": "736925032543-cc57cjo9gl0hn7nf7d281c7ciak6eu5v.apps.googleusercontent.com",
+          "client_id": "736925032543-gl6uskegbsurkfjg6rrrrt1e02sbi2qu.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.Anubis.Sleefax",
             "certificate_hash": "f022e1d5075109316f2905209851b4f1e928838c"
+          }
+        },
+        {
+          "client_id": "736925032543-6mk7poq38gjkrl79v7udkoat7fmrgqov.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.Anubis.Sleefax",
+            "certificate_hash": "b5583a241cf81dd145a2630f469b543cdf478080"
           }
         },
         {
@@ -58,6 +66,14 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "736925032543-76k2qmatemr5um97meecl1qg02cof2k3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.Prithviraj8.storeowner",
+            "certificate_hash": "742828286af254f776d4fcdf100f43e11de414f6"
+          }
+        },
         {
           "client_id": "736925032543-0h3t7uep8crp517rgvq9ifmh9m3u9l6q.apps.googleusercontent.com",
           "client_type": 1,
