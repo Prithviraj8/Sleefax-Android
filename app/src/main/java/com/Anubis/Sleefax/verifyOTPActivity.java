@@ -4,13 +4,21 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.res.Resources;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.Anubis.Sleefax.Animations.GifImageView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -28,10 +36,13 @@ import com.kaopiz.kprogresshud.KProgressHUD;
 
 import java.util.ArrayList;
 
+import static com.Anubis.Sleefax.PdfInfo.dpToPx;
+
 public class verifyOTPActivity extends AppCompatActivity {
     FirebaseAuth mAuth;
     final FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference ref = database.getReference();
+    KProgressHUD hud;
 
 
     String number, mVerificationId, code;
@@ -39,68 +50,125 @@ public class verifyOTPActivity extends AppCompatActivity {
     double shopLat;
     double shopLong;
     double userLat,userLong;
-    long shopNum;
-    int files;
-    double price;
-    int copy;
-    int resultCode;
-    int requestCode;
-    double numberOfPages;
-    String color,custom;
-    boolean FromYourOrders =false, bothSides,isTester,newUser;
     ArrayList<String> urls = new ArrayList<>();
+    ArrayList<String> fileTypes = new ArrayList<>();
+    ArrayList<String> colors = new ArrayList<>();
+    ArrayList<Integer> copies = new ArrayList<>();
+    ArrayList<String> pageSize = new ArrayList<>();
+    ArrayList<String> orientations = new ArrayList<>();
+    boolean bothSides[];
+    ArrayList<String> customPages = new ArrayList<>();
+    ArrayList<String> customValues = new ArrayList<>();
+    ArrayList<Integer> numberOfPages = new ArrayList<>();
+    ArrayList<String> fileNames = new ArrayList<>();
+    ArrayList<String> fileSizes = new ArrayList<>();
+    double pricePerFile[];
+    double totalPrice;
+    Boolean signUp,isShowPassword = false;
+    int files;
+    boolean FromYourOrders =false,isTester,newUser;
+    long shopNum;
 
 
 
     PhoneAuthProvider.ForceResendingToken mResendToken;
     PhoneAuthCredential credential,mcredential;
 
-    EditText otp;
+    EditText otp, digit1, digit2, digit3, digit4, digit5, digit6;
+    TextView valid, Phone;
+    Button confirm;
+
+    RelativeLayout rootLayout, otpLayout, GifRL;
     Button done;
+    GifImageView gifImageView;
+
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_verify_o_t_p);
 
-        otp = findViewById(R.id.otpTV);
-        done = findViewById(R.id.done);
+        // Progress HUD
+        hud = KProgressHUD.create(this)
+                .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
+                .setLabel("Loading")
+                .setMaxProgress(100);
 
+        GifRL = findViewById(R.id.GifRL);
+        gifImageView = (GifImageView) findViewById(R.id.GIF);
+        gifImageView.setGifImageResource(R.raw.file_operation);
+
+        otpLayout = findViewById(R.id.OTP_RL);
+        rootLayout = findViewById(R.id.rootlayout);
+
+
+        Phone = findViewById(R.id.Phone);
+        Phone.setText(number);
+
+        confirm = findViewById(R.id.confirm);
+        digit1 = findViewById(R.id.digit1);
+        digit2 = findViewById(R.id.digit2);
+        digit3 = findViewById(R.id.digit3);
+        digit4 = findViewById(R.id.digit4);
+        digit5 = findViewById(R.id.digit5);
+        digit6 = findViewById(R.id.digit6);
+
+        valid = findViewById(R.id.textview_valid);
+
+        setInitialViewAnimationCode();
         getNewUserOrderDetails();
 
-        done.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(mcredential == null) {
-                    try {
-                        if(otp.getText() != null) {
-                            code = otp.getText().toString();
-                            credential = PhoneAuthProvider.getCredential(mVerificationId, code);
-                            signInWithPhoneAuthCredential(credential);
 
-                        }else {
-                            Toast.makeText(verifyOTPActivity.this, "Enter the otp you received", Toast.LENGTH_SHORT).show();
+
+
+            confirm.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+//                    hud.show();
+                    confirm.setVisibility(View.GONE);
+                    GifRL.setVisibility(View.VISIBLE);
+                    if (mcredential == null) {
+                        try {
+//                            if (code != null && code.length() == 6) {
+//                                code = otp.getText().toString();
+
+                                code = digit1.getText().toString() + digit2.getText().toString() + digit3.getText().toString() + digit4.getText().toString() + digit5.getText().toString() + digit6.getText().toString();
+                                Log.d("DIGIT1",digit1.getText().toString());
+
+
+                                credential = PhoneAuthProvider.getCredential(mVerificationId, code);
+                                signInWithPhoneAuthCredential(credential);
+//                                hud.dismiss();
+
+//                            } else {
+//                                Toast.makeText(verifyOTPActivity.this, "Enter the otp you received", Toast.LENGTH_SHORT).show();
+//                            }
+                        } catch (Exception e) {
+                            Toast.makeText(verifyOTPActivity.this,"Error "+String.valueOf(e),Toast.LENGTH_LONG).show();
+//                            hud.dismiss();
+                            GifRL.setVisibility(View.GONE);
+                            confirm.setVisibility(View.VISIBLE);
+
                         }
-                    }catch (Exception e){
-//                        Toast.makeText(verifyOTPActivity.this,"Error "+String.valueOf(e),Toast.LENGTH_LONG).show();
-                    }
-                }else {
-                    otp.setText(credential.getSmsCode());
-                    signInWithPhoneAuthCredential(credential);
+                    } else {
+//                        otp.setText(credential.getSmsCode());
+                        Log.d("CREDENTIALSMSCODE",String.valueOf(credential.getSmsCode()));
+                        Toast.makeText(verifyOTPActivity.this, "CREDENTIALSMSCODE "+ (credential.getSmsCode()), Toast.LENGTH_SHORT).show();
+                        signInWithPhoneAuthCredential(credential);
+//                        hud.dismiss();
 
+                    }
                 }
-            }
-        });
+            });
+        }
         
-        
-    }
+//    }
 
     private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {
 
-        final KProgressHUD hud = KProgressHUD.create(verifyOTPActivity.this)
-                .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
-                .setLabel("Please wait")
-                .setMaxProgress(100)
-                .show();
+//        hud.show();
 
         FirebaseAuth.getInstance().signInWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -112,39 +180,48 @@ public class verifyOTPActivity extends AppCompatActivity {
                             Log.d("SIGNIN", "signInWithCredential:success");
                             final FirebaseUser user = task.getResult().getUser();
 
-                            ref.child("users").addValueEventListener(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                    if(dataSnapshot.hasChild(user.getUid())){
-                                        Intent intent = new Intent(verifyOTPActivity.this,Select.class);
-                                        startActivity(intent);
-                                        finish();
-                                        hud.dismiss();
-                                    }else {
-//                                        Toast.makeText(verifyOTPActivity.this, "UID"+user.getUid(), Toast.LENGTH_SHORT).show();
+                            if(!newUser) {
+                                ref.child("users").addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                        Toast.makeText(verifyOTPActivity.this, "SENDING NO NEW ORDER DETAILS ", Toast.LENGTH_SHORT).show();
 
-                                        if(!newUser) {
+                                        if (dataSnapshot.hasChild(user.getUid())) {
+                                            Intent intent = new Intent(verifyOTPActivity.this, Select.class);
+                                            startActivity(intent);
+//                                            hud.dismiss();
+                                            GifRL.setVisibility(View.GONE);
+
+                                        }
+                                        else {
+                                            Toast.makeText(verifyOTPActivity.this, "UID"+user.getUid(), Toast.LENGTH_SHORT).show();
                                             Intent intent = new Intent(verifyOTPActivity.this, FirstNameActivity.class);
                                             Bundle bundle = new Bundle();
                                             bundle.putString("Number", number);
                                             intent.putExtras(bundle);
                                             startActivity(intent);
                                             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                                            hud.dismiss();
-                                        }else{
-                                            sendNewUsersOrderData();
+//                                            hud.dismiss();
+                                            GifRL.setVisibility(View.GONE);
+
                                         }
+
                                     }
-                                }
 
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError databaseError) {
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+//                                        hud.dismiss();
+                                        GifRL.setVisibility(View.GONE);
+                                        confirm.setVisibility(View.VISIBLE);
 
-                                    hud.dismiss();
-                                }
-                            });
+                                    }
+                                });
 
-
+                            }else{
+//                                hud.dismiss();
+                                GifRL.setVisibility(View.GONE);
+                                sendNewUsersOrderData();
+                            }
                             // ...
                         } else {
                             // Sign in failed, display a message and update the UI
@@ -152,23 +229,209 @@ public class verifyOTPActivity extends AppCompatActivity {
                             if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
                                 // The verification code entered was invalid
                                 Toast.makeText(verifyOTPActivity.this, " The verification code entered was invalid", Toast.LENGTH_SHORT).show();
-                                hud.dismiss();
+//                                hud.dismiss();
+                                GifRL.setVisibility(View.GONE);
+                                confirm.setVisibility(View.VISIBLE);
 
                             }
                         }
                     }
                 });
     }
+
+
+    public void setInitialViewAnimationCode(){
+        rootLayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                int diff = rootLayout.getRootView().getHeight() - rootLayout.getHeight();
+                if(diff > dpToPx(getApplicationContext(),200)){
+
+                    Resources r = getResources();
+                    int margin = (int) TypedValue.applyDimension(
+                            TypedValue.COMPLEX_UNIT_DIP,
+                            80,
+                            r.getDisplayMetrics());
+
+
+
+                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                    // params.topMargin = margin;
+                    params.addRule(RelativeLayout.CENTER_IN_PARENT);
+                    otpLayout.setLayoutParams(params);
+                }
+
+                if(diff < dpToPx(getApplicationContext(),200)){
+
+                    Resources r = getResources();
+                    int margin = (int) TypedValue.applyDimension(
+                            TypedValue.COMPLEX_UNIT_DIP,
+                            150,
+                            r.getDisplayMetrics());
+
+
+
+                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                    params.topMargin = margin;
+                    params.addRule(RelativeLayout.CENTER_HORIZONTAL);
+                    otpLayout.setLayoutParams(params);
+                }
+
+
+            }
+        });
+        digit1.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                confirm.setVisibility(View.VISIBLE);
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+
+                confirm.setVisibility(View.VISIBLE);
+
+                if(digit1.length() == 1)
+                    digit2.requestFocus();
+
+            }
+        });
+        digit2.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+
+                confirm.setVisibility(View.VISIBLE);
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+
+                confirm.setVisibility(View.VISIBLE);
+
+                if(digit2.length() == 1)
+                    digit3.requestFocus();
+
+            }
+        });
+        digit3.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                confirm.setVisibility(View.VISIBLE);
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+
+                confirm.setVisibility(View.VISIBLE);
+
+                if(digit3.length() == 1)
+                    digit4.requestFocus();
+
+            }
+        });
+        digit4.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+
+                confirm.setVisibility(View.VISIBLE);
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+
+
+                confirm.setVisibility(View.VISIBLE);
+
+                if(digit4.length() == 1)
+                    digit5.requestFocus();
+
+            }
+        });
+        digit5.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+
+                confirm.setVisibility(View.VISIBLE);
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+                confirm.setVisibility(View.VISIBLE);
+
+                if(digit5.length() == 1)
+                    digit6.requestFocus();
+
+            }
+        });
+        digit6.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+
+
+                confirm.setVisibility(View.VISIBLE);
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+
+                confirm.setVisibility(View.VISIBLE);
+
+
+            }
+        });
+    }
+
     public void getNewUserOrderDetails(){
-
-
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
-//        newUser = extras.getBoolean("NewUser");
-        number = extras.getString("Number");
-        mVerificationId = extras.getString("VID");
-        mcredential = extras.getParcelable("Credential");
-
 
         //////////////////////////////////////////////////Shop Info//////////////////////////////////////////
         shopLat = extras.getDouble("ShopLat");
@@ -177,7 +440,7 @@ public class verifyOTPActivity extends AppCompatActivity {
         loc = extras.getString("Location");
         files = extras.getInt("Files");
         orderStatus = extras.getString("OrderStatus");
-        price = extras.getDouble("Price");
+        totalPrice = extras.getDouble("Price");
         FromYourOrders = extras.getBoolean("FromYourOrders");
         shopKey = extras.getString("ShopKey");
         userLat = extras.getDouble("User Lat");
@@ -187,22 +450,30 @@ public class verifyOTPActivity extends AppCompatActivity {
         /////////////////////////////////////////////////Order info////////////////////////////////////////
 
 
-        fileType = extras.getString("FileType");
-        pagesize = extras.getString("PageSize");
-        orientation = extras.getString("Orientation");
+
 
         shopNum = extras.getLong("ShopNum");
+        fileNames = extras.getStringArrayList("FileNames");
+        fileSizes = extras.getStringArrayList("FileSizes");
+
         urls = extras.getStringArrayList("URLS");
-        copy = extras.getInt("Copies");
-        color = extras.getString("ColorType");
-        requestCode = extras.getInt("RequestCode");
-        resultCode = extras.getInt("ResultCode");
-        bothSides = extras.getBoolean("BothSides");
-        custom = extras.getString("Custom");
-        numberOfPages = extras.getDouble("Pages");
+        fileTypes = extras.getStringArrayList("FileType");
+        pageSize = extras.getStringArrayList("PageSize");
+        orientations = extras.getStringArrayList("Orientation");
+        copies = extras.getIntegerArrayList("Copies");
+        colors = extras.getStringArrayList("ColorType");
+        bothSides = extras.getBooleanArray("BothSides");
+        customPages = extras.getStringArrayList("Custom");
+        numberOfPages = extras.getIntegerArrayList("Pages");
+
+        pricePerFile = extras.getDoubleArray("PricePerFile");
+        totalPrice = extras.getDouble("TotalPrice");
+
         isTester = extras.getBoolean("IsTester");
         newUser = extras.getBoolean("NewUser");
-
+        number = extras.getString("Number");
+        mVerificationId = extras.getString("VID");
+        mcredential = extras.getParcelable("Credential");
 
     }
 
@@ -211,39 +482,47 @@ public class verifyOTPActivity extends AppCompatActivity {
         Intent intent = new Intent(verifyOTPActivity.this,FirstNameActivity.class);
         Bundle extras = new Bundle();
 
+        extras.putBoolean("SignUp",true);
         extras.putBoolean("NewUser",true);
         extras.putString("Number", number);
 
-//        extras.putString("Email", FirebaseAuth.getInstance().getCurrentUser().getEmail());
-//        extras.putString("Name", FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
-
-        extras.putStringArrayList("URLS", urls);
         extras.putString("ShopName", shopName);
         extras.putString("Location", loc);
         extras.putDouble("ShopLat", shopLat);
         extras.putDouble("ShopLong", shopLong);
         extras.putInt("Files", files);
-        extras.putDouble("Price", price);
-        extras.putString("FileType", fileType);
-        extras.putString("PageSize", pagesize);
-        extras.putString("Orientation", orientation);
+        extras.putDouble("Price", totalPrice);
+
         extras.putBoolean("IsTester", isTester);
         extras.putLong("ShopNum", shopNum);
 
-        extras.putInt("Copies", copy);
-        extras.putString("ColorType", color);
-        extras.putBoolean("BothSides", bothSides);
-        extras.putString("Custom", custom);
+
+        extras.putStringArrayList("URLS", urls);
+        extras.putIntegerArrayList("Pages", numberOfPages);
+
+        extras.putBooleanArray("BothSides", bothSides);
+        extras.putStringArrayList("Custom", customPages);
+        extras.putStringArrayList("FileNames",fileNames);
+        extras.putStringArrayList("FileType", fileTypes);
+        extras.putStringArrayList("PageSize", pageSize);
+        extras.putStringArrayList("Orientation", orientations);
+        extras.putIntegerArrayList("Copies", copies);
+        extras.putStringArrayList("ColorType", colors);
+
         extras.putString("ShopKey", shopKey);
-//        extras.putString("UserID", userID);
         extras.putDouble("User Lat", userLat);
         extras.putDouble("User Long", userLong);
-        extras.putInt("RequestCode", requestCode);
-        extras.putInt("ResultCode", resultCode);
-        extras.putDouble("Pages", numberOfPages);
+        extras.putStringArrayList("FileSizes",fileSizes);
+
+        extras.putDoubleArray("PricePerFile",pricePerFile);
+        extras.putDouble("TotalPrice",totalPrice);
         intent.putExtras(extras);
+
+        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         startActivity(intent);
 
+
     }
+
 
 }

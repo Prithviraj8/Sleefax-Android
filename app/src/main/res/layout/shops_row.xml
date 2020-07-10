@@ -188,11 +188,12 @@
             <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/showtime1"
+                android:id="@+id/showtime"
                 android:layout_below="@id/Files"
                 android:layout_marginLeft="8dp"
                 android:layout_marginTop="8dp"
-                android:background="@drawable/show_text"/> </RelativeLayout>
+                android:background="@drawable/show_text"/>
+        </RelativeLayout>
 
 
 

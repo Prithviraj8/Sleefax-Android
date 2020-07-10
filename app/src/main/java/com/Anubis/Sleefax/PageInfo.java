@@ -443,19 +443,11 @@ public class PageInfo extends AppCompatActivity {
                             Intent intent = new Intent(PageInfo.this, ShopsActivity.class);
                             Bundle extras = new Bundle();
                             extras.putStringArrayList("URLS", pageURL);
-//                            extras.putParcelableArrayList("URLS", pageURL);
-//                            extras.putInt("Copies", copy);
-//                            extras.putString("ColorType", colour);
                             extras.putInt("ShopCount", ShopsCnt);
-//                            extras.putString("FileType", fileType);
-//                            extras.putString("PageSize", pagesize);
                             extras.putStringArrayList("StoreID", storeID);
-//                            extras.putString("Orientation", orientation);
-//                            extras.putBoolean("BothSides",bothSides);
                             extras.putString("Custom","All");
                             extras.putBoolean("IsTester",isTester);
                             extras.putBoolean("NewUser",newUser);
-
                             extras.putBooleanArray("BothSides", bothSides);
                             extras.putIntegerArrayList("Copies", copies);
                             extras.putStringArrayList("ColorType", colors);

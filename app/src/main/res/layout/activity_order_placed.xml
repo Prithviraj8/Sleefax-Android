@@ -337,16 +337,22 @@
 
             <RelativeLayout
                 android:id="@+id/OrderDetailsRL"
-                android:layout_width="358dp"
-                android:layout_height="174dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_below="@id/view9"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentEnd="true"
-                android:layout_alignParentBottom="true"
                 android:layout_marginStart="21dp"
                 android:layout_marginTop="0dp"
                 android:layout_marginEnd="21dp"
                 android:layout_marginBottom="10dp">
+
+                <ListView
+                    android:id="@+id/OrderDetailsLV"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:divider="@android:color/transparent"
+                    />
 
                 <TextView
                     android:id="@+id/OrderShop"
@@ -399,8 +405,12 @@
                     android:id="@+id/File1TV"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
                     android:layout_alignParentTop="true"
+                    android:layout_marginStart="1dp"
                     android:layout_marginTop="0dp"
+                    android:layout_marginEnd="50dp"
+                    android:layout_toStartOf="@+id/FilePrice1"
                     android:fontFamily="@font/poppins_semibold"
                     android:text="File.pdf 1 "
                     android:textColor="#000000"
@@ -424,7 +434,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/File1TV"
+                    android:layout_alignEnd="@+id/File1TV"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginStart="0dp"
                     android:layout_marginTop="2dp"
+                    android:layout_marginEnd="0dp"
                     android:fontFamily="@font/poppins_semibold"
                     android:text="File.pdf 2"
                     android:textColor="#000000"
@@ -447,7 +461,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/File2TV"
+                    android:layout_alignEnd="@+id/File1TV"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginStart="0dp"
                     android:layout_marginTop="2dp"
+                    android:layout_marginEnd="0dp"
                     android:fontFamily="@font/poppins_semibold"
                     android:text="File.pdf 3"
                     android:textColor="#000000"
@@ -466,11 +484,67 @@
                     android:textColor="#229440"
                     android:visibility="gone" />
 
+
+                <TextView
+                    android:id="@+id/File4TV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/File3TV"
+                    android:layout_alignEnd="@+id/File1TV"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginEnd="0dp"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:text="File.pdf 1 "
+                    android:textColor="#000000"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/FilePrice4"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/File3TV"
+                    android:layout_alignEnd="@+id/FilePrice1"
+                    android:layout_marginTop="0dp"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:text="₹ 12"
+                    android:textColor="#229440"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/File5TV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/File4TV"
+                    android:layout_alignEnd="@+id/File1TV"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginEnd="0dp"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:text="File.pdf 1 "
+                    android:textColor="#000000"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/FilePrice5"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/File4TV"
+                    android:layout_alignEnd="@+id/FilePrice1"
+                    android:layout_marginTop="0dp"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:text="₹ 12"
+                    android:textColor="#229440"
+                    android:visibility="gone" />
+
+
                 <View
                     android:id="@+id/view30"
                     android:layout_width="match_parent"
                     android:layout_height="2dp"
-                    android:layout_below="@+id/File3TV"
+                    android:layout_below="@id/OrderDetailsLV"
                     android:layout_marginTop="2dp"
                     android:background="#818181" />
 
@@ -501,19 +575,20 @@
                     android:text="Total"
                     android:textColor="#000000" />
 
-                <Button
-                    android:id="@+id/OrderDetailsBtn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/textView41"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginTop="10dp"
-                    android:background="#00000000"
-                    android:fontFamily="@font/poppins_semibold"
-                    android:text="Show Full Details"
-                    android:textColor="#227093"
-                    android:textSize="16sp" />
             </RelativeLayout>
+
+            <Button
+                android:id="@+id/OrderDetailsBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@id/OrderDetailsRL"
+                android:layout_marginTop="5dp"
+                android:background="#00000000"
+                android:fontFamily="@font/poppins_semibold"
+                android:text="Show Full Details"
+                android:textColor="#227093"
+                android:textSize="16sp" />
 
         </RelativeLayout>
     </ScrollView>

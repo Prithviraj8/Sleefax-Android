@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#F2F4F4"
+        android:layout_marginBottom="20dp"
+        android:layout_marginTop="10dp"
+        android:paddingHorizontal="30dp"
+        android:id="@+id/orderRowRL">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:id="@+id/pdfName"
+            android:textSize="12sp"
+            android:layout_marginTop="10dp"
+            android:textColor="#367E95"
+            android:text="Analysis Report.pdf"
+            android:fontFamily="@font/poppins_semibold"/>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/pdfName"
+            android:layout_marginTop="20dp"
+            android:layout_marginLeft="20dp"
+            android:orientation="vertical"
+            android:id="@+id/infoLV1">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/pageSize"
+                android:text="Page Size : A4"
+                android:textSize="12sp"
+                android:fontFamily="@font/poppins"
+                android:textColor="#332F2F"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/pageOrientation"
+                android:text="Orientation: Potrait"
+                android:layout_marginTop="10dp"
+                android:textSize="12sp"
+                android:fontFamily="@font/poppins"
+                android:textColor="#332F2F"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/FileType"
+                android:text="File Type: pdf"
+                android:layout_marginTop="10dp"
+                android:textSize="12sp"
+                android:fontFamily="@font/poppins"
+                android:textColor="#332F2F"/>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/pdfName"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_alignParentEnd="true"
+            android:orientation="vertical"
+            android:id="@+id/infoLV2">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/Color"
+                android:text="Colour type: b/w"
+                android:textSize="12sp"
+                android:fontFamily="@font/poppins"
+                android:textColor="#332F2F"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/pdfCopies"
+                android:text="Copies : 2"
+                android:layout_marginTop="10dp"
+                android:textSize="12sp"
+                android:fontFamily="@font/poppins"
+                android:textColor="#332F2F"/>
+
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/infoLV1"
+            android:text="@string/ViewFile"
+            android:layout_alignStart="@id/infoLV2"
+            android:layout_marginBottom="10dp"
+            android:textColor="#367E95"
+            android:layout_marginTop="-10dp"
+            android:textSize="13sp"
+            android:fontFamily="@font/poppins_medium"
+            android:selectAllOnFocus="false"
+            android:linksClickable="true"
+            android:autoLink="all"/>
+
+
+
+
+    </RelativeLayout>
+
+</RelativeLayout>

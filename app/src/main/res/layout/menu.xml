@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="utf-8"?>
+<nl.psdcompany.duonavigationdrawer.views.DuoMenuView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/Duo_Menu"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:tag="menu">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/MenuScrollView">
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/HamburgerMenuRL">
+
+            <View
+                android:id="@+id/view18"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="5dp"
+                android:background="#DEDFDE" />
+
+            <ImageView
+                android:id="@+id/appicon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="25dp"
+                android:layout_marginTop="30dp"
+                android:src="@drawable/usericonmenu" />
+
+            <TextView
+                android:id="@+id/username"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/appicon"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="5dp"
+                android:layout_toEndOf="@+id/appicon"
+                android:paddingStart="7dp"
+                android:text="Welcome"
+                android:textAlignment="textStart"
+                android:textColor="#FFFFFF"
+                android:textSize="22dp"
+                android:fontFamily="@font/poppins" />
+
+            <TextView
+                android:id="@+id/useremail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/username"
+                android:layout_alignStart="@+id/username"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="0dp"
+                android:fontFamily="@font/poppins_medium"
+                android:paddingStart="7dp"
+                android:text="Email"
+                android:textColor="#D6D6D6"
+                android:textSize="14sp" />
+
+
+
+
+            <!--    Menu Items From here-->
+
+
+            <TextView
+                android:id="@+id/MAIN_TV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/appicon"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="44dp"
+                android:layout_marginTop="40dp"
+                android:fontFamily="@font/poppins_medium"
+                android:text="MAIN"
+                android:textColor="#E9E9E9"
+                android:textSize="24sp" />
+
+            <ImageView
+                android:id="@+id/settingsmenuimg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/Menu_Settings"
+                android:layout_alignBottom="@+id/Menu_Settings"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="0dp"
+                android:layout_marginBottom="0dp"
+                android:layout_toStartOf="@+id/Menu_Settings"
+                android:src="@drawable/settingsmenu" />
+
+            <Button
+                android:id="@+id/Menu_Settings"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:layout_below="@id/MAIN_TV"
+                android:layout_alignStart="@+id/MAIN_TV"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="30dp"
+                android:background="#00FFFFFF"
+                android:fontFamily="@font/poppins_medium"
+                android:text="Settings"
+                android:textColor="#FFFFFF"
+                android:textSize="17sp" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/Menu_OrderHistory"
+                android:layout_alignEnd="@+id/settingsmenuimg"
+                android:layout_alignBottom="@+id/Menu_OrderHistory"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="0dp"
+                android:layout_marginBottom="0dp"
+                android:layout_toStartOf="@+id/Menu_OrderHistory"
+                android:src="@drawable/orderhistoryimgmenu" />
+
+
+            <Button
+                android:id="@+id/Menu_OrderHistory"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:layout_below="@+id/Menu_Settings"
+                android:layout_alignStart="@+id/Menu_Settings"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="15dp"
+                android:background="#00FFFFFF"
+                android:fontFamily="@font/poppins_medium"
+                android:text="Order History"
+                android:textColor="#FFFFFF"
+                android:textSize="17sp" />
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/Menu_OrderHistory"
+                android:layout_alignStart="@+id/MAIN_TV"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="15dp"
+                android:fontFamily="@font/poppins_medium"
+                android:text="SUPPORT"
+                android:textColor="#E9E9E9"
+                android:textSize="24sp" />
+
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/Menu_ContactUs"
+                android:layout_alignEnd="@+id/settingsmenuimg"
+                android:layout_alignBottom="@+id/Menu_ContactUs"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="0dp"
+                android:layout_marginBottom="0dp"
+                android:layout_toStartOf="@+id/Menu_ContactUs"
+                android:src="@drawable/contactimgmenu" />
+
+
+            <Button
+                android:id="@+id/Menu_ContactUs"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:layout_below="@+id/textView2"
+                android:layout_alignStart="@+id/Menu_OrderHistory"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="15dp"
+                android:background="#00FFFFFF"
+                android:fontFamily="@font/poppins_medium"
+                android:text="Contact Us"
+                android:textColor="#FFFFFF"
+                android:textSize="17sp" />
+
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/Menu_ReportIssue"
+                android:layout_alignEnd="@+id/settingsmenuimg"
+                android:layout_alignBottom="@+id/Menu_ReportIssue"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="0dp"
+                android:layout_marginBottom="0dp"
+                android:layout_toStartOf="@+id/Menu_ReportIssue"
+                android:src="@drawable/issueimgmenu" />
+
+            <Button
+                android:id="@+id/Menu_ReportIssue"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:layout_below="@+id/Menu_ContactUs"
+                android:layout_alignStart="@+id/Menu_ContactUs"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="15dp"
+                android:background="#00FFFFFF"
+                android:fontFamily="@font/poppins_medium"
+                android:text="Report Issue"
+                android:textColor="#FFFFFF"
+                android:textSize="17sp" />
+
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/Menu_Feedback"
+                android:layout_alignEnd="@+id/settingsmenuimg"
+                android:layout_alignBottom="@+id/Menu_Feedback"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="0dp"
+                android:layout_marginBottom="0dp"
+                android:layout_toStartOf="@+id/Menu_Feedback"
+                android:src="@drawable/feedbackimgmenu" />
+
+            <Button
+                android:id="@+id/Menu_Feedback"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:layout_below="@+id/Menu_ReportIssue"
+                android:layout_alignStart="@+id/Menu_ReportIssue"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="15dp"
+                android:background="#00FFFFFF"
+                android:fontFamily="@font/poppins_medium"
+                android:text="Provide Feedback"
+                android:textColor="#FFFFFF"
+                android:textSize="17sp" />
+
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/Menu_NeedHelp"
+                android:layout_alignEnd="@+id/settingsmenuimg"
+                android:layout_alignBottom="@+id/Menu_NeedHelp"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="0dp"
+                android:layout_marginBottom="0dp"
+                android:layout_toStartOf="@+id/Menu_NeedHelp"
+                android:src="@drawable/helpimgmenu" />
+
+            <Button
+                android:id="@+id/Menu_NeedHelp"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:layout_below="@+id/Menu_Feedback"
+                android:layout_alignStart="@+id/Menu_Feedback"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="15dp"
+                android:background="#00FFFFFF"
+                android:fontFamily="@font/poppins_medium"
+                android:text="Need Help ?"
+                android:textColor="#FFFFFF"
+                android:textSize="17sp" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/Menu_RateUs"
+                android:layout_alignEnd="@+id/settingsmenuimg"
+                android:layout_alignBottom="@+id/Menu_RateUs"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="0dp"
+                android:layout_marginBottom="0dp"
+                android:layout_toStartOf="@+id/Menu_RateUs"
+                android:src="@drawable/rateusimgmenu" />
+
+            <Button
+                android:id="@+id/Menu_RateUs"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:layout_below="@+id/Menu_NeedHelp"
+                android:layout_alignStart="@+id/Menu_NeedHelp"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="15dp"
+                android:background="#00000000"
+                android:fontFamily="@font/poppins_medium"
+                android:text="Rate Us"
+                android:textAlignment="textStart"
+                android:textColor="#FFFFFF"
+                android:textSize="17sp" />
+
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/Menu_Tell_A_Friend"
+                android:layout_alignEnd="@+id/settingsmenuimg"
+                android:layout_alignBottom="@+id/Menu_Tell_A_Friend"
+                android:layout_marginTop="0dp"
+                android:layout_marginEnd="0dp"
+                android:layout_marginBottom="0dp"
+                android:layout_toStartOf="@+id/Menu_Tell_A_Friend"
+                android:src="@drawable/tellafriendimgmenu" />
+
+            <Button
+                android:id="@+id/Menu_Tell_A_Friend"
+                android:layout_width="wrap_content"
+                android:layout_height="35dp"
+                android:layout_below="@+id/Menu_RateUs"
+                android:layout_alignStart="@+id/Menu_RateUs"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="15dp"
+                android:background="#00FFFFFF"
+                android:fontFamily="@font/poppins_medium"
+                android:text="Tell a Friend"
+                android:textColor="#FFFFFF"
+                android:textSize="17sp" />
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/Menu_Logout"
+                android:layout_alignBottom="@+id/Menu_Logout"
+                android:layout_alignStart="@+id/Menu_Logout"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="0dp"
+
+                android:src="@drawable/logoutmenu" />
+
+            <Button
+                android:id="@+id/Menu_Logout"
+                android:layout_width="191dp"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_below="@+id/Menu_Tell_A_Friend"
+                android:layout_marginTop="10dp"
+                android:background="#00FFFFFF"
+                android:fontFamily="@font/poppins_medium"
+                android:text="Logout"
+                android:textColor="#FFF"
+                android:textSize="21sp"
+                android:elevation="10dp"/>
+
+
+        </RelativeLayout>
+
+    </ScrollView>
+
+</nl.psdcompany.duonavigationdrawer.views.DuoMenuView>

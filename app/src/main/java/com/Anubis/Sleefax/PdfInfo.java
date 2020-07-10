@@ -21,8 +21,9 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
+import android.text.Editable;
 import android.text.SpannableString;
+import android.text.TextWatcher;
 import android.text.style.UnderlineSpan;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -36,6 +37,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.webkit.WebView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -68,31 +70,26 @@ import org.apache.poi.hwpf.usermodel.CharacterRun;
 import org.apache.poi.hwpf.usermodel.Paragraph;
 import org.apache.poi.hwpf.usermodel.Picture;
 import org.apache.poi.hwpf.usermodel.Range;
-import org.apache.poi.openxml4j.opc.OPCPackage;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xwpf.usermodel.IBodyElement;
 import org.apache.poi.xwpf.usermodel.IRunElement;
 import org.apache.poi.xwpf.usermodel.UnderlinePatterns;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.apache.poi.xwpf.usermodel.XWPFHyperlinkRun;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFPicture;
 import org.apache.poi.xwpf.usermodel.XWPFPictureData;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
 import org.apache.poi.xwpf.usermodel.XWPFSDT;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
-import org.apache.poi.xwpf.usermodel.XWPFTableCell;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-
-import static com.google.android.material.internal.ViewUtils.dpToPx;
 
 public class PdfInfo extends AppCompatActivity {
     ProgressDialog mProgressDialog;
@@ -101,46 +98,55 @@ public class PdfInfo extends AppCompatActivity {
     String userId;
     int ShopsCnt=0,pdfCnt=0;
 
+
+    // Progress bars and pop ups
+    KProgressHUD hud;
+
 //    String colorType;
 
-    RelativeLayout done, viewFileRL;
+    RelativeLayout viewFileRL,previousBtnRL;
     LinearLayout mainUI;
 
     Spinner pageSizeSpinner, orientSpinner;
     View colorsTV,bwTV,h,v;
     ToggleButton bothSidePrint;
     ImageButton back,scrollDown;
-    Button viewPdf, dismissViewer;
+    ImageView nextBtnArrow;
+    Button viewPdf, dismissViewer,done,previousBtn;
     ScrollView scrollView,viewFileScrollView;
     PDFView pdfView;
     WebView webView;
-    TextView fileNameTV;
+    TextView fileNameTV,filePrice;
     EditText customValue1,customValue2;
-    RelativeLayout bottomRelativeView;
+    RelativeLayout bottomRelativeView,customPagesRL, bothsidesRL;
     RelativeLayout rootLayout;
     RelativeLayout upperLayout;
-    int copy,custValue1,custValue2;
+    ImageView bw_selected,color_selected;
+    CheckBox applyToAllBox;
 
 
-    //    String pdf_url;
-    String pdf_url,pdf_uri;
-    int resultCode,requestCode;
+    int copy,custValue1,custValue2,shopCnt = 0;
+
     int mScreenHeight;
 
-    String colour, pagesize;
+    String colour = "Black/White", pagesize;
 
     ArrayList<String> pdfURL = new ArrayList<>();
-    ArrayList<String> fileType = new ArrayList<>();
+    ArrayList<String> fileTypes = new ArrayList<>();
     ArrayList<String> colors = new ArrayList<>();
     ArrayList<Integer> copies = new ArrayList<>();
     ArrayList<String> pageSize = new ArrayList<>();
     ArrayList<String> orientations = new ArrayList<>();
-    boolean bothSides[];
+    boolean bothSides[],both_Sides_[];
     ArrayList<String> customPages = new ArrayList<>();
     ArrayList<String> customValues = new ArrayList<>();
     ArrayList<Integer> numberOfPages = new ArrayList<>();
     ArrayList<String> fileNames = new ArrayList<>();
     ArrayList<String> fileSizes = new ArrayList<>();
+//    ArrayList<Double> pricePerFile = new ArrayList<Double>();
+
+    double pricePerFile[],price_Per_File[],totalPrice,price = 0;
+
 
 
     EditText copiesTV,pageCount;
@@ -148,7 +154,7 @@ public class PdfInfo extends AppCompatActivity {
     String orientation,fileName;
     String username,email,custom,shopType,customVal;
 //    boolean bothSides = false;
-    boolean isTester,newUser;
+    boolean isTester,newUser,addingMoreFiles;
 
     ArrayList<String> storeID = new ArrayList<>();
 
@@ -156,6 +162,11 @@ public class PdfInfo extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pdf_info);
+        // Progress HUD
+        hud = KProgressHUD.create(PdfInfo.this)
+                .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
+                .setLabel("Loading")
+                .setMaxProgress(100);
 
         bottomRelativeView = findViewById(R.id.bottom_view);
 
@@ -183,16 +194,23 @@ public class PdfInfo extends AppCompatActivity {
 
         pdfCnt = 0;
 
+        customPagesRL = findViewById(R.id.custompagesRL);
+        bothsidesRL = findViewById(R.id.bothsidesRL);
+
         colorsTV = findViewById(R.id.Pdf_Colors);
         bwTV = findViewById(R.id.Pdf_Black_White);
+        bw_selected = findViewById(R.id.bw_selected);
+        color_selected = findViewById(R.id.color_selected);
         done = findViewById(R.id.pdfDone);
         copiesTV = findViewById(R.id.PDF_copies);
         pageSizeSpinner = findViewById(R.id.sizeSpinner);
         orientSpinner = findViewById(R.id.orientationSpinner);
         scrollView = findViewById(R.id.scrollViewPdfs);
         scrollDown = findViewById(R.id.scrollDownPdf);
+        nextBtnArrow = findViewById(R.id.nextBtnArrow);
 
         fileNameTV = findViewById(R.id.fileNameTV);
+        filePrice = findViewById(R.id.pdf_price);
         viewFileRL = findViewById(R.id.viewFileBtnRL);
         viewPdf = findViewById(R.id.viewPdfBtn);
         pageCount = findViewById(R.id.PageCount);
@@ -200,6 +218,10 @@ public class PdfInfo extends AppCompatActivity {
         dismissViewer = findViewById(R.id.DismissViewer);
         viewFileScrollView = findViewById(R.id.ViewerScollView);
         mainUI = findViewById(R.id.ViewerLinearLayout);
+        applyToAllBox = findViewById(R.id.apply_to_all);
+
+        previousBtn = findViewById(R.id.PreviousBtn);
+        previousBtnRL = findViewById(R.id.previous);
 
 
         final String[] sizes = new String[]{"A4", "A3", "A2"};
@@ -214,34 +236,52 @@ public class PdfInfo extends AppCompatActivity {
         customValue1 = findViewById(R.id.customValue1);
         customValue2 = findViewById(R.id.customValue2);
 
-
+        textViewEditListener();
+        checkBoxListener();
 
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
-        pdfURL = extras.getStringArrayList("URLS");
-        fileType = extras.getStringArrayList("FileType");
-        username = extras.getString("username");
-        email = extras.getString("email");
-        requestCode = extras.getInt("RequestCode");
-        resultCode = extras.getInt("ResultCode");
-        numberOfPages = extras.getIntegerArrayList("Pages");
-        isTester = extras.getBoolean("IsTester");
-        newUser = extras.getBoolean("NewUser");
-        fileNames = extras.getStringArrayList("FileNames");
-        fileSizes = extras.getStringArrayList("FileSizes");
 
-        bothSides = new boolean[pdfURL.size()];
+        addingMoreFiles = extras.getBoolean("AddingMoreFiles");
 
-        fileNameTV.setText(fileNames.get(pdfCnt));
-        customValue1.setText("1");
-        if(numberOfPages == null){
-            numberOfPages.add(pdfCnt,10);
-            customValue2.setText(String.valueOf(1));
 
-        }else{
-            customValue2.setText(numberOfPages.get(pdfCnt) != null ? (String.valueOf((int) numberOfPages.get(pdfCnt))) : "1");
+        if(addingMoreFiles){
+            getOrderInfo();
+        }else {
+            pdfURL = extras.getStringArrayList("URLS");
+            fileTypes = extras.getStringArrayList("FileType");
+            username = extras.getString("username");
+            email = extras.getString("email");
+            numberOfPages = extras.getIntegerArrayList("Pages");
+            isTester = extras.getBoolean("IsTester");
+            newUser = extras.getBoolean("NewUser");
+            fileNames = extras.getStringArrayList("FileNames");
+            fileSizes = extras.getStringArrayList("FileSizes");
+
+            bothSides = new boolean[pdfURL.size()];
+            pricePerFile = new double[pdfURL.size()];
+
 
         }
+
+        Log.d("NO_OF_FILES",String.valueOf(pdfURL.size()));
+
+
+        if(pdfURL.size() == 1 || pdfCnt == pdfURL.size() - 1){
+            done.setText("Done");
+            nextBtnArrow.setVisibility(View.GONE);
+        }else{
+            done.setText("Next");
+            nextBtnArrow.setVisibility(View.VISIBLE);
+        }
+
+
+
+
+
+        fileNameTV.setText(fileNames.get(pdfCnt));
+
+
 
         if(!newUser){
             userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -251,33 +291,38 @@ public class PdfInfo extends AppCompatActivity {
         }else{
             shopType = "Stores";
         }
-//        fileName = extras.getString("FileName");
-//        pdf_uri = extras.getParcelable("PDFUri");
-
-
-//        pdfURL.add((pdf_url));
 
         back = findViewById(R.id.back);
         back.setOnClickListener(BtnListener);
 
         bothSidePrint = findViewById(R.id.bothSidesToggle);
 
-        bothSidePrint.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                // The toggle is enabled
-                // The toggle is disabled
-
-
-                bothSides[pdfCnt] = isChecked;
-
+        if(fileTypes.get(0).contains("IMAGE")){
+            if(pdfURL.size() == 1){
+                bothsidesRL.setVisibility(View.INVISIBLE);
             }
-        });
+            customPagesRL.setVisibility(View.INVISIBLE);
+            calculatePrice();
 
-//        if(pdfURL.size() == 1){
-//            done.setVisibility(View.VISIBLE);
-//        }else{
-//            done.setVisibility(View.GONE);
-//        }
+        }else{
+            getNumberOfPages_PDF();
+            if(pdfCnt < numberOfPages.size() && numberOfPages.get(pdfCnt)>1 ) {
+                bothSidePrint.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        // The toggle is enabled
+                        // The toggle is disabled
+
+                        bothSides[pdfCnt] = isChecked;
+                        calculatePrice();
+
+                    }
+                });
+            }
+        }
+
+
+
+
 
         colorsTV.setOnTouchListener(touchListener);
         bwTV.setOnTouchListener(touchListener);
@@ -285,9 +330,74 @@ public class PdfInfo extends AppCompatActivity {
         scrollDown.setOnClickListener(BtnListener);
         viewPdf.setOnClickListener(BtnListener);
         dismissViewer.setOnClickListener(BtnListener);
+        previousBtn.setOnClickListener(BtnListener);
+        if(pdfCnt == 0){
+            previousBtnRL.setVisibility(View.GONE);
+        }
 
 
+//        getShopsCount();
+//        setFileTypes();
+        
     }
+
+
+    @Override
+    public void onBackPressed() {
+        if(pdfCnt == 0) {
+            super.onBackPressed();
+        }else if(pdfCnt > 0){
+            pdfCnt = pdfCnt - 1;
+            getNumberOfPages_PDF();
+        }
+        if(pdfView.VISIBLE == 0){
+            viewPdf.setVisibility(View.VISIBLE);
+            bothSidePrint.setVisibility(View.VISIBLE);
+            done.setVisibility(View.VISIBLE);
+            pdfView.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    
+    public void getOrderInfo(){
+
+
+
+        Intent intent = getIntent();
+        Bundle extras = intent.getExtras();
+
+
+        pdfURL = extras.getStringArrayList("URLS");
+        copies = extras.getIntegerArrayList("Copies");
+        colors = extras.getStringArrayList("ColorType");
+        fileTypes = extras.getStringArrayList("FileType");
+        shopCnt = extras.getInt("ShopCount");
+        pageSize = extras.getStringArrayList("PageSize");
+        orientations = extras.getStringArrayList("Orientation");
+        both_Sides_ = extras.getBooleanArray("BothSides");
+        customPages = extras.getStringArrayList("Custom");
+        numberOfPages = extras.getIntegerArrayList("Pages");
+        newUser = extras.getBoolean("NewUser");
+        customValues = extras.getStringArrayList("CustomValue");
+        fileNames = extras.getStringArrayList("FileNames");
+        fileSizes = extras.getStringArrayList("FileSizes");
+
+        price_Per_File = extras.getDoubleArray("PricePerFile");
+        totalPrice = extras.getDouble("TotalPrice");
+
+        bothSides = Arrays.copyOf(both_Sides_,pdfURL.size());
+        pricePerFile = Arrays.copyOf(price_Per_File,pdfURL.size());
+
+        isTester = extras.getBoolean("IsTester");
+        pdfCnt = extras.getInt("FileCount");
+        pdfCnt = copies.size();
+
+        done.setText("Done");
+        nextBtnArrow.setVisibility(View.GONE);
+        previousBtnRL.setVisibility(View.GONE);
+    }
+
+
 
     private View.OnTouchListener touchListener = new View.OnTouchListener() {
         public boolean onTouch(View view, MotionEvent motionEvent) {
@@ -297,22 +407,161 @@ public class PdfInfo extends AppCompatActivity {
                 colour = ("Black/White");
                 colors.add(pdfCnt,colour);
 
-                bwTV.setBackgroundResource(R.drawable.b_w_border);
-                colorsTV.setBackgroundResource(R.drawable.black_white_view_backgroud);
+//                bwTV.setBackgroundResource(R.drawable.b_w_border);
+//                colorsTV.setBackgroundResource(R.drawable.black_white_view_backgroud);
+
+                bw_selected.setVisibility(View.VISIBLE);
+                color_selected.setVisibility(View.INVISIBLE);
+
+                calculatePrice();
             }
             if(view == findViewById(R.id.Pdf_Colors)){
 
                 colour = "Colors";
                 colors.add(pdfCnt,colour);
 
-                colorsTV.setBackgroundResource(R.drawable.colors_border);
-                bwTV.setBackgroundResource(R.drawable.black_white_view_backgroud);
+//                colorsTV.setBackgroundResource(R.drawable.colors_border);
+//                bwTV.setBackgroundResource(R.drawable.black_white_view_backgroud);
 
+                color_selected.setVisibility(View.VISIBLE);
+                bw_selected.setVisibility(View.INVISIBLE);
+                calculatePrice();
             }
 
             return false;
         }
     };
+
+    public void textViewEditListener(){
+        customValue1.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                Log.d("BeFORETEXT","TESS");
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(count > 0) {
+                    calculatePrice();
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+                Log.d("STEXT",s.toString());
+                if(s.length()>0) {
+                    if (Integer.parseInt(String.valueOf(s)) > Integer.parseInt(customValue2.getText().toString()) || s.toString().equals("0")) {
+                        customValue1.setText("1");
+                    }
+                }
+            }
+        });
+
+        customValue2.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(count > 0) {
+                    calculatePrice();
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(!s.equals("")) {
+//                    calculatePrice();
+                }
+            }
+        });
+        copiesTV.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(count > 0) {
+                    calculatePrice();
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if(!s.equals(null)) {
+//                    calculatePrice();
+                }
+            }
+        });
+    }
+
+    boolean applyToAll = false;
+    public void checkBoxListener(){
+        applyToAllBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                Log.d("APPLYTOALL",String.valueOf(isChecked));
+                applyToAll = isChecked;
+            }
+        });
+    }
+
+    public void getNumberOfPages_PDF(){
+        if(pdfCnt<fileTypes.size() && fileTypes.get(pdfCnt).equals("PDF")){
+            hud.show();
+            pdfView.setVisibility(View.INVISIBLE);
+            pdfView.fromUri(Uri.parse(pdfURL.get(pdfCnt)))
+                    .enableSwipe(true)
+                    .enableAnnotationRendering(true)
+                    .scrollHandle(new DefaultScrollHandle(getApplicationContext()))
+                    .enableDoubletap(true)
+                    .onPageError(new OnPageErrorListener() {
+                        @Override
+                        public void onPageError(int page, Throwable t) {
+                            Log.d("WHILE","PDF");
+                            alertBox("Either the file is corrupt or we're facing an issue on our end 🙁");
+                        }
+                    })
+                    .onLoad(new OnLoadCompleteListener() {
+                        @Override
+                        public void loadComplete(int nbPages) {
+                            Log.d("PDFNOP", String.valueOf(pdfView.getPageCount()));
+                            numberOfPages.add(pdfCnt,pdfView.getPageCount());
+                            customValue2.setText(String.valueOf(numberOfPages.get(pdfCnt)));
+                            pdfView.setVisibility(View.GONE);
+                            hud.dismiss();
+                            if(pdfView.getPageCount() == 1){
+                                bothsidesRL.setVisibility(View.INVISIBLE);
+                            }
+                            calculatePrice();
+                        }
+                    })
+                    .load();
+        }else{
+            if(numberOfPages == null){
+                Log.d("WHILE","NOP PDF");
+
+                alertBox("Either the file is corrupt or we're facing an issue on our end 🙁");
+            }else if(pdfCnt < numberOfPages.size()) {
+                customValue2.setText(String.valueOf(numberOfPages.get(pdfCnt)));
+
+                if(numberOfPages.get(pdfCnt) == 1){
+                    bothsidesRL.setVisibility(View.INVISIBLE);
+                }
+                calculatePrice();
+
+            }
+
+//            if(numberOfPages.size()>0) {
+//                calculatePrice();
+//            }
+        }
+    }
 
     //Create an anonymous implementation of OnClickListener
     private View.OnClickListener BtnListener = new View.OnClickListener() {
@@ -328,124 +577,76 @@ public class PdfInfo extends AppCompatActivity {
                     finish();
                 }
             }
-
-            if(v == findViewById(R.id.pdfDone)) {
-                Toast.makeText(PdfInfo.this, "PDFCNT "+customValue2.getText(), Toast.LENGTH_SHORT).show();
-                if(pdfCnt == pdfURL.size()-1) {
-                    new findShops().execute();
-                }
-
-                copy = (Integer.parseInt(copiesTV.getText().toString()));
-                if (copy == 0) {
-                    copy = 1;
-                }
-                copies.add(pdfCnt,copy);
-
-//                custom = customPages.getText().toString();
-                final String[] sizes = new String[]{"A4", "A3", "A2"};
-                pagesize = sizes[pageSizeSpinner.getSelectedItemPosition()];
-                pageSize.add(pdfCnt,pagesize);
-
-                final String[] ots = new String[]{"Portrait", "Landscape"};
-                orientation = ots[orientSpinner.getSelectedItemPosition()];
-
-//                if (customPages.getText().toString().equals("")) {
-//                    custom = "All";
-//                }
-
-                custValue1 = 1;
-                custValue2 = 2;
-
-                if(customValue1.getText().toString().equals("1")){
-                    custValue1 = 1;
-                }else{
-                    custValue1 = Integer.parseInt(customValue1.getText().toString());
-                }
-
-                if(customValue2.getText().toString().equals(String.valueOf(numberOfPages))){
-                    custValue2 = (int) numberOfPages.get(pdfCnt);
-                }else{
-                    custValue2 = Integer.parseInt(customValue2.getText().toString());
-                }
+            else
+                if(v == findViewById(R.id.pdfDone)) {
 
 
-                if(orientation == null){
-                    orientation = "Portrait";
-                }
-                orientations.add(pdfCnt,orientation);
 
-                if(colour == null){
-                    colour = "Black/White";
-                }
-                colors.add(pdfCnt,colour);
+                    copy = (Integer.parseInt(copiesTV.getText().toString()));
+                    if (copy == 0) {
+                        copy = 1;
+                    }
+                    Log.d("COPIESLIST",String.valueOf(copies.size()));
+                    copies.add(pdfCnt,copy);
 
-                if(custValue1 == 1){
-                    if(pdfCnt < numberOfPages.size() && custValue2 == (int) numberOfPages.get(pdfCnt)){
-                        custom = "All";
-                        customPages.add(pdfCnt,custom);
-                    }else {
-                        custom = "All";
-                        customPages.add(pdfCnt,custom);
+                    final String[] sizes = new String[]{"A4", "A3", "A2"};
+                    pagesize = sizes[pageSizeSpinner.getSelectedItemPosition()];
+                    pageSize.add(pdfCnt,pagesize);
+
+                    final String[] ots = new String[]{"Portrait", "Landscape"};
+                    orientation = ots[orientSpinner.getSelectedItemPosition()];
+
+
+
+                    if(orientation == null){
+                        orientation = "Portrait";
+                    }
+                    orientations.add(pdfCnt,orientation);
+
+                    if(colour == null){
+                        colour = "Black/White";
+                    }
+                    colors.add(pdfCnt,colour);
+
+                    calculatePrice();
+                    pricePerFile[pdfCnt] = price;
+
+                    if(!applyToAll) {
+                        setDefaultValues();
                     }
 
-                }else if(custValue1 != 1 && custValue2 != (int) numberOfPages.get(pdfCnt)){
-
-                    if(custValue1 > custValue2){
-                        int temp = custValue1;
-                        custValue1 = custValue2;
-                        custValue2 = temp;
-
-                        custom = String.valueOf(custValue1)+"-"+String.valueOf(custValue2);
-                        customPages.add(pdfCnt,custom);
-
-                        customVal = String.valueOf(custValue2-custValue1 + 1);
-                        customValues.add(pdfCnt,customVal);
-
-                    }else{
-                        custom = String.valueOf(custValue1)+"-"+String.valueOf(custValue2);
-                        customPages.add(pdfCnt,custom);
-
-                        customVal = String.valueOf(custValue2-custValue1 + 1);
-                        customValues.add(pdfCnt,customVal);
-
-                    }
                     pdfCnt = pdfCnt + 1;
-                    customValue2.setText((int) numberOfPages.get(pdfCnt));
-                    Toast.makeText(PdfInfo.this, "CUSV2 "+customValue2.getText(), Toast.LENGTH_SHORT).show();
+                    Log.d("PDF_CNT",String.valueOf(pdfCnt));
 
-//                    if(pdfCnt == pdfURL.size()) {
-//                        new findShops().execute();
-//                    }
-                }
-                else {
-
-                    if (custValue1 > custValue2) {
-                        int temp = custValue1;
-                        custValue1 = custValue2;
-                        custValue2 = temp;
-
-                        custom = (custValue1) + "-" + (custValue2);
-                        customPages.add(pdfCnt, custom);
-
-                        customVal = String.valueOf(custValue2 - custValue1 + 1);
-                        customValues.add(pdfCnt, customVal);
-
-                    } else {
-                        custom = (custValue1) + "-" + (custValue2);
-                        customPages.add(pdfCnt, custom);
-
-                        customVal = String.valueOf(custValue2 - custValue1 + 1);
-                        customValues.add(pdfCnt, customVal);
-
+                    if(pdfCnt < pdfURL.size()){
+                       previousBtnRL.setVisibility(View.VISIBLE);
+                       if(!fileTypes.get(0).contains("IMAGE")) {
+                           getNumberOfPages_PDF();
+                       }
                     }
-                }
-                Toast.makeText(PdfInfo.this, "CUSV2 "+customValue2.getText(), Toast.LENGTH_SHORT).show();
-                pdfCnt = pdfCnt + 1;
-                    if(pdfCnt < pdfURL.size() ) {
-                        if(pdfCnt < numberOfPages.size()) {
-                            customValue2.setText(String.valueOf((int) numberOfPages.get(pdfCnt)));
+
+                    if(pdfCnt == pdfURL.size() - 1){
+                        done.setText("Done");
+                        nextBtnArrow.setVisibility(View.GONE);
+                    }
+                    if(pdfCnt == pdfURL.size()) {
+                        Log.d("FINALFILE","YES");
+
+//                        if(addingMoreFiles) {
+//                            Toast.makeText(PdfInfo.this, "ADDING MORE FILESS "+ addingMoreFiles, Toast.LENGTH_SHORT).show();
+//                            if(colors != null && copies != null && orientations != null && bothSides != null && customPages != null){
+//                                new File_Settings(pdfURL, fileTypes, colors, copies, pageSize, orientations, bothSides, customPages, customValues, numberOfPages, fileNames, fileSizes, pricePerFile);
+//                            }
+//                        }
+
+                        //Subtracting 1 so that when user comes back to this page from review order activity the pdfCnt will point to the last selected file.
+                        pdfCnt = pdfURL.size() - 1;
+                        if(shopCnt == 0) {
+//                            hud1.show();
+                            new findShops().execute();
                         }else{
-                            customValue2.setText(String.valueOf(1));
+//                            hud1.dismiss();
+                            sendOrderInfo();
                         }
                     }
 
@@ -465,13 +666,13 @@ public class PdfInfo extends AppCompatActivity {
                 dismissViewer.setVisibility(View.VISIBLE);
                 viewFileRL.setVisibility(View.GONE);
 
-                Toast.makeText(PdfInfo.this, "DISMISS BTN  ", Toast.LENGTH_SHORT).show();
-                if (fileType.get(pdfCnt).contains("pdf")) {
-                    viewPdf.setVisibility(View.INVISIBLE);
+                if (fileTypes.get(pdfCnt).equals("PDF")) {
+//                    viewPdf.setVisibility(View.INVISIBLE);
                     bothSidePrint.setVisibility(View.INVISIBLE);
-                    done.setVisibility(View.INVISIBLE);
+//                    done.setVisibility(View.INVISIBLE);
                     pdfView.setVisibility(View.VISIBLE);
 
+                    upperLayout.setVisibility(View.GONE);
 
                     pdfView.fromUri(Uri.parse(pdfURL.get(pdfCnt)))
                             .enableSwipe(true)
@@ -494,56 +695,89 @@ public class PdfInfo extends AppCompatActivity {
                             })
                             .load();
 
-                }else if(fileType.get(pdfCnt).contains("document")){
+                }else if(fileTypes.get(pdfCnt).equals("Docx")){
 
                     mainUI.removeAllViewsInLayout();
                     Toast.makeText(PdfInfo.this, "OPENING DOCX ", Toast.LENGTH_SHORT).show();
-                    alertBoxForViewer("DOCX");
+                    alertBoxForViewer("Docx");
 
 
                     ////// Call to open file in our in app viewer
 //                    new OpenDocFile(findViewById(R.id.ViewerLinearLayout),findViewById(R.id.ViewerScollView),Uri.parse(pdfURL.get(pdfCnt)),"DOCX");
 
 
-                }else if(fileType.get(pdfCnt).contains("msword")){
+                }else if(fileTypes.get(pdfCnt).equals("Word")){
                     mainUI.removeAllViewsInLayout();
                     Toast.makeText(PdfInfo.this, "OPENING WORD ", Toast.LENGTH_SHORT).show();
-                    alertBoxForViewer("WORD");
-
-
+                    alertBoxForViewer("Word");
 
                     ////// Call to open file in our in app viewer
 //                    new OpenDocFile(findViewById(R.id.ViewerLinearLayout),findViewById(R.id.ViewerScollView),Uri.parse(pdfURL.get(pdfCnt)),"WORD");
 
                 }
-                else if(fileType.get(pdfCnt).contains("powerpoint") || fileType.get(pdfCnt).contains("msword")){
-                    Toast.makeText(PdfInfo.this, "YUP "+fileType.get(pdfCnt), Toast.LENGTH_SHORT).show();
-                    ViewFileFromAnotherApp(pdfURL.get(pdfCnt),fileType.get(pdfCnt));
+                else if(fileTypes.get(pdfCnt).equals("PPT") || fileTypes.get(pdfCnt).equals("PPTX")){
+                    Toast.makeText(PdfInfo.this, "YUP "+fileTypes.get(pdfCnt), Toast.LENGTH_SHORT).show();
+                    ViewFileFromAnotherApp(pdfURL.get(pdfCnt),fileTypes.get(pdfCnt));
+                }else {
+                    Toast.makeText(PdfInfo.this, "YUP "+fileTypes.get(pdfCnt), Toast.LENGTH_SHORT).show();
+                    ViewFileFromAnotherApp(pdfURL.get(pdfCnt),fileTypes.get(pdfCnt));
                 }
             }else if(v == findViewById(R.id.DismissViewer)){
 
+                pdfView.setVisibility(View.GONE);
                 viewFileScrollView.setVisibility(View.INVISIBLE);
                 viewFileRL.setVisibility(View.VISIBLE);
                 dismissViewer.setVisibility(View.GONE);
                 upperLayout.setVisibility(View.VISIBLE);
 
             }
+            else if(v == findViewById(R.id.PreviousBtn)){
+                if(pdfCnt > 0){
+                    Log.d("PDFCNT",String.valueOf(pdfCnt));
+                    done.setText("Next");
+                    nextBtnArrow.setVisibility(View.VISIBLE);
+                    pdfCnt = pdfCnt - 1;
+
+                    if(!fileTypes.get(0).contains("IMAGE")) {
+                        getNumberOfPages_PDF();
+                    }
+
+                }
+                if(pdfCnt == 0){
+                    previousBtnRL.setVisibility(View.GONE);
+                }
+                calculatePrice();
+
+            }
         }
     };
 
-    @Override
-    public void onBackPressed() {
-        if(pdfView.VISIBLE == 0){
-            viewPdf.setVisibility(View.VISIBLE);
-            bothSidePrint.setVisibility(View.VISIBLE);
-            done.setVisibility(View.VISIBLE);
-            pdfView.setVisibility(View.INVISIBLE);
+    public void setDefaultValues(){
+
+
+        copiesTV.setText("1");
+        bothSidePrint.setTextOff("OFF");
+
+        if(!fileTypes.get(0).contains("IMAGE")) {
+            if (pdfCnt < pdfURL.size() && numberOfPages.get(pdfCnt) != 0) {
+                customValue2.setText(String.valueOf(numberOfPages.get(pdfCnt)));
+            } else {
+//            alertBox("Error while render the file "+ fileNames.get(pdfCnt) + "\n The file might be corrupt");
+            }
+            customValue1.setText(String.valueOf(1));
         }
+        bw_selected.setVisibility(View.VISIBLE);
+        color_selected.setVisibility(View.INVISIBLE);
+        colour = "Black/White";
+        calculatePrice();
+        Log.d("SETTING","DEFAULT");
+
     }
 
-    protected void alertBoxForViewer(final String whatFile) {
 
+    protected void alertBoxForViewer(final String whatFile) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
         builder.setMessage("Use In-App Viewer ? ")
                 .setCancelable(false)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
@@ -557,7 +791,7 @@ public class PdfInfo extends AppCompatActivity {
                 dismissViewer.setVisibility(View.GONE);
                 viewFileRL.setVisibility(View.VISIBLE);
 
-                ViewFileFromAnotherApp(pdfURL.get(pdfCnt),fileType.get(pdfCnt));
+                ViewFileFromAnotherApp(pdfURL.get(pdfCnt),fileTypes.get(pdfCnt));
             }
         });
 
@@ -588,6 +822,76 @@ public class PdfInfo extends AppCompatActivity {
         return super.dispatchTouchEvent(ev);
     }
 
+
+
+    public void calculatePrice(){
+        Log.d("PDFCNT",String.valueOf(pdfCnt));
+        double pages = 0.0;
+        if(!fileTypes.get(0).contains("IMAGE")) {
+            pages = numberOfPages.get(pdfCnt);
+            price = (int) pages;
+
+
+            int customVal1 = Integer.parseInt(customValue1.getText().toString());
+            int customVal2 = Integer.parseInt(customValue2.getText().toString());
+            int cusPages;
+
+
+            if (customVal1 == 1 && customVal2 == pages) {
+                custom = "All";
+                customPages.add(pdfCnt, custom);
+                price = (int) pages;
+                Log.d("CUSTOMPAGES", String.valueOf(customPages.get(pdfCnt)));
+
+            } else if ((customVal2 > customVal1) && customVal1 == 1) {
+
+                cusPages = customVal2;
+                pages = cusPages;
+                price = (int) pages;
+                customPages.add(pdfCnt, (customVal1) + " - " + customVal2);
+
+                Log.d("CUSTOMPAGES", String.valueOf(customPages.get(pdfCnt)));
+
+            } else if (customVal2 > customVal1) {
+
+                cusPages = customVal2 - customVal1 + 1;
+                pages = cusPages;
+                price = (int) pages;
+//            customPages.add(pdfCnt, String.valueOf(cusPages));
+                customPages.add(pdfCnt, String.valueOf(customVal1) + " - " + customVal2);
+                Log.d("CUSTOMPAGES", String.valueOf(customPages.get(pdfCnt)));
+
+            }
+        }else{
+            price = 1;
+        }
+
+
+            copy = (Integer.parseInt(copiesTV.getText().toString()));
+
+            Log.d("COLOR_",colour);
+
+            if (colour.equals("Colors")) {
+                price = price * 5;
+            }else if(!fileTypes.get(0).contains("IMAGE")){
+                price = (int) pages;
+            }else if (colour.equals("Black/White")){
+                price = 1;
+            }
+            price = price * copy;
+
+            if (bothSides[pdfCnt]) {
+                price = price / 2;
+            }
+            Log.d("PRICEPERIMG", String.valueOf(price));
+
+//            pricePerFile[pdfCnt] = price;
+            filePrice.setText(String.valueOf(price));
+
+    }
+
+
+
     public void alertBox(String message){
         AlertDialog.Builder builder1 = new AlertDialog.Builder(PdfInfo.this);
         builder1.setMessage(message);
@@ -613,18 +917,48 @@ public class PdfInfo extends AppCompatActivity {
         alert11.show();
     }
 
-    KProgressHUD hud;
+
+
+
+
+    public void sendOrderInfo(){
+
+        Intent intent = new Intent(PdfInfo.this, ReviewOrderActivity.class);
+        Bundle extras = new Bundle();
+        extras.putStringArrayList("StoreID", storeID);
+
+        extras.putInt("ShopCount", shopCnt);
+        extras.putStringArrayList("URLS", pdfURL);
+        extras.putIntegerArrayList("Pages", numberOfPages);
+        extras.putBooleanArray("BothSides", bothSides);
+        extras.putIntegerArrayList("Copies", copies);
+        extras.putStringArrayList("ColorType", colors);
+        extras.putStringArrayList("FileType", fileTypes);
+        extras.putStringArrayList("PageSize", pageSize);
+        extras.putStringArrayList("Orientation", orientations);
+        extras.putStringArrayList("FileNames",fileNames);
+        extras.putStringArrayList("FileSizes",fileSizes);
+        extras.putBoolean("NewUser",newUser);
+        extras.putStringArrayList("Custom",customPages);
+        extras.putStringArrayList("CustomValue",customValues);
+        extras.putBoolean("IsTester",isTester);
+        extras.putBoolean("AddingMoreFiles",addingMoreFiles);
+        extras.putDoubleArray("PricePerFile",pricePerFile);
+
+
+        intent.putExtras(extras);
+        startActivity(intent);
+        hud.dismiss();
+    }
+
 
 public class findShops extends AsyncTask<Void,Void,Integer>{
 
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-          hud = KProgressHUD.create(PdfInfo.this)
-                .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
-                .setLabel("Finding stores")
-                .setMaxProgress(100)
-                .show();
+
+        hud.show();
     }
 
     int shopsCount;
@@ -632,7 +966,7 @@ public class findShops extends AsyncTask<Void,Void,Integer>{
     protected Integer doInBackground(Void... integers) {
         getShopsCount();
 //        Log.d("Shops Count is ", String.valueOf(shopsCount));
-        return ShopsCnt;
+        return shopCnt;
     }
 
     @Override
@@ -652,38 +986,8 @@ public class findShops extends AsyncTask<Void,Void,Integer>{
 
 //                if(isTester){
                     if(dataSnapshot.getKey().equals(shopType)) {
-                        ShopsCnt = (int) dataSnapshot.getChildrenCount();
-
-                        Intent intent = new Intent(PdfInfo.this, ShopsActivity.class);
-                        Bundle extras = new Bundle();
-                        Toast.makeText(PdfInfo.this, "PDFCNT2 "+pdfURL.size(), Toast.LENGTH_SHORT).show();
-                        extras.putInt("ShopCount", ShopsCnt);
-                        extras.putStringArrayList("StoreID", storeID);
-
-                        extras.putStringArrayList("URLS", pdfURL);
-                        extras.putIntegerArrayList("Pages", numberOfPages);
-                        extras.putBooleanArray("BothSides", bothSides);
-                        extras.putIntegerArrayList("Copies", copies);
-                        extras.putStringArrayList("ColorType", colors);
-                        extras.putStringArrayList("FileType", fileType);
-                        extras.putStringArrayList("PageSize", pageSize);
-                        extras.putStringArrayList("Orientation", orientations);
-                        extras.putStringArrayList("FileNames",fileNames);
-                        extras.putStringArrayList("FileSizes",fileSizes);
-                        extras.putBoolean("NewUser",newUser);
-
-                        extras.putStringArrayList("Custom",customPages);
-                        extras.putStringArrayList("CustomValue",customValues);
-//                        if(custom == "All"){
-//                            extras.putString("Custom", customPages);
-//                        }else {
-//                            extras.putString("CustomValue",customVal);
-//                            extras.putString("Custom", custom);
-//                        }
-                        extras.putBoolean("IsTester",isTester);
-                        intent.putExtras(extras);
-                        hud.dismiss();
-                        startActivity(intent);
+                        shopCnt = (int) dataSnapshot.getChildrenCount();
+                        sendOrderInfo();
                     }
 
             }
@@ -759,6 +1063,7 @@ public class findShops extends AsyncTask<Void,Void,Integer>{
 
         public OpenDocFile(View mainUI, View viewerScollView, Uri file, String whatFile) {
 
+
             this.mainUI = (LinearLayout) mainUI;
             this.viewerScollView = (ScrollView) viewerScollView;
             this.file = file;
@@ -788,6 +1093,8 @@ public class findShops extends AsyncTask<Void,Void,Integer>{
 
         public void openViewer(Uri file){
 
+
+
             upperLayout.setVisibility(View.GONE);
 
 
@@ -798,17 +1105,16 @@ public class findShops extends AsyncTask<Void,Void,Integer>{
                 setUpDocx docxObj = new setUpDocx();
                 setUpWord wordObj = new setUpWord();
 
-                if(whatFile.equals("DOCX")) {
+                if(whatFile.equals("Docx")) {
 
-                    Toast.makeText(PdfInfo.this,"SETUP WORD",Toast.LENGTH_LONG).show();
-
+                    Toast.makeText(PdfInfo.this,"SETUP DOCX",Toast.LENGTH_LONG).show();
                     XWPFDocument docx = new XWPFDocument(inputStream);
 
                     docxObj.traverseBodyElements(docx.getBodyElements());
                     picList = docx.getAllPackagePictures();
                 }
-                else if(whatFile.equals("WORD")){
-                        Toast.makeText(PdfInfo.this,"SETUP DOCX",Toast.LENGTH_LONG).show();
+                else if(whatFile.equals("Word")){
+                        Toast.makeText(PdfInfo.this,"SETUP WORD",Toast.LENGTH_LONG).show();
 
                     HWPFDocument wordDoc = new HWPFDocument(inputStream);
                     WordExtractor extractor = new WordExtractor(wordDoc);
@@ -854,6 +1160,10 @@ public class findShops extends AsyncTask<Void,Void,Integer>{
 //                                List<Picture> pictures = wordDoc.getPicturesTable().getAllPictures();
 //                                traversePictures(pictures);
 
+                            if(i == paragraphs.length - 1){
+                                hud.dismiss();
+                            }
+
                             if (run.getEndOffset() == pr.getEndOffset()) {
                                 break;
                             }
@@ -867,10 +1177,10 @@ public class findShops extends AsyncTask<Void,Void,Integer>{
 
             } catch (IOException e) {
                 e.printStackTrace();
-                ViewFileFromAnotherApp(file.toString(),fileType.get(pdfCnt));
+                ViewFileFromAnotherApp(file.toString(),fileTypes.get(pdfCnt));
             } catch (Exception e) {
                 e.printStackTrace();
-                ViewFileFromAnotherApp(file.toString(),fileType.get(pdfCnt));
+                ViewFileFromAnotherApp(file.toString(),fileTypes.get(pdfCnt));
 
             }
 
@@ -914,8 +1224,6 @@ public class findShops extends AsyncTask<Void,Void,Integer>{
                 if(myText != null) {
                     Log.d("CONT ",String.valueOf(content));
                     if((content.equals(myText.getText().toString()))){
-                        Log.d("MYTXT ",myText.getText().toString());
-                        Log.d("ICNT ",String.valueOf(i));
                         break;
 
                     }else{
@@ -923,9 +1231,9 @@ public class findShops extends AsyncTask<Void,Void,Integer>{
                         break;
                     }
                 }else{
-                    Log.d("NTAGCNT ",String.valueOf(TagCnt));
-                    Log.d("NICNT ",String.valueOf(i));
-                    Log.d("NULLTXT ",content);
+//                    Log.d("NTAGCNT ",String.valueOf(TagCnt));
+//                    Log.d("NICNT ",String.valueOf(i));
+//                    Log.d("NULLTXT ",content);
                 }
             }
             if(TagCnt == 0 ){
@@ -1022,6 +1330,7 @@ public class findShops extends AsyncTask<Void,Void,Integer>{
             imageLayout.setLayoutParams(params);
             mainUI.addView(imageLayout);
 
+
         }
 
     }
@@ -1114,13 +1423,10 @@ public class findShops extends AsyncTask<Void,Void,Integer>{
                     //Appending text to paragraph
                     para.append(run);
                     paras.add(para);
-                    Log.i("font family",run.getFontFamily());
                     traversePictures(run.getEmbeddedPictures());
 
                 } else if (runElement instanceof XWPFSDT) {
                     XWPFSDT sDT = (XWPFSDT)runElement;
-                    System.out.println("sDT"+sDT);
-                    System.out.println("SDT_CONTENT "+sDT.getContent());
                     //ToDo: The SDT may have traversable content too.
                 }
             }

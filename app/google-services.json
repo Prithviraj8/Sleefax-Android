@@ -8,7 +8,7 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:736925032543:android:59ced1a8686b886a933bea",
+        "mobilesdk_app_id": "1:736925032543:android:032b5c8ae898db0c933bea",
         "android_client_info": {
           "package_name": "com.Anubis.Sleefax"
         }
@@ -20,14 +20,6 @@
           "android_info": {
             "package_name": "com.Anubis.Sleefax",
             "certificate_hash": "f022e1d5075109316f2905209851b4f1e928838c"
-          }
-        },
-        {
-          "client_id": "736925032543-6mk7poq38gjkrl79v7udkoat7fmrgqov.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.Anubis.Sleefax",
-            "certificate_hash": "b5583a241cf81dd145a2630f469b543cdf478080"
           }
         },
         {

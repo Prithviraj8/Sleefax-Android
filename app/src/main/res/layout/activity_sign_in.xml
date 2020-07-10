@@ -63,7 +63,7 @@
             android:layout_marginLeft="20dp"
             android:id="@+id/phoneIV"/>
 
-        <EditText
+        <TextView
             android:id="@+id/phoneNumber"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
@@ -76,7 +76,8 @@
             android:gravity="center"
             android:hint="Continue with Mobile"
             android:textColor="#818181"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            />
 
     </RelativeLayout>
 
@@ -108,6 +109,7 @@
         android:visibility="gone"
         android:id="@+id/country_codeTV"
         android:fontFamily="@font/poppins"/>
+
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="50dp"
@@ -126,18 +128,19 @@
         android:layout_alignTop="@id/country_codeTV"
         android:textSize="18sp"
         android:fontFamily="@font/poppins"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Please Enter a valid Mobile Number"
-        android:layout_below="@id/phoneRL"
-        android:layout_centerHorizontal="true"
-        android:visibility="gone"
-        android:gravity="center_vertical"
-        android:textColor="#C44848"
-        android:textSize="11sp"
-        android:id="@+id/valid_text"
-        android:fontFamily="@font/poppins" />
+
+<!--    <TextView-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="Please Enter a valid Mobile Number"-->
+<!--        android:layout_below="@id/phoneRL"-->
+<!--        android:layout_centerHorizontal="true"-->
+<!--        android:visibility="gone"-->
+<!--        android:gravity="center_vertical"-->
+<!--        android:textColor="#C44848"-->
+<!--        android:textSize="11sp"-->
+<!--        android:id="@+id/valid_text"-->
+<!--        android:fontFamily="@font/poppins" />-->
 
     <TextView
         android:id="@+id/mobilenumTV"
@@ -263,6 +266,19 @@
             android:src="@drawable/google_icon" />
     </com.google.android.gms.common.SignInButton>
 
+    <RelativeLayout
+        android:id="@+id/GifRL"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#FFF"
+        android:visibility="gone">
 
+        <com.Anubis.Sleefax.Animations.GifImageView
+            android:id="@+id/GIF"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:visibility="visible" />
+    </RelativeLayout>
 
 </RelativeLayout>

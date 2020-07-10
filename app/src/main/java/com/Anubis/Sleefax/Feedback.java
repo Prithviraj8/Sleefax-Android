@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -24,7 +25,15 @@ import com.Anubis.Sleefax.AppReviewClass.feedback;
 
 
 public class Feedback extends AppCompatActivity {
+    public class feedback {
+        public String feedbackText;
+        public int star;
 
+        public feedback(String feedbackText, int star) {
+            this.feedbackText = feedbackText;
+            this.star = star;
+        }
+    }
 
     RelativeLayout[] ratings;
     TextView[] textViews;
@@ -41,7 +50,8 @@ public class Feedback extends AppCompatActivity {
 
 
     String feedbackText = "";
-
+    int star;
+    boolean rating[] = new boolean[10];
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,10 +145,10 @@ public class Feedback extends AppCompatActivity {
 
                     toast.show();
 
-                    feedback obj = new feedback(feedbackText);
+                    feedback obj = new feedback(feedbackText,star);
                     feedbackDb.child("Feedback").child(userId).setValue(obj);
-                    Intent intent = new Intent(Feedback.this, Select.class);
-                    startActivity(intent);
+//                    Intent intent = new Intent(Feedback.this, Select.class);
+//                    startActivity(intent);
                     finish();
 
                 }else{
@@ -146,8 +156,8 @@ public class Feedback extends AppCompatActivity {
                     Toast toast = Toast.makeText(context, text, duration);
                     toast.show();
 
-                    Intent intent = new Intent(Feedback.this, Select.class);
-                    startActivity(intent);
+//                    Intent intent = new Intent(Feedback.this, Select.class);
+//                    startActivity(intent);
                     finish();
 
                 }
@@ -158,6 +168,9 @@ public class Feedback extends AppCompatActivity {
         ratings[0].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Toast.makeText(Feedback.this, "STAR1", Toast.LENGTH_SHORT).show();
+                star = 1;
+                rating[0] = !rating[0];
                 for(int i =0;i>=0;i--){
 
                     int color = getResources().getColor(R.color.colorPrimary);
@@ -165,11 +178,27 @@ public class Feedback extends AppCompatActivity {
                     textViews[i].setTextColor(Color.WHITE);
 
                 }
+//                Log.d("BACKGROUND_COLOR",String.valueOf(ratings[0].getBackground()));
+
+                if(!rating[0]) {
+                    for (int i = 9; i >= 0; i--) {
+
+                        int color = getResources().getColor(R.color.colorPrimary);
+                        ratings[i].setBackgroundColor(Color.WHITE);
+                        textViews[i].setTextColor(color);
+                        ratings[i].setBackgroundResource(R.drawable.rating_bg);
+
+
+                    }
+                }
             }
         });
         ratings[1].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Toast.makeText(Feedback.this, "STAR1", Toast.LENGTH_SHORT).show();
+                star = 2;
+                rating[1] = !rating[1];
                 for(int i =1;i>=0;i--){
 
                     int color = getResources().getColor(R.color.colorPrimary);
@@ -177,11 +206,27 @@ public class Feedback extends AppCompatActivity {
                     textViews[i].setTextColor(Color.WHITE);
 
                 }
+//                Log.d("BACKGROUND_COLOR",String.valueOf(ratings[0].getBackground()));
+
+                if(!rating[1]) {
+                    for (int i = 9; i >= 1; i--) {
+
+                        int color = getResources().getColor(R.color.colorPrimary);
+                        ratings[i].setBackgroundColor(Color.WHITE);
+                        textViews[i].setTextColor(color);
+                        ratings[i].setBackgroundResource(R.drawable.rating_bg);
+
+
+                    }
+                }
             }
         });
         ratings[2].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Toast.makeText(Feedback.this, "STAR1", Toast.LENGTH_SHORT).show();
+                star = 3;
+                rating[2] = !rating[2];
                 for(int i =2;i>=0;i--){
 
                     int color = getResources().getColor(R.color.colorPrimary);
@@ -189,11 +234,28 @@ public class Feedback extends AppCompatActivity {
                     textViews[i].setTextColor(Color.WHITE);
 
                 }
+//                Log.d("BACKGROUND_COLOR",String.valueOf(ratings[0].getBackground()));
+
+                if(!rating[2]) {
+                    for (int i = 9; i >= 2; i--) {
+
+                        int color = getResources().getColor(R.color.colorPrimary);
+                        ratings[i].setBackgroundColor(Color.WHITE);
+                        textViews[i].setTextColor(color);
+                        ratings[i].setBackgroundResource(R.drawable.rating_bg);
+
+
+                    }
+                }
             }
         });
         ratings[3].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Toast.makeText(Feedback.this, "STAR1", Toast.LENGTH_SHORT).show();
+                star = 4;
+
+                rating[3] = !rating[3];
                 for(int i =3;i>=0;i--){
 
                     int color = getResources().getColor(R.color.colorPrimary);
@@ -201,11 +263,28 @@ public class Feedback extends AppCompatActivity {
                     textViews[i].setTextColor(Color.WHITE);
 
                 }
+//                Log.d("BACKGROUND_COLOR",String.valueOf(ratings[0].getBackground()));
+
+                if(!rating[3]) {
+                    for (int i = 9; i >= 3; i--) {
+
+                        int color = getResources().getColor(R.color.colorPrimary);
+                        ratings[i].setBackgroundColor(Color.WHITE);
+                        textViews[i].setTextColor(color);
+                        ratings[i].setBackgroundResource(R.drawable.rating_bg);
+
+
+                    }
+                }
             }
         });
         ratings[4].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Toast.makeText(Feedback.this, "STAR1", Toast.LENGTH_SHORT).show();
+                star = 5;
+
+                rating[4] = !rating[4];
                 for(int i =4;i>=0;i--){
 
                     int color = getResources().getColor(R.color.colorPrimary);
@@ -213,11 +292,28 @@ public class Feedback extends AppCompatActivity {
                     textViews[i].setTextColor(Color.WHITE);
 
                 }
+//                Log.d("BACKGROUND_COLOR",String.valueOf(ratings[0].getBackground()));
+
+                if(!rating[4]) {
+                    for (int i = 9; i >= 4; i--) {
+
+                        int color = getResources().getColor(R.color.colorPrimary);
+                        ratings[i].setBackgroundColor(Color.WHITE);
+                        textViews[i].setTextColor(color);
+                        ratings[i].setBackgroundResource(R.drawable.rating_bg);
+
+
+                    }
+                }
             }
         });
         ratings[5].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Toast.makeText(Feedback.this, "STAR1", Toast.LENGTH_SHORT).show();
+                star = 6;
+
+                rating[5] = !rating[5];
                 for(int i =5;i>=0;i--){
 
                     int color = getResources().getColor(R.color.colorPrimary);
@@ -225,53 +321,134 @@ public class Feedback extends AppCompatActivity {
                     textViews[i].setTextColor(Color.WHITE);
 
                 }
+//                Log.d("BACKGROUND_COLOR",String.valueOf(ratings[0].getBackground()));
+
+                if(!rating[5]) {
+                    for (int i = 9; i >= 5; i--) {
+
+                        int color = getResources().getColor(R.color.colorPrimary);
+                        ratings[i].setBackgroundColor(Color.WHITE);
+                        textViews[i].setTextColor(color);
+                        ratings[i].setBackgroundResource(R.drawable.rating_bg);
+
+
+                    }
+                }
             }
         });
         ratings[6].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Toast.makeText(Feedback.this, "STAR1", Toast.LENGTH_SHORT).show();
+                star = 7;
+
+                rating[6] = !rating[6];
                 for(int i =6;i>=0;i--){
 
                     int color = getResources().getColor(R.color.colorPrimary);
                     ratings[i].setBackgroundColor(color);
                     textViews[i].setTextColor(Color.WHITE);
-                    rateUs.setVisibility(View.VISIBLE);
+
+                }
+//                Log.d("BACKGROUND_COLOR",String.valueOf(ratings[0].getBackground()));
+
+                if(!rating[6]) {
+                    for (int i = 9; i >= 6; i--) {
+
+                        int color = getResources().getColor(R.color.colorPrimary);
+                        ratings[i].setBackgroundColor(Color.WHITE);
+                        textViews[i].setTextColor(color);
+                        ratings[i].setBackgroundResource(R.drawable.rating_bg);
+
+
+                    }
                 }
             }
         });
         ratings[7].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Toast.makeText(Feedback.this, "STAR1", Toast.LENGTH_SHORT).show();
+                star = 8;
+
+                rating[7] = !rating[7];
                 for(int i =7;i>=0;i--){
 
                     int color = getResources().getColor(R.color.colorPrimary);
                     ratings[i].setBackgroundColor(color);
                     textViews[i].setTextColor(Color.WHITE);
-                    rateUs.setVisibility(View.VISIBLE);
+
+                }
+//                Log.d("BACKGROUND_COLOR",String.valueOf(ratings[0].getBackground()));
+
+                if(!rating[7]) {
+                    for (int i = 9; i >= 7; i--) {
+
+                        int color = getResources().getColor(R.color.colorPrimary);
+                        ratings[i].setBackgroundColor(Color.WHITE);
+                        textViews[i].setTextColor(color);
+                        ratings[i].setBackgroundResource(R.drawable.rating_bg);
+
+
+                    }
                 }
             }
         });
         ratings[8].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Toast.makeText(Feedback.this, "STAR1", Toast.LENGTH_SHORT).show();
+                star = 9;
+
+                rating[8] = !rating[8];
                 for(int i =8;i>=0;i--){
 
                     int color = getResources().getColor(R.color.colorPrimary);
                     ratings[i].setBackgroundColor(color);
                     textViews[i].setTextColor(Color.WHITE);
-                    rateUs.setVisibility(View.VISIBLE);
+
+                }
+//                Log.d("BACKGROUND_COLOR",String.valueOf(ratings[0].getBackground()));
+
+                if(!rating[8]) {
+                    for (int i = 9; i >= 8; i--) {
+
+                        int color = getResources().getColor(R.color.colorPrimary);
+                        ratings[i].setBackgroundColor(Color.WHITE);
+                        textViews[i].setTextColor(color);
+                        ratings[i].setBackgroundResource(R.drawable.rating_bg);
+
+
+                    }
                 }
             }
         });
         ratings[9].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Toast.makeText(Feedback.this, "STAR1", Toast.LENGTH_SHORT).show();
+                star = 10;
+
+                rating[9] = !rating[9];
                 for(int i =9;i>=0;i--){
 
                     int color = getResources().getColor(R.color.colorPrimary);
                     ratings[i].setBackgroundColor(color);
                     textViews[i].setTextColor(Color.WHITE);
-                    rateUs.setVisibility(View.VISIBLE);
+
+                }
+//                Log.d("BACKGROUND_COLOR",String.valueOf(ratings[0].getBackground()));
+
+                if(!rating[9]) {
+                    for (int i = 9; i >= 9; i--) {
+
+                        int color = getResources().getColor(R.color.colorPrimary);
+                        ratings[i].setBackgroundColor(Color.WHITE);
+                        textViews[i].setTextColor(color);
+                        ratings[i].setBackgroundResource(R.drawable.rating_bg);
+
+
+                    }
                 }
             }
         });

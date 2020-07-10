@@ -50,10 +50,6 @@ public class MainActivity extends AppCompatActivity  {
     final FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference ref = database.getReference();
 
-    String userId,username,email;
-    long num;
-
-
     Button addFilesBtn, signIn,privacypolicy;
 
 //    String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();

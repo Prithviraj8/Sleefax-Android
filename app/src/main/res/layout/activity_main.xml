@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/mainpageback"
+    android:background="@drawable/mainactivitygradient"
     tools:context=".MainActivity">
 
     <RelativeLayout
@@ -24,15 +24,15 @@
             android:layout_alignParentStart="true"
             android:layout_alignParentTop="true"
             android:layout_marginStart="32dp"
-            android:layout_marginTop="60dp"
-            app:srcCompat="@drawable/appicon" />
+            android:layout_marginTop="140dp"
+            app:srcCompat="@drawable/appicon"
+            />
 
         <RelativeLayout
             android:id="@+id/relativeLayout2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/imageView17"
-            android:layout_marginTop="50dp">
+            android:layout_centerInParent="true">
 
             <TextView
                 android:id="@+id/textView15"
@@ -42,10 +42,11 @@
                 android:layout_alignParentTop="true"
                 android:layout_marginStart="29dp"
                 android:layout_marginTop="0dp"
+                android:fontFamily="@font/poppins_medium"
                 android:text="Take printouts."
                 android:textAlignment="center"
                 android:textColor="#FFF"
-                android:textSize="36sp"
+                android:textSize="37sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -56,9 +57,10 @@
                 android:layout_alignParentStart="true"
                 android:layout_marginStart="29dp"
                 android:layout_marginTop="0dp"
+                android:fontFamily="@font/poppins_medium"
                 android:text="Go mobile."
                 android:textColor="#FFF"
-                android:textSize="36sp"
+                android:textSize="37sp"
                 android:textStyle="bold" />
         </RelativeLayout>
 
@@ -71,6 +73,7 @@
             android:layout_marginTop="20dp"
             android:layout_marginBottom="20dp"
             android:layout_toEndOf="@+id/imageView17"
+            android:fontFamily="@font/poppins"
             android:text="Sleefax"
             android:textColor="#FFF"
             android:textSize="32sp"
@@ -87,6 +90,8 @@
             android:layout_marginEnd="10dp"
             android:background="#00FFFFFF"
             android:backgroundTint="#FFF"
+            android:elevation="10dp"
+            android:fontFamily="@font/poppins"
             android:text="Log in"
             android:textAlignment="center"
             android:textAllCaps="false"
@@ -113,9 +118,10 @@
                 android:backgroundTint="#FFF"
                 android:text="Start adding files"
                 android:textAllCaps="false"
-                android:textColor="#000"
+                android:textColor="#227093"
                 android:textSize="25sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:elevation="10dp"/>
         </RelativeLayout>
 
         <TextView

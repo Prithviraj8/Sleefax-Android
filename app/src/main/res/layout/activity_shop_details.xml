@@ -1,0 +1,440 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ShopDetailsActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/arrow_left_black"
+                    android:layout_alignTop="@id/shop_layout1"
+                    android:layout_marginTop="20dp"
+                    android:id="@+id/back"
+                    android:layout_marginLeft="30dp"/>
+
+                <RelativeLayout
+                    android:layout_width="140dp"
+                    android:layout_height="140dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_centerHorizontal="true"
+                    android:background="@drawable/shop_bg"
+                    android:id="@+id/shop_layout1">
+                    <ImageView
+                        android:layout_width="70dp"
+                        android:layout_height="70dp"
+                        android:src="@drawable/shopblue"
+                        android:layout_centerVertical="true"
+                        android:layout_centerHorizontal="true"    />
+                </RelativeLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="MIT Print Shop"
+                    android:layout_alignStart="@id/shop_layout1"
+                    android:layout_below="@id/shop_layout1"
+                    android:textSize="20sp"
+                    android:id="@+id/ShopName"
+                    android:textColor="#227093"
+                    android:fontFamily="@font/poppins_semibold"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Kothrud Pune"
+                    android:layout_alignStart="@id/shop_layout1"
+                    android:layout_below="@id/ShopName"
+                    android:textSize="12sp"
+                    android:id="@+id/Location"
+                    android:textColor="#858585"
+                    android:fontFamily="@font/poppins_semibold"/></RelativeLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Shop Timing"
+                android:textSize="25sp"
+                android:id="@+id/textview"
+                android:fontFamily="@font/poppins_bold"
+                android:textColor="#000000"
+                android:layout_below="@id/Location"
+                android:layout_marginTop="30dp"
+                android:layout_marginLeft="40dp"/>
+            <TableLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="25dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="20dp"
+                android:id="@+id/table1"
+                android:layout_below="@id/textview">
+                <TableRow>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textSize="18dp"
+                        android:textColor="#000000"
+                        android:fontFamily="@font/poppins_semibold"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Opening Hours"
+                        android:textSize="13sp"
+                        android:layout_marginLeft="5dp"
+                        android:textColor="#227093"
+                        android:fontFamily="@font/poppins_semibold"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textSize="12dp"
+                        android:layout_marginLeft="5dp"
+                        android:textColor="#000000"
+                        android:fontFamily="@font/poppins"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Closing Hours"
+                        android:textSize="13sp"
+                        android:layout_marginLeft="5dp"
+                        android:textColor="#227093"
+                        android:fontFamily="@font/poppins_semibold"/>
+
+
+
+                </TableRow>
+
+                <TableRow>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Mon-Fri"
+                        android:textSize="18sp"
+                        android:textColor="#227093"
+                        android:fontFamily="@font/poppins_semibold"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/Mon_Fri_StartTime"
+                        android:text="09:15 am"
+                        android:gravity="center"
+                        android:textSize="14sp"
+                        android:layout_marginLeft="15dp"
+                        android:textColor="#000000"
+                        android:fontFamily="@font/poppins"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=" - "
+                        android:gravity="center"
+                        android:textSize="14sp"
+                        android:layout_marginLeft="5dp"
+                        android:textColor="#000000"
+                        android:fontFamily="@font/poppins"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/Mon_Fri_CloseTime"
+                        android:text="01:15 pm"
+                        android:textSize="14sp"
+                        android:layout_marginLeft="15dp"
+                        android:textColor="#000000"
+                        android:gravity="center"
+                        android:fontFamily="@font/poppins"/>
+
+
+
+                </TableRow>
+                <TableRow>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textSize="18dp"
+                        android:textColor="#000000"
+                        android:fontFamily="@font/poppins_semibold"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="03:15 am"
+                        android:layout_marginLeft="15dp"
+                        android:gravity="center"
+                        android:textSize="14sp"
+                        android:textColor="#000000"
+                        android:fontFamily="@font/poppins"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=" - "
+                        android:textSize="14sp"
+                        android:gravity="center"
+                        android:layout_marginLeft="5dp"
+                        android:textColor="#000000"
+                        android:fontFamily="@font/poppins"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="09:15 pm"
+                        android:layout_marginLeft="15dp"
+                        android:gravity="center"
+                        android:textSize="14sp"
+                        android:textColor="#000000"
+                        android:fontFamily="@font/poppins"/>
+
+
+
+                </TableRow>
+
+
+                <TableRow>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Saturday"
+                        android:textSize="18sp"
+                        android:textColor="#227093"
+                        android:fontFamily="@font/poppins_semibold"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="09:15 am"
+                        android:layout_marginLeft="15dp"
+                        android:gravity="center"
+                        android:textSize="14sp"
+                        android:textColor="#000000"
+                        android:fontFamily="@font/poppins"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=" - "
+                        android:textSize="14sp"
+                        android:gravity="center"
+                        android:layout_marginLeft="5dp"
+                        android:textColor="#000000"
+                        android:fontFamily="@font/poppins"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="01:15 pm"
+                        android:textSize="14sp"
+                        android:layout_marginLeft="15dp"
+                        android:gravity="center"
+                        android:textColor="#000000"
+                        android:fontFamily="@font/poppins"/>
+
+                </TableRow>
+                <TableRow>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Sunday"
+                        android:textSize="18sp"
+                        android:textColor="#227093"
+                        android:fontFamily="@font/poppins_semibold"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Closed"
+                        android:textSize="14sp"
+                        android:gravity="center"
+                        android:layout_marginLeft="15dp"
+                        android:textColor="#C44848"
+                        android:fontFamily="@font/poppins"/>
+
+                </TableRow>
+
+
+
+            </TableLayout>
+
+            <View
+                android:layout_width="wrap_content"
+                android:layout_height="1dp"
+                android:background="#707070"
+                android:layout_marginLeft="25dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="10dp"/>
+
+
+            <TextView
+                android:id="@+id/textview1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/table1"
+                android:layout_marginLeft="40dp"
+                android:layout_marginTop="40dp"
+                android:fontFamily="@font/poppins_bold"
+                android:text="Pricing"
+                android:textColor="#000000"
+                android:textSize="25sp" />
+
+            <TableLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignStart="@id/back"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="25dp"
+                android:id="@+id/table2"
+                android:layout_marginBottom="20dp"
+                android:layout_below="@id/textview1">
+
+                <TableRow>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="BW Printout(Single Side)"
+                        android:textSize="12sp"
+                        android:textColor="#227093"
+                        android:fontFamily="@font/poppins_semibold"/>
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/rupee_black"
+                        android:textSize="12dp"
+                        android:layout_marginTop="-2dp"
+                        android:layout_marginLeft="20dp"
+                        android:textColor="#000000"
+                        android:fontFamily="@font/poppins"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="1"
+                        android:textSize="14sp"
+                        android:layout_marginLeft="15dp"
+                        android:textColor="#000000"
+                        android:fontFamily="@font/poppins"/>
+
+
+
+                </TableRow>
+                <TableRow>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="BW Printout(Both Sides)"
+                        android:textSize="12sp"
+                        android:textColor="#227093"
+                        android:layout_marginTop="10dp"
+                        android:fontFamily="@font/poppins_semibold"/>
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/rupee_black"
+                        android:textSize="12dp"
+                        android:layout_marginLeft="20dp"
+                        android:layout_marginTop="8dp"
+                        android:textColor="#000000"
+                        android:fontFamily="@font/poppins"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="1"
+                        android:layout_marginTop="10dp"
+                        android:textSize="14sp"
+                        android:layout_marginLeft="15dp"
+                        android:textColor="#000000"
+                        android:fontFamily="@font/poppins"/>
+
+
+
+                </TableRow>
+
+                <TableRow>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Color Printout(Single Side)"
+                        android:textSize="12sp"
+                        android:textColor="#227093"
+                        android:layout_marginTop="10dp"
+                        android:fontFamily="@font/poppins_semibold"/>
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/rupee_black"
+                        android:textSize="12dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginLeft="20dp"
+                        android:textColor="#000000"
+                        android:fontFamily="@font/poppins"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="5"
+                        android:layout_marginTop="10dp"
+                        android:textSize="14sp"
+                        android:layout_marginLeft="15dp"
+                        android:textColor="#000000"
+                        android:fontFamily="@font/poppins"/>
+
+
+
+                </TableRow>
+
+                <TableRow>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Color Printout(Both Sides)"
+                        android:textSize="12sp"
+                        android:layout_marginTop="10dp"
+                        android:textColor="#227093"
+                        android:fontFamily="@font/poppins_semibold"/>
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/rupee_black"
+                        android:textSize="12dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginLeft="20dp"
+                        android:textColor="#000000"
+                        android:fontFamily="@font/poppins"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="5"
+                        android:layout_marginTop="10dp"
+                        android:textSize="14sp"
+                        android:layout_marginLeft="15dp"
+                        android:textColor="#000000"
+                        android:fontFamily="@font/poppins"/>
+
+
+
+                </TableRow>
+
+
+
+
+
+
+            </TableLayout>
+
+        </LinearLayout>
+
+
+    </ScrollView>
+
+
+
+</RelativeLayout>

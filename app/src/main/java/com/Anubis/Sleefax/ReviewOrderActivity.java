@@ -1,0 +1,381 @@
+package com.Anubis.Sleefax;
+
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ListAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
+
+class fileInfo {
+
+    String Name;
+    String Price;
+    String Size;
+
+
+    public String getName() {
+        return Name;
+    }
+
+    public void setName(String name) {
+        Name = name;
+    }
+
+    public String getPrice() {
+        return Price;
+    }
+
+    public void setPrice(String price) {
+        Price = price;
+    }
+
+    public String getSize() {
+        return Size;
+    }
+
+    public void setSize(String size) {
+        Size = size;
+    }
+
+    public fileInfo(String name, String price, String size) {
+        Name = name;
+        Price = price;
+        Size = size;
+    }
+}
+public class ReviewOrderActivity extends AppCompatActivity {
+
+    ArrayList<String> urls = new ArrayList<>();
+    ArrayList<String> fileTypes = new ArrayList<>();
+    ArrayList<String> colors = new ArrayList<>();
+    ArrayList<Integer> copies = new ArrayList<>();
+    ArrayList<String> pageSize = new ArrayList<>();
+    ArrayList<String> orientations = new ArrayList<>();
+    boolean bothSides[];
+    ArrayList<String> customPages = new ArrayList<>();
+    ArrayList<String> customValues = new ArrayList<>();
+    ArrayList<Integer> numberOfPages = new ArrayList<>();
+    ArrayList<String> fileNames = new ArrayList<>();
+    ArrayList<String> fileSizes = new ArrayList<>();
+//    ArrayList<Double> pricePerFile = new ArrayList<>();
+    double pricePerFile[];
+    double totalPrice = 0.0;
+
+
+    boolean newUser,isTester,addingMoreFiles, selectingFile;
+    int shopCnt;
+
+
+    ListView pdfView,billingView;
+    Button selectShopBtn,addMoreFilesBtn;
+    ImageButton backBtn;
+    TextView priceTotal;
+
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_review_order);
+
+        selectShopBtn = findViewById(R.id.SelectShops);
+        backBtn = findViewById(R.id.back_button);
+        addMoreFilesBtn = findViewById(R.id.addMoreFilesBtn);
+        priceTotal = findViewById(R.id.price_total);
+
+        getOrderInfo();
+
+        pdfViewAdapter pdfViewAdapter;
+        billingViewAdapter billingViewAdapter;
+        ArrayList<fileInfo> arrayList = new ArrayList<>();
+
+        Log.d("FILESIZE",String.valueOf(fileSizes.size()));
+        Log.d("FILENAME",String.valueOf(fileNames.size()));
+        Log.d("PRICEPERFILE",String.valueOf(pricePerFile.length));
+
+        for(int i = 0;i< fileNames.size();i++) {
+//            arrayList.add(new fileInfo(fileNames.get(i),pricePerFile.get(i),fileSizes.get(i)));
+            arrayList.add(new fileInfo(fileNames.get(i),"₹ "+String.valueOf(pricePerFile[i]),fileSizes.get(i)));
+            Log.d("IMGNAME ",String.valueOf(fileNames.get(i)));
+            totalPrice = pricePerFile[i] + totalPrice;
+
+            if(i == fileNames.size()-1){
+               pdfViewAdapter = new pdfViewAdapter(arrayList);
+               billingViewAdapter = new billingViewAdapter(arrayList);
+
+
+                pdfView = findViewById(R.id.pdfListView);
+                pdfView.setAdapter(pdfViewAdapter);
+                setDynamicHeight(pdfView);
+
+                billingView = findViewById(R.id.billing_pdf_listview);
+                billingView.setAdapter(billingViewAdapter);
+                setDynamicHeight(billingView);
+
+                //setting total Price
+                priceTotal.setText(String.valueOf(totalPrice));
+            }
+        }
+
+
+        // Attaching btn listeners.
+        selectShopBtn.setOnClickListener(Listener);
+        backBtn.setOnClickListener(Listener);
+        addMoreFilesBtn.setOnClickListener(Listener);
+
+
+
+    }
+
+
+    private View.OnClickListener Listener = new View.OnClickListener() {
+
+        public void onClick(View v) {
+
+            if(v == findViewById(R.id.SelectShops)){
+                addingMoreFiles = false;
+                sendOrderInfo();
+            }
+            else if(v == findViewById(R.id.back_button)){
+                finish();
+            }
+            else if(v == findViewById(R.id.addMoreFilesBtn)){
+                addingMoreFiles = true;
+
+                if(fileTypes.get(0).contains("IMAGE")){
+                    selectingFile = false;
+                }else {
+                    selectingFile = true;
+                }
+                sendOrderInfo();
+            }
+        }
+    };
+
+    public void selectImages(boolean isImage){
+        if(isImage) {
+            Intent intent = new Intent();
+            intent.setType("image/*");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+            startActivityForResult(Intent.createChooser(intent, "Select Images"), 1);
+        }else{
+            Intent intent = new Intent();
+            intent.setType("application/*");
+            intent.setAction(Intent.ACTION_OPEN_DOCUMENT);
+            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+            startActivityForResult(Intent.createChooser(intent, "Select files"), 1);
+        }
+
+    }
+    //        if(addingMoreFiles){
+//            ArrayList<File_Settings> data = new ArrayList<>();
+//            Log.d("GETTING DATA ",String.valueOf(data));
+//        }
+
+
+    public void getOrderInfo(){
+
+        Intent intent = getIntent();
+        Bundle extras = intent.getExtras();
+
+        addingMoreFiles = extras.getBoolean("AddingMoreFiles");
+
+        urls = extras.getStringArrayList("URLS");
+        copies = extras.getIntegerArrayList("Copies");
+        colors = extras.getStringArrayList("ColorType");
+        fileTypes = extras.getStringArrayList("FileType");
+        shopCnt = extras.getInt("ShopCount");
+        pageSize = extras.getStringArrayList("PageSize");
+        orientations = extras.getStringArrayList("Orientation");
+        bothSides = extras.getBooleanArray("BothSides");
+        customPages = extras.getStringArrayList("Custom");
+        numberOfPages = extras.getIntegerArrayList("Pages");
+        newUser = extras.getBoolean("NewUser");
+        customValues = extras.getStringArrayList("CustomValue");
+        fileNames = extras.getStringArrayList("FileNames");
+        fileSizes = extras.getStringArrayList("FileSizes");
+        isTester = extras.getBoolean("IsTester");
+
+        pricePerFile = new double[urls.size()];
+        pricePerFile = extras.getDoubleArray("PricePerFile");
+
+
+    }
+
+    public void sendOrderInfo(){
+        Intent intent;
+        Bundle extras = new Bundle();
+
+        if(addingMoreFiles) {
+            intent = new Intent(ReviewOrderActivity.this, Pop.class);
+            extras.putBoolean("File",false);
+            extras.putBoolean("AddingMoreFiles",true);
+            extras.putInt("FileCount",urls.size());
+            extras.putBoolean("File",selectingFile);
+        }else{
+            intent = new Intent(ReviewOrderActivity.this, ShopsActivity.class);
+        }
+
+
+        extras.putInt("ShopCount", shopCnt);
+        extras.putStringArrayList("URLS", urls);
+        extras.putIntegerArrayList("Pages", numberOfPages);
+        extras.putBooleanArray("BothSides", bothSides);
+        extras.putIntegerArrayList("Copies", copies);
+        extras.putStringArrayList("ColorType", colors);
+        extras.putStringArrayList("FileType", fileTypes);
+        extras.putStringArrayList("PageSize", pageSize);
+        extras.putStringArrayList("Orientation", orientations);
+        extras.putStringArrayList("FileNames",fileNames);
+        extras.putStringArrayList("FileSizes",fileSizes);
+        extras.putBoolean("NewUser",newUser);
+        extras.putStringArrayList("Custom",customPages);
+        extras.putStringArrayList("CustomValue",customValues);
+
+        extras.putDoubleArray("PricePerFile",pricePerFile);
+        extras.putDouble("TotalPrice",totalPrice);
+
+        extras.putBoolean("IsTester",isTester);
+
+        intent.putExtras(extras);
+        startActivity(intent);
+    }
+
+
+    public class pdfViewAdapter extends BaseAdapter {
+
+        ArrayList<fileInfo> Data;
+
+        public pdfViewAdapter(ArrayList<fileInfo> data) {
+            Data = data;
+        }
+
+        @Override
+        public int getCount() {
+            return Data.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return position;
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @SuppressLint("ViewHolder")
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            convertView = getLayoutInflater().inflate(R.layout.file_row,null);
+
+            if(convertView != null) {
+                TextView Name, Size, Price, customize;
+                Name = convertView.findViewById(R.id.pdfName);
+                Size = convertView.findViewById(R.id.size);
+                Price = convertView.findViewById(R.id.price);
+                customize = convertView.findViewById(R.id.text_customize);
+
+                Name.setText(Data.get(position).getName());
+                Price.setText(Data.get(position).getPrice());
+
+                customize.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        // Send user to file or image setting page based on the users selection.
+//                    startActivity(new Intent(this,PageSetting.class));
+                    }
+                });
+
+                Name.setText(Data.get(position).getName());
+                Size.setText(Data.get(position).getSize());
+                Price.setText(Data.get(position).getPrice());
+
+            }
+            return convertView;
+        }
+    }
+
+    public class billingViewAdapter extends BaseAdapter{
+
+        ArrayList<fileInfo> Data;
+
+        public billingViewAdapter(ArrayList<fileInfo> data) {
+            Data = data;
+        }
+
+        @Override
+        public int getCount() {
+            return Data.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return position;
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+
+            convertView =  getLayoutInflater().inflate(R.layout.book_and_price,null);
+            TextView Name,Price;
+            Name = convertView.findViewById(R.id.pdfName);
+            Price = convertView.findViewById(R.id.price);
+
+            Name.setText(Data.get(position).getName());
+            Price.setText(Data.get(position).getPrice());
+
+
+
+            return convertView;
+        }
+    }
+
+
+    public void setDynamicHeight(ListView listView) {
+        ListAdapter adapter = listView.getAdapter();
+        //check adapter if null
+        if (adapter == null) {
+            return;
+        }
+        int height = 0;
+        int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(), View.MeasureSpec.UNSPECIFIED);
+        for (int i = 0; i < adapter.getCount(); i++) {
+            View listItem = adapter.getView(i, null, listView);
+            listItem.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
+            height += listItem.getMeasuredHeight();
+        }
+        ViewGroup.LayoutParams layoutParams = listView.getLayoutParams();
+        layoutParams.height = height + (listView.getDividerHeight() * (adapter.getCount() - 1));
+        listView.setLayoutParams(layoutParams);
+        listView.requestLayout();
+    }
+
+
+}

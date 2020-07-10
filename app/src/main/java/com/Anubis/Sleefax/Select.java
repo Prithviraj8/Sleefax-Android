@@ -35,6 +35,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -53,6 +54,7 @@ import android.transition.TransitionInflater;
 import android.transition.TransitionManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -90,10 +92,18 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 
+import nl.psdcompany.duonavigationdrawer.views.DuoDrawerLayout;
+import nl.psdcompany.duonavigationdrawer.views.DuoMenuView;
+import nl.psdcompany.duonavigationdrawer.widgets.DuoDrawerToggle;
+
 public class Select extends AppCompatActivity {
+
+    PaytmPGService Service = PaytmPGService.getProductionService();
     public String SharedPrefs = "Data";
+
     NotificationManagerCompat notificationManager;
     String CHANNEL_ID = "Sleefax";
+
     ProgressDialog mProgressDialog;
 
     ArrayList<String> pageURL = new ArrayList<String>();
@@ -114,20 +124,14 @@ public class Select extends AppCompatActivity {
 
     View addFileView,blurrView;
 
-    int PICK_IMAGE_MULTIPLE = 1;
-    final static int PICK_PDF_CODE = 2342;
-    final static int PICK_IMAGE_CODE = 100;
-    int orderCnt = 0,mScreenHeight;
+    int orderCnt = 0,mScreenHeight, mScreenWidth;
 
-    String imageEncoded;
-    List<String> imagesEncodedList;
-    private boolean isMenuShown = false;
     int cnt;
     boolean network,isTester,newUser;
-    PaytmPGService Service = PaytmPGService.getProductionService();
 
     RelativeLayout contactsRl,addfilePage,addfileTVRL,pickedUpOrderView,CurrentOrderRowRL,liveOrderRL;
 
+    TextView addFilesText,addPhotosText;
     ////// Buttons and items of contacts page /////
     Button num1,num2;
     ImageButton back;
@@ -165,6 +169,7 @@ public class Select extends AppCompatActivity {
         DisplayMetrics displaymetrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
         mScreenHeight = displaymetrics.heightPixels;
+        mScreenWidth = displaymetrics.widthPixels;
 
         //View that will come from the top of the screen when user clicks on add file btn///
         addfileTVRL = findViewById(R.id.AddfileTVRL);
@@ -173,14 +178,20 @@ public class Select extends AppCompatActivity {
         //Buttons for image and files
         selectAttachment = findViewById(R.id.SelectFile);
         selectPhotos = findViewById(R.id.SelectImage);
+        addFilesText = findViewById(R.id.add_files_text);
+        addPhotosText = findViewById(R.id.add_photos_text);
+
+        addPhotosText.animate().translationXBy(-1000f);
+        addFilesText.animate().translationXBy(1000f);
 
         addFileView = findViewById(R.id.liveordersTopView);
         shortAnimationDuration = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
         selectFilesBtn = findViewById(R.id.AddFilesButton);
 
-        setting = findViewById(R.id.settings);
-        orders = findViewById(R.id.YourOrders);
+//        setting = findViewById(R.id.settings);
+//        orders = findViewById(R.id.YourOrders);
+
         sideMenu = findViewById(R.id.SideMenu);
         more = findViewById(R.id.more);
         contactsRl = findViewById(R.id.contactsRelativeL);
@@ -211,7 +222,7 @@ public class Select extends AppCompatActivity {
         }
 
         if(newUser){
-            orders.setVisibility(View.INVISIBLE);
+//            orders.setVisibility(View.INVISIBLE);
         }else{
             if(FirebaseAuth.getInstance().getCurrentUser() != null) {
 
@@ -230,24 +241,26 @@ public class Select extends AppCompatActivity {
 
 
                 /////// Order History button listener ///////
-                orders.setOnClickListener(Listener);
-                if(FirebaseAuth.getInstance().getCurrentUser().getEmail() != null) {
-                    if (FirebaseAuth.getInstance().getCurrentUser().getEmail().contains("tester") || FirebaseAuth.getInstance().getCurrentUser().getEmail().contains("Tester")) {
+//                orders.setOnClickListener(Listener);
+                if(FirebaseAuth.getInstance().getCurrentUser() != null) {
+                    Log.d("USERID",FirebaseAuth.getInstance().getCurrentUser().getUid());
+                    if(FirebaseAuth.getInstance().getCurrentUser().getEmail() != null && FirebaseAuth.getInstance().getCurrentUser().getEmail().contains("tester")){
                         isTester = true;
-                    } else {
-                        isTester = false;
-                    }
-                }else{
-                    if(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber()).contains("909")){
+                    }else if(FirebaseAuth.getInstance().getCurrentUser().getEmail() != null && FirebaseAuth.getInstance().getCurrentUser().getEmail().contains("Tester")){
                         isTester = true;
-                    }else {
-                        isTester = false;
-                    }
+                    }else if(FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber() != null && FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber().contains("123456789")){
+                        isTester = true;
 
+                    }else{
+                        isTester = false;
+                    }
+//                    if (FirebaseAuth.getInstance().getCurrentUser().getEmail().contains("tester") || FirebaseAuth.getInstance().getCurrentUser().getEmail().contains("Tester") || FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber().contains("1234567890")) {
+//                        isTester = true;
+//                    } else {
+//                        isTester = false;
+//                    }
                 }
-//                createNotificationChannel();
-                //startService(new Intent(Select.this, notificationService.class));
-//                new createNotification().execute();
+
 
                 ///Creating notification service
                 Intent notificationServiceIntent = new Intent(Select.this, NotificationService.class);
@@ -285,43 +298,18 @@ public class Select extends AppCompatActivity {
                 selectFiles(view);
 
                 addfileTVRL.setVisibility(View.VISIBLE);
-                blurrView.setVisibility(View.VISIBLE);
+//                blurrView.setVisibility(View.VISIBLE);
 
                 if(addfileTVRL.getHeight() == 0) {
                     expandView(addfileTVRL, 0, mScreenHeight / 4);
-//                    selectFilesBtn.animate()
-//                            .alpha(0f)
-//                            .setDuration(100)
-//                            .setListener(new AnimatorListenerAdapter() {
-//                                @Override
-//                                public void onAnimationEnd(Animator animation) {
-//                                    super.onAnimationStart(animation);
-//                                    selectFilesBtn.setAlpha(1f);
-//
-//                                }
-//                            });
-                }else{
-//                    selectFilesBtn.setBackgroundResource(R.drawable.addfilebtnshadow);
                 }
 
-
-
             }
         });
 
 
-        setting.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Select.this,settings.class);
-                startActivity(intent);
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-
-            }
-        });
 
         selectAttachment.setOnClickListener(Listener);
-
         selectPhotos.setOnClickListener(Listener);
 
 
@@ -394,26 +382,7 @@ public class Select extends AppCompatActivity {
             if (!network) {
                 Toast.makeText(Select.this, "Please check your internet connection.", Toast.LENGTH_LONG).show();
             } else {
-                if(v == findViewById(R.id.YourOrders)) {
-                    mProgressDialog = new ProgressDialog(Select.this);
-                    // Set progressdialog title
-                    mProgressDialog.setTitle("Retreiving Orders");
-                    // Set progressdialog message
-                    mProgressDialog.setMessage("Loading...");
-                    mProgressDialog.setIndeterminate(false);
-                    // Show progressdialog
-                    mProgressDialog.show();
-                    Context context = getApplicationContext();
-//                CharSequence text = "No order history to show.";
-                    CharSequence text = "Order Cnt" + orderCnt;
-                    int duration = Toast.LENGTH_SHORT;
-                    Toast toast = Toast.makeText(context, text, duration);
-
-                    Intent orderHistoryIntent = new Intent(Select.this, YourOrders.class);
-                    startActivity(orderHistoryIntent);
-                    finish();
-                    mProgressDialog.dismiss();
-                }else if(v == findViewById(R.id.SelectFile)){
+                 if(v == findViewById(R.id.SelectFile)){
                     Log.d("SELECTINGPHOTOS","TRUE");
                     Intent intent = new Intent(Select.this,Pop.class);
                     Bundle bundle = new Bundle();
@@ -495,15 +464,94 @@ public class Select extends AppCompatActivity {
     }
 
     private void selectFiles(final View v) {
-        final CoordinatorLayout mCLayout = (CoordinatorLayout) findViewById(R.id.coordinator_layout);
-        int transitionId;
+
         Intent pop = new Intent(Select.this,Pop.class);
         Bundle bundle = new Bundle();
         bundle.putBoolean("IsTester",isTester);
         bundle.putBoolean("NewUser",newUser);
-//        pop.putExtras(bundle);
-//        startActivity(pop);
 
+
+        //Todo: Animation Type 1
+        animateFileAndImageBtns();
+
+
+        //Todo: Animation Type 2
+           // animate2File_Photos(v);
+    }
+
+
+
+    int i = 1;
+    public void animateFileAndImageBtns(){
+        i++;
+        // add.setRotation(45f);
+
+        Resources r = getResources();
+        int xaxistext = (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                70,
+                r.getDisplayMetrics());
+        int xxaxistext = (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                125,
+                r.getDisplayMetrics());
+        int yaxis = (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                100,
+                r.getDisplayMetrics());
+        int xaxis = (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                90,
+                r.getDisplayMetrics());
+        if(i%2==0){
+            collapseView(liveOrderRL,liveOrderRL.getLayoutParams().height,0);
+
+//            selectFilesBtn.setRotation(45f);
+            ObjectAnimator.ofFloat(selectFilesBtn, "rotation", 0f, 45f).start();
+
+            pullToRefresh.setAlpha(0.1f);
+//            listView.setAlpha(0.1f);
+
+            addPhotosText.animate().translationXBy(1000f + mScreenWidth/6 - 10).setDuration(400);
+            // addPhotosText.animate().translationXBy(1000f).translationXBy(xaxistext).setDuration(400);
+            // addFilesText.setVisibility(View.VISIBLE);
+            selectAttachment.animate().translationXBy(mScreenWidth/4 - 20).translationYBy(-(float) yaxis).setDuration(400);
+            selectAttachment.setVisibility(View.VISIBLE);
+            selectPhotos.animate().translationXBy(-(mScreenWidth/4)).translationYBy(-(float) yaxis).setDuration(400);
+            selectPhotos.setVisibility(View.VISIBLE);
+            addFilesText.animate().translationXBy(-(1000f + mScreenWidth/5 + 10)).setDuration(400);
+            //  addPhotosText.setVisibility(View.VISIBLE);
+        } else
+        {
+            collapseView(addfileTVRL,mScreenHeight/4,0);
+//            selectFilesBtn.setRotation(90f);
+            ObjectAnimator.ofFloat(selectFilesBtn, "rotation", 45f, 0f).start();
+
+            pullToRefresh.setAlpha(1f);
+//            listView.setAlpha(1);
+
+            selectAttachment.animate().translationXBy(-(mScreenWidth/4 - 20)).translationYBy((float) yaxis).setDuration(400);
+            addPhotosText.animate().translationXBy(-(1000f + mScreenWidth/6 - 10)).setDuration(400);
+            // addFiles.setVisibility(View.INVISIBLE);
+            //  addPhotos.animate().translationXBy((float) (xaxis-15)).translationYBy(-(float) yaxis).setDuration(200);
+            //  addPhotos.setVisibility(View.INVISIBLE);
+            selectPhotos.animate().translationXBy((mScreenWidth/4)).translationYBy((float) yaxis).setDuration(400);
+            addFilesText.animate().translationXBy(1000f + mScreenWidth/5 + 10).setDuration(400);
+            // addFilesText.setVisibility(View.INVISIBLE);
+            // addPhotosText.setVisibility(View.INVISIBLE);
+            blurrView.setVisibility(View.GONE);
+
+            expandView(liveOrderRL,0,liveOrderRLInitHT);
+
+        }
+    }
+
+
+    public void animate2File_Photos(final View v){
+
+
+        final CoordinatorLayout mCLayout = (CoordinatorLayout) findViewById(R.id.coordinator_layout);
+        int transitionId;
         collapseView(liveOrderRL,liveOrderRL.getLayoutParams().height,0);
 
         if(!isTop1) {
@@ -575,6 +623,7 @@ public class Select extends AppCompatActivity {
         togglePositionBtn2();
 
     }
+
     protected void togglePositionBtn1(){
         // Change the button widget location to animate it
         CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams)selectPhotos.getLayoutParams();
@@ -661,7 +710,6 @@ public class Select extends AppCompatActivity {
 
     public void expandView(final View v,int initialHt,int finalHt){
 
-
         ValueAnimator slideAnimator = ValueAnimator.ofInt(initialHt,finalHt).setDuration(shortAnimationDuration);
         slideAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
@@ -708,123 +756,6 @@ public class Select extends AppCompatActivity {
         set.start();
 
     }
-
-    public void setUpNavigationViews(){
-
-        //////////////////////NAVIGATION VIEW/////////////////////////
-
-        navigationView = findViewById(R.id.NavView);
-        toolbar = findViewById(R.id.navaction);
-        drawerLayout = findViewById(R.id.drawerLayout);
-
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-
-        TextView username,useremail;
-        View header = navigationView.getHeaderView(0);
-        useremail =  header.findViewById(R.id.useremail);
-        username = header.findViewById(R.id.username);
-
-
-        username.setText(getDisplayNameSavedLocally());
-        if(FirebaseAuth.getInstance().getCurrentUser() != null) {
-            useremail.setText(FirebaseAuth.getInstance().getCurrentUser().getEmail());
-        }
-
-        actionBarDrawerToggle = new ActionBarDrawerToggle(this,drawerLayout,toolbar,R.string.open,R.string.close);
-//        actionBarDrawerToggle = new ActionBarDrawerToggle(Select.this,drawerLayout,R.string.open,R.string.close);
-
-//        actionBarDrawerToggle.setDrawerIndicatorEnabled(false);
-//        actionBarDrawerToggle.setToolbarNavigationClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                drawerLayout.openDrawer(GravityCompat.START);
-//            }
-//        });
-//        actionBarDrawerToggle.setHomeAsUpIndicator(0);
-
-        drawerLayout.addDrawerListener(actionBarDrawerToggle);
-        actionBarDrawerToggle.syncState();
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        actionBarDrawerToggle.setDrawerIndicatorEnabled(false);
-        Drawable drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.openmenublack,getTheme());
-        actionBarDrawerToggle.setHomeAsUpIndicator(drawable);
-        actionBarDrawerToggle.setToolbarNavigationClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (drawerLayout.isDrawerVisible(GravityCompat.START)) {
-                    drawerLayout.closeDrawer(GravityCompat.START);
-                } else {
-                    drawerLayout.openDrawer(GravityCompat.START);
-                }
-            }
-        });
-
-        navigationView.setItemIconTintList(null);
-
-        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                menuItem.setChecked(false);
-                int menu_id = menuItem.getItemId();
-                Log.d("MENUID", String.valueOf(menuItem.getItemId()));
-                drawerLayout.closeDrawers();
-
-                switch (menu_id){
-                    case R.id.userprofile:
-
-                        Intent intent = new Intent(Select.this,changeInfoPopUp.class);
-                        startActivity(intent);
-                        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                        break;
-
-                    case R.id.logout:
-
-                        FirebaseAuth.getInstance().signOut();
-                        Intent signOutIntent = new Intent(Select.this, MainActivity.class);
-                        signOutIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);//makesure user cant go back
-                        startActivity(signOutIntent);
-                        Toast.makeText(Select.this,"Successfully signed out", Toast.LENGTH_SHORT).show();
-                        finish();
-                        break;
-
-                    case R.id.issue:
-
-                        Intent issueIntent = new Intent(Select.this,ReportIssue.class);
-                        startActivity(issueIntent);
-                        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                        break;
-
-                    case R.id.contact:
-
-                        contactsRl.setVisibility(View.VISIBLE);
-                        addfilePage.setVisibility(View.INVISIBLE);
-
-                        num1 = findViewById(R.id.num1);
-                        num2 = findViewById(R.id.num2);
-
-                        num1.setOnClickListener(contactsPageListener);
-                        num2.setOnClickListener(contactsPageListener);
-                        back.setOnClickListener(contactsPageListener);
-
-                        break;
-
-                    case R.id.feedback:
-                        Intent feedbackIntent = new Intent(Select.this,Feedback.class);
-                        startActivity(feedbackIntent);
-                        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                        break;
-                }
-
-                return true;
-            }
-        });
-
-
-
-    }
-
     public String getDisplayNameSavedLocally(){
 
         String name;
@@ -832,6 +763,214 @@ public class Select extends AppCompatActivity {
         name = sharedPreferences.getString("DisplayName",null);
         return name;
     }
+
+    public void setUpNavigationViews(){
+
+        //////////////////////NAVIGATION VIEW/////////////////////////
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+
+        final DuoDrawerLayout drawerLayout = (DuoDrawerLayout) findViewById(R.id.drawerLayout);
+        final DuoDrawerToggle drawerToggle = new DuoDrawerToggle(Select.this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+
+        drawerLayout.setDrawerListener(drawerToggle);
+        drawerToggle.syncState();
+
+        DuoMenuView duoMenuView = findViewById(R.id.Duo_Menu);
+
+
+        //Todo: Basic Navigation view
+//        navigationView = findViewById(R.id.NavView);
+//        toolbar = findViewById(R.id.navaction);
+//        drawerLayout = findViewById(R.id.drawerLayout);
+//
+//        setSupportActionBar(toolbar);
+//        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        TextView username,useremail;
+
+        //Todo: Uncomment next line if you want to use the basic navigation menu
+//        View header = navigationView.getHeaderView(0);
+        useremail =  duoMenuView.findViewById(R.id.useremail);
+        username = duoMenuView.findViewById(R.id.username);
+
+
+        username.setText(getDisplayNameSavedLocally());
+        if(FirebaseAuth.getInstance().getCurrentUser() != null) {
+            useremail.setText(FirebaseAuth.getInstance().getCurrentUser().getEmail());
+        }
+
+        setUpMenuButtonActions();
+
+
+        //Todo: Basic actionBarToggle
+//        actionBarDrawerToggle = new ActionBarDrawerToggle(this,drawerLayout,toolbar,R.string.open,R.string.close);
+//
+//        drawerLayout.addDrawerListener(actionBarDrawerToggle);
+//        actionBarDrawerToggle.syncState();
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//
+//        actionBarDrawerToggle.setDrawerIndicatorEnabled(false);
+//        Drawable drawable = ResourcesCompat.getDrawable(getResources(), R.drawable.openmenublack,getTheme());
+//        actionBarDrawerToggle.setHomeAsUpIndicator(drawable);
+//        actionBarDrawerToggle.setToolbarNavigationClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (drawerLayout.isDrawerVisible(GravityCompat.START)) {
+//                    drawerLayout.closeDrawer(GravityCompat.START);
+//                } else {
+//                    drawerLayout.openDrawer(GravityCompat.START);
+//                }
+//            }
+//        });
+
+//        navigationView.setItemIconTintList(null);
+//        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+//            @Override
+//            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+//                menuItem.setChecked(false);
+//                int menu_id = menuItem.getItemId();
+//                Log.d("MENUID", String.valueOf(menuItem.getItemId()));
+//                drawerLayout.closeDrawers();
+//
+//                switch (menu_id){
+//                    case R.id.userprofile:
+//
+//                        Intent intent = new Intent(Select.this,changeInfoPopUp.class);
+//                        startActivity(intent);
+//                        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+//                        break;
+//
+//                    case R.id.logout:
+//
+//                        FirebaseAuth.getInstance().signOut();
+//                        Intent signOutIntent = new Intent(Select.this, MainActivity.class);
+//                        signOutIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);//makesure user cant go back
+//                        startActivity(signOutIntent);
+//                        Toast.makeText(Select.this,"Successfully signed out", Toast.LENGTH_SHORT).show();
+//                        finish();
+//                        break;
+//
+//                    case R.id.issue:
+//
+//                        Intent issueIntent = new Intent(Select.this,ReportIssue.class);
+//                        startActivity(issueIntent);
+//                        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+//                        break;
+//
+//                    case R.id.contact:
+//
+//                        contactsRl.setVisibility(View.VISIBLE);
+//                        addfilePage.setVisibility(View.INVISIBLE);
+//
+//                        num1 = findViewById(R.id.num1);
+//                        num2 = findViewById(R.id.num2);
+//
+//                        num1.setOnClickListener(contactsPageListener);
+//                        num2.setOnClickListener(contactsPageListener);
+//                        back.setOnClickListener(contactsPageListener);
+//
+//                        break;
+//
+//                    case R.id.feedback:
+//                        Intent feedbackIntent = new Intent(Select.this,Feedback.class);
+//                        startActivity(feedbackIntent);
+//                        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+//                        break;
+//                }
+//
+//                return true;
+//            }
+//        });
+
+
+
+    }
+
+    public void setUpMenuButtonActions(){
+        Button orderHistory,settings,feedback, contactUs,issue,needHelp,rateUs,tell_A_Friend,logout;
+
+        orderHistory = findViewById(R.id.Menu_OrderHistory);
+        settings = findViewById(R.id.Menu_Settings);
+        contactUs = findViewById(R.id.Menu_ContactUs);
+        issue = findViewById(R.id.Menu_ReportIssue);
+        needHelp = findViewById(R.id.Menu_NeedHelp);
+        rateUs = findViewById(R.id.Menu_RateUs);
+        tell_A_Friend = findViewById(R.id.Menu_Tell_A_Friend);
+        feedback = findViewById(R.id.Menu_Feedback);
+        logout = findViewById(R.id.Menu_Logout);
+
+        settings.setOnClickListener(MenuBtnListeners);
+        orderHistory.setOnClickListener(MenuBtnListeners);
+        contactUs.setOnClickListener(MenuBtnListeners);
+        issue.setOnClickListener(MenuBtnListeners);
+        feedback.setOnClickListener(MenuBtnListeners);
+        needHelp.setOnClickListener(MenuBtnListeners);
+        rateUs.setOnClickListener(MenuBtnListeners);
+        tell_A_Friend.setOnClickListener(MenuBtnListeners);
+        logout.setOnClickListener(MenuBtnListeners);
+
+    }
+    //     Create an anonymous implementation of OnClickListener
+    private View.OnClickListener MenuBtnListeners = new View.OnClickListener() {
+        @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+        public void onClick(View v) {
+
+            if(v == findViewById(R.id.Menu_Settings)){
+
+                Intent intent = new Intent(Select.this,settings.class);
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+
+            }else if(v == findViewById(R.id.Menu_OrderHistory)){
+                mProgressDialog = new ProgressDialog(Select.this);
+                // Set progressdialog title
+                mProgressDialog.setTitle("Retreiving Orders");
+                // Set progressdialog message
+                mProgressDialog.setMessage("Loading...");
+                mProgressDialog.setIndeterminate(false);
+                // Show progressdialog
+                mProgressDialog.show();
+                Context context = getApplicationContext();
+//                CharSequence text = "No order history to show.";
+                CharSequence text = "Order Cnt" + orderCnt;
+                int duration = Toast.LENGTH_SHORT;
+                Toast toast = Toast.makeText(context, text, duration);
+
+                Intent orderHistoryIntent = new Intent(Select.this, YourOrders.class);
+                startActivity(orderHistoryIntent);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+
+//                finish();
+                mProgressDialog.dismiss();
+            }else if(v == findViewById(R.id.Menu_ContactUs)){
+
+            }else if(v == findViewById(R.id.Menu_ReportIssue)){
+                Intent issueIntent = new Intent(Select.this,ReportIssue.class);
+                startActivity(issueIntent);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+            }else if(v == findViewById(R.id.Menu_Feedback)){
+                Intent feedbackIntent = new Intent(Select.this,Feedback.class);
+                startActivity(feedbackIntent);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+            }else if(v == findViewById(R.id.Menu_NeedHelp)){
+
+            }else if(v == findViewById(R.id.Menu_RateUs)){
+
+            }else if(v == findViewById(R.id.Menu_Tell_A_Friend)){
+
+            }else if(v == findViewById(R.id.Menu_Logout)){
+                FirebaseAuth.getInstance().signOut();
+                Intent signOutIntent = new Intent(Select.this, MainActivity.class);
+                signOutIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);//makesure user cant go back
+                startActivity(signOutIntent);
+                Toast.makeText(Select.this,"Successfully signed out", Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        }
+    };
+
+
     @Override
     public void onBackPressed() {
 //        super.onBackPressed();
@@ -919,7 +1058,8 @@ public class Select extends AppCompatActivity {
 
     ArrayList<String> shopKey = new ArrayList<>();
      ArrayList<String> shopNames = new ArrayList<>();
-     ArrayList<String> locations = new ArrayList<>();
+    ArrayList<String> fileNames = new ArrayList<>();
+    ArrayList<String> locations = new ArrayList<>();
      ArrayList<String> orderStatus = new ArrayList<>();
 
     //final ArrayList<String> orderkey = new ArrayList<>();
@@ -1014,24 +1154,28 @@ public class Select extends AppCompatActivity {
                 paymentModes.clear();
 
 //                Toast.makeText(Select.this,"ORDERID"+orderKeys.getChildrenCount(),Toast.LENGTH_LONG).show();
-                Log.d("NEWORDERMAP",String.valueOf(orderKeys.getValue()));
+//                Log.d("NEWORDERMAP",String.valueOf(orderKeys.getValue()));
                 for(DataSnapshot values: orderKeys.getChildren()) {
                     Map<String, Object> map = (Map<String, Object>) values.getValue();
 
                     if (map != null) {
-                        Log.d("MAPVAL", String.valueOf(map));
+//                        Log.d("MAPVAL", String.valueOf(map));
                         if (!String.valueOf(map.get("orderStatus")).equals("Done")) {
 //                            cnt = (int) orderKeys.getChildrenCount();
 
-                            files.add(Integer.parseInt(String.valueOf(map.get("files"))));
-                            locations.add(String.valueOf(map.get("ShopsLocation")));
-                            shopNames.add(String.valueOf(map.get("ShopName")));
-                            shopLat.add(Double.parseDouble(String.valueOf(map.get("ShopLat"))));
-                            shopLong.add(Double.parseDouble(String.valueOf(map.get("ShopLong"))));
-                            orderStatus.add(String.valueOf(map.get("orderStatus")));
-                            price.add(Double.parseDouble(String.valueOf(map.get("price"))));
-                            orderDate.add(String.valueOf(map.get("orderDateTime")));
-                            paymentModes.add(String.valueOf(map.get("paymentMode")));
+                            files.add(Integer.parseInt(String.valueOf(map.get("files") != null ? map.get("files") : 0)));
+                            locations.add(String.valueOf(map.get("ShopsLocation") != null ? map.get("ShopsLocation"): "NA"));
+                            shopNames.add(String.valueOf(map.get("ShopName") != null ? map.get("ShopName"): "NA"));
+                            shopLat.add(Double.parseDouble(String.valueOf(map.get("ShopLat") != null ? map.get("ShopLat") : 0)));
+                            shopLong.add(Double.parseDouble(String.valueOf(map.get("ShopLong") != null ? map.get("ShopLong") : 0)));
+                            orderStatus.add(String.valueOf(map.get("orderStatus") != null ? map.get("orderStatus") : 0));
+                            price.add(Double.parseDouble(String.valueOf(map.get("price") != null ? map.get("price") : 0)));
+                            orderDate.add(String.valueOf(map.get("orderDateTime") != null ? map.get("orderDateTime") : 0));
+                            paymentModes.add(String.valueOf(map.get("paymentMode") != null ? map.get("paymentMode") : 0));
+
+//                            for (Map.Entry<String, Object> entry : map.entrySet())
+//                                System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
+
                         }
                     }
                 }
@@ -1039,6 +1183,7 @@ public class Select extends AppCompatActivity {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
+
 
 //                        Collections.reverse(orderkey);
 //                        Collections.reverse(shopKey);
@@ -1085,6 +1230,7 @@ public class Select extends AppCompatActivity {
                     if(String.valueOf(map.get("orderStatus")).equals("Done")){
 //                        cnt = (int) (dataSnapshot.getChildrenCount()+cnt);
                         orderCnt = orderCnt + 1;
+
                         SharedPreferences sharedPreferences = getSharedPreferences(SharedPrefs,0);
                         sharedPreferences.edit().putInt("OrderHistoryCnt",orderCnt).apply();
 
@@ -1333,7 +1479,7 @@ public class Select extends AppCompatActivity {
 
 
 
-    public void moreDetails(String shopKey,String orderKey,String shopName,Double shopLat, Double shopLong, String loc,int files,String orderStatus, Double price){
+    public void moreDetails(String shopKey,String orderKey,String shopName,Double shopLat, Double shopLong, String loc,int files,String orderStatus, Double price, String orderID){
 
         Intent intent = new Intent(Select.this, OrderPlaced.class);
         Bundle extras = new Bundle();
@@ -1347,6 +1493,7 @@ public class Select extends AppCompatActivity {
         extras.putInt("Files", files);
         extras.putString("OrderStatus", orderStatus);
         extras.putDouble("Price", (Double) price);
+        extras.putString("OrderID",orderID);
         extras.putBoolean("FromYourOrders", false);
         extras.putBoolean("FromAddFilesPage", true);
 
@@ -1516,8 +1663,8 @@ public class Select extends AppCompatActivity {
                 finalConvertView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if (position < locations.size() && position < shopNames.size() && position < orderStatus.size() && position < price.size() && position < orderDate.size() && position < orderkey.size()) {
-                            moreDetails(shopKey.get(position), orderkey.get(position), shopNames.get(position), shopLat.get(position), shopLong.get(position), locations.get(position), files.get(position), orderStatus.get(position), price.get(position));
+                        if (position < locations.size() && position < shopNames.size() && position < orderStatus.size() && position < price.size() && position < orderDate.size() && position < orderkey.size() && position < orderID.size() && position < files.size()) {
+                            moreDetails(shopKey.get(position), orderkey.get(position), shopNames.get(position), shopLat.get(position), shopLong.get(position), locations.get(position), files.get(position), orderStatus.get(position), price.get(position), orderID.get(position));
                         }
 
                     }

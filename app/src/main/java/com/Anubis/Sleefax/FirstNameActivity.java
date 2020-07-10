@@ -21,6 +21,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -45,23 +46,30 @@ public class FirstNameActivity extends AppCompatActivity {
     final FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference ref = database.getReference();
     String userId,number;
-    boolean newUser;
     String name = " ",email,num;
 
     String loc,orderStatus,shopKey,fileType,pagesize,orientation,shopName;
     double shopLat;
     double shopLong;
     double userLat,userLong;
-    long shopNum;
-    int files;
-    double price;
-    int copy;
-    int resultCode;
-    int requestCode;
-    double numberOfPages;
-    String color,custom;
-    boolean FromYourOrders =false, bothSides,isTester;
     ArrayList<String> urls = new ArrayList<>();
+    ArrayList<String> fileTypes = new ArrayList<>();
+    ArrayList<String> colors = new ArrayList<>();
+    ArrayList<Integer> copies = new ArrayList<>();
+    ArrayList<String> pageSize = new ArrayList<>();
+    ArrayList<String> orientations = new ArrayList<>();
+    boolean bothSides[];
+    ArrayList<String> customPages = new ArrayList<>();
+    ArrayList<String> customValues = new ArrayList<>();
+    ArrayList<Integer> numberOfPages = new ArrayList<>();
+    ArrayList<String> fileNames = new ArrayList<>();
+    ArrayList<String> fileSizes = new ArrayList<>();
+    double pricePerFile[];
+    double totalPrice;
+    Boolean signUp,isShowPassword = false;
+    int files;
+    boolean FromYourOrders =false,isTester,newUser;
+    long shopNum;
 
 
     @Override
@@ -76,10 +84,11 @@ public class FirstNameActivity extends AppCompatActivity {
         newUser = extras.getBoolean("NewUser");
         number = extras.getString("Number");
 
+
         if(newUser){
             getNewUserOrderDetails();
         }
-        Log.d("FFFNEWUSER",String.valueOf(newUser));
+        Log.d("IS_NEWUSER",String.valueOf(newUser));
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_NOTIFICATION_POLICY) != PackageManager.PERMISSION_GRANTED) {
             // Permission is not granted
@@ -114,14 +123,11 @@ public class FirstNameActivity extends AppCompatActivity {
         });
 
     }
+
     public void getNewUserOrderDetails(){
-
-
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
-//        newUser = extras.getBoolean("NewUser");
-        email = extras.getString("Email");
-        number = extras.getString("Number");
+
         //////////////////////////////////////////////////Shop Info//////////////////////////////////////////
         shopLat = extras.getDouble("ShopLat");
         shopLong = extras.getDouble("ShopLong");
@@ -129,7 +135,7 @@ public class FirstNameActivity extends AppCompatActivity {
         loc = extras.getString("Location");
         files = extras.getInt("Files");
         orderStatus = extras.getString("OrderStatus");
-        price = extras.getDouble("Price");
+        totalPrice = extras.getDouble("Price");
         FromYourOrders = extras.getBoolean("FromYourOrders");
         shopKey = extras.getString("ShopKey");
         userLat = extras.getDouble("User Lat");
@@ -139,64 +145,75 @@ public class FirstNameActivity extends AppCompatActivity {
         /////////////////////////////////////////////////Order info////////////////////////////////////////
 
 
-        fileType = extras.getString("FileType");
-        pagesize = extras.getString("PageSize");
-        orientation = extras.getString("Orientation");
+
 
         shopNum = extras.getLong("ShopNum");
-        urls = extras.getStringArrayList("URLS");
-        copy = extras.getInt("Copies");
-        color = extras.getString("ColorType");
-        requestCode = extras.getInt("RequestCode");
-        resultCode = extras.getInt("ResultCode");
-        bothSides = extras.getBoolean("BothSides");
-        custom = extras.getString("Custom");
-        numberOfPages = extras.getDouble("Pages");
-        isTester = extras.getBoolean("IsTester");
-        newUser = extras.getBoolean("NewUser");
+        fileNames = extras.getStringArrayList("FileNames");
+        fileSizes = extras.getStringArrayList("FileSizes");
 
-        android.util.Log.d("FFFFPRICE", String.valueOf(price));
+        urls = extras.getStringArrayList("URLS");
+        fileTypes = extras.getStringArrayList("FileType");
+        pageSize = extras.getStringArrayList("PageSize");
+        orientations = extras.getStringArrayList("Orientation");
+        copies = extras.getIntegerArrayList("Copies");
+        colors = extras.getStringArrayList("ColorType");
+        bothSides = extras.getBooleanArray("BothSides");
+        customPages = extras.getStringArrayList("Custom");
+        numberOfPages = extras.getIntegerArrayList("Pages");
+
+        pricePerFile = extras.getDoubleArray("PricePerFile");
+        totalPrice = extras.getDouble("TotalPrice");
+
+        isTester = extras.getBoolean("IsTester");
 
     }
-
 
     public void sendNewUsersOrderData(){
 
         Intent intent = new Intent(FirstNameActivity.this,Payments.class);
         Bundle extras = new Bundle();
 
-        extras.putBoolean("NewUser",false);
-        extras.putString("Email", FirebaseAuth.getInstance().getCurrentUser().getEmail());
-        extras.putString("Name", FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
+        extras.putBoolean("SignUp",true);
+        extras.putBoolean("NewUser",true);
 
-        extras.putStringArrayList("URLS", urls);
+
         extras.putString("ShopName", shopName);
         extras.putString("Location", loc);
         extras.putDouble("ShopLat", shopLat);
         extras.putDouble("ShopLong", shopLong);
         extras.putInt("Files", files);
-        extras.putDouble("Price", price);
-        extras.putString("FileType", fileType);
-        extras.putString("PageSize", pagesize);
-        extras.putString("Orientation", orientation);
+        extras.putDouble("Price", totalPrice);
+
         extras.putBoolean("IsTester", isTester);
         extras.putLong("ShopNum", shopNum);
 
-        extras.putInt("Copies", copy);
-        extras.putString("ColorType", color);
-        extras.putBoolean("BothSides", bothSides);
-        extras.putString("Custom", custom);
+
+        extras.putStringArrayList("URLS", urls);
+        extras.putIntegerArrayList("Pages", numberOfPages);
+
+        extras.putBooleanArray("BothSides", bothSides);
+        extras.putStringArrayList("Custom", customPages);
+        extras.putStringArrayList("FileNames",fileNames);
+        extras.putStringArrayList("FileType", fileTypes);
+        extras.putStringArrayList("PageSize", pageSize);
+        extras.putStringArrayList("Orientation", orientations);
+        extras.putIntegerArrayList("Copies", copies);
+        extras.putStringArrayList("ColorType", colors);
+
         extras.putString("ShopKey", shopKey);
-//        extras.putString("UserID", userID);
         extras.putDouble("User Lat", userLat);
         extras.putDouble("User Long", userLong);
-        extras.putInt("RequestCode", requestCode);
-        extras.putInt("ResultCode", resultCode);
-        extras.putDouble("Pages", numberOfPages);
+        extras.putStringArrayList("FileSizes",fileSizes);
+
+        extras.putDoubleArray("PricePerFile",pricePerFile);
+        extras.putDouble("TotalPrice",totalPrice);
         intent.putExtras(extras);
+
         startActivity(intent);
 
+
     }
+
 
     private void attemptRegistration(){
 
@@ -246,38 +263,26 @@ public class FirstNameActivity extends AppCompatActivity {
         new Handler().post(new Runnable() {
             @Override
             public void run() {
+
                 ///////Saving users name on the android phone locally./////
                 saveDisplayNameLocally(name,Long.parseLong(num));
 
                     if(newUser){
+                        Toast.makeText(FirstNameActivity.this, "NEW_USER "+newUser, Toast.LENGTH_SHORT).show();
+
                         ref.child("users").child(userId).setValue(info);
                         sendNewUsersOrderData();
                     }else{
+                        Toast.makeText(FirstNameActivity.this, "NOT_NEW_USER "+newUser, Toast.LENGTH_SHORT).show();
+
                         Intent goToMainPage = new Intent(FirstNameActivity.this,Select.class);
                         ref.child("users").child(userId).setValue(info);
                         Bundle bundle = new Bundle();
                         bundle.putBoolean("NewUser",false);
                         goToMainPage.putExtras(bundle);
-                        startActivity(goToMainPage);
-                        finish();
+//                        startActivity(goToMainPage);
                     }
 
-
-//                    ref.addValueEventListener(new ValueEventListener() {
-//                        @Override
-//                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-////                            if (!dataSnapshot.child("users").hasChild(userId)) {
-//
-////                            }
-//                        }
-//
-//                        @Override
-//                        public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//                        }
-//
-//
-//                    });
 
             }
         });

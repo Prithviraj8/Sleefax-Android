@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.Anubis.Sleefax">
+    <!-- Android Play store SHA-1 Key for this app -->
+    <!-- b5:58:3a:24:1c:f8:1d:d1:45:a2:63:0f:46:9b:54:3c:df:47:80:80 -->
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google OrderPlaced Android API v2, but you must specify either coarse or fine
@@ -21,8 +24,12 @@
         android:label="@string/app_Name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".verifyOTPActivity"></activity>
+        android:theme="@style/AppTheme"
+        tools:replace="android:label">
+        <activity android:name=".ShowFullDetails"></activity>
+        <activity android:name=".ShopDetailsActivity" />
+        <activity android:name=".ReviewOrderActivity" />
+        <activity android:name=".verifyOTPActivity" />
         <activity android:name=".ProcessingOrderProgressActivity" />
         <activity
             android:name=".SplashActivity"
@@ -111,16 +118,13 @@
                 <action android:name="android.intent.action.MAIN" />
                 <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
             </intent-filter>
-        </activity>
-
-<!--        <service-->
-<!--            android:name=".Services.MyFirebaseMessagingService"-->
-<!--            android:exported="false">-->
-<!--            <intent-filter>-->
-<!--                <action android:name="com.google.firebase.MESSAGING_EVENT" />-->
-<!--            </intent-filter>-->
-<!--        </service>-->
-
+        </activity> <!-- <service -->
+        <!-- android:name=".Services.MyFirebaseMessagingService" -->
+        <!-- android:exported="false"> -->
+        <!-- <intent-filter> -->
+        <!-- <action android:name="com.google.firebase.MESSAGING_EVENT" /> -->
+        <!-- </intent-filter> -->
+        <!-- </service> -->
         <meta-data
             android:name="com.razorpay.ApiKey"
             android:value="rzp_test_VVGChG6ThLrzyS" />

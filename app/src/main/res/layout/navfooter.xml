@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+
+<!--    <TextView-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_alignBottom="@+id/Menu_Logout"-->
+<!--        android:layout_alignParentTop="true"-->
+<!--        android:layout_centerHorizontal="true"-->
+<!--        android:layout_marginTop="0dp"-->
+<!--        android:layout_marginBottom="0dp"-->
+<!--        android:fontFamily="@font/poppins_medium"-->
+<!--        android:text="Logout"-->
+<!--        android:textAlignment="center"-->
+<!--        android:textColor="#FFFFFF"-->
+<!--        android:textSize="23sp"/>-->
+
+    <Button
+        android:id="@+id/Menu_Logout"
+        android:layout_width="191dp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:background="#00FFFFFF"
+        android:text="Logout"
+        android:textSize="21sp"
+        android:textColor="#FFF"
+        android:fontFamily="@font/poppins_medium"/>
+
+    <ImageView
+        android:layout_width="40dp"
+        android:layout_height="25dp"
+        android:layout_alignStart="@+id/Menu_Logout"
+        android:layout_alignBottom="@+id/Menu_Logout"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="12dp"
+        android:src="@drawable/logoutmenu" />
+
+
+</RelativeLayout>

@@ -79,9 +79,8 @@ public class ShopsActivity extends AppCompatActivity {
     ListView shopsLV;
 //    ArrayList<Integer> pageCopies = new ArrayList<Integer>();
 //    ArrayList<String> storeID = new ArrayList<>();
-    ArrayList<String> urls = new ArrayList<>();
 //    ArrayList<Uri> urls = new ArrayList<>();
-    ImageButton crop,back;
+    ImageButton back;
     Button no,confirm;
     int copy;
     ArrayList<Double> price = new ArrayList<>();
@@ -92,12 +91,7 @@ public class ShopsActivity extends AppCompatActivity {
 //    Page_Info info = new Page_Info();
     final Location userLoc = new Location("");
 
-
-
     RelativeLayout relativeLayoutUpper;
-
-
-
 
     View confirmView;
     TextView orderPrice,confirmOrder,paymentModeTV,tv;
@@ -116,7 +110,7 @@ public class ShopsActivity extends AppCompatActivity {
 
     RelativeLayout proceedLayout;
 
-    ArrayList<String> pdfURL = new ArrayList<>();
+    ArrayList<String> urls = new ArrayList<>();
     ArrayList<String> fileTypes = new ArrayList<>();
     ArrayList<String> colors = new ArrayList<>();
     ArrayList<Integer> copies = new ArrayList<>();
@@ -128,6 +122,8 @@ public class ShopsActivity extends AppCompatActivity {
     ArrayList<Integer> numberOfPages = new ArrayList<>();
     ArrayList<String> fileNames = new ArrayList<>();
     ArrayList<String> fileSizes = new ArrayList<>();
+    double pricePerFile[];
+    double totalPrice;
 
     //    private FusedLocationProviderClient fusedLocationClient;
     LocationManager locationManager;
@@ -200,8 +196,6 @@ public class ShopsActivity extends AppCompatActivity {
         paymentModeTV = findViewById(R.id.paymentTV);
 
         urls = extras.getStringArrayList("URLS");
-        Toast.makeText(this, "URLSIZE "+urls.size(), Toast.LENGTH_SHORT).show();
-//        copy = extras.getInt("Copies");
         copies = extras.getIntegerArrayList("Copies");
         colors = extras.getStringArrayList("ColorType");
         fileTypes = extras.getStringArrayList("FileType");
@@ -218,6 +212,9 @@ public class ShopsActivity extends AppCompatActivity {
         customValues = extras.getStringArrayList("CustomValue");
         fileNames = extras.getStringArrayList("FileNames");
         fileSizes = extras.getStringArrayList("FileSizes");
+
+        pricePerFile = extras.getDoubleArray("PricePerFile");
+        totalPrice = extras.getDouble("TotalPrice");
 
         if(!newUser){
             userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -245,7 +242,19 @@ public class ShopsActivity extends AppCompatActivity {
     }
 
 
-    double finalPrice = 0.0;
+    //Create an anonymous implementation of OnClickListener
+    private View.OnClickListener BtnListener = new View.OnClickListener() {
+        @SuppressLint("SetTextI18n")
+        @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+        public void onClick(View v) {
+
+            if(v == findViewById(R.id.showtime)){
+
+            }
+        }
+    };
+
+            double finalPrice = 0.0;
     public void calculatePrice(){
         ArrayList<Integer> cnt = new ArrayList<>();
 
@@ -540,10 +549,11 @@ public class ShopsActivity extends AppCompatActivity {
                     final TextView Price = convertView.findViewById(R.id.Price);
                     final TextView Distance = convertView.findViewById(R.id.Distance);
                     final RelativeLayout ShopLayout = convertView.findViewById(R.id.shop);
-//                    ImageButton button = convertView.findViewById(R.id.ShopsLVButton);
-//                    Files.setText("Files: "+urls.size());
+                    final ImageButton shopDetails = convertView.findViewById(R.id.showtime);
 
-//                    ShopsName.setText("Shops1");
+
+
+
             userLoc.setLatitude(user_loc.latitude);
             userLoc.setLongitude(user_loc.longitude);
             final View finalConvertView = convertView;
@@ -582,6 +592,7 @@ public class ShopsActivity extends AppCompatActivity {
                             public void run() {
 
                                 if(position<shopLat.size()&&position<shopLong.size()) {
+
                                     double finalShopLat = shopLat.get(position);
                                     double finalShopLong = shopLong.get(position);
 
@@ -591,7 +602,6 @@ public class ShopsActivity extends AppCompatActivity {
 
                                     int distanceFromShop = (int) userLoc.distanceTo(shopLoc);
                                     distances.add((double) (distanceFromShop / 1000));
-
 
                                 }
 
@@ -603,10 +613,11 @@ public class ShopsActivity extends AppCompatActivity {
                             @Override
                             public void run() {
                                 if(position<shopNames.size()) {
+
                                     ShopsName.setText(shopNames.get(position));
                                     Location.setText(locations.get(position));
-//                                    Files.setText("Files : " + urls.size());
                                     Distance.setText("~" + (distances.get(position)) + "km");
+
                                 }
                             }
                         }, 300);
@@ -617,8 +628,15 @@ public class ShopsActivity extends AppCompatActivity {
                             @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
                             @Override
                             public void onClick(View v) {
-                                Log.d("VIEW ","Tapped");
-                                //Drawable drawable = getDrawable(R.drawable.outline);
+
+//                                Drawable initialDrawable = getDrawable(R.drawable.white_bg_layout);
+//                                ShopLayout.setBackground(initialDrawable);
+
+
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                    Log.d("FOCUS",String.valueOf(finalConvertView.getFocusable()));
+                                }
+
                                 Drawable drawable = getDrawable(R.drawable.outline);
                                 ShopLayout.setBackground(drawable);
                                 proceedLayout.setVisibility(View.VISIBLE);
@@ -626,18 +644,31 @@ public class ShopsActivity extends AppCompatActivity {
                                 proceedLayout.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
-
                                         processOrder(storeID.get(position),locations.get(position),shopLat.get(position),shopLong.get(position),shopNames.get(position),numbers.get(position),urls.size(),1);
-
                                     }
                                 });
 
                                 ////// Haven't calculated price yet for selection of multiple orders//////
                                  //   processOrder(storeID.get(position),locations.get(position),shopLat.get(position),shopLong.get(position),shopNames.get(position),numbers.get(position),urls.size(),1);
 
-
                             }
 
+                        });
+
+
+                        shopDetails.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                                Intent intent = new Intent(ShopsActivity.this,ShopDetailsActivity.class);
+                                Bundle bundle = new Bundle();
+                                bundle.putString("ShopID",storeID.get(position));
+                                bundle.putBoolean("IsTester",isTester);
+                                bundle.putString("ShopType",shopType);
+                                intent.putExtras(bundle);
+                                startActivity(intent);
+
+                            }
                         });
 
                     }
@@ -688,11 +719,18 @@ public class ShopsActivity extends AppCompatActivity {
         this.shopName = ShopName;
         this.files = files;
         this.shopNum = num;
+        Intent intent;
+        Bundle extras;
 
-
-
-        Intent intent = new Intent(ShopsActivity.this, Payments.class);
-        Bundle extras = new Bundle();
+        if(!newUser) {
+            intent = new Intent(ShopsActivity.this, Payments.class);
+            extras = new Bundle();
+        }else{
+            intent = new Intent(ShopsActivity.this, SignInActivity.class);
+            extras = new Bundle();
+            extras.putBoolean("SignUp",true);
+            extras.putBoolean("NewUser",true);
+        }
 
         extras.putStringArrayList("URLS", urls);
         extras.putString("ShopName", shopName);
@@ -700,13 +738,6 @@ public class ShopsActivity extends AppCompatActivity {
         extras.putDouble("ShopLat", shopLat);
         extras.putDouble("ShopLong", shopLong);
         extras.putInt("Files", files);
-//        extras.putDouble("Price", price);
-
-        ///// Change default price value here to calculated price...//////
-        extras.putDouble("Price", 1);
-
-        Log.d("PRICE", String.valueOf(price));
-
         extras.putIntegerArrayList("Copies", copies);
         extras.putStringArrayList("ColorType", colors);
         extras.putStringArrayList("Custom", customPages);
@@ -716,22 +747,15 @@ public class ShopsActivity extends AppCompatActivity {
         extras.putIntegerArrayList("Pages", numberOfPages);
         extras.putStringArrayList("FileNames",fileNames);
         extras.putStringArrayList("FileSizes",fileSizes);
-
         extras.putBoolean("IsTester", isTester);
         extras.putLong("ShopNum", shopNum);
-
-//        if (username != null && email != null && usernum > 0) {
-//            extras.putString("Username", username);
-//            extras.putString("email", email);
-//            extras.putLong("UserNumber", usernum);
-//        }
-
-
         extras.putString("ShopKey", storeID);
         extras.putString("UserID", userID);
         extras.putDouble("User Lat", userLoc.getLatitude());
         extras.putDouble("User Long", userLoc.getLongitude());
-        extras.putBoolean("NewUser",newUser);
+
+        extras.putDoubleArray("PricePerFile",pricePerFile);
+        extras.putDouble("TotalPrice",totalPrice);
 
         intent.putExtras(extras);
         startActivity(intent);

@@ -201,8 +201,11 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
     ArrayList<String> orientations = new ArrayList<>();
     boolean bothSides[];
     ArrayList<String> customPages = new ArrayList<>();
-    ArrayList<String> customValues = new ArrayList<>();
-    double numberOfPages[];
+    ArrayList<Integer> numberOfPages = new ArrayList<>();
+
+    double pricePerFile[];
+    double totalPrice;
+
     ArrayList<String> fileNames = new ArrayList<>();
     ArrayList<String> fileSizes = new ArrayList<>();
 
@@ -233,32 +236,24 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
 
         getOrderInfo();
 
-        if(!newUser) {
+//        if(!newUser) {
             userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
             getCurrentUserInfo();
-            Log.d("ISTESTER",String.valueOf(isTester));
 
             if(isTester){
                 shopType = "TestStores";
             }else{
                 shopType = "Stores";
             }
-            //Gathering ids of pervious orders
-
             getId();
-
-
-        }else{
-
-            sendData();
-        }
+//        }
 
         paytm = findViewById(R.id.paytm);
       //  upi = findViewById(R.id.upi);
         payOnPickup = findViewById(R.id.pickup);
        //    otherPayments = findViewById(R.id.otherPayments);
         amount = findViewById(R.id.amount);
-        amount.setText(""+price);
+        amount.setText(String.valueOf(totalPrice));
 
         shortAnimationDuration = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
@@ -404,6 +399,24 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
 //            }
 //        });
 
+//        Toast.makeText(Payments.this, "CUSTOMPAGES "+ customPages.get(0), Toast.LENGTH_SHORT).show();
+
+
+//        for(int i = 0;i<fileTypes.size();i++){
+//            if(fileTypes.get(i).contains("application/vnd.openxmlformats-officedocument.wordprocessingml.document")){
+//                fileTypes.add(i,"Docx");
+//            }else if(fileTypes.get(i).contains("presentation")){
+//                fileTypes.add(i,"PPTX");
+//            }else if(fileTypes.get(i).contains("powerpoint")){
+//                fileTypes.add(i,"PPT");
+//            }else if(fileTypes.get(i).equals("application/msword")){
+//                fileTypes.add(i,"Word");
+//            }else if(fileTypes.get(i).equals("application/pdf")){
+//                fileTypes.add(i,"PDF");
+//            }
+//        }
+
+
     }
 
 
@@ -450,11 +463,13 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
         colors = extras.getStringArrayList("ColorType");
         bothSides = extras.getBooleanArray("BothSides");
         customPages = extras.getStringArrayList("Custom");
-        numberOfPages = extras.getDoubleArray("Pages");
+        numberOfPages = extras.getIntegerArrayList("Pages");
+
+        pricePerFile = extras.getDoubleArray("PricePerFile");
+        totalPrice = extras.getDouble("TotalPrice");
 
         isTester = extras.getBoolean("IsTester");
         newUser = extras.getBoolean("NewUser");
-        Toast.makeText(this, "FILETPYE "+fileType, Toast.LENGTH_SHORT).show();
 
     }
 
@@ -742,22 +757,12 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
 
 
     public void sendData(){
-//        view3.setVisibility(View.GONE);
-//        orderProcessAnime.setVisibility(View.GONE);
-//        mProgress.setVisibility(View.GONE);
-//        tv.setVisibility(View.GONE);
 
         Intent intent;
         Bundle extras = new Bundle();
 
-        if (newUser) {
-            intent = new Intent(Payments.this,SignInActivity.class);
-            extras.putBoolean("SignUp",true);
-            extras.putBoolean("NewUser",true);
-        }else{
-            intent = new Intent(Payments.this,OrderPlaced.class);
-        }
 
+        intent = new Intent(Payments.this,OrderPlaced.class);
 
         extras.putString("ShopName", shopName);
         extras.putString("Location", loc);
@@ -777,23 +782,26 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
         }
 
         extras.putStringArrayList("URLS", urls);
-        extras.putDoubleArray("Pages", numberOfPages);
+        extras.putIntegerArrayList("Pages", numberOfPages);
+
         extras.putBooleanArray("BothSides", bothSides);
-        extras.putIntegerArrayList("Copies", copies);
-        extras.putStringArrayList("ColorType", colors);
+        extras.putStringArrayList("Custom", customPages);
+        extras.putStringArrayList("FileNames",fileNames);
         extras.putStringArrayList("FileType", fileTypes);
         extras.putStringArrayList("PageSize", pageSize);
         extras.putStringArrayList("Orientation", orientations);
-        extras.putStringArrayList("Custom", customPages);
+        extras.putIntegerArrayList("Copies", copies);
+        extras.putStringArrayList("ColorType", colors);
 
         extras.putString("OrderKey", orderKey);
         extras.putString("ShopKey", shopKey);
         extras.putDouble("User Lat", userLat);
         extras.putDouble("User Long", userLong);
         extras.putString("PaymentMode",paymentMode);
-        extras.putStringArrayList("FileNames",fileNames);
         extras.putStringArrayList("FileSizes",fileSizes);
 
+        extras.putDoubleArray("PricePerFile",pricePerFile);
+        extras.putDouble("TotalPrice",totalPrice);
 
         intent.putExtras(extras);
         startActivity(intent);
@@ -950,6 +958,9 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
     int id = 0,custorderID=0;
     FirebaseStorage storage = FirebaseStorage.getInstance();
     StorageReference storageRef = storage.getReference();
+
+   
+
     public class uploadFile extends AsyncTask<ArrayList<String>,Void,Void> {
     final int[] uploadCnt = {0};
 
@@ -959,31 +970,56 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
         protected Void doInBackground(final ArrayList<String>... arrayLists) {
 
             String currentDate = new SimpleDateFormat("dd/MM/yy", Locale.getDefault()).format(new Date());
-            String currentTime = new SimpleDateFormat("HH:mm a", Locale.getDefault()).format(new Date());
+            String currentTime = new SimpleDateFormat("hh:mm a", Locale.getDefault()).format(new Date());
             orderDateTime = currentTime +" " +currentDate;
 
             final ObjectAnimator[] progressAnimator = new ObjectAnimator[1];
             Uri uri;
 
+
+
+            
             for (int i = 0; i < urls.size(); i++) {
                 final String file = urls.get(i);
                 uri = Uri.parse(file);
 
-                final String uniqueID = UUID.randomUUID().toString();
-                final StorageReference filesRef;
 
-                if(fileTypes.get(i).contains("document")){
-                    fileTypes.add(i,"Docx");
+                final String uniqueID = UUID.randomUUID().toString();
+                StorageReference filesRef = null;
+//                if(fileTypes.get(i).equals("application/vnd.openxmlformats-officedocument.wordprocessingml.document")){
+//                    fileTypes.add(i,"Docx");
+//                    filesRef = storageRef.child(uniqueID+".docx");
+//                }else if(fileTypes.get(i).equals("application/vnd.openxmlformats-officedocument.presentationml.presentation")){
+//                    fileTypes.add(i,"PPTX");
+//                    filesRef = storageRef.child(uniqueID+".pptx");
+//                }else if(fileTypes.get(i).equals("application/vnd.ms-powerpoint")){
+//                    fileTypes.add(i,"PPT");
+//                    filesRef = storageRef.child(uniqueID+".ppt");
+//                }else if(fileTypes.get(i).equals("application/msword")){
+//                    fileTypes.add(i,"Word");
+//                    filesRef = storageRef.child(uniqueID+".doc");
+//                }else if(fileTypes.get(i).equals("application/pdf")){
+//                    fileTypes.add(i,"PDF");
+//                    filesRef = storageRef.child(uniqueID+".pdf");
+//                }
+
+                
+                
+                
+                if(fileTypes.get(i).equals("Docx")){
                     filesRef = storageRef.child(uniqueID+".docx");
-                }else if(fileTypes.get(i).contains("powerpoint")){
-                    fileTypes.add(i,"PowerPoint");
+                }else if(fileTypes.get(i).equals("PPTX")){
                     filesRef = storageRef.child(uniqueID+".pptx");
-                }else if(fileTypes.get(i).equals("application/msword")){
-                    fileTypes.add(i,"Word");
+                }else if(fileTypes.get(i).equals("PPT")){
+                    filesRef = storageRef.child(uniqueID+".ppt");
+                }else if(fileTypes.get(i).equals("Word")){
                     filesRef = storageRef.child(uniqueID+".doc");
-                }else{
-                    fileTypes.add(i,"PDF");
+                }else if(fileTypes.get(i).equals("PDF")){
+//                    fileTypes.add(i,"PDF");
                     filesRef = storageRef.child(uniqueID+".pdf");
+                }
+                if (fileTypes.get(0).equals("IMAGE")){
+                    filesRef = storageRef.child(uniqueID+".jpg");
                 }
 
 //        if (Build.VERSION.SDK_INT < 19) {
@@ -994,6 +1030,8 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
                 final int finalI = i;
                 final Uri finalUri = uri;
 
+                final StorageReference finalFilesRef = filesRef;
+                final StorageReference finalFilesRef1 = filesRef;
                 uploadTask.addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception exception) {
@@ -1044,7 +1082,7 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
 
                                 uploadCnt[0]++;
                                 // Continue with the task to get the download URL
-                                return filesRef.getDownloadUrl();
+                                return finalFilesRef1.getDownloadUrl();
                             }
                         }).addOnCompleteListener(new OnCompleteListener<Uri>() {
 
@@ -1090,10 +1128,10 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
                                         android.util.Log.d("OTPCREATED",(otp));
 
                                         orderID = uniqueID.substring(uniqueID.length()-8);
-                                        shopinfo orderInfo = new shopinfo(storeID,loc, shopName, "Placed", shopLat, shopLong, shopNum, files, price, orderDateTime, false, false, false, false, false, paymentMode, custorderID,orderID,otp,false);
+                                        shopinfo orderInfo = new shopinfo(storeID,loc, shopName, "Placed", shopLat, shopLong, shopNum, files, totalPrice, orderDateTime, false, false, false, false, false, paymentMode, custorderID,orderID,otp,false);
 
                                         android.util.Log.d("ORDERIDSAVED",(uniqueID.substring(uniqueID.length()-8)));
-                                        info userinfo = new info(username, email, usernum, "android", "Placed", orderDateTime, id,  price, paymentMode,userId,files,false,orderID,otp,false);
+                                        info userinfo = new info(username, email, usernum, "android", "Placed", orderDateTime, id,  totalPrice, paymentMode,userId,files,false,orderID,otp,false);
 
 
 //                                        db = db.child("users").child(userId).child("Orders").child(storeID).child(orderKey);
@@ -1116,20 +1154,33 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
                                             page_INFO pageInfo;
 
 
-                                            if(fileTypes.get(0).equals("Image")){
-                                                 pageInfo = new page_INFO(downloadUrls.get(k), colors.get(0), copies.get(0), fileTypes.get(0), pageSize.get(0), orientations.get(0));
+                                            if(fileTypes.get(0).equals("IMAGE")){
+                                                pageInfo = new page_INFO(downloadUrls.get(k), colors.get(0), copies.get(0), fileTypes.get(0), pageSize.get(0), orientations.get(0),fileNames.get(k),fileSizes.get(k),pricePerFile[k],urls.get(k));
                                                 db.push().setValue(pageInfo);
                                                 storeDb.push().setValue(pageInfo);
                                             }else{
                                                 if(fileSizes.get(k).length()>=4){
-                                                    fileSizes.set(k,fileSizes.get(k)+"MB");
+                                                    fileSizes.set(k,fileSizes.get(k));
                                                 }else {
-                                                    fileSizes.set(k,fileSizes.get(k)+"KB");
+                                                    fileSizes.set(k,fileSizes.get(k));
                                                 }
                                                 if(fileNames.size() <= k){
-                                                    single = new eachFileInfo(downloadUrls.get(k), colors.get(k), copies.get(k), fileTypes.get(k), pageSize.get(k), orientations.get(k),"Unknown File Name",customPages.get(k),fileSizes.get(k));
+                                                    single = new eachFileInfo(downloadUrls.get(k), colors.get(k), copies.get(k), fileTypes.get(k), fileTypes.get(k), pageSize.get(k), orientations.get(k),"Unknown File Name",customPages.get(k),fileSizes.get(k),pricePerFile[k],urls.get(k));
                                                 }else {
-                                                    single = new eachFileInfo(downloadUrls.get(k), colors.get(k), copies.get(k), fileTypes.get(k), pageSize.get(k), orientations.get(k), fileNames.get(k), customPages.get(k),fileSizes.get(k));
+                                                    Log.d("DOWNLOADURLS",downloadUrls.get(k));
+                                                    Log.d("COLOR",colors.get(k));
+                                                    Log.d("FTYPES",fileTypes.get(k));
+                                                    Log.d("DOWNLOADURLS",pageSize.get(k));
+                                                    Log.d("DOWNLOADURLS",orientations.get(k));
+                                                    Log.d("DOWNLOADURLS",fileNames.get(k));
+                                                    Log.d("DOWNLOADURLS",customPages.get(k));
+                                                    Log.d("DOWNLOADURLS",fileSizes.get(k));
+                                                    Log.d("DOWNLOADURLS", String.valueOf(pricePerFile[k]));
+
+                                                    if(colors.get(k) == null){
+                                                        colors.add(k, "Black/White");
+                                                    }
+                                                    single = new eachFileInfo(downloadUrls.get(k), colors.get(k), copies.get(k), fileTypes.get(k), fileTypes.get(k), pageSize.get(k), orientations.get(k), fileNames.get(k), customPages.get(k),fileSizes.get(k),pricePerFile[k],urls.get(k));
                                                 }
                                                 db.push().setValue(single);
                                                 storeDb.push().setValue(single);
@@ -1143,7 +1194,8 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
 //                                                  if(!ring.isPlaying()) {
                                                     Toast.makeText(Payments.this, "Starting audio", Toast.LENGTH_SHORT).show();
 //                                                    ring.start();
-                                                    launchRocket();
+                                                    showNotification(orderKey);
+//                                                    launchRocket();
                                                 }
 
 //                                                if(!ring.isPlaying()) {

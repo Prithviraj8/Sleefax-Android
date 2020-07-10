@@ -219,24 +219,25 @@
                     android:layout_centerVertical="true"
                     android:layout_alignParentLeft="true"
                     android:layout_marginLeft="50dp"/>
+
                 <EditText
+                    android:id="@+id/PDF_copies"
                     android:layout_width="73dp"
                     android:layout_height="30dp"
-                    android:background="@drawable/blue_background_texts"
+                    android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
+                    android:layout_marginRight="50dp"
+                    android:background="@drawable/blue_background_texts"
                     android:elevation="10dp"
-                    android:id="@+id/PDF_copies"
-                    android:text="0"
-                    android:inputType="number"
                     android:focusable="auto"
                     android:focusedByDefault="false"
-                    android:textColor="#FFFFFF"
                     android:fontFamily="@font/poppins_medium"
-                    android:textStyle="bold"
-                    android:textSize="18sp"
                     android:gravity="center"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginRight="50dp"/>
+                    android:inputType="number"
+                    android:text="1"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
             </RelativeLayout>
 
             <RelativeLayout
@@ -274,7 +275,9 @@
                         android:gravity="center"
                         android:popupBackground="@drawable/blue_background_texts"
                         android:spinnerMode="dropdown"
-                        /></RelativeLayout>
+                        android:textAlignment="center"
+                        />
+                </RelativeLayout>
             </RelativeLayout>
 
             <RelativeLayout
@@ -311,14 +314,16 @@
                         android:gravity="center"
                         android:background="@android:color/transparent"
                         android:popupBackground="@drawable/blue_background_texts"
-                        android:spinnerMode="dropdown" /></RelativeLayout>
+                        android:spinnerMode="dropdown"
+                        android:textAlignment="center"/>
+                </RelativeLayout>
             </RelativeLayout>
 
             <RelativeLayout
                 android:layout_width="333dp"
                 android:layout_height="89dp"
                 android:elevation="5dp"
-                android:id="@+id/sides"
+                android:id="@+id/bothsidesRL"
                 android:background="@drawable/white_bg_layout"
                 android:layout_marginTop="20dp">
 
@@ -356,7 +361,7 @@
                 android:layout_width="333dp"
                 android:layout_height="89dp"
                 android:elevation="5dp"
-                android:id="@+id/custompages"
+                android:id="@+id/custompagesRL"
                 android:background="@drawable/white_bg_layout"
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="70dp">
@@ -517,7 +522,7 @@
 
                 <TextView
                     android:layout_width="70dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="35dp"
                     android:layout_centerVertical="true"
                     android:text="Book.pdf"
                     android:id="@+id/fileNameTV"
@@ -525,7 +530,10 @@
                     android:fontFamily="@font/poppins_semibold"
                     android:textStyle="bold"
                     android:textColor="#FFFFFF"
-                   />
+                    android:autoSizeTextType="uniform"
+                    android:textAlignment="center"
+                    android:padding="5dp"
+                    />
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -559,90 +567,102 @@
             </RelativeLayout>
 
             <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="34dp"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:background="@drawable/blue_background_texts"
-                android:layout_centerVertical="true"
                 android:id="@+id/previous"
-                android:layout_toRightOf="@id/name_price"
+                android:layout_width="100dp"
+                android:layout_height="34dp"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="10dp"
                 android:layout_marginLeft="10dp"
+                android:layout_toEndOf="@+id/name_price"
+                android:layout_toRightOf="@id/name_price"
+                android:background="@drawable/blue_background_texts"
                 >
 
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/arrow_left_white"
+                    android:layout_alignParentStart="true"
                     android:layout_centerVertical="true"
-                    />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:src="@drawable/arrow_left_white" />
+
+                <Button
+                    android:id="@+id/PreviousBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+
+                    android:layout_centerVertical="true"
+                    android:background="#00FFFFFF"
                     android:fontFamily="@font/poppins_semibold"
                     android:text="Previous"
                     android:textColor="#FFFFFF"
-                    android:textSize="13dp"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="20dp"/>
+                    android:textSize="13dp" />
+
 
             </RelativeLayout>
 
+            <!--            <RelativeLayout-->
+            <!--                android:layout_width="wrap_content"-->
+            <!--                android:layout_height="34dp"-->
+            <!--                android:background="@drawable/blue_background_texts"-->
+            <!--                android:paddingHorizontal="10dp"-->
+            <!--                android:layout_toRightOf="@id/previous"-->
+            <!--                android:layout_centerVertical="true"-->
+            <!--                android:layout_marginRight="10dp"-->
+            <!--                android:layout_marginLeft="10dp"-->
+            <!--                android:id="@+id/next"-->
+            <!--                android:visibility="gone">-->
+
+            <!--                <TextView-->
+            <!--                    android:layout_width="wrap_content"-->
+            <!--                    android:layout_height="wrap_content"-->
+            <!--                    android:text="Next"-->
+            <!--                    android:fontFamily="@font/poppins_semibold"-->
+            <!--                    android:textColor="#FFFFFF"-->
+            <!--                    android:textSize="13dp"-->
+            <!--                    android:id="@+id/textviewnext"-->
+            <!--                    android:layout_marginLeft="20dp"-->
+            <!--                    android:layout_centerVertical="true" />-->
+            <!--                <ImageView-->
+            <!--                    android:layout_width="wrap_content"-->
+            <!--                    android:layout_height="wrap_content"-->
+            <!--                    android:layout_toRightOf="@id/textviewnext"-->
+            <!--                    android:layout_marginLeft="10dp"-->
+            <!--                    android:layout_marginRight="10dp"-->
+            <!--                    android:src="@drawable/arrow"-->
+            <!--                    android:layout_centerVertical="true" />-->
+            <!--            </RelativeLayout>-->
+
             <RelativeLayout
-                android:layout_width="wrap_content"
+                android:layout_width="100dp"
                 android:layout_height="34dp"
                 android:background="@drawable/blue_background_texts"
-                android:paddingHorizontal="10dp"
-                android:layout_toRightOf="@id/previous"
                 android:layout_centerVertical="true"
-                android:layout_marginRight="10dp"
-                android:layout_marginLeft="10dp"
-                android:id="@+id/next">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Next"
-                    android:fontFamily="@font/poppins_semibold"
-                    android:textColor="#FFFFFF"
-                    android:textSize="13dp"
-                    android:id="@+id/textviewnext"
-                    android:layout_marginLeft="20dp"
-                    android:layout_centerVertical="true" />
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/textviewnext"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
-                    android:src="@drawable/arrow"
-                    android:layout_centerVertical="true" />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="34dp"
-                android:paddingHorizontal="30dp"
-                android:background="@drawable/blue_background_texts"
-                android:layout_centerVertical="true"
-                android:id="@+id/pdfDone"
+                android:id="@+id/DoneBtnRL"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:visibility="visible"
-                android:layout_toRightOf="@id/previous"
-                >
+                android:layout_toRightOf="@id/previous">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textSize="13dp"
-                    android:textStyle="bold"
+
+                <Button
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#00FFFFFF"
+                    android:id="@+id/pdfDone"
+                    android:textColor="#FFF"
                     android:text="Done"
-                    android:fontFamily="@font/poppins_semibold"
-                    android:textColor="#FFFFFF"
-                    android:gravity="center"
+                    android:textAlignment="center"
+                    android:layout_centerInParent="true"/>
+
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/nextBtnArrow"
                     android:layout_centerVertical="true"
-                    android:layout_centerHorizontal="true"/>
+                    android:layout_alignRight="@+id/pdfDone"
+                    android:layout_marginRight="5dp"
+                    android:src="@drawable/arrow" />
 
             </RelativeLayout>
 
@@ -693,15 +713,6 @@
 
     </RelativeLayout>
 
-    <com.github.barteksc.pdfviewer.PDFView
-        android:id="@+id/viewPDF"
-        android:layout_width="match_parent"
-        android:layout_height="680dp"
-        android:layout_centerInParent="true"
-        android:layout_marginTop="0dp"
-        android:visibility="invisible" />
-
-
 
     <ScrollView
         android:id="@+id/ViewerScollView"
@@ -740,6 +751,13 @@
         android:text="Dissmiss"
         android:textColor="#000000"
         android:visibility="gone" />
+
+    <com.github.barteksc.pdfviewer.PDFView
+        android:id="@+id/viewPDF"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerHorizontal="true"
+        android:visibility="invisible" />
 
 
 </RelativeLayout>

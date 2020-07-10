@@ -109,6 +109,7 @@ public class YourOrders extends AppCompatActivity {
      ArrayList<Integer> files = new ArrayList<>();
      ArrayList<Double> price = new ArrayList<>();
      ArrayList<Integer> ids = new ArrayList<>();
+     ArrayList<String> orderID = new ArrayList<>();
 
     public void getOrders(){
 
@@ -128,6 +129,7 @@ public class YourOrders extends AppCompatActivity {
 //                        orderCnt = orderCnt + 1;
                         shopKey.add(String.valueOf(map.get("storeId")));
                         orderkey.add(dataSnapshot.getKey());
+                        orderID.add(String.valueOf(map.get("orderID")));
                     }
 //                }
             }
@@ -285,7 +287,7 @@ public class YourOrders extends AppCompatActivity {
                 Files.setText("Files : " + files.get(position));
                 Price.setText("Price : ₹" + price.get(position));
                 orderDateAndTime.setText(orderDate.get(position));
-                orderIDTV.setText("Order ID : " + orderkey.get(position));
+                orderIDTV.setText("Order ID : " + orderID.get(position));
                 paymentModeTV.setText(paymentModes.get(position));
 
                 if ((orderStatus.get(position)).equals("Done")){
@@ -309,8 +311,8 @@ public class YourOrders extends AppCompatActivity {
                         extras.putString("Location", locations.get(position));
                         extras.putInt("Files", files.get(position));
                         extras.putString("OrderStatus", orderStatus.get(position));
-                        Log.d("ORDERSTATS",orderStatus.get(position));
                         extras.putDouble("Price", (price.get(position)));
+                        extras.putString("OrderID",orderID.get(position));
                         extras.putBoolean("FromYourOrders", true);
                         intent.putExtras(extras);
                         startActivity(intent);

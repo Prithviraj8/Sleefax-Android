@@ -2,11 +2,8 @@ package com.Anubis.Sleefax;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.FileProvider;
 
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -14,54 +11,34 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.provider.OpenableColumns;
-import android.provider.Settings;
-import android.text.method.ScrollingMovementMethod;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
-import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.github.barteksc.pdfviewer.PDFView;
 import com.github.barteksc.pdfviewer.listener.OnLoadCompleteListener;
 import com.github.barteksc.pdfviewer.listener.OnPageErrorListener;
 import com.github.barteksc.pdfviewer.scroll.DefaultScrollHandle;
+import com.kaopiz.kprogresshud.KProgressHUD;
 
 import org.apache.poi.hslf.HSLFSlideShow;
 import org.apache.poi.hslf.model.Slide;
-import org.apache.poi.hslf.model.TextRun;
 import org.apache.poi.hslf.usermodel.SlideShow;
 import org.apache.poi.hwpf.HWPFDocument;
-import org.apache.poi.hwpf.extractor.WordExtractor;
-import org.apache.poi.xslf.extractor.XSLFPowerPointExtractor;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
-
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
-
-import static com.aspose.words.LoadFormat.DOC;
 
 public class Pop extends AppCompatActivity {
 
@@ -82,15 +59,38 @@ public class Pop extends AppCompatActivity {
 
 
     private static final String GOOGLE_PHOTOS_PACKAGE_NAME = "com.google.android.apps.photos";
-    int shortAnimationDuration,cnt = 0;
+    int shortAnimationDuration,cnt = 0,shopCnt;
 //    double[] numberOfPages;
-    ArrayList<Integer> numberOfPages = new ArrayList<>();
+    String mimeType,fileName,fileSize;
+    ArrayList<String> mimeTypes = new ArrayList<>();
 
-    Boolean isTester,newUser,selectingFile;
+    ArrayList<String> urls = new ArrayList<>();
+    ArrayList<String> fileTypes = new ArrayList<>();
+    ArrayList<String> colors = new ArrayList<>();
+    ArrayList<Integer> copies = new ArrayList<>();
+    ArrayList<String> pageSize = new ArrayList<>();
+    ArrayList<String> orientations = new ArrayList<>();
+    boolean bothSides[];
+    ArrayList<String> customPages = new ArrayList<>();
+    ArrayList<String> customValues = new ArrayList<>();
+    ArrayList<Integer> numberOfPages = new ArrayList<>();
+    ArrayList<String> fileNames = new ArrayList<>();
+    ArrayList<String> fileSizes = new ArrayList<>();
+
+    ArrayList<Uri> fileLocations = new ArrayList<>();
+    double pricePerFile[];
+    double totalPrice;
+
+    boolean newUser,isTester,addingMoreFiles,selectingFile;
+
+
+    String fileType;
+
     PDFView pdfView;
     Button nextActivity,dismissViewPDF,selectPhotos,selectAttachment;
     View bottomNavView;
     RelativeLayout pdfViewRL;
+    KProgressHUD hud;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,7 +120,12 @@ public class Pop extends AppCompatActivity {
         isTester = bundle.getBoolean("IsTester");
         newUser = bundle.getBoolean("NewUser");
         selectingFile = bundle.getBoolean("File");
-        Toast.makeText(this, "Selecting File "+ selectingFile, Toast.LENGTH_LONG).show();
+        addingMoreFiles = bundle.getBoolean("AddingMoreFiles");
+
+        if(addingMoreFiles){
+            getOrderInfo();
+        }
+
 
         if(selectingFile){
             Intent fileIntent = new Intent();
@@ -158,12 +163,55 @@ public class Pop extends AppCompatActivity {
 
         shortAnimationDuration = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
+        // Progress HUD
+        hud = KProgressHUD.create(Pop.this)
+                .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
+                .setLabel("Loading")
+                .setMaxProgress(100);
+    }
+
+    @Override
+    public void onBackPressed() {
+//        super.onBackPressed();
+//        Intent intent = new Intent(Pop.this,Select.class);
+//        startActivity(intent);
+        if(hud.isShowing()){
+            hud.dismiss();
+        }
+        finish();
+    }
+
+    public void getOrderInfo(){
+
+
+
+        Intent intent = getIntent();
+        Bundle extras = intent.getExtras();
+
+
+        urls = extras.getStringArrayList("URLS");
+        copies = extras.getIntegerArrayList("Copies");
+        colors = extras.getStringArrayList("ColorType");
+        mimeTypes = extras.getStringArrayList("FileType");
+        shopCnt = extras.getInt("ShopCount");
+        pageSize = extras.getStringArrayList("PageSize");
+        orientations = extras.getStringArrayList("Orientation");
+        bothSides = extras.getBooleanArray("BothSides");
+        customPages = extras.getStringArrayList("Custom");
+        numberOfPages = extras.getIntegerArrayList("Pages");
+        newUser = extras.getBoolean("NewUser");
+        customValues = extras.getStringArrayList("CustomValue");
+        fileNames = extras.getStringArrayList("FileNames");
+        fileSizes = extras.getStringArrayList("FileSizes");
+        isTester = extras.getBoolean("IsTester");
+        cnt = extras.getInt("FileCount");
+
+        pricePerFile = extras.getDoubleArray("PricePerFile");
+        totalPrice = extras.getDouble("TotalPrice");
+
 
     }
 
-    ArrayList<Uri> uri = new ArrayList<>();
-    String fileType;
-    Uri file;
 
 
     //     Create an anonymous implementation of OnClickListener
@@ -175,11 +223,11 @@ public class Pop extends AppCompatActivity {
 
 
             if(v == findViewById(R.id.nextActivity)){
-                cnt += 1;
-                if(cnt == uri.size()) {
-                    uploadFile(uri);
+//                cnt += 1;
+                if(cnt == urls.size()) {
+                    uploadFile(urls);
                 }else{
-                    ViewPDF(uri);
+//                    ViewPDF(urls);
                 }
             }
             if(v == findViewById(R.id.dismissBtn)){
@@ -195,413 +243,484 @@ public class Pop extends AppCompatActivity {
     };
 
 
-    public void setVisibilities(){
-        pdfViewRL.setAlpha(0f);
-        pdfViewRL.setVisibility(View.VISIBLE);
-        pdfViewRL.animate()
-                .alpha(1f)
-                .setDuration(shortAnimationDuration)
-                .setListener(null);
 
-        selectAttachment.setVisibility(View.GONE);
-        selectPhotos.setVisibility(View.GONE);
-    }
-
-    String mimeType,fileName,fileSize;
-    ArrayList<String> mimeTypes = new ArrayList<>();
-    ArrayList<String> fileSizes = new ArrayList<>();
-    ArrayList<String> fileNames = new ArrayList<>();
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        uri.clear();
-        mimeTypes.clear();
+//        uri.clear();
+//        mimeTypes.clear();
 
         super.onActivityResult(requestCode, resultCode, data);
         //when the user choses the file
 
         if (requestCode == 1 && resultCode == RESULT_OK) {
             //if a file is selected
+            renderFiles(data);
+        }
+    }
 
 
-            if (data.getData() != null) {
-                //uploading the file
-
-                Uri returnUri = data.getData();
-//                file = returnUri;
-
-                mimeType = getContentResolver().getType(returnUri);
-
-                ///Running Pagecount api
-//                startPageCountApi(returnUri,mimeType);
-
-                Log.d("MIMETYPE1",String.valueOf(mimeType));
-
-                Cursor returnCursor = getContentResolver().query(returnUri, null, null, null, null);
-                int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
-                int sizeIndex = returnCursor.getColumnIndex(OpenableColumns.SIZE);
-                returnCursor.moveToFirst();
-
-                fileName = (returnCursor.getString(nameIndex));
-                fileNames.add(fileName);
 
 
-                if(Long.toString(returnCursor.getLong(sizeIndex)).length() >= 7) {
-                    fileSize = (Long.toString((long) ((returnCursor.getLong(sizeIndex)) * 0.000001)));
-                    fileSizes.add(fileSize);
+    public void renderFiles(final Intent data){
 
-                }else{
-                    fileSize = (Long.toString((long) ((returnCursor.getLong(sizeIndex)) * 00.001)));
-                    fileSizes.add(fileSize);
-                }
-                Log.d("FNAME1",fileName);
-                Log.d("FSIZE1", String.valueOf(fileSize));
 
-                if (mimeType.contains("application")) {
-                    mimeTypes.add(mimeType);
+        hud.show();
+//        new Handler(Looper.getMainLooper()) {
+//            @Override
+//            public void handleMessage(Message message) {
+//
+//
+//            }
+//        };
 
-                    uri.add(returnUri);
+        final ArrayList<String> pdfs = new ArrayList<>();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                if (data.getData() != null) {
+                    //uploading the file
+
+                    Uri returnUri = data.getData();
+                    fileLocations.add(returnUri);
+
+                    mimeType = getContentResolver().getType(returnUri);
+
+                    if (mimeType.contains("application")) {
+//                    mimeTypes.add(mimeType);
+
+                        Cursor returnCursor = getContentResolver().query(returnUri, null, null, null, null);
+                        int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                        int sizeIndex = returnCursor.getColumnIndex(OpenableColumns.SIZE);
+                        returnCursor.moveToFirst();
+
+                        fileName = (returnCursor.getString(nameIndex));
+                        fileNames.add(fileName);
+
+
+                        if (Long.toString(returnCursor.getLong(sizeIndex)).length() >= 7) {
+                            fileSize = (Long.toString((long) ((returnCursor.getLong(sizeIndex)) * 0.000001)) + " MB");
+                            fileSizes.add(fileSize);
+
+                        } else {
+                            fileSize = (Long.toString((long) ((returnCursor.getLong(sizeIndex)) * 00.001)) + " kB");
+                            fileSizes.add(fileSize);
+                        }
+                        urls.add(String.valueOf(returnUri));
 //                    numberOfPages = new double[uri.size()];
-                    if(mimeType.equals("application/pdf")){
+                        if (mimeType.equals("application/pdf")) {
+                            mimeTypes.add("PDF");
+//                            ViewPDF(returnUri.toString());
+                            hud.dismiss();
+                            uploadFile(urls);
 
-                        ViewPDF(uri);
+                            pdfs.add(returnUri.toString());
+//                            ViewPDF(pdfs);
 
-                    }else {
+                        } else {
 //                        uri.add(returnUri);
-                        try {
-                            FileInputStream inputStream = (FileInputStream) getContentResolver().openInputStream(data.getData());
+                            try {
+                                FileInputStream inputStream = (FileInputStream) getContentResolver().openInputStream(data.getData());
 
-                            if(fileName.contains("docx")) {
+                                if (mimeType.equals("application/vnd.openxmlformats-officedocument.wordprocessingml.document")) {
+                                    mimeTypes.add(cnt,"Docx");
 
-                                XWPFDocument document;
-                                document = new XWPFDocument(inputStream);
-                                XWPFWordExtractor extractor = new XWPFWordExtractor(document);
-                                int pages = document.getProperties().getExtendedProperties().getUnderlyingProperties().getPages();
-                                numberOfPages.add(pages);
-                                Toast.makeText(this, "NOPOF DOCX " + pages, Toast.LENGTH_SHORT).show();
+                                    XWPFDocument document;
+                                    document = new XWPFDocument(inputStream);
+                                    XWPFWordExtractor extractor = new XWPFWordExtractor(document);
+                                    int pages = document.getProperties().getExtendedProperties().getUnderlyingProperties().getPages();
+                                    numberOfPages.add(pages);
+                                    Log.d("NOPOFDOCX", String.valueOf(pages));
 
-                            }else if(fileName.contains("doc")){
-                                HWPFDocument document = new HWPFDocument(inputStream);
-                                int pages = document.getSummaryInformation().getPageCount();
-                                numberOfPages.add(pages);
-                                Toast.makeText(this, "NOPOF DOC " + pages, Toast.LENGTH_SHORT).show();
-                            }else if(fileName.contains("ppt")){
+                                } else if (mimeType.equals("application/msword")) {
 
-                                HSLFSlideShow show = new HSLFSlideShow(inputStream);
-                                SlideShow ss = new SlideShow(show);
-                                Slide[] slides = ss.getSlides();
-
-                                int slide_count = ss.getSlides().length;
-                                numberOfPages.add(slide_count);
-                                Toast.makeText(this, "NOPOF PPT " + slide_count, Toast.LENGTH_SHORT).show();
-                                Log.d("PPTSLIDES ",String.valueOf(slide_count));
-
-                            }else if(fileName.contains("pptx")){
-                                XMLSlideShow slideShow = new XMLSlideShow(inputStream);
-                                int slides = slideShow.getSlides().length;
-                                numberOfPages.add(slides);
-
-                            }
-                        }catch (IOException e){
-                            e.printStackTrace();
-                        }
-
-
-                        ViewDoc(uri,mimeType);
-//                        uploadFile(uri);
-                    }
-                } else {
-
-//                     mimeTypes.add("Image");
-
-                    if(data.getClipData() != null) {
-                        for (int i = 0; i < data.getClipData().getItemCount(); i++) {
-//                            mimeTypes.add("Image");
-                            if (data.getClipData().getItemAt(i).getUri() != null) {
-                                uri.add(data.getClipData().getItemAt(i).getUri());
-                                if (i == data.getClipData().getItemCount() - 1) {
-                                    uploadImg( data,uri);
-                                }
-                            }
-                        }
-//                        uri.add(returnUri);
-//                        uploadImg(requestCode, resultCode, data, uri);
-                    }else{
-                        uri.add(returnUri);
-                        uploadImg(data,uri);
-                    }
-                }
-            } else {
-
-
-                Log.d("DATA", String.valueOf(data.getClipData()));
-
-                if(data.getClipData() != null) {
-
-                    if(data.getClipData().toString().contains("application")) {
-                        for (int i = 0; i < data.getClipData().getItemCount(); i++) {
-                            if (data.getClipData().getItemAt(i).getUri() != null) {
-
-                                uri.add(data.getClipData().getItemAt(i).getUri());
-                                mimeTypes.add(getContentResolver().getType(data.getClipData().getItemAt(i).getUri()));
-
-                                Cursor returnCursor = getContentResolver().query(data.getClipData().getItemAt(i).getUri(), null, null, null, null);
-                                int sizeIndex = returnCursor.getColumnIndex(OpenableColumns.SIZE);
-                                int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
-                                returnCursor.moveToFirst();
-
-
-                                if(Long.toString(returnCursor.getLong(sizeIndex)).length() >= 7) {
-                                    fileSizes.add(Long.toString((long) ((returnCursor.getLong(sizeIndex)) * 0.000001)));
-                                }else{
-                                    fileSizes.add(Long.toString((long) ((returnCursor.getLong(sizeIndex)) * 00.001)));
-                                }
-                                fileNames.add(returnCursor.getString(nameIndex));
-
-
-                                try {
-                                    FileInputStream inputStream = (FileInputStream) getContentResolver().openInputStream(data.getClipData().getItemAt(i).getUri());
-                                    if(fileNames.get(i).contains("docx")) {
-                                        XWPFDocument document;
-                                         document = new XWPFDocument();
-                                        XWPFWordExtractor extractor = new XWPFWordExtractor(document);
-                                        int pages = document.getProperties().getExtendedProperties().getUnderlyingProperties().getPages();
-                                        numberOfPages.add(pages);
-                                        Log.d("DOCXPAGES",String.valueOf(pages));
-                                        Toast.makeText(this, "NOPOF DOC "+ pages, Toast.LENGTH_SHORT).show();
-                                    }else if(fileNames.get(i).contains("doc")){
+                                    try {
                                         HWPFDocument document = new HWPFDocument(inputStream);
                                         int pages = document.getSummaryInformation().getPageCount();
                                         numberOfPages.add(pages);
-                                        Log.d("DOCPAGES",String.valueOf(pages));
+                                        mimeTypes.add(cnt,"Word");
 
-                                        Toast.makeText(this, "NOPOF DOC " + pages, Toast.LENGTH_SHORT).show();
-
-                                    }else if(fileNames.get(i).contains("ppt")){
-
-                                    }else if(fileNames.get(i).contains("pptx")){
+                                    } catch (Exception e) {
+                                        FileInputStream docxIS = (FileInputStream) getContentResolver().openInputStream(data.getData());
+                                        XWPFDocument document;
+                                        document = new XWPFDocument(docxIS);
+                                        XWPFWordExtractor extractor = new XWPFWordExtractor(document);
+                                        int pages = document.getProperties().getExtendedProperties().getUnderlyingProperties().getPages();
+                                        numberOfPages.add(pages);
+                                        // Adding mimeType as PPTX even though PPT is selected because the page count algo for PPT is crashing and for PPTX is working for this selected file
+                                        mimeTypes.add(cnt,"Docx");
 
                                     }
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
 
-                                if (i == data.getClipData().getItemCount() - 1) {
-//                                    numberOfPages = new double[uri.size()];
-//                                    uploadFile(uri);
-                                    if(mimeTypes.get(i).equals("application/pdf")) {
-                                        ViewPDF(uri);
-                                    }else if(mimeTypes.get(i).contains("document") || mimeTypes.get(i).contains("powerpoint")){
-                                        ViewDoc(uri,mimeType);
+//                                Toast.makeText(this, "NOPOF DOC " + pages, Toast.LENGTH_SHORT).show();
+                                } else if (mimeType.equals("application/vnd.ms-powerpoint")) {
+//                                XMLSlideShow slideShow = new XMLSlideShow(inputStream);
+//                                int slides = slideShow.getSlides().length;
+//                                numberOfPages.add(slides);
+
+                                    try {
+                                        HSLFSlideShow show = new HSLFSlideShow(inputStream);
+                                        SlideShow ss = new SlideShow(show);
+                                        Slide[] slides = ss.getSlides();
+//
+                                        int slide_count = ss.getSlides().length;
+                                        numberOfPages.add(slide_count);
+                                        mimeTypes.add(cnt,"PPT");
+
+                                        Log.d("NOPOF PPT ", String.valueOf(slide_count));
+
+                                    } catch (Exception e) {
+                                        XMLSlideShow slideShow = new XMLSlideShow(inputStream);
+                                        int slides = slideShow.getSlides().length;
+                                        numberOfPages.add(slides);
+                                        mimeTypes.add(cnt,"PPTX");
+
+                                        Log.d("NOPOF PPTX ", String.valueOf(slides));
                                     }
+
+
+                                } else if (mimeType.equals("application/vnd.openxmlformats-officedocument.presentationml.presentation")) {
+                                    mimeTypes.add(cnt,"PPTX");
+
+                                    XMLSlideShow slideShow = new XMLSlideShow(inputStream);
+                                    int slides = slideShow.getSlides().length;
+                                    numberOfPages.add(slides);
+                                    Log.d("NOPOF PPTX ", String.valueOf(slides));
+
                                 }
+//                                cnt = cnt + 1;
+
+                            } catch (IOException e) {
+                                e.printStackTrace();
                             }
-                        }
-                    }else {
-                        fileType = "image/png";
 
-                        for (int i = 0; i < data.getClipData().getItemCount(); i++) {
+
+//                        ViewDoc();
+                            hud.dismiss();
+                            uploadFile(urls);
+                        }
+                    } else {
+
+
+                        if (data.getClipData() != null) {
+                            for (int i = 0; i < data.getClipData().getItemCount(); i++) {
 //                            mimeTypes.add("Image");
-                            if (data.getClipData().getItemAt(i).getUri() != null) {
-                                uri.add(data.getClipData().getItemAt(i).getUri());
-                                if (i == data.getClipData().getItemCount() - 1) {
-                                    uploadImg(data, uri);
+                                if (data.getClipData().getItemAt(i).getUri() != null) {
+                                    urls.add(String.valueOf(data.getClipData().getItemAt(i).getUri()));
+                                    mimeTypes.add("IMAGE");
+
+                                    Log.d("IMGSELE",String.valueOf(data.getClipData().getItemAt(i).getUri()));
+                                    Cursor returnCursor = getContentResolver().query(data.getClipData().getItemAt(i).getUri(), null, null, null, null);
+                                    int sizeIndex = returnCursor.getColumnIndex(OpenableColumns.SIZE);
+                                    int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                                    returnCursor.moveToFirst();
+
+                                    if (Long.toString(returnCursor.getLong(sizeIndex)).length() >= 7) {
+                                        fileSizes.add(Long.toString((long) ((returnCursor.getLong(sizeIndex)) * 0.000001)) + " MB");
+                                    } else {
+                                        fileSizes.add(Long.toString((long) ((returnCursor.getLong(sizeIndex)) * 00.001)) + " kB");
+                                    }
+                                    fileNames.add(returnCursor.getString(nameIndex));
+
+
+                                    if (i == data.getClipData().getItemCount() - 1) {
+                                        hud.dismiss();
+                                        uploadImg(urls);
+                                    }
+                                }
+                            }
+//                        uri.add(returnUri);
+//                        uploadImg(requestCode, resultCode, data, uri);
+                        } else {
+                            mimeTypes.add("IMAGE");
+
+                            Cursor returnCursor = getContentResolver().query(returnUri, null, null, null, null);
+                            int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                            int sizeIndex = returnCursor.getColumnIndex(OpenableColumns.SIZE);
+                            returnCursor.moveToFirst();
+
+                            fileName = (returnCursor.getString(nameIndex));
+                            fileNames.add(fileName);
+
+
+                            if (Long.toString(returnCursor.getLong(sizeIndex)).length() >= 7) {
+                                fileSize = (Long.toString((long) ((returnCursor.getLong(sizeIndex)) * 0.000001)) + " MB");
+                                fileSizes.add(fileSize);
+
+                            } else {
+                                fileSize = (Long.toString((long) ((returnCursor.getLong(sizeIndex)) * 00.001)) + " kB");
+                                fileSizes.add(fileSize);
+                            }
+                            urls.add(String.valueOf(returnUri));
+                            hud.dismiss();
+                            uploadImg(urls);
+                        }
+                    }
+
+                    if(hud.isShowing()) {
+                        hud.dismiss();
+                    }
+                } else {
+
+                    if (data.getClipData() != null) {
+
+                        if (data.getClipData().toString().contains("application")) {
+                            for (int i = 0; i < data.getClipData().getItemCount(); i++) {
+                                fileLocations.add(data.getClipData().getItemAt(i).getUri());
+
+                                cnt = i;
+
+                                if (data.getClipData().getItemAt(i).getUri() != null) {
+
+                                    urls.add(String.valueOf(data.getClipData().getItemAt(i).getUri()));
+//                                mimeTypes.add(getContentResolver().getType(data.getClipData().getItemAt(i).getUri()));
+
+
+                                    Cursor returnCursor = getContentResolver().query(data.getClipData().getItemAt(i).getUri(), null, null, null, null);
+                                    int sizeIndex = returnCursor.getColumnIndex(OpenableColumns.SIZE);
+                                    int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                                    returnCursor.moveToFirst();
+
+
+                                    if (Long.toString(returnCursor.getLong(sizeIndex)).length() >= 7) {
+                                        fileSizes.add(Long.toString((long) ((returnCursor.getLong(sizeIndex)) * 0.000001)) + " MB");
+                                    } else {
+                                        fileSizes.add(Long.toString((long) ((returnCursor.getLong(sizeIndex)) * 00.001)) + " kB");
+                                    }
+                                    fileNames.add(returnCursor.getString(nameIndex));
+
+
+                                    try {
+                                        FileInputStream inputStream = (FileInputStream) getContentResolver().openInputStream(data.getClipData().getItemAt(i).getUri());
+                                        if (getContentResolver().getType(data.getClipData().getItemAt(i).getUri()).equals("application/vnd.openxmlformats-officedocument.wordprocessingml.document")) {
+                                            mimeTypes.add(i, "Docx");
+
+                                            XWPFDocument document;
+                                            document = new XWPFDocument(inputStream);
+                                            XWPFWordExtractor extractor = new XWPFWordExtractor(document);
+                                            int pages = document.getProperties().getExtendedProperties().getUnderlyingProperties().getPages();
+                                            numberOfPages.add(pages);
+                                            Log.d("DOCXPAGES", String.valueOf(pages));
+                                        } else if (getContentResolver().getType(data.getClipData().getItemAt(i).getUri()).equals("application/msword")) {
+
+                                            try {
+                                                HWPFDocument document = new HWPFDocument(inputStream);
+                                                int pages = document.getSummaryInformation().getPageCount();
+                                                numberOfPages.add(pages);
+                                                mimeTypes.add(i, "Word");
+
+                                                Log.d("DOCPAGES", String.valueOf(pages));
+                                            }catch (Exception e){
+                                                FileInputStream docxIS = (FileInputStream) getContentResolver().openInputStream(data.getClipData().getItemAt(i).getUri());
+                                                XWPFDocument document;
+                                                document = new XWPFDocument(docxIS);
+                                                int pages = document.getProperties().getExtendedProperties().getUnderlyingProperties().getPages();
+                                                numberOfPages.add(pages);
+                                                // Adding mimeType as DOCX even though word is selected because the page count algo of docx is crashing and word algo is working for this selected docx file
+                                                mimeTypes.add("Docx");
+
+                                            }
+
+                                        } else if (getContentResolver().getType(data.getClipData().getItemAt(i).getUri()).equals("application/vnd.ms-powerpoint")) {
+
+//                                        HSLFSlideShow show = new HSLFSlideShow(inputStream);
+//                                        SlideShow ss = new SlideShow(show);
+//                                        Slide[] slides = ss.getSlides();
+////
+//                                        int slide_count = ss.getSlides().length;
+//                                        numberOfPages.add(slide_count);
+
+                                            try {
+                                                HSLFSlideShow show = new HSLFSlideShow(inputStream);
+                                                SlideShow ss = new SlideShow(show);
+                                                Slide[] slides = ss.getSlides();
+//
+                                                int slide_count = slides.length;
+                                                numberOfPages.add(slide_count);
+                                                mimeTypes.add(i, "PPT");
+
+                                                Log.d("PAGES_PPT", String.valueOf(slide_count));
+
+                                            } catch (Exception e) {
+                                                FileInputStream pptxIS = (FileInputStream) getContentResolver().openInputStream(data.getClipData().getItemAt(i).getUri());
+
+                                                XMLSlideShow slideShow = new XMLSlideShow(pptxIS);
+                                                int slides = slideShow.getSlides().length;
+                                                numberOfPages.add(slides);
+
+                                                // Adding mimeType as PPTX even though PPT is selected because the page count algo for PPT is crashing and for PPTX is working for this selected file
+                                                mimeTypes.add(i, "PPTX");
+                                                Log.d("PAGES_PPT", String.valueOf(slides));
+
+                                            }
+
+                                        } else if (getContentResolver().getType(data.getClipData().getItemAt(i).getUri()).equals("application/vnd.openxmlformats-officedocument.presentationml.presentation")) {
+                                            mimeTypes.add(i, "PPTX");
+
+                                            XMLSlideShow slideShow = new XMLSlideShow(inputStream);
+                                            int slides = slideShow.getSlides().length;
+                                            numberOfPages.add(slides);
+                                        } else if (getContentResolver().getType(data.getClipData().getItemAt(i).getUri()).equals("application/pdf")) {
+                                            mimeTypes.add(i, "PDF");
+                                            pdfs.add(String.valueOf(data.getClipData().getItemAt(i).getUri()));
+                                            Log.d("ONLYPDF","YES");
+//                                            ViewPDF(String.valueOf(data.getClipData().getItemAt(i).getUri()));
+//                                            ViewPDF(pdfs);
+                                        }
+
+                                        if (i == data.getClipData().getItemCount() - 1) {
+                                            hud.dismiss();
+                                            uploadFile(urls);
+                                        }
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+
+
+                                }
+                            }
+                        } else {
+
+                            for (int i = 0; i < data.getClipData().getItemCount(); i++) {
+                                mimeTypes.add("IMAGE");
+
+                                if (data.getClipData().getItemAt(i).getUri() != null) {
+                                    urls.add(String.valueOf(data.getClipData().getItemAt(i).getUri()));
+                                    Cursor returnCursor = getContentResolver().query(data.getClipData().getItemAt(i).getUri(), null, null, null, null);
+                                    int sizeIndex = returnCursor.getColumnIndex(OpenableColumns.SIZE);
+                                    int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                                    returnCursor.moveToFirst();
+
+                                    if (Long.toString(returnCursor.getLong(sizeIndex)).length() >= 7) {
+                                        fileSizes.add(Long.toString((long) ((returnCursor.getLong(sizeIndex)) * 0.000001)) + " MB");
+                                    } else {
+                                        fileSizes.add(Long.toString((long) ((returnCursor.getLong(sizeIndex)) * 00.001)) + " kB");
+                                    }
+                                    fileNames.add(returnCursor.getString(nameIndex));
+
+
+                                    if (i == data.getClipData().getItemCount() - 1) {
+                                        hud.dismiss();
+                                        uploadImg(urls);
+                                    }
                                 }
                             }
                         }
                     }
-                }
-            }
-        }
-    }
-
-
-    public void ViewPDF(ArrayList<Uri> files){
-
-        setVisibilities();
-
-//        String fileName = getFileName(files.get(cnt));
-//        fileNames.add(cnt,fileName);
-
-        pdfView.fromUri(files.get(cnt))
-                .enableSwipe(true)
-                .enableAnnotationRendering(true)
-                .scrollHandle(new DefaultScrollHandle(getApplicationContext()))
-                .enableDoubletap(true)
-                .onPageError(new OnPageErrorListener() {
-                    @Override
-                    public void onPageError(int page, Throwable t) {
-                        Toast.makeText(Pop.this,"Sorry but we faced an error on our side 😢. \n Please select this file again.",Toast.LENGTH_LONG).show();
-
+                    if(hud.isShowing()) {
+                        hud.dismiss();
                     }
-                })
-                .onLoad(new OnLoadCompleteListener() {
-                    @Override
-                    public void loadComplete(int nbPages) {
-//                        Log.d("PDFNOP", String.valueOf(pdfView.getPageCount()));
-
-                        nextActivity.setAlpha(0f);
-                        nextActivity.setVisibility(View.VISIBLE);
-                        nextActivity.animate()
-                                .alpha(1f)
-                                .setDuration(shortAnimationDuration)
-                                .setListener(null);
-
-                        numberOfPages.add(cnt,pdfView.getPageCount());
-                    }
-                })
-                .load();
-    }
-
-    public void ViewDoc(ArrayList<Uri> word, String mimeType) {
-
-        uploadFile(uri);
-
-    }
-
-    public String getFileName(Uri uri) {
-        String result = null;
-        if (uri.getScheme().equals("content")) {
-            Cursor cursor = getContentResolver().query(uri, null, null, null, null);
-            try {
-                if (cursor != null && cursor.moveToFirst()) {
-                    result = cursor.getString(cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME));
                 }
-            } finally {
-                cursor.close();
+
             }
-        }
-        if (result == null) {
-            result = uri.getPath();
-            int cut = result.lastIndexOf('/');
-            if (cut != -1) {
-                result = result.substring(cut + 1);
-            }
-        }
-        return result;
+        }).start();
     }
 
-
-//    public class uploadFiles extends AsyncTask<Void,Void,Void>{
-//
-//        @Override
-//        protected Void doInBackground(Void... voids) {
-//            Intent goToPdfInfo = new Intent(Pop.this, PdfInfo.class);
-//            Bundle extras = new Bundle();
-//
-//            extras.putDoubleArray("Pages",numberOfPages);
-//            extras.putStringArrayList("FileNames",fileNames);
-//            Log.d("SOZEEE",String.valueOf(fileSizes.size()));
-//            extras.putStringArrayList("FileSizes",fileSizes);
-//            ArrayList<String> files = new ArrayList<>();
-//
-//            for (int i=0;i<uri.size();i++){
-////                        Toast.makeText(Pop.this,"NOP "+numberOfPages[i],Toast.LENGTH_LONG).show();
-//
-//                files.add(uri.get(i).toString());
-//                if(i == uri.size()-1){
-//                    extras.putStringArrayList("URLS", files);
-//                    extras.putStringArrayList("FileType", mimeTypes);
-//                    extras.putBoolean("IsTester",isTester);
-//                    extras.putBoolean("NewUser",newUser);
-//
-//                    goToPdfInfo.putExtras(extras);
-//                    startActivity(goToPdfInfo);
-//                    finish();
-//
-//                }
-//            }
-//
-//            return null;
-//        }
-//    }
-//    public class uploadImages extends AsyncTask<Void,Void,Void>{
-//
-//        @Override
-//        protected Void doInBackground(Void... voids) {
-//            Intent goToPageInfo = new Intent(Pop.this, PageInfo.class);
-//            Bundle extras = new Bundle();
-//            extras.putStringArrayList("FileType", mimeTypes);
-//            ArrayList<String> images = new ArrayList<>();
-//            int i;
-//
-//            for(i=0;i<uri.size();i++){
-//                images.add(uri.get(i).toString());
-//
-//                if(i == uri.size()-1) {
-////                Log.d("URISIZE", String.valueOf(uri.size()));
-//                    extras.putStringArrayList("URLS", images);
-////                    extras.putParcelable("Data",data);
-//                    extras.putBoolean("IsTester",isTester);
-//                    extras.putBoolean("NewUser",newUser);
-//
-////            extras.putParcelableArrayList("URLS", uri);
-//                    goToPageInfo.putExtras(extras);
-//                    startActivity(goToPageInfo);
-//                }
-//            }
-//
-//            return null;
-//        }
-//    }
 
 
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public void uploadFile(ArrayList uri){
 
-        Intent goToPdfInfo = new Intent(Pop.this, PdfInfo.class);
-        Bundle extras = new Bundle();
+        if(addingMoreFiles){
+            sendOrderInfo();
+        }else {
+            Intent goToPdfInfo = new Intent(Pop.this, PdfInfo.class);
+            Bundle extras = new Bundle();
 
-        System.out.print("NUMBER OF PAGES SIZE "+numberOfPages.size());
-        extras.putIntegerArrayList("Pages",numberOfPages);
-        extras.putStringArrayList("FileNames",fileNames);
-        extras.putStringArrayList("FileSizes",fileSizes);
-        ArrayList<String> files = new ArrayList<>();
+            Log.d("Number of pages ",String.valueOf(numberOfPages.size()));
 
-        for (int i=0;i<uri.size();i++){
-//                        Toast.makeText(Pop.this,"NOP "+numberOfPages[i],Toast.LENGTH_LONG).show();
+            extras.putIntegerArrayList("Pages", numberOfPages);
+            extras.putStringArrayList("FileNames", fileNames);
+            extras.putStringArrayList("FileSizes", fileSizes);
+            extras.putStringArrayList("URLS", urls);
+            extras.putStringArrayList("FileType", mimeTypes);
+            extras.putBoolean("IsTester", isTester);
+            extras.putBoolean("NewUser", newUser);
 
-            files.add(uri.get(i).toString());
-            if(i == uri.size()-1){
-                extras.putStringArrayList("URLS", files);
-                extras.putStringArrayList("FileType", mimeTypes);
-                extras.putBoolean("IsTester",isTester);
-                extras.putBoolean("NewUser",newUser);
+//            extras.putInt("FileCount", urls.size());
+//            extras.putBoolean("AddingMoreFiles", addingMoreFiles);
 
-                goToPdfInfo.putExtras(extras);
-                startActivity(goToPdfInfo);
-                finish();
+            goToPdfInfo.putExtras(extras);
 
+            if(hud.isShowing()){
+                hud.dismiss();
             }
+            startActivity(goToPdfInfo);
+            finish();
+
         }
 
 
     }
 
 
-    public void uploadImg(Intent data, ArrayList<Uri> uri){
-        Intent goToPageInfo = new Intent(Pop.this, PageInfo.class);
+    public void uploadImg(ArrayList<String> uri){
+
+        hud.show();
+        Intent goToPageInfo = new Intent(Pop.this, PdfInfo.class);
         Bundle extras = new Bundle();
 
         ArrayList<String> images = new ArrayList<>();
         int i;
-        for(i=0;i<uri.size();i++){
-            images.add(uri.get(i).toString());
-            mimeTypes.add("Image");
-            if(i == uri.size()-1) {
-                extras.putStringArrayList("FileType", mimeTypes);
-                extras.putStringArrayList("URLS", images);
-                extras.putParcelable("Data",data);
-                extras.putBoolean("IsTester",isTester);
-                extras.putBoolean("NewUser",newUser);
+//        for(i=0;i<urls.size();i++){
+//            images.add(urls.get(i));
+            mimeTypes.add("IMAGE");
 
-//            extras.putParcelableArrayList("URLS", uri);
-                goToPageInfo.putExtras(extras);
-                startActivity(goToPageInfo);
-            }
-        }
+                if(!addingMoreFiles) {
+                    extras.putStringArrayList("FileType", mimeTypes);
+                    extras.putStringArrayList("URLS", uri);
+                    extras.putBoolean("IsTester", isTester);
+                    extras.putBoolean("NewUser", newUser);
+                    extras.putBoolean("AddingMoreFiles", addingMoreFiles);
+                    extras.putStringArrayList("FileNames", fileNames);
+                    extras.putStringArrayList("FileSizes", fileSizes);
+
+                    hud.dismiss();
+                    goToPageInfo.putExtras(extras);
+                    startActivity(goToPageInfo);
+                }else{
+                    hud.dismiss();
+                    sendOrderInfo();
+                }
+//        }
     }
+
+    public void sendOrderInfo(){
+        Intent intent;
+        Bundle extras;
+        extras = new Bundle();
+
+        intent = new Intent(Pop.this, PdfInfo.class);
+        extras.putBoolean("AddingMoreFiles",true);
+        extras.putInt("FileCount",urls.size());
+
+        extras.putInt("ShopCount", shopCnt);
+        extras.putStringArrayList("URLS", urls);
+        extras.putIntegerArrayList("Pages", numberOfPages);
+        extras.putBooleanArray("BothSides", bothSides);
+        extras.putIntegerArrayList("Copies", copies);
+        extras.putStringArrayList("ColorType", colors);
+        extras.putStringArrayList("FileType", mimeTypes);
+        extras.putStringArrayList("PageSize", pageSize);
+        extras.putStringArrayList("Orientation", orientations);
+        extras.putStringArrayList("FileNames",fileNames);
+        extras.putStringArrayList("FileSizes",fileSizes);
+        extras.putBoolean("NewUser",newUser);
+        extras.putStringArrayList("Custom",customPages);
+        extras.putStringArrayList("CustomValue",customValues);
+        extras.putBoolean("IsTester",isTester);
+
+        extras.putDoubleArray("PricePerFile",pricePerFile);
+        extras.putDouble("TotalPrice",totalPrice);
+
+        intent.putExtras(extras);
+        startActivity(intent);
+    }
+
+
+
 
 
     protected void alertMessage(String message, final boolean isImage) {
@@ -624,6 +743,9 @@ public class Pop extends AppCompatActivity {
                             intent.setType("application/*");
                             intent.setAction(Intent.ACTION_OPEN_DOCUMENT);
                             intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+
+
+
                             startActivityForResult(Intent.createChooser(intent, "Select files"), 1);
                         }
 

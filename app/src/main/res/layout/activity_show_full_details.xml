@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    tools:context=".ShowFullDetails">
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/arrow_left_black"
+        android:background="@android:color/transparent"
+        android:layout_marginTop="35dp"
+        android:id="@+id/backBtn"
+        android:layout_marginLeft="20dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/OrderId"
+        android:text="Order #23FGRWT456"
+        android:textSize="14sp"
+        android:fontFamily="@font/poppins_medium"
+        android:layout_toRightOf="@id/backBtn"
+        android:layout_alignTop="@id/backBtn"
+        android:textColor="#227093"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="-10dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/status"
+        android:text="Completed"
+        android:textColor="#393939"
+        android:textSize="12sp"
+        android:fontFamily="@font/poppins_medium"
+        android:layout_below="@id/OrderId"
+        android:layout_toRightOf="@id/backBtn"
+        android:layout_alignStart="@id/OrderId"/>
+    <View
+        android:layout_width="1dp"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/status"
+        android:id="@+id/vertiacal_divider1"
+        android:background="#707070"
+        android:layout_alignTop="@id/status"
+        android:layout_alignBottom="@id/status"
+        android:layout_marginLeft="5dp"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/Files"
+        android:text="3 Files"
+        android:layout_marginLeft="5dp"
+        android:textColor="#393939"
+        android:textSize="12sp"
+        android:fontFamily="@font/poppins_medium"
+        android:layout_below="@id/OrderId"
+        android:layout_toRightOf="@id/vertiacal_divider1"
+        />
+    <View
+        android:layout_width="1dp"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/Files"
+        android:id="@+id/vertiacal_divider2"
+        android:background="#707070"
+        android:layout_alignTop="@id/status"
+        android:layout_alignBottom="@id/status"
+        android:layout_marginLeft="5dp"/>
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/rupee_live_orders"
+        android:layout_toRightOf="@id/vertiacal_divider2"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="-3dp"
+        android:layout_below="@id/OrderId"
+        android:layout_alignTop="@id/Files"
+        android:layout_alignBottom="@id/Files"
+        android:id="@+id/rupee_symbol"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/Price"
+        android:text="126"
+        android:gravity="center"
+        android:textSize="12sp"
+        android:fontFamily="@font/poppins_medium"
+        android:textColor="#393939"
+        android:layout_toRightOf="@id/rupee_symbol"
+        android:layout_below="@id/OrderId"
+        android:layout_marginLeft="2dp"
+        android:layout_alignBottom="@id/Files"
+        android:layout_alignTop="@id/Files"/>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#EBEBEB"
+        android:layout_below="@id/backBtn"
+        android:layout_marginTop="20dp"
+        android:id="@+id/horizontal_divider1"/>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/DetailsSV"
+        android:layout_below="@id/horizontal_divider1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingVertical="10dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/ShopInfoRL"
+                android:layout_marginTop="10dp"
+                android:paddingRight="20dp"
+                android:paddingLeft="20dp"
+                android:background="#FFFFFF">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/show_full_details_shopbg"
+                    android:src="@drawable/shopblue"
+                    android:id="@+id/ShopIV"
+                    android:padding="8dp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/ShopIV"
+                    android:text="MIT Print Shop"
+                    android:textColor="#227093"
+                    android:textSize="16sp"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:layout_marginLeft="10dp"
+                    android:id="@+id/ShopName"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/ShopIV"
+                    android:text="Kothrud, Pune"
+                    android:textColor="#959595"
+                    android:textSize="10sp"
+                    android:layout_below="@id/ShopName"
+                    android:fontFamily="@font/poppins_medium"
+                    android:layout_marginLeft="10dp"
+                    android:id="@+id/Location"/>
+                <ImageButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/technology"
+                    android:background="@android:color/transparent"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignTop="@id/view_in_maps"
+                    android:layout_alignBottom="@id/view_in_maps"
+                    android:layout_marginLeft="5dp"
+                    android:id="@+id/view_in_mapsBtn"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/view_in_maps"
+                    android:selectAllOnFocus="false"
+                    android:linksClickable="true"
+                    android:autoLink="all"
+                    android:textSize="13sp"
+                    android:gravity="center"
+                    android:text="@string/ViewInMaps"
+                    android:textColor="#367E95"
+                    android:fontFamily="@font/poppins_medium"
+                    android:layout_marginTop="-15dp"
+                    android:layout_toLeftOf="@id/view_in_mapsBtn"
+                    android:layout_alignTop="@id/Location"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Bill Details"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:textColor="#353636"
+                    android:layout_marginLeft="10dp"
+                    android:layout_below="@id/ShopIV"
+                    android:layout_marginTop="20dp"
+                    android:layout_alignParentStart="true"
+                    android:id="@+id/billing_details_text"
+                    android:textSize="14sp"/>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="#F2F4F4"
+                android:layout_marginTop="10dp"
+                android:id="@+id/FilesRL">
+
+                <ListView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingHorizontal="20dp"
+                    android:divider="@android:color/transparent"
+                    android:id="@+id/billing_pdf_listview"
+                    />
+
+                <View
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/billing_pdf_listview"
+                    android:layout_marginTop="5dp"
+                    android:id="@+id/dividertwo"
+                    android:layout_marginHorizontal="20dp"
+                    android:background="@drawable/line_two"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:text="TOTAL"
+                    android:layout_below="@id/dividertwo"
+                    android:layout_marginTop="10dp"
+                    android:textSize="13sp"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:textColor="#000000"
+                    android:layout_marginLeft="30dp"/>
+                <TextView
+                    android:layout_width="11dp"
+                    android:layout_height="11dp"
+                    android:background="@drawable/india_rupee"
+                    android:layout_below="@id/dividertwo"
+                    android:layout_marginTop="15dp"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:textColor="#000000"
+                    android:id="@+id/rupee"
+                    android:layout_toLeftOf="@id/price_total" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="89"
+                    android:layout_alignParentEnd="true"
+                    android:layout_below="@id/dividertwo"
+                    android:layout_marginTop="10dp"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:textColor="#000000"
+                    android:id="@+id/price_total"
+                    android:layout_marginRight="30dp"/>
+                <View
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/price_total"
+                    android:layout_marginTop="5dp"
+                    android:id="@+id/dividerthree"
+                    android:layout_marginHorizontal="20dp"
+                    android:background="@drawable/line_two"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/paymentMode"
+                    android:textSize="14sp"
+                    android:textColor="#227093"
+                    android:gravity="center"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:text="Pay On Pickup"
+                    android:layout_below="@id/dividerthree"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginRight="30dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Paid Via"
+                    android:layout_toLeftOf="@id/paymentMode"
+                    android:layout_below="@id/dividerthree"
+                    android:layout_alignTop="@id/paymentMode"
+                    android:layout_alignBottom="@id/paymentMode"
+                    android:gravity="center"
+                    android:textColor="#353636"
+                    android:layout_marginRight="10dp"
+                    android:fontFamily="@font/poppins"
+                    android:textSize="14sp"/>
+
+            </RelativeLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Order Details"
+                android:fontFamily="@font/poppins_semibold"
+                android:textColor="#353636"
+                android:layout_below="@id/ShopIV"
+                android:layout_marginTop="20dp"
+                android:layout_alignParentStart="true"
+                android:id="@+id/order_details_text"
+                android:layout_marginLeft="30dp"
+                android:textSize="14sp"/>
+            <ListView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/OrdersLV"
+                android:divider="@android:color/transparent"/>
+
+
+
+        </LinearLayout>
+
+    </ScrollView>
+
+
+
+
+</RelativeLayout>

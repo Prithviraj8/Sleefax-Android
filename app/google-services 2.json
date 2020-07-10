@@ -1,0 +1,99 @@
+{
+  "project_info": {
+    "project_number": "736925032543",
+    "firebase_url": "https://storeowner-9c355.firebaseio.com",
+    "project_id": "storeowner-9c355",
+    "storage_bucket": "storeowner-9c355.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:736925032543:android:59ced1a8686b886a933bea",
+        "android_client_info": {
+          "package_name": "com.Anubis.Sleefax"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "736925032543-cc57cjo9gl0hn7nf7d281c7ciak6eu5v.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.Anubis.Sleefax",
+            "certificate_hash": "f022e1d5075109316f2905209851b4f1e928838c"
+          }
+        },
+        {
+          "client_id": "736925032543-ip2eafmsbot3u28o4i05dctidqjssc4r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD3XSkHxs8cNaIPPmeD6v0e6AnblrphYAQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "736925032543-ip2eafmsbot3u28o4i05dctidqjssc4r.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "736925032543-pij32tupg81f4jngck4ttrnq7ctb8vp8.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.prithviraj8.storeowner"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:736925032543:android:119f66f63aee0e49933bea",
+        "android_client_info": {
+          "package_name": "com.Prithviraj8.storeowner"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "736925032543-0h3t7uep8crp517rgvq9ifmh9m3u9l6q.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.Prithviraj8.storeowner",
+            "certificate_hash": "f022e1d5075109316f2905209851b4f1e928838c"
+          }
+        },
+        {
+          "client_id": "736925032543-ip2eafmsbot3u28o4i05dctidqjssc4r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD3XSkHxs8cNaIPPmeD6v0e6AnblrphYAQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "736925032543-ip2eafmsbot3u28o4i05dctidqjssc4r.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "736925032543-pij32tupg81f4jngck4ttrnq7ctb8vp8.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.prithviraj8.storeowner"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

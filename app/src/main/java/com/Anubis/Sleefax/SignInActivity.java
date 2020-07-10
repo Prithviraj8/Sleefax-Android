@@ -41,6 +41,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.Anubis.Sleefax.Animations.GifImageView;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -81,9 +82,9 @@ public class SignInActivity extends AppCompatActivity {
 
     final FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference ref = database.getReference();
-//    String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+    KProgressHUD hud;
 
-    RelativeLayout signinRL,rootLayout, phoneRL, loginRL;
+    RelativeLayout signinRL,rootLayout, phoneRL, loginRL, gifRL;
     Button forgotPassword,back,Login, SignInButton;
     ImageButton showPass;
 
@@ -94,27 +95,33 @@ public class SignInActivity extends AppCompatActivity {
     TextView signUp_InTV,phoneNum,Terms,loginTV,mobileTv, ccTv,mtv, validTv;
     EditText Phone;
     ImageView phoneIv;
-
-
+    GifImageView gifImageView;
 
     String loc,orderStatus,shopKey,fileType,pagesize,orientation,email,shopName;
     double shopLat;
     double shopLong;
     double userLat,userLong;
-    long shopNum;
-    int files;
-    double price;
-    int copy;
-    int resultCode;
-    int requestCode;
-    double numberOfPages;
-    String color,custom;
-    boolean FromYourOrders =false, bothSides,isTester,newUser;
     ArrayList<String> urls = new ArrayList<>();
+    ArrayList<String> fileTypes = new ArrayList<>();
+    ArrayList<String> colors = new ArrayList<>();
+    ArrayList<Integer> copies = new ArrayList<>();
+    ArrayList<String> pageSize = new ArrayList<>();
+    ArrayList<String> orientations = new ArrayList<>();
+    boolean bothSides[];
+    ArrayList<String> customPages = new ArrayList<>();
+    ArrayList<String> customValues = new ArrayList<>();
+    ArrayList<Integer> numberOfPages = new ArrayList<>();
+    ArrayList<String> fileNames = new ArrayList<>();
+    ArrayList<String> fileSizes = new ArrayList<>();
+    double pricePerFile[];
+    double totalPrice;
     Boolean signUp,isShowPassword = false;
+    int files;
+    boolean FromYourOrders =false,isTester,newUser;
+    long shopNum;
+
 
     int top,left;
-
     Intent otpIntent;
     Bundle otpBundle;
 
@@ -128,6 +135,11 @@ public class SignInActivity extends AppCompatActivity {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.INTERNET, Manifest.permission.INTERNET}, 1);
         }
+        // Progress HUD
+        hud = KProgressHUD.create(this)
+                .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
+                .setLabel("Loading")
+                .setMaxProgress(100);
 //        emailTV = findViewById(R.id.EmailTV);
 //        passwordTV = findViewById(R.id.PasswordTV);
 //        signUp_InTV = findViewById(R.id.SignIn_Up);
@@ -151,7 +163,9 @@ public class SignInActivity extends AppCompatActivity {
         phoneIv = findViewById(R.id.phoneIV);
         mtv = findViewById(R.id.phoneNumber);
 
-        validTv = findViewById(R.id.valid_text);
+        gifRL = findViewById(R.id.GifRL);
+        gifImageView = (GifImageView) findViewById(R.id.GIF);
+        gifImageView.setGifImageResource(R.raw.file_operation);
 
 
         setupInitialViews();
@@ -242,7 +256,6 @@ public class SignInActivity extends AppCompatActivity {
 
                 }
 
-
             }
         });
 
@@ -261,7 +274,7 @@ public class SignInActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 ccTv.setVisibility(View.VISIBLE);
-//                Phone.setVisibility(View.VISIBLE);
+                Phone.setVisibility(View.VISIBLE);
                 mobileTv.setVisibility(View.VISIBLE);
 
                 Animation animation1 = new AlphaAnimation(1.0f,0.0f);
@@ -323,21 +336,11 @@ public class SignInActivity extends AppCompatActivity {
             }
         });
 
-
-        System.out.print("PHONENUM "+ phoneNum.getText().toString());
     }
 
-
-
     public void getNewUserOrderDetails(){
-
-
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
-//        signUp = extras.getBoolean("SignUp");
-//        newUser = extras.getBoolean("NewUser");
-
-
 
         //////////////////////////////////////////////////Shop Info//////////////////////////////////////////
         shopLat = extras.getDouble("ShopLat");
@@ -346,7 +349,7 @@ public class SignInActivity extends AppCompatActivity {
         loc = extras.getString("Location");
         files = extras.getInt("Files");
         orderStatus = extras.getString("OrderStatus");
-        price = extras.getDouble("Price");
+        totalPrice = extras.getDouble("Price");
         FromYourOrders = extras.getBoolean("FromYourOrders");
         shopKey = extras.getString("ShopKey");
         userLat = extras.getDouble("User Lat");
@@ -356,95 +359,53 @@ public class SignInActivity extends AppCompatActivity {
         /////////////////////////////////////////////////Order info////////////////////////////////////////
 
 
-        fileType = extras.getString("FileType");
-        pagesize = extras.getString("PageSize");
-        orientation = extras.getString("Orientation");
+
 
         shopNum = extras.getLong("ShopNum");
+        fileNames = extras.getStringArrayList("FileNames");
+        fileSizes = extras.getStringArrayList("FileSizes");
+
         urls = extras.getStringArrayList("URLS");
-        copy = extras.getInt("Copies");
-        color = extras.getString("ColorType");
-        requestCode = extras.getInt("RequestCode");
-        resultCode = extras.getInt("ResultCode");
-        bothSides = extras.getBoolean("BothSides");
-        custom = extras.getString("Custom");
-        numberOfPages = extras.getDouble("Pages");
+        fileTypes = extras.getStringArrayList("FileType");
+        pageSize = extras.getStringArrayList("PageSize");
+        orientations = extras.getStringArrayList("Orientation");
+        copies = extras.getIntegerArrayList("Copies");
+        colors = extras.getStringArrayList("ColorType");
+        bothSides = extras.getBooleanArray("BothSides");
+        customPages = extras.getStringArrayList("Custom");
+        numberOfPages = extras.getIntegerArrayList("Pages");
+
+        pricePerFile = extras.getDoubleArray("PricePerFile");
+        totalPrice = extras.getDouble("TotalPrice");
+
         isTester = extras.getBoolean("IsTester");
         newUser = extras.getBoolean("NewUser");
 
-
     }
+
+
     String mVerificationId;
     PhoneAuthProvider.ForceResendingToken mResendToken;
     PhoneAuthCredential mcredential;
-    public void sendNewUsersOrderData(){
 
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-
-        Intent intent;
-
-        Toast.makeText(this,String.valueOf(mVerificationId),Toast.LENGTH_LONG).show();
-        if(mVerificationId != null){
-            intent = new Intent(SignInActivity.this,verifyOTPActivity.class);
-        }else {
-            intent = new Intent(SignInActivity.this, FirstNameActivity.class);
-        }
-        Bundle extras = new Bundle();
-
-        extras.putBoolean("SignUp",true);
-        extras.putBoolean("NewUser",true);
-
-        extras.putString("Number",phoneNum.getText().toString());
-        extras.putString("VID",mVerificationId);
-        otpBundle.putParcelable("Credential",mcredential);
-
-        if(currentUser!=null) {
-            extras.putString("Email", currentUser.getEmail());
-            extras.putString("Name", currentUser.getDisplayName());
-        }
-        extras.putStringArrayList("URLS", urls);
-        extras.putString("ShopName", shopName);
-        extras.putString("Location", loc);
-        extras.putDouble("ShopLat", shopLat);
-        extras.putDouble("ShopLong", shopLong);
-        extras.putInt("Files", files);
-        extras.putDouble("Price", price);
-        android.util.Log.d("SSSSPRRICE", String.valueOf(price));
-
-        extras.putString("FileType", fileType);
-        extras.putString("PageSize", pagesize);
-        extras.putString("Orientation", orientation);
-        extras.putBoolean("IsTester", isTester);
-        extras.putLong("ShopNum", shopNum);
-
-        extras.putInt("Copies", copy);
-        extras.putString("ColorType", color);
-        extras.putBoolean("BothSides", bothSides);
-        extras.putString("Custom", custom);
-        extras.putString("ShopKey", shopKey);
-//        extras.putString("UserID", userID);
-        extras.putDouble("User Lat", userLat);
-        extras.putDouble("User Long", userLong);
-        extras.putInt("RequestCode", requestCode);
-        extras.putInt("ResultCode", resultCode);
-        extras.putDouble("Pages", numberOfPages);
-        intent.putExtras(extras);
-        startActivity(intent);
-
-
-    }
 
 
 
     private View.OnClickListener Listener = new View.OnClickListener() {
         public void onClick(View v) {
             // do something when the button is clicked
+
+//            hud.show();
+            gifRL.setVisibility(View.VISIBLE);
             if(v == findViewById(R.id.SignIn)) {
-                if(phoneNum.getText().length() == 0) {
+                if(Phone.getText().length() == 0) {
+//                    hud.dismiss();
+                    gifRL.setVisibility(View.GONE);
 //                    attemptRegistration();
                 }else{
-                    Toast.makeText(SignInActivity.this, "PHONE "+phoneNum.getText(), Toast.LENGTH_SHORT).show();
-                    attemptPhoneAuth("+91"+phoneNum.getText().toString().trim());
+                    SignInButton.setVisibility(View.GONE);
+                    attemptPhoneAuth("+1"+Phone.getText().toString().trim());
+
                 }
             }
 //            else
@@ -531,11 +492,17 @@ public class SignInActivity extends AppCompatActivity {
 
             if(!newUser){
                 otpBundle.putParcelable("Credential",credential);
+                otpBundle.putString("Number",Phone.getText().toString());
+
                 otpIntent.putExtras(otpBundle);
 
                 startActivity(otpIntent);
+//                hud.dismiss();
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                gifRL.setVisibility(View.GONE);
+
             }else {
+                Toast.makeText(SignInActivity.this, "NEW_NUMBER"+ Phone.getText().toString(), Toast.LENGTH_SHORT).show();
                 sendNewUsersOrderData();
             }
 
@@ -546,6 +513,7 @@ public class SignInActivity extends AppCompatActivity {
             // This callback is invoked in an invalid request for verification is made,
             // for instance if the the phone number format is not valid.
             Log.w(TAG, "onVerificationFailed", e);
+            SignInButton.setVisibility(View.VISIBLE);
 
             if (e instanceof FirebaseAuthInvalidCredentialsException) {
                 // Invalid request
@@ -573,12 +541,17 @@ public class SignInActivity extends AppCompatActivity {
             mResendToken = token;
 
             if(!newUser) {
-                otpBundle.putString("Number",phoneNum.getText().toString());
+                otpBundle.putString("Number",Phone.getText().toString());
                 otpBundle.putString("VID",mVerificationId);
                 otpIntent.putExtras(otpBundle);
                 startActivity(otpIntent);
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+
+//                hud.dismiss();
+                gifRL.setVisibility(View.GONE);
+
             }else{
+                Toast.makeText(SignInActivity.this, "NEW_NUMBER"+ Phone.getText().toString(), Toast.LENGTH_SHORT).show();
                 sendNewUsersOrderData();
             }
 
@@ -615,6 +588,8 @@ public class SignInActivity extends AppCompatActivity {
             } catch (ApiException e) {
                 // Google Sign In failed, update UI appropriately
                 Log.w(TAG, "Google sign in failed", e);
+                SignInButton.setVisibility(View.VISIBLE);
+
                 // ...
             }
         }
@@ -640,6 +615,8 @@ public class SignInActivity extends AppCompatActivity {
                             Log.w(TAG, "signInWithCredential:failure", task.getException());
                             Log.d("Failed ","Authentication Failed.");
                             updateUI(null);
+                            SignInButton.setVisibility(View.VISIBLE);
+
                         }
 
                         // ...
@@ -658,7 +635,9 @@ public class SignInActivity extends AppCompatActivity {
         final String[] name = new String[1];
         if(currentUser != null) {
             saveEmailLocally(email);
-            hud.show();
+//            hud.show();
+            gifRL.setVisibility(View.VISIBLE);
+
 
             ref.addChildEventListener(new ChildEventListener() {
 
@@ -683,26 +662,20 @@ public class SignInActivity extends AppCompatActivity {
                                 extras.putString("Email", currentUser.getEmail());
                                 extras.putString("Name", currentUser.getDisplayName());
                                 intent.putExtras(extras);
-                                hud.dismiss();
+//                                hud.dismiss();
+                                gifRL.setVisibility(View.GONE);
+
                                 startActivity(intent);
                             }
 //                            finish();
                         }else{
                             Intent intent = new Intent(SignInActivity.this, Select.class);
                             startActivity(intent);
-                            hud.dismiss();
-                            finish();
+//                            hud.dismiss();
+                            gifRL.setVisibility(View.GONE);
+
                         }
-//                    }
-//                    else {
-//                        Intent intent = new Intent(SignInActivity.this, FirstNameActivity.class);
-//                        Bundle extras = new Bundle();
-//                        extras.putString("Email", currentUser.getEmail());
-////                        extras.putString("Name",currentUser.getDisplayName());
-//                        intent.putExtras(extras);
-//                        hud.dismiss();
-////                        startActivity(intent);
-//                    }
+
                 }
 
                 @Override
@@ -738,7 +711,7 @@ public class SignInActivity extends AppCompatActivity {
                 .setLabel("Please wait")
                 .setMaxProgress(100);
 
-        hud.show();
+//        hud.show();
 
         // Reset errors displayed in the form.
         emailTV.setError(null);
@@ -753,7 +726,9 @@ public class SignInActivity extends AppCompatActivity {
 
         // Check for a valid password, if the user entered one.
         if (TextUtils.isEmpty(password) || !isPasswordValid(password)) {
-            hud.dismiss();
+//            hud.dismiss();
+            gifRL.setVisibility(View.GONE);
+
             passwordTV.setError(getString(R.string.error_invalid_password));
             focusView = passwordTV;
             cancel = true;
@@ -761,19 +736,25 @@ public class SignInActivity extends AppCompatActivity {
 
         // Check for a valid email address.
         if (TextUtils.isEmpty(email)) {
-            hud.dismiss();
+//            hud.dismiss();
+            gifRL.setVisibility(View.GONE);
+
             emailTV.setError(getString(R.string.error_field_required));
             focusView = emailTV;
             cancel = true;
         } else if (!isEmailValid(email)) {
-            hud.dismiss();
+//            hud.dismiss();
+            gifRL.setVisibility(View.GONE);
+
             emailTV.setError(getString(R.string.error_invalid_email));
             focusView = emailTV;
             cancel = true;
         }
 
         if (cancel) {
-            hud.dismiss();
+//            hud.dismiss();
+            gifRL.setVisibility(View.GONE);
+
             // There was an error; don't attempt login and focus the first
             // form field with an error.
             focusView.requestFocus();
@@ -783,7 +764,7 @@ public class SignInActivity extends AppCompatActivity {
 
             // TODO: Call create FirebaseUser() here
             login();
-            hud.dismiss();
+//            hud.dismiss();
 
 
         }
@@ -810,7 +791,8 @@ public class SignInActivity extends AppCompatActivity {
                 .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
                 .setLabel("Please wait.")
                 .setMaxProgress(100);
-        hud.show();
+//        hud.show();
+        gifRL.setVisibility(View.VISIBLE);
 
         mAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(SignInActivity.this, new OnCompleteListener<AuthResult>() {
             @Override
@@ -827,7 +809,6 @@ public class SignInActivity extends AppCompatActivity {
                     Intent intent = new Intent(SignInActivity.this,Select.class);
                     intent.putExtra("Email",email);
                     startActivity(intent);
-                    finish();
                 }
             }
         });
@@ -839,7 +820,9 @@ public class SignInActivity extends AppCompatActivity {
                 .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
                 .setLabel("Please wait.")
                 .setMaxProgress(100);
-        hud.show();
+//        hud.show();
+        gifRL.setVisibility(View.VISIBLE);
+
 
         mAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
@@ -911,6 +894,70 @@ public class SignInActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+
+
+    public void sendNewUsersOrderData(){
+
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        Intent intent;
+
+        if(mVerificationId != null){
+            intent = new Intent(SignInActivity.this,verifyOTPActivity.class);
+        }else {
+            intent = new Intent(SignInActivity.this, FirstNameActivity.class);
+        }
+        Bundle extras = new Bundle();
+
+        extras.putBoolean("SignUp",true);
+        extras.putBoolean("NewUser",true);
+
+        extras.putString("Number",Phone.getText().toString());
+        extras.putString("VID",mVerificationId);
+        extras.putParcelable("Credential",mcredential);
+
+        if(currentUser!=null) {
+            extras.putString("Email", currentUser.getEmail());
+            extras.putString("Name", currentUser.getDisplayName());
+        }
+        extras.putString("ShopName", shopName);
+        extras.putString("Location", loc);
+        extras.putDouble("ShopLat", shopLat);
+        extras.putDouble("ShopLong", shopLong);
+        extras.putInt("Files", files);
+        extras.putDouble("Price", totalPrice);
+
+        extras.putBoolean("IsTester", isTester);
+        extras.putLong("ShopNum", shopNum);
+
+
+        extras.putStringArrayList("URLS", urls);
+        extras.putIntegerArrayList("Pages", numberOfPages);
+
+        extras.putBooleanArray("BothSides", bothSides);
+        extras.putStringArrayList("Custom", customPages);
+        extras.putStringArrayList("FileNames",fileNames);
+        extras.putStringArrayList("FileType", fileTypes);
+        extras.putStringArrayList("PageSize", pageSize);
+        extras.putStringArrayList("Orientation", orientations);
+        extras.putIntegerArrayList("Copies", copies);
+        extras.putStringArrayList("ColorType", colors);
+
+        extras.putString("ShopKey", shopKey);
+        extras.putDouble("User Lat", userLat);
+        extras.putDouble("User Long", userLong);
+        extras.putStringArrayList("FileSizes",fileSizes);
+
+        extras.putDoubleArray("PricePerFile",pricePerFile);
+        extras.putDouble("TotalPrice",totalPrice);
+        intent.putExtras(extras);
+
+//            hud.dismiss();
+        gifRL.setVisibility(View.GONE);
+        startActivity(intent);
+
+
     }
 
     public void saveEmailLocally(String email){
