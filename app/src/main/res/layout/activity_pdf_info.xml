@@ -740,6 +740,17 @@
 
     </ScrollView>
 
+
+    <ImageView
+        android:id="@+id/ViewImage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignBottom="@+id/DismissViewer"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="0dp"
+        android:background="#000000"
+        android:visibility="gone" />
     <Button
         android:id="@+id/DismissViewer"
         android:layout_width="wrap_content"
@@ -748,7 +759,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginStart="10dp"
         android:layout_marginBottom="10dp"
-        android:text="Dismiss"
+        android:text="Dissmiss"
         android:textColor="#000000"
         android:visibility="gone" />
 

@@ -737,7 +737,7 @@
                 <RelativeLayout
                     android:id="@+id/LiveOrderTopRL"
                     android:layout_width="match_parent"
-                    android:layout_height="136dp"
+                    android:layout_height="100dp"
                     android:layout_alignParentTop="true"
                     android:layout_marginTop="0dp"
                     android:background="@drawable/roundedview"

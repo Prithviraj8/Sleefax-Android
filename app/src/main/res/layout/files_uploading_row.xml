@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/imageView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/FileName"
+        android:layout_alignBottom="@+id/FileName"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="0dp"
+        android:layout_toEndOf="@+id/FileName"
+        app:srcCompat="@drawable/red_cros" />
+
+    <ImageView
+        android:id="@+id/tickIMG"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="10dp"
+        app:srcCompat="@drawable/file" />
+
+    <TextView
+        android:id="@+id/FileName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/tickIMG"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="0dp"
+        android:layout_toEndOf="@+id/tickIMG"
+        android:text="TextView" />
+
+</RelativeLayout>

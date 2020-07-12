@@ -239,7 +239,7 @@
         android:id="@+id/GifRL"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#FFF"
+        android:background="#227093"
         android:visibility="gone">
 
         <com.Anubis.Sleefax.Animations.GifImageView

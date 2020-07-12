@@ -36,17 +36,21 @@ import android.os.Parcelable;
 import android.transition.TransitionInflater;
 import android.util.DisplayMetrics;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.Anubis.Sleefax.Animations.GifImageView;
 import com.Anubis.Sleefax.Animations.ProgressBarAnimation;
 import com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar;
 import com.android.volley.RequestQueue;
@@ -183,12 +187,14 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
 
     long usernum;
     RelativeLayout paytm,otherPayments,payOnPickup,upi,gpay,phonepay;
-    RelativeLayout upperBlueLayout;
+    RelativeLayout upperBlueLayout,gifRL;
     RelativeLayout slidelayout;
     int idOfPaymentMode;
     TextView amount,tv;
     ProgressBar mProgress;
     View view3,orderProcessAnime;
+    GifImageView gifImageView;
+
     ImageButton back;
     RelativeLayout relativeLForUPI,progressRL;
     ArrayList<String> pageURL = new ArrayList<>();
@@ -218,6 +224,9 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
         getWindowManager().getDefaultDisplay().getMetrics(displaymetrics);
         mScreenHeight = displaymetrics.heightPixels;
 
+        gifRL = findViewById(R.id.GifRL);
+        gifImageView = (GifImageView) findViewById(R.id.GIF);
+        gifImageView.setGifImageResource(R.raw.file_operation);
 
     //    orderProcessAnime = findViewById(R.id.orderProcessAnime);
        // view3 = findViewById(R.id.view3);
@@ -805,6 +814,7 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
 
         intent.putExtras(extras);
         startActivity(intent);
+        finish();
 
 
     }
@@ -888,6 +898,8 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
     ImageView rocket;
     RoundCornerProgressBar roundCornerProgressBar;
     MediaPlayer ring;
+    ListView filesUploadingLV;
+
     public void setVisibilities(){
         payOnPickup.setVisibility(View.INVISIBLE);
        // upi.setVisibility(View.INVISIBLE);
@@ -897,56 +909,20 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
         rocket = findViewById(R.id.rocket);
         roundCornerProgressBar = findViewById(R.id.progressBarCenteredCustom);
 
+        filesUploadingLV = findViewById(R.id.FilesUploadingListView);
+        FileUploadingAdapter fileUploadingAdapter = new FileUploadingAdapter();
+        filesUploadingLV.setAdapter(fileUploadingAdapter);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setEnterTransition(TransitionInflater.from(Payments.this).inflateTransition(R.transition.slide_from_bottom));
         }
 
-//        view3.setVisibility(View.VISIBLE);
-//        view3.setAlpha(0f);
-//        view3.setVisibility(View.VISIBLE);
-//        view3.animate()
-//                .alpha(1f)
-//                .setDuration(shortAnimationDuration)
-//                .setListener(null);
-//
-//        orderProcessAnime.setAlpha(0f);
-//        orderProcessAnime.setVisibility(View.VISIBLE);
-//        orderProcessAnime.animate()
-//                .alpha(1f)
-//                .setDuration(shortAnimationDuration)
-//                .setListener(null);
-//
-////        orderProcessAnime.setVisibility(View.VISIBLE);
-//
-//        Resources res = getResources();
-//        Drawable drawable;
-//        drawable = res.getDrawable(R.drawable.circular);
-//
-//
-//        mProgress.setAlpha(0f);
-//        mProgress.setVisibility(View.VISIBLE);
-//        mProgress.animate()
-//                .alpha(1f)
-//                .setDuration(shortAnimationDuration)
-//                .setListener(null);
 
 
 
-
-//        mProgress.setProgress(0);   // Main Progress
-//        mProgress.setSecondaryProgress(100); // Secondary Progress
-//        mProgress.setMax(100); // Maximum Progress
-//        mProgress.setProgressDrawable(drawable);
 
         expandView(progressRL,0,mScreenHeight);
         ring = MediaPlayer.create(Payments.this, R.raw.rocketlaunchaudio);
-//        tv.setAlpha(0f);
-//        tv.setVisibility(View.VISIBLE);
-//        tv.animate()
-//                .alpha(1f)
-//                .setDuration(shortAnimationDuration)
-//                .setListener(null);
 
 
         new uploadFile().execute();
@@ -954,6 +930,48 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
     }
 
 
+    // Listview of files being uploaded
+    double progressValue;
+    String fileBeingUploaded;
+    public class FileUploadingAdapter extends BaseAdapter {
+
+
+        @Override
+        public int getCount() {
+            return urls.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return position;
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+
+            convertView =  getLayoutInflater().inflate(R.layout.files_uploading_row,null);
+            TextView Name;
+            ImageView tick;
+            Name = convertView.findViewById(R.id.FileName);
+            tick = convertView.findViewById(R.id.tickIMG);
+
+            Name.setText(fileBeingUploaded);
+
+            // SETTING PROGRESS VALUE OF THE FILE CURRENTLY BEING UPLOADED TO FIREBASE
+            if(progressValue == 100){
+                tick.setImageResource(R.drawable.green_tick);
+            }
+
+
+
+            return convertView;
+        }
+    }
 
     int id = 0,custorderID=0;
     FirebaseStorage storage = FirebaseStorage.getInstance();
@@ -986,22 +1004,7 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
 
                 final String uniqueID = UUID.randomUUID().toString();
                 StorageReference filesRef = null;
-//                if(fileTypes.get(i).equals("application/vnd.openxmlformats-officedocument.wordprocessingml.document")){
-//                    fileTypes.add(i,"Docx");
-//                    filesRef = storageRef.child(uniqueID+".docx");
-//                }else if(fileTypes.get(i).equals("application/vnd.openxmlformats-officedocument.presentationml.presentation")){
-//                    fileTypes.add(i,"PPTX");
-//                    filesRef = storageRef.child(uniqueID+".pptx");
-//                }else if(fileTypes.get(i).equals("application/vnd.ms-powerpoint")){
-//                    fileTypes.add(i,"PPT");
-//                    filesRef = storageRef.child(uniqueID+".ppt");
-//                }else if(fileTypes.get(i).equals("application/msword")){
-//                    fileTypes.add(i,"Word");
-//                    filesRef = storageRef.child(uniqueID+".doc");
-//                }else if(fileTypes.get(i).equals("application/pdf")){
-//                    fileTypes.add(i,"PDF");
-//                    filesRef = storageRef.child(uniqueID+".pdf");
-//                }
+
 
                 
                 
@@ -1022,16 +1025,14 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
                     filesRef = storageRef.child(uniqueID+".jpg");
                 }
 
-//        if (Build.VERSION.SDK_INT < 19) {
 
-//      getContext().getContentResolver().takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                 final UploadTask uploadTask = filesRef.putFile(uri);
-//        final UploadTask uploadTask = filesRef.putFile(changeExtension(new File(file.getPath()),"pdf"));
                 final int finalI = i;
                 final Uri finalUri = uri;
 
                 final StorageReference finalFilesRef = filesRef;
                 final StorageReference finalFilesRef1 = filesRef;
+                final int finalI1 = i;
                 uploadTask.addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception exception) {
@@ -1059,7 +1060,9 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
 
                         roundCornerProgressBar.startAnimation(anim);
 
-//                        }
+                        // Setting these values below in order to change values in the fileUploadingListview or FileUploadingAdapter
+                        fileBeingUploaded = fileNames.get(finalI1);
+                        progressValue = progress;
 
 
                     }

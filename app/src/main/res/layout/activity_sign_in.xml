@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/rootlayout"
-    android:paddingHorizontal="30dp"
     android:background="#FFFFFF"
     tools:context=".SignInActivity">
 
@@ -16,6 +15,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_marginTop="160dp"
+        android:paddingHorizontal="30dp"
         android:fitsSystemWindows="true">
 
         <TextView
@@ -50,6 +50,7 @@
         android:layout_height="50dp"
         android:paddingVertical="11dp"
         android:id="@+id/phoneRL"
+        android:layout_marginStart="30dp"
         android:layout_marginTop="67dp"
         android:layout_marginEnd="30dp"
         android:layout_centerHorizontal="true"
@@ -172,6 +173,9 @@
         android:layout_below="@id/phoneRL"
         android:layout_marginTop="40dp"
         android:text="Continue"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        android:layout_centerHorizontal="true"
         android:textAllCaps="false"
         android:fontFamily="@font/poppins_semibold"
         android:textColor="#FFFFFF"
@@ -277,9 +281,8 @@
         android:id="@+id/GifRL"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#FFFF"
-        android:visibility="gone"
-        android:layout_centerInParent="true">
+        android:background="#227093"
+        android:visibility="gone">
 
         <com.Anubis.Sleefax.Animations.GifImageView
             android:id="@+id/GIF"

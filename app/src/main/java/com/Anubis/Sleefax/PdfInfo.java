@@ -111,7 +111,7 @@ public class PdfInfo extends AppCompatActivity {
     View colorsTV,bwTV,h,v;
     ToggleButton bothSidePrint;
     ImageButton back,scrollDown;
-    ImageView nextBtnArrow;
+    ImageView nextBtnArrow, imgView;
     Button viewPdf, dismissViewer,done,previousBtn;
     ScrollView scrollView,viewFileScrollView;
     PDFView pdfView;
@@ -218,6 +218,7 @@ public class PdfInfo extends AppCompatActivity {
         viewPdf = findViewById(R.id.viewPdfBtn);
         pageCount = findViewById(R.id.PageCount);
         pdfView = findViewById(R.id.viewPDF);
+        imgView = findViewById(R.id.ViewImage);
         dismissViewer = findViewById(R.id.DismissViewer);
         viewFileScrollView = findViewById(R.id.ViewerScollView);
         mainUI = findViewById(R.id.ViewerLinearLayout);
@@ -695,7 +696,12 @@ public class PdfInfo extends AppCompatActivity {
             if(v == findViewById(R.id.viewPdfBtn)) {
                 dismissViewer.setVisibility(View.VISIBLE);
                 viewFileRL.setVisibility(View.GONE);
+                upperLayout.setVisibility(View.GONE);
 
+                if(fileTypes.get(pdfCnt).equals("IMAGE")){
+                    imgView.setVisibility(View.VISIBLE);
+                    imgView.setImageURI(Uri.parse(pdfURL.get(pdfCnt)));
+                }else
                 if (fileTypes.get(pdfCnt).equals("PDF")) {
 //                    viewPdf.setVisibility(View.INVISIBLE);
                     bothSidePrint.setVisibility(View.INVISIBLE);
@@ -758,6 +764,8 @@ public class PdfInfo extends AppCompatActivity {
                 viewFileRL.setVisibility(View.VISIBLE);
                 dismissViewer.setVisibility(View.GONE);
                 upperLayout.setVisibility(View.VISIBLE);
+                imgView.setVisibility(View.GONE);
+                upperLayout.setVisibility(View.VISIBLE);
 
             }
             else if(v == findViewById(R.id.PreviousBtn)){
@@ -786,8 +794,7 @@ public class PdfInfo extends AppCompatActivity {
         copiesTV.setText("1");
         bothSidePrint.setTextOff("OFF");
 
-        if(pdfCnt < numberOfPages.size()) {
-            if (!fileTypes.get(0).contains("IMAGE")) {
+            if (!fileTypes.get(0).contains("IMAGE") && pdfCnt < numberOfPages.size()) {
                 if (pdfCnt < pdfURL.size() && numberOfPages.get(pdfCnt) != 0) {
                     customValue2.setText(String.valueOf(numberOfPages.get(pdfCnt)));
                 } else {
@@ -795,7 +802,6 @@ public class PdfInfo extends AppCompatActivity {
                 }
                 customValue1.setText(String.valueOf(1));
             }
-        }
         bw_selected.setVisibility(View.VISIBLE);
         color_selected.setVisibility(View.INVISIBLE);
         colour = "Black/White";

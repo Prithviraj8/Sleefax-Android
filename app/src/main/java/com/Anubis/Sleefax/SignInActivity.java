@@ -159,7 +159,6 @@ public class SignInActivity extends AppCompatActivity {
         Phone = findViewById(R.id.PhoneNumber);
 
         Login = findViewById(R.id.login_with_phoneBtn);
-        loginTV = findViewById(R.id.loginText);
         mobileTv = findViewById(R.id.mobilenumTV);
         ccTv = findViewById(R.id.country_codeTV);
         phoneIv = findViewById(R.id.phoneIV);
@@ -167,7 +166,7 @@ public class SignInActivity extends AppCompatActivity {
 
         gifRL = findViewById(R.id.GifRL);
         gifImageView = (GifImageView) findViewById(R.id.GIF);
-        gifImageView.setGifImageResource(R.raw.animation_640_kchj0ms6);
+        gifImageView.setGifImageResource(R.raw.animation_640_kchmf79t);
 //        gifRL.setVisibility(View.VISIBLE);
 
         setupInitialViews();

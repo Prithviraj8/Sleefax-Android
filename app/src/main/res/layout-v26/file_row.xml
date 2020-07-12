@@ -34,14 +34,16 @@
         <Button
             android:id="@+id/customise"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/pdfName"
+            android:layout_height="31dp"
             android:layout_alignStart="@+id/pdfName"
+            android:layout_alignTop="@+id/price"
+            android:layout_alignBottom="@+id/price"
             android:layout_marginStart="0dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="0dp"
+            android:background="#00FFFFFF"
             android:fontFamily="@font/poppins"
             android:text="@string/customize"
-            android:background="#00FFFFFF"
             android:textColor="#227093"
             android:textSize="15dp" />
 

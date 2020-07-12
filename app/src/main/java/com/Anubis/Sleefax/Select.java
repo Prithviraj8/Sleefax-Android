@@ -49,6 +49,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Vibrator;
 import android.transition.Transition;
 import android.transition.TransitionInflater;
 import android.transition.TransitionManager;
@@ -137,6 +138,9 @@ public class Select extends AppCompatActivity {
     RelativeLayout contactsRl,addfilePage,addfileTVRL,pickedUpOrderView,CurrentOrderRowRL,liveOrderRL;
 
     TextView addFilesText,addPhotosText;
+
+    Vibrator vibrator;
+
     ////// Buttons and items of contacts page /////
     Button num1,num2;
     ImageButton back;
@@ -175,7 +179,7 @@ public class Select extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_files);
 
-
+        vibrator = (Vibrator) this.getSystemService(Context.VIBRATOR_SERVICE);
 
 
         //////////////////////////////home page UI elements///////////////////////////////////
@@ -198,6 +202,7 @@ public class Select extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                vibrator.vibrate(20);//80 represents the milliseconds (the duration of the vibration)
                 home.setImageResource(R.drawable.home_blue);
                 cart.setImageResource(R.drawable.shopping_grey);
                 homepage.setVisibility(View.VISIBLE);
@@ -210,6 +215,7 @@ public class Select extends AppCompatActivity {
         cart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                vibrator.vibrate(20);//80 represents the milliseconds (the duration of the vibration)
 
                 home.setImageResource(R.drawable.home_grey);
                 cart.setImageResource(R.drawable.supermarket);
@@ -858,6 +864,7 @@ public class Select extends AppCompatActivity {
         String name;
         SharedPreferences sharedPreferences = getSharedPreferences(SharedPrefs,0);
         name = sharedPreferences.getString("DisplayName",null);
+        hellonameTv.setText("Hello "+name + ",");
         return name;
     }
 
@@ -1111,62 +1118,6 @@ public class Select extends AppCompatActivity {
 
 
 
-//    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-//    public void uploadFile(ArrayList uri){
-//
-//        Intent goToPdfInfo = new Intent(Pop.this, PdfInfo.class);
-//        Bundle extras = new Bundle();
-//
-//        extras.putDoubleArray("Pages",numberOfPages);
-//        extras.putStringArrayList("FileNames",fileNames);
-//        Log.d("SOZEEE",String.valueOf(fileSizes.size()));
-//        extras.putStringArrayList("FileSizes",fileSizes);
-//        ArrayList<String> files = new ArrayList<>();
-//
-//        for (int i=0;i<uri.size();i++){
-////                        Toast.makeText(Pop.this,"NOP "+numberOfPages[i],Toast.LENGTH_LONG).show();
-//
-//            files.add(uri.get(i).toString());
-//            if(i == uri.size()-1){
-//                extras.putStringArrayList("URLS", files);
-//                extras.putStringArrayList("FileType", mimeTypes);
-//                extras.putBoolean("IsTester",isTester);
-//                extras.putBoolean("NewUser",newUser);
-//
-//                goToPdfInfo.putExtras(extras);
-//                startActivity(goToPdfInfo);
-//                finish();
-//
-//            }
-//        }
-//
-//
-//    }
-//
-//
-//    public void uploadImg(Intent data, ArrayList<Uri> uri){
-//        Intent goToPageInfo = new Intent(Select.this, PageInfo.class);
-//        Bundle extras = new Bundle();
-//        extras.putStringArrayList("FileType", mimeTypes);
-//        ArrayList<String> images = new ArrayList<>();
-//        int i;
-//
-//        for(i=0;i<uri.size();i++){
-//            images.add(uri.get(i).toString());
-//
-//            if(i == uri.size()-1) {
-////                Log.d("URISIZE", String.valueOf(uri.size()));
-//                extras.putStringArrayList("URLS", images);
-//                extras.putParcelable("Data",data);
-//                extras.putBoolean("IsTester",isTester);
-//                extras.putBoolean("NewUser",newUser);
-//
-////            extras.putParcelableArrayList("URLS", uri);
-//                goToPageInfo.putExtras(extras);
-//                startActivity(goToPageInfo);
-//            }
-//        }
-//    }
 
      ArrayList<String> orderkey = new ArrayList<>();
     ArrayList<String> orderID = new ArrayList<>();

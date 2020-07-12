@@ -267,6 +267,15 @@
             android:layout_marginBottom="0dp"
             android:background="#FFF">
 
+            <com.Anubis.Sleefax.Animations.GifImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/GIF"
+                android:layout_above="@+id/progressBarCenteredCustom"
+                android:layout_marginTop="20dp"
+                android:layout_centerHorizontal="true"
+                />
+
             <TextView
                 android:id="@+id/tv"
                 android:layout_width="wrap_content"
@@ -277,19 +286,6 @@
                 android:textSize="26sp"
                 android:visibility="visible" />
 
-
-            <com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar
-                android:id="@+id/progressBarCenteredCustom"
-                android:layout_width="300dp"
-                android:layout_height="20dp"
-                android:layout_below="@+id/tv"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="10dp"
-                app:rcBackgroundColor="#FFF"
-                app:rcMax="100"
-                app:rcProgress="20"
-                app:rcProgressColor="#227093"
-                app:rcRadius="20dp" />
 
 
             <FrameLayout
@@ -309,6 +305,29 @@
                     android:layout_gravity="bottom|center" />
 
             </FrameLayout>
+
+            <com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar
+                android:id="@+id/progressBarCenteredCustom"
+                android:layout_width="300dp"
+                android:layout_height="20dp"
+                android:layout_below="@+id/tv"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="10dp"
+                app:rcBackgroundColor="#FFF"
+                app:rcMax="100"
+                app:rcProgress="20"
+                app:rcProgressColor="#227093"
+                app:rcRadius="20dp" />
+
+            <ListView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/FilesUploadingListView"
+                android:layout_below="@+id/progressBarCenteredCustom"
+                android:layout_marginTop="20dp"
+                android:layout_centerHorizontal="true"
+                />
+
         </RelativeLayout>
 
     </RelativeLayout>

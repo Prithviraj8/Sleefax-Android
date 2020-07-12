@@ -34,6 +34,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.Anubis.Sleefax.Animations.GifImageView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -108,6 +109,9 @@ public class FirstNameActivity extends AppCompatActivity {
     long shopNum;
 
 
+    RelativeLayout gifRL;
+    GifImageView gifImageView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -115,6 +119,12 @@ public class FirstNameActivity extends AppCompatActivity {
         if(FirebaseAuth.getInstance().getCurrentUser() != null){
             userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         }
+
+        gifRL = findViewById(R.id.GifRL);
+        gifImageView = (GifImageView) findViewById(R.id.GIF);
+        gifImageView.setGifImageResource(R.raw.animation_640_kchmf79t);
+        gifRL.setVisibility(View.GONE);
+
 
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
@@ -340,6 +350,7 @@ public class FirstNameActivity extends AppCompatActivity {
         continueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                gifRL.setVisibility(View.VISIBLE);
                 if(!isEmailValid(EmailText))
                     validTv.setVisibility(View.VISIBLE);
                 else
@@ -440,6 +451,7 @@ public class FirstNameActivity extends AppCompatActivity {
         intent.putExtras(extras);
 
         startActivity(intent);
+        finish();
 
 
     }
@@ -463,6 +475,8 @@ public class FirstNameActivity extends AppCompatActivity {
             firstNameTV.setError(getString(R.string.error_field_required));
             focusView = firstNameTV;
             cancel = true;
+            gifRL.setVisibility(View.GONE);
+
         }
 
         // Check for a valid email address.
@@ -470,19 +484,21 @@ public class FirstNameActivity extends AppCompatActivity {
             numberTV.setError(getString(R.string.error_field_required));
             focusView = numberTV;
             cancel = true;
+            gifRL.setVisibility(View.GONE);
+
         }
 
         if (cancel) {
             // There was an error; don't attempt login and focus the first
             // form field with an error.
             focusView.requestFocus();
+            gifRL.setVisibility(View.GONE);
         } else {
             Log.d("Name is ",name);
             Log.d("num is", String.valueOf(num));
 
             // TODO: Call create FirebaseUser() here
-
-
+            uploadUserData(name,num);
 
         }
     }
@@ -510,7 +526,9 @@ public class FirstNameActivity extends AppCompatActivity {
                         Bundle bundle = new Bundle();
                         bundle.putBoolean("NewUser",false);
                         goToMainPage.putExtras(bundle);
-//                        startActivity(goToMainPage);
+                        startActivity(goToMainPage);
+                        finish();
+
                     }
                 }
             });

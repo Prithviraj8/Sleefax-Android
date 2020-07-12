@@ -102,7 +102,7 @@ public class verifyOTPActivity extends AppCompatActivity {
 
         GifRL = findViewById(R.id.GifRL);
         gifImageView = (GifImageView) findViewById(R.id.GIF);
-        gifImageView.setGifImageResource(R.raw.animation_640_kchj0ms6);
+        gifImageView.setGifImageResource(R.raw.animation_640_kchmf79t);
 
         otpLayout = findViewById(R.id.OTP_RL);
         rootLayout = findViewById(R.id.rootlayout);
@@ -551,6 +551,7 @@ public class verifyOTPActivity extends AppCompatActivity {
 
         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         startActivity(intent);
+        finish();
 
 
     }

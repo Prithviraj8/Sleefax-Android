@@ -288,4 +288,20 @@
             android:textSize="27sp"/>
     </RelativeLayout>
 
+    <RelativeLayout
+        android:id="@+id/GifRL"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#1C5C81"
+        android:visibility="gone"
+        android:layout_centerInParent="true">
+
+        <com.Anubis.Sleefax.Animations.GifImageView
+            android:id="@+id/GIF"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"
+            android:visibility="visible"
+            />
+    </RelativeLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

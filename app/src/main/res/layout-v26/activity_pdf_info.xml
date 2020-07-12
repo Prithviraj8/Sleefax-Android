@@ -740,6 +740,17 @@
 
     </ScrollView>
 
+
+    <ImageView
+        android:id="@+id/ViewImage"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignBottom="@+id/DismissViewer"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="0dp"
+        android:layout_marginBottom="0dp"
+        android:background="#000000"
+        android:visibility="gone" />
     <Button
         android:id="@+id/DismissViewer"
         android:layout_width="wrap_content"
