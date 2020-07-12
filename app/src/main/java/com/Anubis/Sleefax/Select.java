@@ -71,6 +71,7 @@ import android.widget.Toast;
 
 import com.Anubis.Sleefax.CONSTANTS.CONSTANTS;
 import com.Anubis.Sleefax.Services.NotificationService;
+import com.github.mmin18.widget.RealtimeBlurView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -125,7 +126,8 @@ public class Select extends AppCompatActivity {
     Button orders,orderPickBtn;
     ImageButton selectFilesBtn,more ,setting,sideMenu,selectPhotos,selectAttachment;
 
-    View addFileView,blurrView;
+    View addFileView;
+    RealtimeBlurView blurrView;
 
     int orderCnt = 0,mScreenHeight, mScreenWidth;
 
@@ -392,9 +394,9 @@ public class Select extends AppCompatActivity {
                 addfileTVRL.setVisibility(View.VISIBLE);
 
                 homepage.setVisibility(View.INVISIBLE);
-//                blurrView.setVisibility(View.VISIBLE);
 
                 if(addfileTVRL.getHeight() == 0) {
+                    blurrView.setVisibility(View.VISIBLE);
                     expandView(addfileTVRL, 0, mScreenHeight / 4);
                 }
 
@@ -603,7 +605,7 @@ public class Select extends AppCompatActivity {
 //            selectFilesBtn.setRotation(45f);
             ObjectAnimator.ofFloat(selectFilesBtn, "rotation", 0f, 45f).start();
 
-            pullToRefresh.setAlpha(0.1f);
+//            pullToRefresh.setAlpha(0.1f);
 //            listView.setAlpha(0.1f);
 
             addPhotosText.animate().translationXBy(1000f + mScreenWidth/6 - 10).setDuration(400);
@@ -621,7 +623,7 @@ public class Select extends AppCompatActivity {
 //            selectFilesBtn.setRotation(90f);
             ObjectAnimator.ofFloat(selectFilesBtn, "rotation", 45f, 0f).start();
 
-            pullToRefresh.setAlpha(1f);
+//            pullToRefresh.setAlpha(1f);
 //            listView.setAlpha(1);
 
             selectAttachment.animate().translationXBy(-(mScreenWidth/4 - 20)).translationYBy((float) yaxis).setDuration(400);
@@ -828,6 +830,7 @@ public class Select extends AppCompatActivity {
 
     public void collapseView(final View v,int initialHt,int finalHt){
 
+        blurrView.setVisibility(View.GONE);
 
         ValueAnimator slideAnimator = ValueAnimator.ofInt(initialHt,finalHt).setDuration(shortAnimationDuration);
         slideAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
