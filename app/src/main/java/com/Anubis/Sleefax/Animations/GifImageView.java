@@ -78,6 +78,7 @@ public class GifImageView extends View {
 
     public void setGifImageResource(int id) {
         mInputStream = mContext.getResources().openRawResource(id);
+
         init();
     }
 

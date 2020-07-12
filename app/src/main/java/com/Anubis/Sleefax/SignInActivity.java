@@ -113,6 +113,8 @@ public class SignInActivity extends AppCompatActivity {
     ArrayList<Integer> numberOfPages = new ArrayList<>();
     ArrayList<String> fileNames = new ArrayList<>();
     ArrayList<String> fileSizes = new ArrayList<>();
+    ArrayList<Integer> customPage1 = new ArrayList<>();
+    ArrayList<Integer> customPage2 = new ArrayList<>();
     double pricePerFile[];
     double totalPrice;
     Boolean signUp,isShowPassword = false;
@@ -165,8 +167,8 @@ public class SignInActivity extends AppCompatActivity {
 
         gifRL = findViewById(R.id.GifRL);
         gifImageView = (GifImageView) findViewById(R.id.GIF);
-        gifImageView.setGifImageResource(R.raw.file_operation);
-
+        gifImageView.setGifImageResource(R.raw.animation_640_kchj0ms6);
+//        gifRL.setVisibility(View.VISIBLE);
 
         setupInitialViews();
 
@@ -375,6 +377,9 @@ public class SignInActivity extends AppCompatActivity {
         customPages = extras.getStringArrayList("Custom");
         numberOfPages = extras.getIntegerArrayList("Pages");
 
+        customPage1 = extras.getIntegerArrayList("CustomPages1");
+        customPage2 = extras.getIntegerArrayList("CustomPages2");
+
         pricePerFile = extras.getDoubleArray("PricePerFile");
         totalPrice = extras.getDouble("TotalPrice");
 
@@ -475,6 +480,7 @@ public class SignInActivity extends AppCompatActivity {
                 mCallbacks);        // OnVerificationStateChangedCallbacks
 
     }
+
     PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
 
         @Override
@@ -948,7 +954,8 @@ public class SignInActivity extends AppCompatActivity {
         extras.putDouble("User Lat", userLat);
         extras.putDouble("User Long", userLong);
         extras.putStringArrayList("FileSizes",fileSizes);
-
+        extras.putIntegerArrayList("CustomPages1",customPage1);
+        extras.putIntegerArrayList("CustomPages2",customPage2);
         extras.putDoubleArray("PricePerFile",pricePerFile);
         extras.putDouble("TotalPrice",totalPrice);
         intent.putExtras(extras);

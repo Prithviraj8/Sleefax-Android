@@ -76,7 +76,8 @@ public class Pop extends AppCompatActivity {
     ArrayList<Integer> numberOfPages = new ArrayList<>();
     ArrayList<String> fileNames = new ArrayList<>();
     ArrayList<String> fileSizes = new ArrayList<>();
-
+    ArrayList<Integer> customPage1 = new ArrayList<>();
+    ArrayList<Integer> customPage2 = new ArrayList<>();
     ArrayList<Uri> fileLocations = new ArrayList<>();
     double pricePerFile[];
     double totalPrice;
@@ -205,6 +206,8 @@ public class Pop extends AppCompatActivity {
         fileSizes = extras.getStringArrayList("FileSizes");
         isTester = extras.getBoolean("IsTester");
         cnt = extras.getInt("FileCount");
+        customPage1 = extras.getIntegerArrayList("CustomPages1");
+        customPage2 = extras.getIntegerArrayList("CustomPages2");
 
         pricePerFile = extras.getDoubleArray("PricePerFile");
         totalPrice = extras.getDouble("TotalPrice");
@@ -286,6 +289,7 @@ public class Pop extends AppCompatActivity {
                     Uri returnUri = data.getData();
                     fileLocations.add(returnUri);
 
+                    Log.d("FILELOC",returnUri.toString());
                     mimeType = getContentResolver().getType(returnUri);
 
                     if (mimeType.contains("application")) {
@@ -327,8 +331,12 @@ public class Pop extends AppCompatActivity {
                                 if (mimeType.equals("application/vnd.openxmlformats-officedocument.wordprocessingml.document")) {
                                     mimeTypes.add(cnt,"Docx");
 
-                                    XWPFDocument document;
-                                    document = new XWPFDocument(inputStream);
+                                    XWPFDocument document = null;
+                                    if (inputStream != null) {
+                                        document = new XWPFDocument(inputStream);
+                                    }else{
+
+                                    }
                                     XWPFWordExtractor extractor = new XWPFWordExtractor(document);
                                     int pages = document.getProperties().getExtendedProperties().getUnderlyingProperties().getPages();
                                     numberOfPages.add(pages);
@@ -711,7 +719,8 @@ public class Pop extends AppCompatActivity {
         extras.putStringArrayList("Custom",customPages);
         extras.putStringArrayList("CustomValue",customValues);
         extras.putBoolean("IsTester",isTester);
-
+        extras.putIntegerArrayList("CustomPages1",customPage1);
+        extras.putIntegerArrayList("CustomPages2",customPage2);
         extras.putDoubleArray("PricePerFile",pricePerFile);
         extras.putDouble("TotalPrice",totalPrice);
 

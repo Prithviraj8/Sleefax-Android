@@ -80,7 +80,7 @@ public class FirstNameActivity extends AppCompatActivity {
     final FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference ref = database.getReference();
     String userId,number;
-    String name = " ",email,num;
+    String name = " ",isUser,email,num;
 
     String loc,orderStatus,shopKey,fileType,pagesize,orientation,shopName;
     double shopLat;
@@ -98,6 +98,8 @@ public class FirstNameActivity extends AppCompatActivity {
     ArrayList<Integer> numberOfPages = new ArrayList<>();
     ArrayList<String> fileNames = new ArrayList<>();
     ArrayList<String> fileSizes = new ArrayList<>();
+    ArrayList<Integer> customPage1 = new ArrayList<>();
+    ArrayList<Integer> customPage2 = new ArrayList<>();
     double pricePerFile[];
     double totalPrice;
     Boolean signUp,isShowPassword = false;
@@ -113,6 +115,7 @@ public class FirstNameActivity extends AppCompatActivity {
         if(FirebaseAuth.getInstance().getCurrentUser() != null){
             userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         }
+
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
         newUser = extras.getBoolean("NewUser");
@@ -333,6 +336,7 @@ public class FirstNameActivity extends AppCompatActivity {
                 finish();
             }
         });
+
         continueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -383,6 +387,9 @@ public class FirstNameActivity extends AppCompatActivity {
         customPages = extras.getStringArrayList("Custom");
         numberOfPages = extras.getIntegerArrayList("Pages");
 
+        customPage1 = extras.getIntegerArrayList("CustomPages1");
+        customPage2 = extras.getIntegerArrayList("CustomPages2");
+
         pricePerFile = extras.getDoubleArray("PricePerFile");
         totalPrice = extras.getDouble("TotalPrice");
 
@@ -426,7 +433,8 @@ public class FirstNameActivity extends AppCompatActivity {
         extras.putDouble("User Lat", userLat);
         extras.putDouble("User Long", userLong);
         extras.putStringArrayList("FileSizes",fileSizes);
-
+        extras.putIntegerArrayList("CustomPages1",customPage1);
+        extras.putIntegerArrayList("CustomPages2",customPage2);
         extras.putDoubleArray("PricePerFile",pricePerFile);
         extras.putDouble("TotalPrice",totalPrice);
         intent.putExtras(extras);
@@ -473,7 +481,8 @@ public class FirstNameActivity extends AppCompatActivity {
             Log.d("num is", String.valueOf(num));
 
             // TODO: Call create FirebaseUser() here
-            uploadUserData(name,num);
+
+
 
         }
     }
@@ -491,7 +500,6 @@ public class FirstNameActivity extends AppCompatActivity {
 
                     if(newUser){
                         Toast.makeText(FirstNameActivity.this, "NEW_USER "+newUser, Toast.LENGTH_SHORT).show();
-
                         ref.child("users").child(userId).setValue(info);
                         sendNewUsersOrderData();
                     }else{
@@ -504,17 +512,19 @@ public class FirstNameActivity extends AppCompatActivity {
                         goToMainPage.putExtras(bundle);
 //                        startActivity(goToMainPage);
                     }
-
-
-            }
-        });
-
+                }
+            });
     }
 
     boolean isEmailValid(CharSequence email) {
         return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
+//    public void getInfoSavedLocally(){
+//        SharedPreferences sharedPreferences = getSharedPreferences(SharedPrefs,0);
+//        isUser = sharedPreferences.getString("UserID","No user");
+//
+//    }
 
 
     public void saveDisplayNameLocally(String name,long num){

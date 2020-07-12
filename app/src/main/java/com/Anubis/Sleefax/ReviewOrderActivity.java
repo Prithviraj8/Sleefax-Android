@@ -1,15 +1,11 @@
 package com.Anubis.Sleefax;
 
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -20,9 +16,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 class fileInfo {
 
@@ -75,7 +69,9 @@ public class ReviewOrderActivity extends AppCompatActivity {
     ArrayList<Integer> numberOfPages = new ArrayList<>();
     ArrayList<String> fileNames = new ArrayList<>();
     ArrayList<String> fileSizes = new ArrayList<>();
-//    ArrayList<Double> pricePerFile = new ArrayList<>();
+    ArrayList<Integer> customPage1 = new ArrayList<>();
+    ArrayList<Integer> customPage2 = new ArrayList<>();
+
     double pricePerFile[];
     double totalPrice = 0.0;
 
@@ -152,7 +148,7 @@ public class ReviewOrderActivity extends AppCompatActivity {
 
             if(v == findViewById(R.id.SelectShops)){
                 addingMoreFiles = false;
-                sendOrderInfo();
+                sendOrderInfo(false,0);
             }
             else if(v == findViewById(R.id.back_button)){
                 finish();
@@ -165,7 +161,7 @@ public class ReviewOrderActivity extends AppCompatActivity {
                 }else {
                     selectingFile = true;
                 }
-                sendOrderInfo();
+                sendOrderInfo(false,0);
             }
         }
     };
@@ -214,6 +210,8 @@ public class ReviewOrderActivity extends AppCompatActivity {
         fileNames = extras.getStringArrayList("FileNames");
         fileSizes = extras.getStringArrayList("FileSizes");
         isTester = extras.getBoolean("IsTester");
+        customPage1 = extras.getIntegerArrayList("CustomPages1");
+        customPage2 = extras.getIntegerArrayList("CustomPages2");
 
         pricePerFile = new double[urls.size()];
         pricePerFile = extras.getDoubleArray("PricePerFile");
@@ -221,20 +219,27 @@ public class ReviewOrderActivity extends AppCompatActivity {
 
     }
 
-    public void sendOrderInfo(){
-        Intent intent;
+    public void sendOrderInfo(boolean customize,int pdfCnt){
+        Intent intent = null;
         Bundle extras = new Bundle();
 
-        if(addingMoreFiles) {
+//        Toast.makeText(this, "ADDINGMORE "+addingMoreFiles, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, "CUSTOMIZE "+customize, Toast.LENGTH_SHORT).show();
+        if(addingMoreFiles && !customize) {
             intent = new Intent(ReviewOrderActivity.this, Pop.class);
             extras.putBoolean("File",false);
             extras.putBoolean("AddingMoreFiles",true);
             extras.putInt("FileCount",urls.size());
             extras.putBoolean("File",selectingFile);
-        }else{
+        }else if(!customize){
             intent = new Intent(ReviewOrderActivity.this, ShopsActivity.class);
-        }
-
+        }else
+            if(customize){
+                intent = new Intent(ReviewOrderActivity.this, PdfInfo.class);
+                extras.putBoolean("Customize",true);
+                extras.putInt("FileCount",urls.size());
+                extras.putInt("PdfCnt",pdfCnt);
+             }
 
         extras.putInt("ShopCount", shopCnt);
         extras.putStringArrayList("URLS", urls);
@@ -250,6 +255,9 @@ public class ReviewOrderActivity extends AppCompatActivity {
         extras.putBoolean("NewUser",newUser);
         extras.putStringArrayList("Custom",customPages);
         extras.putStringArrayList("CustomValue",customValues);
+
+        extras.putIntegerArrayList("CustomPages1",customPage1);
+        extras.putIntegerArrayList("CustomPages2",customPage2);
 
         extras.putDoubleArray("PricePerFile",pricePerFile);
         extras.putDouble("TotalPrice",totalPrice);
@@ -286,15 +294,16 @@ public class ReviewOrderActivity extends AppCompatActivity {
 
         @SuppressLint("ViewHolder")
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, ViewGroup parent) {
             convertView = getLayoutInflater().inflate(R.layout.file_row,null);
 
             if(convertView != null) {
-                TextView Name, Size, Price, customize;
+                TextView Name, Size, Price;
                 Name = convertView.findViewById(R.id.pdfName);
                 Size = convertView.findViewById(R.id.size);
                 Price = convertView.findViewById(R.id.price);
-                customize = convertView.findViewById(R.id.text_customize);
+                Button customize = convertView.findViewById(R.id.customise);
+
 
                 Name.setText(Data.get(position).getName());
                 Price.setText(Data.get(position).getPrice());
@@ -304,7 +313,11 @@ public class ReviewOrderActivity extends AppCompatActivity {
                     public void onClick(View v) {
 
                         // Send user to file or image setting page based on the users selection.
-//                    startActivity(new Intent(this,PageSetting.class));
+//                        Intent intent = new Intent(ReviewOrderActivity.this,PdfInfo.class);
+//                        Bundle extras = new Bundle();
+//                        extras.putInt("PdfCnt",position);
+                        sendOrderInfo(true,position);
+
                     }
                 });
 

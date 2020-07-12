@@ -122,6 +122,8 @@ public class ShopsActivity extends AppCompatActivity {
     ArrayList<Integer> numberOfPages = new ArrayList<>();
     ArrayList<String> fileNames = new ArrayList<>();
     ArrayList<String> fileSizes = new ArrayList<>();
+    ArrayList<Integer> customPage1 = new ArrayList<>();
+    ArrayList<Integer> customPage2 = new ArrayList<>();
     double pricePerFile[];
     double totalPrice;
 
@@ -212,6 +214,10 @@ public class ShopsActivity extends AppCompatActivity {
         customValues = extras.getStringArrayList("CustomValue");
         fileNames = extras.getStringArrayList("FileNames");
         fileSizes = extras.getStringArrayList("FileSizes");
+
+        customPage1 = extras.getIntegerArrayList("CustomPages1");
+        customPage2 = extras.getIntegerArrayList("CustomPages2");
+
 
         pricePerFile = extras.getDoubleArray("PricePerFile");
         totalPrice = extras.getDouble("TotalPrice");
@@ -753,7 +759,8 @@ public class ShopsActivity extends AppCompatActivity {
         extras.putString("UserID", userID);
         extras.putDouble("User Lat", userLoc.getLatitude());
         extras.putDouble("User Long", userLoc.getLongitude());
-
+        extras.putIntegerArrayList("CustomPages1",customPage1);
+        extras.putIntegerArrayList("CustomPages2",customPage2);
         extras.putDoubleArray("PricePerFile",pricePerFile);
         extras.putDouble("TotalPrice",totalPrice);
 

@@ -92,22 +92,23 @@
 
         </LinearLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <Button
+            android:id="@+id/ViewFileBtn"
+            android:layout_width="100dp"
+            android:layout_height="21dp"
             android:layout_below="@id/infoLV1"
-            android:text="@string/ViewFile"
             android:layout_alignStart="@id/infoLV2"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="-8dp"
             android:layout_marginBottom="10dp"
-            android:textColor="#367E95"
-            android:layout_marginTop="-10dp"
-            android:textSize="13sp"
+            android:autoLink="all"
+            android:background="#00FFFFFF"
             android:fontFamily="@font/poppins_medium"
-            android:selectAllOnFocus="false"
             android:linksClickable="true"
-            android:autoLink="all"/>
-
-
+            android:selectAllOnFocus="false"
+            android:text="@string/ViewFile"
+            android:textColor="#367E95"
+            android:textSize="13sp" />
 
 
     </RelativeLayout>

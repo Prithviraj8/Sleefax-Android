@@ -4,41 +4,41 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingHorizontal="30dp"
     android:id="@+id/rootlayout"
+    android:paddingHorizontal="30dp"
     android:background="#FFFFFF"
     tools:context=".SignInActivity">
 
 
     <RelativeLayout
+        android:id="@+id/relativeLayoutLogin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/relativeLayoutLogin"
-        android:fitsSystemWindows="true"
         android:layout_alignParentTop="true"
-        android:layout_marginTop="160dp">
+        android:layout_marginTop="160dp"
+        android:fitsSystemWindows="true">
 
         <TextView
+            android:id="@+id/namasteText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Namaste,"
             android:layout_marginTop="0dp"
-            android:textColor="#000000"
-            android:textSize="35sp"
             android:layout_marginBottom="-10dp"
             android:fontFamily="@font/poppins_semibold"
-            android:id="@+id/namasteText"/>
+            android:text="Namaste,"
+            android:textColor="#000000"
+            android:textSize="35sp" />
 
         <TextView
+            android:id="@+id/loginText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Login to Continue."
             android:layout_below="@id/namasteText"
             android:layout_marginTop="-10dp"
-            android:textColor="#000000"
-            android:textSize="25sp"
             android:fontFamily="@font/poppins"
-            android:id="@+id/loginText"/>
+            android:text="Login to Continue."
+            android:textColor="#000000"
+            android:textSize="25sp" />
 
     </RelativeLayout>
 
@@ -51,6 +51,8 @@
         android:paddingVertical="11dp"
         android:id="@+id/phoneRL"
         android:layout_marginTop="67dp"
+        android:layout_marginEnd="30dp"
+        android:layout_centerHorizontal="true"
         android:background="@drawable/login_page_phone_text"
         android:layout_below="@id/relativeLayoutLogin">
 
@@ -187,6 +189,7 @@
         android:layout_below="@id/SignIn"
         android:id="@+id/signinRL"
         android:layout_marginTop="38dp">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -196,6 +199,7 @@
             android:textSize="15sp"
             android:fontFamily="@font/poppins"
             android:id="@+id/signinTV"/>
+
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -264,21 +268,32 @@
             android:paddingHorizontal="9dp"
             android:paddingVertical="10dp"
             android:src="@drawable/google_icon" />
+
     </com.google.android.gms.common.SignInButton>
+
+
+<!--    <com.github.mmin18.widget.RealtimeBlurView-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="match_parent"-->
+<!--        app:realtimeBlurRadius="10dp"-->
+<!--        app:realtimeOverlayColor="#3B000000">-->
+<!--    </com.github.mmin18.widget.RealtimeBlurView>-->
 
     <RelativeLayout
         android:id="@+id/GifRL"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#FFF"
-        android:visibility="gone">
+        android:background="#FFFF"
+        android:visibility="gone"
+        android:layout_centerInParent="true">
 
         <com.Anubis.Sleefax.Animations.GifImageView
             android:id="@+id/GIF"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_centerInParent="true"
-            android:visibility="visible" />
+            android:visibility="visible"
+           />
     </RelativeLayout>
 
 </RelativeLayout>

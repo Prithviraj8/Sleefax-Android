@@ -130,5 +130,7 @@ dependencies {
     //Duo menu navigation
     implementation 'nl.psdcompany:duo-navigation-drawer:3.0.0'
 
+    implementation 'com.github.mmin18:realtimeblurview:1.2.1' // Working perfectly
+
 }
 apply plugin: 'com.google.gms.google-services'

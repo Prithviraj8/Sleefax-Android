@@ -1311,6 +1311,10 @@ public class Select extends AppCompatActivity {
 //                        Collections.reverse(orderStatus);
 
 
+                        home.setImageResource(R.drawable.home_grey);
+                        cart.setImageResource(R.drawable.supermarket);
+                        liveorders.setVisibility(View.VISIBLE);
+                        homepage.setVisibility(View.GONE);
                         currentOrderLV();
                     }
                 },500);

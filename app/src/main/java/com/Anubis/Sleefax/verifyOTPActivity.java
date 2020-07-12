@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.text.Editable;
@@ -43,6 +44,7 @@ public class verifyOTPActivity extends AppCompatActivity {
     final FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference ref = database.getReference();
     KProgressHUD hud;
+    public String SharedPrefs = "Data";
 
 
     String number, mVerificationId, code;
@@ -62,6 +64,8 @@ public class verifyOTPActivity extends AppCompatActivity {
     ArrayList<Integer> numberOfPages = new ArrayList<>();
     ArrayList<String> fileNames = new ArrayList<>();
     ArrayList<String> fileSizes = new ArrayList<>();
+    ArrayList<Integer> customPage1 = new ArrayList<>();
+    ArrayList<Integer> customPage2 = new ArrayList<>();
     double pricePerFile[];
     double totalPrice;
     Boolean signUp,isShowPassword = false;
@@ -98,7 +102,7 @@ public class verifyOTPActivity extends AppCompatActivity {
 
         GifRL = findViewById(R.id.GifRL);
         gifImageView = (GifImageView) findViewById(R.id.GIF);
-        gifImageView.setGifImageResource(R.raw.file_operation);
+        gifImageView.setGifImageResource(R.raw.animation_640_kchj0ms6);
 
         otpLayout = findViewById(R.id.OTP_RL);
         rootLayout = findViewById(R.id.rootlayout);
@@ -165,6 +169,7 @@ public class verifyOTPActivity extends AppCompatActivity {
         }
         
 //    }
+    boolean isNewUser;
 
     private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {
 
@@ -179,6 +184,8 @@ public class verifyOTPActivity extends AppCompatActivity {
 
                             Log.d("SIGNIN", "signInWithCredential:success");
                             final FirebaseUser user = task.getResult().getUser();
+
+                            getInfoSavedLocally();
 
                             if(!newUser) {
                                 ref.child("users").addValueEventListener(new ValueEventListener() {
@@ -218,7 +225,11 @@ public class verifyOTPActivity extends AppCompatActivity {
                                 });
 
                             }else{
-//                                hud.dismiss();
+                                if(!isUser.equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                                    isNewUser = true;
+                                }else{
+                                    isNewUser = false;
+                                }
                                 GifRL.setVisibility(View.GONE);
                                 sendNewUsersOrderData();
                             }
@@ -429,6 +440,14 @@ public class verifyOTPActivity extends AppCompatActivity {
         });
     }
 
+
+    String isUser;
+    public void getInfoSavedLocally(){
+        SharedPreferences sharedPreferences = getSharedPreferences(SharedPrefs,0);
+        isUser = sharedPreferences.getString("UserID","No user");
+
+    }
+
     public void getNewUserOrderDetails(){
         Intent intent = getIntent();
         Bundle extras = intent.getExtras();
@@ -466,6 +485,9 @@ public class verifyOTPActivity extends AppCompatActivity {
         customPages = extras.getStringArrayList("Custom");
         numberOfPages = extras.getIntegerArrayList("Pages");
 
+        customPage1 = extras.getIntegerArrayList("CustomPages1");
+        customPage2 = extras.getIntegerArrayList("CustomPages2");
+
         pricePerFile = extras.getDoubleArray("PricePerFile");
         totalPrice = extras.getDouble("TotalPrice");
 
@@ -478,9 +500,17 @@ public class verifyOTPActivity extends AppCompatActivity {
     }
 
     public void sendNewUsersOrderData(){
+        Intent intent;
+        Bundle extras;
+        if(isNewUser){
+            intent = new Intent(verifyOTPActivity.this,FirstNameActivity.class);
+            extras = new Bundle();
 
-        Intent intent = new Intent(verifyOTPActivity.this,FirstNameActivity.class);
-        Bundle extras = new Bundle();
+        }else{
+            intent = new Intent(verifyOTPActivity.this,Payments.class);
+            extras = new Bundle();
+        }
+
 
         extras.putBoolean("SignUp",true);
         extras.putBoolean("NewUser",true);
@@ -513,7 +543,8 @@ public class verifyOTPActivity extends AppCompatActivity {
         extras.putDouble("User Lat", userLat);
         extras.putDouble("User Long", userLong);
         extras.putStringArrayList("FileSizes",fileSizes);
-
+        extras.putIntegerArrayList("CustomPages1",customPage1);
+        extras.putIntegerArrayList("CustomPages2",customPage2);
         extras.putDoubleArray("PricePerFile",pricePerFile);
         extras.putDouble("TotalPrice",totalPrice);
         intent.putExtras(extras);
