@@ -291,8 +291,10 @@ public class YourOrders extends AppCompatActivity {
                 paymentModeTV.setText(paymentModes.get(position));
 
                 if ((orderStatus.get(position)).equals("Done")){
-                    OrderStatus.setText("Completed");
-                    OrderStatus.setBackgroundResource(R.drawable.orderstatusview3);
+                  //  OrderStatus.setText("Completed");
+                 //   OrderStatus.setBackgroundResource(R.drawable.orderstatusview3);
+                    OrderStatus.setVisibility(View.VISIBLE);
+
                 }
 
 

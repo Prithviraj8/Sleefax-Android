@@ -62,6 +62,7 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -91,6 +92,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import nl.psdcompany.duonavigationdrawer.views.DuoDrawerLayout;
 import nl.psdcompany.duonavigationdrawer.views.DuoMenuView;
@@ -148,6 +151,15 @@ public class Select extends AppCompatActivity {
     Toolbar toolbar;
     NavigationView navigationView;
 
+//////////////////////////////home page UI elements///////////////////////////////////
+    RelativeLayout liveorders,homepage;
+    boolean scrollingLeft = false;
+
+    HorizontalScrollView horizontalScrollView;
+
+    ImageButton home,cart;
+    TextView hellonameTv;//this variable to be changed for the name on home page
+//////////////////////////////home page UI elements///////////////////////////////////
 
 
     //////// Live orders Listview /////////
@@ -160,6 +172,84 @@ public class Select extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_files);
+
+
+
+
+        //////////////////////////////home page UI elements///////////////////////////////////
+
+        liveorders = findViewById(R.id.LiveOrdersRL);
+        homepage = findViewById(R.id.HomePageLayout);
+
+        horizontalScrollView = findViewById(R.id.ImagesScrollView);
+
+
+        horizontalScrollView.setSmoothScrollingEnabled(true);
+
+        hellonameTv = findViewById(R.id.helloTV);
+
+
+//////////////////////////////shifting between home page and live orders/////////////////////////////////////////////
+        home = findViewById(R.id.home);
+        cart = findViewById(R.id.cart);
+        home.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                home.setImageResource(R.drawable.home_blue);
+                cart.setImageResource(R.drawable.shopping_grey);
+                homepage.setVisibility(View.VISIBLE);
+                liveorders.setVisibility(View.GONE);
+
+
+
+            }
+        });
+        cart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                home.setImageResource(R.drawable.home_grey);
+                cart.setImageResource(R.drawable.supermarket);
+                liveorders.setVisibility(View.VISIBLE);
+                homepage.setVisibility(View.GONE);
+            }
+        });
+
+
+        //////////////////////////////animation///////////////////////////////////
+
+
+        Timer timer = new Timer("horizontalScrollViewTimer");
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (scrollingLeft) {
+
+                            if (horizontalScrollView.getScrollX() == 0) {
+                                horizontalScrollView.smoothScrollBy(10, 0);
+                                scrollingLeft = false;
+                            } else {
+                                horizontalScrollView.smoothScrollBy(-10, 0);
+                            }
+
+                        } else {
+                            if (horizontalScrollView.canScrollHorizontally(View.FOCUS_RIGHT)) {
+                                horizontalScrollView.smoothScrollBy(10, 0);
+                            } else {
+
+                                horizontalScrollView.smoothScrollBy(-10, 0);
+                                scrollingLeft = true;
+                            }
+                        }
+                    }
+                });
+            }
+        }, 0, 50);
+        //////////////////////////////home page UI elements///////////////////////////////////
 
 
         Random random = new Random();
@@ -295,9 +385,13 @@ public class Select extends AppCompatActivity {
         selectFilesBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+
                 selectFiles(view);
 
                 addfileTVRL.setVisibility(View.VISIBLE);
+
+                homepage.setVisibility(View.INVISIBLE);
 //                blurrView.setVisibility(View.VISIBLE);
 
                 if(addfileTVRL.getHeight() == 0) {
@@ -773,8 +867,26 @@ public class Select extends AppCompatActivity {
         final DuoDrawerLayout drawerLayout = (DuoDrawerLayout) findViewById(R.id.drawerLayout);
         final DuoDrawerToggle drawerToggle = new DuoDrawerToggle(Select.this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
 
+        drawerToggle.setDrawerIndicatorEnabled(false);
+
+        drawerToggle.setHomeAsUpIndicator(R.drawable.more_2);
+        drawerToggle.setToolbarNavigationClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (drawerLayout.isDrawerVisible(GravityCompat.START)) {
+                    drawerLayout.closeDrawer(GravityCompat.START);
+                } else {
+                    drawerLayout.openDrawer(GravityCompat.START);
+                }
+            }
+        });
+
+
         drawerLayout.setDrawerListener(drawerToggle);
         drawerToggle.syncState();
+
+
+
 
         DuoMenuView duoMenuView = findViewById(R.id.Duo_Menu);
 

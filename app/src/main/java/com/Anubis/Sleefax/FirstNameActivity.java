@@ -10,17 +10,28 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewTreeObserver;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -33,12 +44,35 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
+import static com.Anubis.Sleefax.PdfInfo.dpToPx;
+
 
 public class FirstNameActivity extends AppCompatActivity {
 
+    //////////////////////////////////////////new UI ////////////////////////////////////////////////
+//Refer to the comments for the variables
+    RelativeLayout rootlayout;//the outer relative layout
+    RelativeLayout nameRL;// the relative layout of name edit text
+    RelativeLayout emailRL;// the relative layout of email edit text
+    Button nameBtn,emailBtn;// on clicking on the nameBtn nad emailBtn the animation is triggered and the outline of relative layout is changed to blue
+    TextView nameTV,mailTv;//the text Name and email that comes to top of edit text after user starts typing
+    RelativeLayout detailsRL;// the relative layout containing edit text name and email
+    ImageView nameIV,mailIV; // two side icons of name and email edit text
+    int top,left;//used for animation
+    TextView nTv,eTv;// the enter your name and eter email textviews
+
+    String EmailText;// get the text of Email entered by user
+
+    TextView validTv;//Enter a valid email textview
+
+
+    boolean flag = false;// used to adjust screen size after keyboard appears
+    ////////////////////////////////////////////////new UI/////////////////////////////////////////////////
+
+    EditText firstNameTV,Email;//the main Edit text
+
 
     public String SharedPrefs = "Data";
-    private AutoCompleteTextView firstNameTV;
     EditText numberTV;
     private FirebaseAuth mAuth;
 
@@ -95,13 +129,197 @@ public class FirstNameActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_NOTIFICATION_POLICY}, 3);
             Log.d("NOTIFICATION ", String.valueOf(PackageManager.PERMISSION_DENIED));
         }
+
+
         firstNameTV = findViewById(R.id.FirstNameTV);
         numberTV = findViewById(R.id.numberTV);
         numberTV.setText(number);
+        Email = findViewById(R.id.Email);
 
-        Button continueButton = findViewById(R.id.FirstNameButton);
+        final Button continueButton = findViewById(R.id.FirstNameButton);
 
         ImageButton back = findViewById(R.id.back);
+
+        /////////////////////////////////////////////////////new UI///////////////////////////////////////////////
+
+       //these all are just used for either animation or changing backgrounds
+        rootlayout= findViewById(R.id.rootlayout);
+        nameTV = findViewById(R.id.usernameTV);
+        nameRL = findViewById(R.id.nameRL);
+        nameBtn = findViewById(R.id.name_button);
+        detailsRL = findViewById(R.id.detailsLayout);
+        nameIV = findViewById(R.id.nameIV);
+        nTv = findViewById(R.id.entername_tv);
+        emailRL = findViewById(R.id.emailRL);
+        emailBtn = findViewById(R.id.email_button);
+        mailIV = findViewById(R.id.mailIV);
+        mailTv = findViewById(R.id.EmailTv);
+        eTv = findViewById(R.id.entermail_tv);
+        validTv = findViewById(R.id.valid_mail_text);
+
+
+       // find whether keyboard is visible or not
+        rootlayout.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                int diff = rootlayout.getRootView().getHeight() - rootlayout.getHeight();
+                if(diff > dpToPx(getApplicationContext(),200)){
+
+                    //keyboard visible;adjust height
+
+
+                    Resources r = getResources();
+                    int margin = (int) TypedValue.applyDimension(
+                            TypedValue.COMPLEX_UNIT_DIP,
+                            90,
+                            r.getDisplayMetrics());
+
+
+
+                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                    params.topMargin = margin;
+                    detailsRL.setLayoutParams(params);
+
+                }
+
+
+
+
+
+                if(diff < dpToPx(getApplicationContext(),200))
+                {
+
+
+                    //keyboard not visible
+
+                    Resources r = getResources();
+                    int margin = (int) TypedValue.applyDimension(
+                            TypedValue.COMPLEX_UNIT_DIP,
+                            140,
+                            r.getDisplayMetrics());
+
+
+
+                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                    if(flag){ params.topMargin = margin;
+                        detailsRL.setLayoutParams(params);}
+
+
+
+                } }
+        });
+
+
+        Resources r = getResources();
+        top = (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                25,
+                r.getDisplayMetrics());
+        left = (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                120,
+                r.getDisplayMetrics());
+
+        nameBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                firstNameTV.setVisibility(View.VISIBLE);
+                nameTV.setVisibility(View.VISIBLE);
+
+                Animation animation1 = new AlphaAnimation(1.0f,0.0f);
+                animation1.setDuration(500);
+
+
+                nameIV.startAnimation(animation1);
+                nTv.startAnimation(animation1);
+
+
+                Animation animation2 = new AlphaAnimation(0.1f,1.0f);
+                animation2.setDuration(500);
+
+
+                nameTV.startAnimation(animation2);
+                firstNameTV.startAnimation(animation2);
+
+
+
+
+                Animation animation = new TranslateAnimation(0,-left,0,-top);
+                animation.setDuration(500);
+                animation.setFillEnabled(true);
+                animation.setFillAfter(true);
+
+                nameTV.startAnimation(animation);
+
+                nameBtn.setVisibility(View.INVISIBLE);
+
+
+
+            }
+        });
+
+        emailBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Email.requestFocus();
+
+                Email.setVisibility(View.VISIBLE);
+                mailTv.setVisibility(View.VISIBLE);
+
+                Animation animation1 = new AlphaAnimation(1.0f,0.0f);
+                animation1.setDuration(500);
+
+
+                mailIV.startAnimation(animation1);
+                eTv.startAnimation(animation1);
+
+
+                Animation animation2 = new AlphaAnimation(0.1f,1.0f);
+                animation2.setDuration(500);
+
+
+                mailTv.startAnimation(animation2);
+                Email.startAnimation(animation2);
+
+
+                Animation animation = new TranslateAnimation(0,-left,0,-top);
+                animation.setDuration(500);
+                animation.setFillEnabled(true);
+                animation.setFillAfter(true);
+
+                mailTv.startAnimation(animation);
+
+                emailBtn.setVisibility(View.INVISIBLE);
+
+            }
+        });
+
+        Email.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                EmailText = Email.getText().toString();
+                continueButton.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                EmailText = Email.getText().toString();
+                continueButton.setVisibility(View.VISIBLE);
+            }
+        });
+
+        EmailText = Email.getText().toString();
+        /////////////////////////////////////////////////////new UI///////////////////////////////////////////////
+
+
 
         back.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -118,6 +336,10 @@ public class FirstNameActivity extends AppCompatActivity {
         continueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(!isEmailValid(EmailText))
+                    validTv.setVisibility(View.VISIBLE);
+                else
+                {validTv.setVisibility(View.INVISIBLE);}
                 attemptRegistration();
             }
         });
@@ -288,6 +510,12 @@ public class FirstNameActivity extends AppCompatActivity {
         });
 
     }
+
+    boolean isEmailValid(CharSequence email) {
+        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
+    }
+
+
 
     public void saveDisplayNameLocally(String name,long num){
         SharedPreferences sharedPreferences = getSharedPreferences(SharedPrefs,0);

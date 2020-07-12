@@ -19,68 +19,311 @@
         app:layout_constraintTop_toTopOf="parent">
 
 
-        <View
-            android:id="@+id/view11"
-            android:layout_width="match_parent"
-            android:layout_height="162dp"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="0dp"
-            android:layout_marginEnd="0dp"
-            android:background="@drawable/storesview" />
-
         <ImageButton
-            android:id="@+id/back"
-            style="?android:attr/borderlessButtonStyle"
-            android:layout_width="20dp"
-            android:layout_height="30dp"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginStart="25dp"
-            android:layout_marginTop="27dp"
-            android:background="@null"
-            android:src="@drawable/w" />
-
-        <ImageView
-            android:id="@+id/imageview"
-            android:layout_width="100dp"
-            android:layout_height="94dp"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="12dp"
-            app:srcCompat="@drawable/userimg" />
-
-        <TextView
-            android:id="@+id/headingTV"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/imageview"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="1dp"
-            android:text="Enter New Details"
-            android:textColor="#FFFFFF"
-            android:textSize="20dp"
-            android:textStyle="bold" />
-
-        <AutoCompleteTextView
-            android:id="@+id/emailTV"
-            android:layout_width="260dp"
-            android:layout_height="46dp"
-            android:layout_below="@+id/view11"
-            android:layout_centerHorizontal="true"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="30dp"
-            android:layout_marginEnd="0dp"
-            android:background="@drawable/textfield"
-            android:hint="New Email"
-            android:paddingLeft="20dp"
+            android:id="@+id/back"
+            android:background="@android:color/transparent"
+            android:src="@drawable/arrow_left_black"
+            android:layout_alignTop="@id/text_edit"
+            android:layout_alignBottom="@id/text_edit"
+            android:layout_marginVertical="10dp"
+            android:layout_marginLeft="20dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Edit Profile"
+            android:id="@+id/text_edit"
             android:textColor="#000000"
-            android:textColorHint="#808080"
-            android:inputType="textEmailAddress"/>
+            android:fontFamily="@font/poppins_semibold"
+            android:layout_toRightOf="@id/back"
+            android:textSize="26sp"
+            android:layout_marginTop="30dp"
+            android:layout_marginLeft="35dp"/>
 
-<!--        <AutoCompleteTextView-->
+
+        <RelativeLayout
+            android:id="@+id/profileRL"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="35dp"
+            android:layout_alignStart="@id/back"
+            android:layout_marginLeft="15dp"
+            android:layout_below="@+id/back"
+            android:layout_marginTop="40dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Name"
+                android:id="@+id/name_tv"
+                android:textColor="#000000"
+                android:fontFamily="@font/poppins"
+                android:textSize="15sp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="John Doe"
+                android:layout_alignStart="@id/name_tv"
+                android:layout_below="@id/name_tv"
+                android:layout_marginTop="10dp"
+                android:textColor="#000000"
+                android:textSize="20sp"
+                android:id="@+id/Name"
+                android:fontFamily="@font/poppins"
+                android:layout_marginLeft="10dp"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#707070"
+                android:id="@+id/div1"
+                android:layout_alignBottom="@id/Name" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Phone number"
+                android:layout_below="@id/div1"
+                android:layout_marginTop="45dp"
+                android:id="@+id/phone_tv"
+                android:textColor="#000000"
+                android:fontFamily="@font/poppins"
+                android:textSize="15sp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="8299828306"
+                android:layout_alignStart="@id/name_tv"
+                android:layout_below="@id/phone_tv"
+                android:layout_marginTop="10dp"
+                android:textColor="#000000"
+                android:textSize="20sp"
+                android:id="@+id/Phone"
+                android:fontFamily="@font/poppins"
+                android:layout_marginLeft="10dp"/>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/check"
+                android:layout_alignTop="@id/Phone"
+                android:id="@+id/phone_verified_iv"
+                android:layout_marginRight="5dp"
+                android:layout_alignBottom="@id/Phone"
+                android:layout_marginBottom="5dp"
+                android:layout_alignEnd="@id/div2"
+                android:layout_alignParentRight="true"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#707070"
+                android:id="@+id/div2"
+                android:layout_alignBottom="@id/Phone"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Email"
+                android:layout_below="@id/div2"
+                android:layout_marginTop="45dp"
+                android:id="@+id/email_tv"
+                android:textColor="#000000"
+                android:fontFamily="@font/poppins"
+                android:textSize="15sp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="john25@gmail.com"
+                android:layout_alignStart="@id/name_tv"
+                android:layout_below="@id/email_tv"
+                android:layout_marginTop="10dp"
+                android:textColor="#000000"
+                android:textSize="20sp"
+                android:id="@+id/Email"
+                android:fontFamily="@font/poppins"
+                android:layout_marginLeft="10dp"/>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/check"
+                android:layout_alignTop="@id/Email"
+                android:layout_alignBottom="@id/Email"
+                android:layout_alignEnd="@id/div3"
+                android:visibility="gone"
+                android:layout_marginBottom="5dp"
+                android:id="@+id/email_verified_iv"
+                android:layout_marginRight="5dp"
+                android:layout_alignParentRight="true"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#707070"
+                android:id="@+id/div3"
+                android:layout_alignBottom="@id/Email"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Email not verified. Check your inbox to verify."
+                android:layout_below="@id/div3"
+                android:textColor="#C44848"
+                android:id="@+id/verify_email"
+                android:textSize="11sp"
+                android:fontFamily="@font/poppins"
+                android:layout_alignStart="@id/Email"
+                android:layout_marginBottom="20dp"/>
+
+
+        </RelativeLayout>
+
+
+
+        <RelativeLayout
+            android:id="@+id/new_emailRL"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="35dp"
+            android:visibility="gone"
+            android:layout_alignStart="@id/back"
+            android:layout_marginLeft="15dp"
+            android:layout_below="@+id/back"
+            android:layout_marginTop="80dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Email"
+                android:id="@+id/new_email_tv"
+                android:textColor="#000000"
+                android:fontFamily="@font/poppins"
+                android:textSize="15sp"/>
+            <EditText
+                android:id="@+id/emailTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="john25@gmail.com"
+                android:background="@android:color/transparent"
+                android:layout_alignStart="@id/new_email_tv"
+                android:layout_below="@id/new_email_tv"
+                android:layout_marginTop="10dp"
+                android:textColorHint="#000000"
+                android:textColor="#000000"
+                android:textSize="20sp"
+                android:fontFamily="@font/poppins"
+                android:layout_marginLeft="10dp"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="#707070"
+                android:id="@+id/bluediv_email"
+                android:layout_alignBottom="@id/emailTV"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Please Enter a valid Email Id"
+                android:layout_below="@id/bluediv_email"
+                android:textColor="#C44848"
+                android:textSize="11sp"
+                android:id="@+id/valid_text_email"
+                android:visibility="invisible"
+                android:fontFamily="@font/poppins"
+                android:layout_alignStart="@id/emailTV" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/valid_text_email"
+                android:background="@drawable/edit_profile_buttons"
+                android:layout_alignStart="@id/bluediv_email"
+                android:id="@+id/save_changes_email"
+                android:layout_alignEnd="@id/bluediv_email"
+                android:visibility="gone"
+                android:layout_marginTop="30dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginBottom="10dp"
+                android:text="Save Changes"
+                android:textColor="#FFFFFF"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="19sp"/>
+
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/new_numRL"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="35dp"
+            android:layout_alignStart="@id/back"
+            android:layout_marginLeft="15dp"
+            android:layout_below="@+id/back"
+            android:layout_marginTop="80dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Phone Number"
+                android:id="@+id/new_phone_tv"
+                android:textColor="#000000"
+                android:fontFamily="@font/poppins"
+                android:textSize="15sp"/>
+            <EditText
+                android:id="@+id/numTV"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="8299828908"
+                android:background="@android:color/transparent"
+                android:layout_alignStart="@id/new_phone_tv"
+                android:layout_below="@id/new_phone_tv"
+                android:layout_marginTop="10dp"
+                android:textColorHint="#000000"
+                android:inputType="number"
+                android:textColor="#000000"
+                android:textSize="20sp"
+                android:fontFamily="@font/poppins"
+                android:layout_marginLeft="10dp"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="#707070"
+                android:id="@+id/bluediv1"
+                android:layout_alignBottom="@id/numTV" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Please Enter a valid Mobile Number"
+                android:layout_below="@id/bluediv1"
+                android:layout_alignStart="@id/numTV"
+                android:visibility="invisible"
+                android:textColor="#C44848"
+                android:textSize="11sp"
+                android:id="@+id/valid_text"
+                android:fontFamily="@font/poppins" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/valid_text"
+                android:background="@drawable/edit_profile_buttons"
+                android:layout_alignStart="@id/bluediv1"
+                android:visibility="gone"
+                android:layout_alignEnd="@id/bluediv1"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="30dp"
+                android:layout_marginRight="10dp"
+                android:id="@+id/save_changes"
+                android:layout_marginBottom="10dp"
+                android:text="Save Changes"
+                android:textColor="#FFFFFF"
+                android:fontFamily="@font/poppins_semibold"
+                android:textSize="19sp"/>
+
+        </RelativeLayout>
+
+        <!--        <AutoCompleteTextView-->
 <!--            android:id="@+id/nameTV"-->
 <!--            android:layout_width="260dp"-->
 <!--            android:layout_height="46dp"-->
@@ -95,28 +338,12 @@
 <!--            android:textColor="#000000"-->
 <!--            android:textColorHint="#808080" />-->
 
-        <AutoCompleteTextView
-            android:id="@+id/numTV"
-            android:layout_width="260dp"
-            android:layout_height="46dp"
-            android:layout_below="@+id/emailTV"
-            android:layout_alignStart="@+id/emailTV"
-            android:layout_alignEnd="@+id/emailTV"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="34dp"
-            android:layout_marginEnd="0dp"
-            android:background="@drawable/textfield"
-            android:hint="New Number"
-            android:paddingLeft="20dp"
-            android:textColor="#000000"
-            android:textColorHint="#808080"
-            android:inputType="number"/>
 
         <Button
             android:id="@+id/changeInfoBtn"
             android:layout_width="150dp"
             android:layout_height="51dp"
-            android:layout_below="@+id/numTV"
+            android:visibility="gone"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="34dp"
             android:background="@drawable/signin_btn_round"

@@ -114,26 +114,21 @@
             android:text= "89"
             android:textColor="#000000"
             android:textSize="10sp" />
-        <RelativeLayout
+        <Button
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="30dp"
             android:id="@+id/rate_this_order"
             android:paddingHorizontal="20dp"
-            android:paddingVertical="5dp"
             android:layout_marginRight="20dp"
+            android:text="Rate this order"
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF"
+            android:fontFamily="@font/poppins_medium"
+            android:textSize="12sp"
             android:layout_alignTop="@+id/textview1"
             android:layout_alignParentEnd="true"
             android:background="@drawable/rate_this_order_bg">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/textview3"
-                android:text="Rate This Order"
-                android:layout_centerVertical="true"
-                android:textSize="12sp"
-                android:textColor="#FFFFFF"
-                android:fontFamily="@font/poppins_medium"/>
-        </RelativeLayout>
+        </Button>
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -176,10 +171,15 @@
             android:layout_alignTop="@id/Price"
             android:layout_marginTop="-5dp"
             android:layout_marginRight="20dp"
+            android:visibility="invisible"
+            android:paddingVertical="1dp"
             android:fontFamily="@font/poppins_semibold"
-            android:text="Recieved Successfully"
-            android:textColor="#B5B5B5"
-            android:textSize="13sp" />
+            android:text="Completed"
+            android:gravity="center"
+            android:layout_alignStart="@id/rate_this_order"
+            android:background="@drawable/rate_this_order_bg"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp" />
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"

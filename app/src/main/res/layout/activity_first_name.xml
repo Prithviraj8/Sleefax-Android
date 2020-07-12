@@ -6,101 +6,286 @@
     android:layout_height="match_parent"
     tools:context=".FirstNameActivity">
 
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:id="@+id/rootlayout"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <View
-            android:id="@+id/liveordersTopView"
-            android:layout_width="match_parent"
-            android:layout_height="169dp"
-            android:background="@drawable/storesview" />
-
-        <ImageView
-            android:id="@+id/imageView6"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_below="@+id/liveordersTopView"
-            android:layout_alignBottom="@+id/liveordersTopView"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="-50dp"
-            android:layout_marginBottom="-50dp"
-            app:srcCompat="@drawable/applogo" />
-
         <ImageButton
-            android:id="@+id/back"
-            android:layout_width="23dp"
-            android:layout_height="28dp"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:background="@null"
-            android:src="@drawable/w" />
-
-        <TextView
-            android:id="@+id/textView11"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="56dp"
-            android:foregroundGravity="center_horizontal"
-            android:text="A little more about yourself."
-            android:textColor="#FFF"
-            android:textSize="25sp"
-            android:textStyle="bold">
+            android:id="@+id/back"
+            android:background="@android:color/transparent"
+            android:src="@drawable/arrow_left_black"
+            android:layout_alignTop="@id/text_edit"
+            android:layout_alignBottom="@id/text_edit"
+            android:layout_marginVertical="10dp"
+            android:layout_marginLeft="20dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Edit Profile"
+            android:id="@+id/text_edit"
+            android:textColor="#000000"
+            android:fontFamily="@font/poppins_semibold"
+            android:layout_toRightOf="@id/back"
+            android:textSize="26sp"
+            android:layout_marginTop="30dp"
+            android:layout_marginLeft="35dp"/>
 
-        </TextView>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="You are one step away from \n effortlessly printing your files."
+            android:textSize="16sp"
+            android:textColor="#707070"
+            android:layout_marginTop="20dp"
+            android:layout_below="@id/text_edit"
+            android:layout_alignStart="@id/text_edit"
+            android:id="@+id/textview"
+            android:fontFamily="@font/poppins"
+            android:gravity="center"
+            />
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_below="@id/textview"
+            android:id="@+id/detailsLayout">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:paddingVertical="11dp"
+                android:id="@+id/nameRL"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                android:layout_marginTop="40dp"
+                android:background="@drawable/login_page_phone_text"
+                >
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/name"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginLeft="20dp"
+                    android:id="@+id/nameIV"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:fontFamily="@font/poppins"
+                    android:textColor="#818181"
+                    android:gravity="center"
+                    android:text="Enter your Name"
+                    android:layout_alignTop="@id/nameIV"
+                    android:layout_alignBottom="@id/nameIV"
+                    android:id="@+id/entername_tv"
+                    android:layout_toRightOf="@id/nameIV"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginEnd="20dp"
+                    />
+
+            </RelativeLayout>
+
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:paddingVertical="10dp"
+                android:layout_alignStart="@id/nameRL"
+                android:layout_alignEnd="@id/nameRL"
+                android:layout_alignTop="@id/nameRL"
+                android:layout_alignBottom="@id/nameRL"
+                android:id="@+id/name_button"
+                android:background="#00FFFFFF" />
+
+
+            <EditText
+                android:id="@+id/FirstNameTV"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:textColor="#000000"
+                android:textColorHint="#000000"
+                android:background="@drawable/name_email_et"
+                android:paddingHorizontal="15dp"
+                android:layout_alignStart="@id/nameRL"
+                android:layout_alignTop="@id/nameRL"
+                android:layout_alignBottom="@id/nameRL"
+                android:visibility="gone"
+                android:inputType="textPersonName"
+                android:gravity="center_vertical"
+                android:layout_marginLeft="-2dp"
+                android:layout_alignEnd="@id/nameRL"
+                android:textSize="18sp"
+                android:fontFamily="@font/poppins"/>
+
+            <TextView
+                android:id="@+id/usernameTV"
+                android:layout_width="wrap_content"
+                android:layout_height="17dp"
+                android:layout_alignStart="@id/nameRL"
+                android:layout_alignTop="@id/nameRL"
+                android:layout_marginLeft="150dp"
+                android:background="#FFFFFF"
+                android:fontFamily="@font/poppins"
+                android:gravity="center_vertical"
+                android:text="Name"
+                android:textColor="#227093"
+                android:textSize="12sp"
+                android:layout_marginTop="15dp"
+                android:visibility="gone"/>
+
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:paddingVertical="11dp"
+                android:id="@+id/emailRL"
+                android:layout_marginLeft="30dp"
+                android:layout_marginRight="30dp"
+                android:layout_marginTop="30dp"
+                android:background="@drawable/login_page_phone_text"
+                android:layout_below="@id/nameRL">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/mail_2"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginLeft="20dp"
+                    android:id="@+id/mailIV"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:fontFamily="@font/poppins"
+                    android:textColor="#818181"
+                    android:gravity="center"
+                    android:text="Enter Email"
+                    android:layout_alignTop="@id/mailIV"
+                    android:layout_alignBottom="@id/mailIV"
+                    android:id="@+id/entermail_tv"
+                    android:layout_toRightOf="@id/mailIV"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginEnd="20dp"
+                    />
+
+            </RelativeLayout>
+
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:paddingVertical="10dp"
+                android:layout_alignStart="@id/emailRL"
+                android:layout_alignEnd="@id/emailRL"
+                android:layout_alignTop="@id/emailRL"
+                android:layout_alignBottom="@id/emailRL"
+                android:id="@+id/email_button"
+                android:background="#00FFFFFF" />
+
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:textColor="#000000"
+                android:textColorHint="#000000"
+                android:background="@drawable/name_email_et"
+                android:layout_alignTop="@id/emailRL"
+                android:layout_alignBottom="@id/emailRL"
+                android:layout_alignStart="@id/emailRL"
+                android:paddingHorizontal="15dp"
+                android:visibility="gone"
+                android:inputType="textEmailAddress"
+                android:gravity="center_vertical"
+                android:id="@+id/Email"
+                android:layout_marginLeft="-2dp"
+                android:layout_alignEnd="@id/emailRL"
+                android:textSize="18sp"
+                android:fontFamily="@font/poppins"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Please Enter a valid Email"
+                android:layout_below="@id/emailRL"
+                android:layout_centerHorizontal="true"
+                android:visibility="gone"
+                android:gravity="center_vertical"
+                android:textColor="#C44848"
+                android:textSize="11sp"
+                android:id="@+id/valid_mail_text"
+                android:fontFamily="@font/poppins" />
+            <TextView
+                android:id="@+id/EmailTv"
+                android:layout_width="wrap_content"
+                android:layout_height="17dp"
+                android:layout_alignStart="@id/emailRL"
+                android:layout_alignTop="@id/emailRL"
+                android:layout_marginLeft="150dp"
+                android:background="#FFFFFF"
+                android:fontFamily="@font/poppins"
+                android:gravity="center_vertical"
+                android:text="Email"
+                android:textColor="#227093"
+                android:textSize="12sp"
+                android:layout_marginTop="15dp"
+                android:visibility="gone"/>
+
+
+
+        </RelativeLayout>
 
         <EditText
             android:id="@+id/numberTV"
-            android:layout_width="270dp"
+            android:layout_width="wrap_content"
             android:layout_height="42dp"
-            android:layout_below="@+id/FirstNameTV"
+            android:layout_below="@id/detailsLayout"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="26dp"
+            android:layout_marginTop="30dp"
             android:autofillHints=""
-            android:background="@drawable/textfield"
+            android:layout_alignParentStart="true"
+            android:layout_marginLeft="30dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="30dp"
+            android:gravity="center"
+            android:background="@drawable/login_page_phone_text"
             android:ems="10"
             android:hint="@string/your_number"
             android:inputType="number"
             android:paddingLeft="10dp"
             android:textColorHint="#808080" />
 
-        <AutoCompleteTextView
-            android:id="@+id/FirstNameTV"
-            android:layout_width="270dp"
-            android:layout_height="42dp"
-            android:layout_below="@+id/imageView6"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="72dp"
-            android:background="@drawable/textfield"
-            android:hint="@string/your_name"
-            android:inputType="textPersonName"
-            android:paddingLeft="10dp"
-            android:textColor="#000000"
-            android:textColorHint="#808080" />
 
         <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/detailsLayout"
+            android:background="@drawable/edit_profile_buttons"
+            android:layout_alignStart="@id/detailsLayout"
             android:id="@+id/FirstNameButton"
-            android:layout_width="170dp"
-            android:layout_height="45dp"
-            android:layout_below="@+id/numberTV"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="26dp"
-            android:background="@drawable/signin_btn_round"
-            android:backgroundTint="#FFF"
-            android:text="@string/done"
-            android:textAllCaps="false"
-            android:textColor="#000"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:layout_alignEnd="@id/detailsLayout"
+            android:visibility="gone"
+            android:layout_marginTop="30dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginRight="30dp"
+            android:layout_marginBottom="30dp"
+            android:text="Proceed"
+            android:textColor="#FFFFFF"
+            android:fontFamily="@font/poppins_semibold"
+            android:textSize="27sp"/>
     </RelativeLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

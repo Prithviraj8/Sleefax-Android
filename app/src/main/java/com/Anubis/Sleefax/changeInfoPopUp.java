@@ -4,12 +4,18 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,13 +32,202 @@ public class changeInfoPopUp extends AppCompatActivity {
     DatabaseReference ref = database.getReference();
     String userId;
 
+//////////////////////////////////////////new UI////////////////////////////////////////////////////////
+    TextView Name,Phone,Email;
+    TextView verify_text;
 
-    TextView email,name,num;
+    ImageView verified;
+
+    RelativeLayout emailRL,phoneRL,profileRL;
+
+///for email Relative layout////
+    TextView validText_email;
+    View divider_email;
+    Button saveChanges_email;//changing mail
+
+    String emailId;
+
+
+////////for changing umber//////
+    Button saveChanges_number;//changing number
+    View divider_number;
+    TextView validtv_number;
+
+    String PhoneNum;
+
+
+    // as per the new UI I have two different layouts for changing email and number.
+    //for number the otp section has to be added
+
+
+//////////////////////////////////////////new UI////////////////////////////////////////////////////////
+
+
+    EditText email,name,num;
     ImageButton back;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_change_info_pop_up);
+
+//the new email and number edit texts
+        email = findViewById(R.id.emailTV);
+//        name = findViewById(R.id.nameTV);
+        num = findViewById(R.id.numTV);
+
+        //////////////////////////////////////////new UI////////////////////////////////////////////////////////
+
+        verify_text = findViewById(R.id.verify_email);
+        verified = findViewById(R.id.email_verified_iv);
+        verify_text.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                verified.setVisibility(View.VISIBLE);
+                verify_text.setVisibility(View.INVISIBLE);
+
+            }
+        });
+        Name = findViewById(R.id.Name);//the earlier user data
+        Phone = findViewById(R.id.Phone);//the earlier user data
+        Email = findViewById(R.id.Email);//the earlier user data
+        profileRL = findViewById(R.id.profileRL);//the relative layout containing earlier user data
+        emailRL = findViewById(R.id.new_emailRL);//new email relative layout
+        phoneRL = findViewById(R.id.new_numRL);//new phone relative layout
+
+
+        Phone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                profileRL.setVisibility(View.INVISIBLE);
+                emailRL.setVisibility(View.INVISIBLE);
+                phoneRL.setVisibility(View.VISIBLE);
+            }
+        });
+        Email.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                profileRL.setVisibility(View.INVISIBLE);
+                phoneRL.setVisibility(View.INVISIBLE);
+                emailRL.setVisibility(View.VISIBLE);
+
+
+            }
+        });
+
+        ////for changing email////
+        validText_email = findViewById(R.id.valid_text_email);
+        divider_email = findViewById(R.id.bluediv_email);
+        saveChanges_email = findViewById(R.id.save_changes_email);
+
+
+        email.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+                int color = Color.parseColor("#227093");
+                divider_email.setBackgroundColor(color);
+
+                emailId = email.getText().toString();
+
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+                saveChanges_email.setVisibility(View.VISIBLE);
+                int color = Color.parseColor("#227093");
+                divider_email.setBackgroundColor(color);
+
+                emailId = email.getText().toString();
+
+
+
+            }
+        });
+
+        emailId = email.getText().toString();
+
+        saveChanges_email.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!isEmailValid(emailId))
+                    validText_email.setVisibility(View.VISIBLE);
+                else
+                {validText_email.setVisibility(View.INVISIBLE);
+
+                }
+
+            }
+        });
+
+        ////////////////changing number//////////////////
+        saveChanges_number = findViewById(R.id.save_changes);
+        divider_number = findViewById(R.id.bluediv1);
+        validtv_number = findViewById(R.id.valid_text);
+
+
+        num.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+
+
+                // saveChanges.setVisibility(View.VISIBLE);
+                int color = Color.parseColor("#227093");
+                divider_number.setBackgroundColor(color);
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+
+
+                saveChanges_number.setVisibility(View.VISIBLE);
+                int color = Color.parseColor("#227093");
+                divider_number.setBackgroundColor(color);
+
+                PhoneNum = num.getText().toString();
+
+            }
+        });
+
+
+
+        saveChanges_number.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+                if(PhoneNum.length()<10 || PhoneNum.length()>10){
+
+                    validtv_number.setVisibility(View.VISIBLE);
+
+                }
+                if(PhoneNum.length() == 10){
+
+                    ///otp activity to be called///
+                }
+
+
+
+            }
+        });
+
+        //////////////////////////////////////////new UI////////////////////////////////////////////////////////
 
         if(FirebaseAuth.getInstance().getCurrentUser() != null){
             userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -53,15 +248,16 @@ public class changeInfoPopUp extends AppCompatActivity {
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
 
-        email = findViewById(R.id.emailTV);
-//        name = findViewById(R.id.nameTV);
-        num = findViewById(R.id.numTV);
+
 
         int width = dm.widthPixels;
         int height = dm.heightPixels;
 
 //        getWindow().setLayout((int)(width * 0.8),(int) (height* 0.6));
 
+
+
+        //this has to be changed as now there are separate buttons  for email and number also when number is changed the otp activity pops up
         Button dismiss = findViewById(R.id.changeInfoBtn);
         dismiss.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -112,6 +308,11 @@ public class changeInfoPopUp extends AppCompatActivity {
 
             }
         });
+    }
+
+
+    boolean isEmailValid(CharSequence email) {
+        return android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
     public void createToast(String message){
