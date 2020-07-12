@@ -931,6 +931,7 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
 
 
     // Listview of files being uploaded
+    // The layout file for each row for this list view is files_uploading_row.xml
     double progressValue;
     String fileBeingUploaded;
     public class FileUploadingAdapter extends BaseAdapter {
@@ -963,6 +964,9 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
             Name.setText(fileBeingUploaded);
 
             // SETTING PROGRESS VALUE OF THE FILE CURRENTLY BEING UPLOADED TO FIREBASE
+
+            // RED TICK - for files currently being uploaded or are yet to be uploaded
+            //GREEN TICK - for files that are uploaded on firebase
             if(progressValue == 100){
                 tick.setImageResource(R.drawable.green_tick);
             }
