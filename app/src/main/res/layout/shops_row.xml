@@ -25,7 +25,7 @@
             android:layout_width="77dp"
             android:layout_height="23dp"
             android:layout_alignParentEnd="true"
-            android:background="@drawable/open_bg"
+            android:background="@drawable/open_background"
             android:layout_alignTop="@+id/shop_layout1"
             android:id="@+id/open1">
 
@@ -43,7 +43,7 @@
         <RelativeLayout
             android:layout_width="77dp"
             android:layout_height="23dp"
-            android:background="@drawable/closed_bg"
+            android:background="@drawable/closed_background1"
             android:layout_alignParentEnd="true"
             android:layout_alignTop="@id/shop_layout1"
             android:id="@+id/closed1"
@@ -66,7 +66,7 @@
         <RelativeLayout
             android:layout_width="77dp"
             android:layout_height="23dp"
-            android:background="@drawable/partially_closed_bg"
+            android:background="@drawable/closed_background2"
             android:layout_alignParentEnd="true"
             android:id="@+id/partially_closed1"
             android:layout_alignTop="@id/shop_layout1"
@@ -113,20 +113,11 @@
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/view_in_maps1"
-            android:layout_marginBottom="6dp"
+            android:id="@+id/showtime"
             android:layout_alignBottom="@id/shop_info1"
-            android:layout_toLeftOf="@id/imagemap"
-            android:background="@android:color/transparent"
-            android:src="@drawable/viewinmaps"/>
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:layout_marginBottom="4dp"
-            android:layout_alignBottom="@id/shop_info1"
-            android:id="@+id/imagemap"
-            android:src="@drawable/technology"/>
+            android:background="@android:color/transparent"
+            android:src="@drawable/show_text"/>
 
         <RelativeLayout
             android:layout_width="wrap_content"
@@ -188,11 +179,20 @@
             <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/showtime"
+                android:id="@+id/view_in_maps1"
                 android:layout_below="@id/Files"
                 android:layout_marginLeft="8dp"
                 android:layout_marginTop="8dp"
-                android:background="@drawable/show_text"/>
+                android:background="@drawable/viewinmaps"/>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/view_in_maps1"
+                android:id="@+id/imagemap"
+                android:layout_alignTop="@id/view_in_maps1"
+                android:layout_alignBottom="@id/view_in_maps1"
+                android:src="@drawable/technology"/>
+
         </RelativeLayout>
 
 

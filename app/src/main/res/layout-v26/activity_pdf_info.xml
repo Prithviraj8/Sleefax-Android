@@ -518,18 +518,18 @@
                 android:id="@+id/name_price"
                 android:layout_alignParentStart="true"
                 android:paddingRight="10dp"
-                android:background="@drawable/blue_background_texts">
+                android:background="@android:color/transparent">
 
                 <TextView
-                    android:layout_width="70dp"
-                    android:layout_height="35dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:text="Book.pdf"
                     android:id="@+id/fileNameTV"
                     android:textSize="13dp"
                     android:fontFamily="@font/poppins_semibold"
                     android:textStyle="bold"
-                    android:textColor="#FFFFFF"
+                    android:textColor="#005A82"
                     android:autoSizeTextType="uniform"
                     android:textAlignment="center"
                     android:padding="5dp"
@@ -571,11 +571,9 @@
                 android:layout_width="100dp"
                 android:layout_height="34dp"
                 android:layout_centerVertical="true"
-                android:layout_marginStart="10dp"
-                android:layout_marginLeft="10dp"
-                android:layout_toEndOf="@+id/name_price"
-                android:layout_toRightOf="@id/name_price"
-                android:background="@drawable/blue_background_texts"
+                android:layout_toLeftOf="@id/DoneBtnRL"
+                android:elevation="5dp"
+                android:background="@drawable/previous_pdf_info"
                 >
 
                 <ImageView
@@ -583,19 +581,19 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
                     android:layout_centerVertical="true"
-                    android:layout_marginStart="5dp"
-                    android:src="@drawable/arrow_left_white" />
+                    android:layout_marginStart="8dp"
+                    android:visibility="visible"
+                    android:src="@drawable/back_blue" />
 
                 <Button
                     android:id="@+id/PreviousBtn"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-
                     android:layout_centerVertical="true"
                     android:background="#00FFFFFF"
                     android:fontFamily="@font/poppins_semibold"
                     android:text="Previous"
-                    android:textColor="#FFFFFF"
+                    android:textColor="#005A82"
                     android:textSize="13dp" />
 
 
@@ -636,13 +634,14 @@
             <RelativeLayout
                 android:layout_width="100dp"
                 android:layout_height="34dp"
-                android:background="@drawable/blue_background_texts"
+                android:background="@drawable/done_pdf_info"
                 android:layout_centerVertical="true"
                 android:id="@+id/DoneBtnRL"
                 android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
+                android:layout_marginRight="20dp"
                 android:visibility="visible"
-                android:layout_toRightOf="@id/previous">
+                android:elevation="5dp"
+                android:layout_alignParentEnd="true">
 
 
                 <Button
@@ -662,7 +661,7 @@
                     android:layout_centerVertical="true"
                     android:layout_alignRight="@+id/pdfDone"
                     android:layout_marginRight="5dp"
-                    android:src="@drawable/arrow" />
+                    android:src="@drawable/back_white" />
 
             </RelativeLayout>
 
@@ -692,24 +691,23 @@
         android:background="@drawable/circlered">
 
         <TextView
-            android:layout_width="20dp"
-            android:layout_height="12dp"
-            android:background="@drawable/view_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
+            android:elevation="5dp"
+            android:text="View"
+            android:textSize="15sp"
+            android:textColor="#FFFFFF"
+            android:fontFamily="@font/poppins_semibold"
+            android:layout_centerVertical="true"
             android:layout_marginTop="10dp"/>
-        <ImageView
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:src="@drawable/pdf"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="25dp"/>
 
 
         <Button
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/viewPdfBtn"
-            android:background="#00FFFFFF"/>
+            android:background="@drawable/view_pdf"/>
 
     </RelativeLayout>
 

@@ -38,7 +38,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:theme ="@style/NavigationDrawerStyle"
-        android:background="@drawable/menuback"
+        android:background="@drawable/menu_background"
         android:tag="menu">
 
 
@@ -47,6 +47,7 @@
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@drawable/menu_background"
             android:id="@+id/MenuScrollView">
 
 
@@ -55,15 +56,6 @@
                 android:layout_height="match_parent"
                 android:id="@+id/HamburgerMenuRL">
 
-                <View
-                    android:id="@+id/view18"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentBottom="true"
-                    android:layout_marginBottom="5dp"
-                    android:background="#DEDFDE" />
 
                 <ImageView
                     android:id="@+id/appicon"
@@ -81,14 +73,13 @@
                     android:layout_height="wrap_content"
                     android:layout_alignTop="@+id/appicon"
                     android:layout_marginStart="0dp"
-                    android:layout_marginTop="5dp"
                     android:layout_toEndOf="@+id/appicon"
                     android:paddingStart="7dp"
                     android:text="Welcome"
                     android:textAlignment="textStart"
                     android:textColor="#FFFFFF"
-                    android:textSize="22dp"
-                    android:fontFamily="@font/poppins" />
+                    android:textSize="24sp"
+                    android:fontFamily="@font/poppins_bold" />
 
                 <TextView
                     android:id="@+id/useremail"
@@ -97,7 +88,7 @@
                     android:layout_below="@+id/username"
                     android:layout_alignStart="@+id/username"
                     android:layout_marginStart="0dp"
-                    android:layout_marginTop="0dp"
+                    android:layout_marginTop="-5dp"
                     android:fontFamily="@font/poppins_medium"
                     android:paddingStart="7dp"
                     android:text="Email"
@@ -118,10 +109,10 @@
                     android:layout_alignParentStart="true"
                     android:layout_marginStart="44dp"
                     android:layout_marginTop="40dp"
-                    android:fontFamily="@font/poppins_medium"
+                    android:fontFamily="@font/poppins_bold"
                     android:text="MAIN"
                     android:textColor="#E9E9E9"
-                    android:textSize="24sp" />
+                    android:textSize="22sp" />
 
                 <ImageView
                     android:id="@+id/settingsmenuimg"
@@ -129,7 +120,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignTop="@+id/Menu_Settings"
                     android:layout_alignBottom="@+id/Menu_Settings"
-                    android:layout_marginTop="0dp"
+                    android:layout_marginTop="-5dp"
                     android:layout_marginEnd="0dp"
                     android:layout_marginBottom="0dp"
                     android:layout_toStartOf="@+id/Menu_Settings"
@@ -138,14 +129,15 @@
                 <Button
                     android:id="@+id/Menu_Settings"
                     android:layout_width="wrap_content"
-                    android:layout_height="35dp"
+                    android:layout_height="wrap_content"
                     android:layout_below="@id/MAIN_TV"
                     android:layout_alignStart="@+id/MAIN_TV"
                     android:layout_marginStart="5dp"
-                    android:layout_marginTop="30dp"
+                    android:layout_marginTop="0dp"
                     android:background="#00FFFFFF"
-                    android:fontFamily="@font/poppins_medium"
+                    android:fontFamily="@font/poppins_semibold"
                     android:text="Settings"
+                    android:textAllCaps="false"
                     android:textColor="#FFFFFF"
                     android:textSize="17sp" />
 
@@ -155,7 +147,7 @@
                     android:layout_alignTop="@+id/Menu_OrderHistory"
                     android:layout_alignEnd="@+id/settingsmenuimg"
                     android:layout_alignBottom="@+id/Menu_OrderHistory"
-                    android:layout_marginTop="0dp"
+                    android:layout_marginTop="-5dp"
                     android:layout_marginEnd="0dp"
                     android:layout_marginBottom="0dp"
                     android:layout_toStartOf="@+id/Menu_OrderHistory"
@@ -165,14 +157,15 @@
                 <Button
                     android:id="@+id/Menu_OrderHistory"
                     android:layout_width="wrap_content"
-                    android:layout_height="35dp"
+                    android:layout_height="wrap_content"
                     android:layout_below="@+id/Menu_Settings"
                     android:layout_alignStart="@+id/Menu_Settings"
-                    android:layout_marginStart="0dp"
-                    android:layout_marginTop="15dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="0dp"
                     android:background="#00FFFFFF"
-                    android:fontFamily="@font/poppins_medium"
+                    android:fontFamily="@font/poppins_semibold"
                     android:text="Order History"
+                    android:textAllCaps="false"
                     android:textColor="#FFFFFF"
                     android:textSize="17sp" />
 
@@ -183,11 +176,11 @@
                     android:layout_below="@+id/Menu_OrderHistory"
                     android:layout_alignStart="@+id/MAIN_TV"
                     android:layout_marginStart="0dp"
-                    android:layout_marginTop="15dp"
-                    android:fontFamily="@font/poppins_medium"
+                    android:layout_marginTop="25dp"
+                    android:fontFamily="@font/poppins_bold"
                     android:text="SUPPORT"
                     android:textColor="#E9E9E9"
-                    android:textSize="24sp" />
+                    android:textSize="22sp" />
 
 
                 <ImageView
@@ -196,7 +189,7 @@
                     android:layout_alignTop="@+id/Menu_ContactUs"
                     android:layout_alignEnd="@+id/settingsmenuimg"
                     android:layout_alignBottom="@+id/Menu_ContactUs"
-                    android:layout_marginTop="0dp"
+                    android:layout_marginTop="-5dp"
                     android:layout_marginEnd="0dp"
                     android:layout_marginBottom="0dp"
                     android:layout_toStartOf="@+id/Menu_ContactUs"
@@ -206,14 +199,15 @@
                 <Button
                     android:id="@+id/Menu_ContactUs"
                     android:layout_width="wrap_content"
-                    android:layout_height="35dp"
+                    android:layout_height="wrap_content"
                     android:layout_below="@+id/textView2"
                     android:layout_alignStart="@+id/Menu_OrderHistory"
                     android:layout_marginStart="0dp"
-                    android:layout_marginTop="15dp"
+                    android:layout_marginTop="0dp"
                     android:background="#00FFFFFF"
-                    android:fontFamily="@font/poppins_medium"
+                    android:fontFamily="@font/poppins_semibold"
                     android:text="Contact Us"
+                    android:textAllCaps="false"
                     android:textColor="#FFFFFF"
                     android:textSize="17sp" />
 
@@ -224,7 +218,7 @@
                     android:layout_alignTop="@+id/Menu_ReportIssue"
                     android:layout_alignEnd="@+id/settingsmenuimg"
                     android:layout_alignBottom="@+id/Menu_ReportIssue"
-                    android:layout_marginTop="0dp"
+                    android:layout_marginTop="-5dp"
                     android:layout_marginEnd="0dp"
                     android:layout_marginBottom="0dp"
                     android:layout_toStartOf="@+id/Menu_ReportIssue"
@@ -233,14 +227,15 @@
                 <Button
                     android:id="@+id/Menu_ReportIssue"
                     android:layout_width="wrap_content"
-                    android:layout_height="35dp"
+                    android:layout_height="wrap_content"
                     android:layout_below="@+id/Menu_ContactUs"
                     android:layout_alignStart="@+id/Menu_ContactUs"
                     android:layout_marginStart="0dp"
-                    android:layout_marginTop="15dp"
+                    android:layout_marginTop="0dp"
                     android:background="#00FFFFFF"
-                    android:fontFamily="@font/poppins_medium"
-                    android:text="Report Issue"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:text="Report An Issue"
+                    android:textAllCaps="false"
                     android:textColor="#FFFFFF"
                     android:textSize="17sp" />
 
@@ -251,7 +246,7 @@
                     android:layout_alignTop="@+id/Menu_Feedback"
                     android:layout_alignEnd="@+id/settingsmenuimg"
                     android:layout_alignBottom="@+id/Menu_Feedback"
-                    android:layout_marginTop="0dp"
+                    android:layout_marginTop="-5dp"
                     android:layout_marginEnd="0dp"
                     android:layout_marginBottom="0dp"
                     android:layout_toStartOf="@+id/Menu_Feedback"
@@ -260,13 +255,14 @@
                 <Button
                     android:id="@+id/Menu_Feedback"
                     android:layout_width="wrap_content"
-                    android:layout_height="35dp"
+                    android:layout_height="wrap_content"
+                    android:textAllCaps="false"
                     android:layout_below="@+id/Menu_ReportIssue"
                     android:layout_alignStart="@+id/Menu_ReportIssue"
                     android:layout_marginStart="0dp"
-                    android:layout_marginTop="15dp"
+                    android:layout_marginTop="0dp"
                     android:background="#00FFFFFF"
-                    android:fontFamily="@font/poppins_medium"
+                    android:fontFamily="@font/poppins_semibold"
                     android:text="Provide Feedback"
                     android:textColor="#FFFFFF"
                     android:textSize="17sp" />
@@ -278,7 +274,7 @@
                     android:layout_alignTop="@+id/Menu_NeedHelp"
                     android:layout_alignEnd="@+id/settingsmenuimg"
                     android:layout_alignBottom="@+id/Menu_NeedHelp"
-                    android:layout_marginTop="0dp"
+                    android:layout_marginTop="-5dp"
                     android:layout_marginEnd="0dp"
                     android:layout_marginBottom="0dp"
                     android:layout_toStartOf="@+id/Menu_NeedHelp"
@@ -287,14 +283,15 @@
                 <Button
                     android:id="@+id/Menu_NeedHelp"
                     android:layout_width="wrap_content"
-                    android:layout_height="35dp"
+                    android:layout_height="wrap_content"
+                    android:textAllCaps="false"
                     android:layout_below="@+id/Menu_Feedback"
                     android:layout_alignStart="@+id/Menu_Feedback"
                     android:layout_marginStart="0dp"
-                    android:layout_marginTop="15dp"
+                    android:layout_marginTop="0dp"
                     android:background="#00FFFFFF"
-                    android:fontFamily="@font/poppins_medium"
-                    android:text="Need Help ?"
+                    android:fontFamily="@font/poppins_semibold"
+                    android:text="Help &amp; Support"
                     android:textColor="#FFFFFF"
                     android:textSize="17sp" />
 
@@ -304,7 +301,7 @@
                     android:layout_alignTop="@+id/Menu_RateUs"
                     android:layout_alignEnd="@+id/settingsmenuimg"
                     android:layout_alignBottom="@+id/Menu_RateUs"
-                    android:layout_marginTop="0dp"
+                    android:layout_marginTop="-5dp"
                     android:layout_marginEnd="0dp"
                     android:layout_marginBottom="0dp"
                     android:layout_toStartOf="@+id/Menu_RateUs"
@@ -313,14 +310,15 @@
                 <Button
                     android:id="@+id/Menu_RateUs"
                     android:layout_width="wrap_content"
-                    android:layout_height="35dp"
+                    android:layout_height="wrap_content"
                     android:layout_below="@+id/Menu_NeedHelp"
                     android:layout_alignStart="@+id/Menu_NeedHelp"
                     android:layout_marginStart="0dp"
-                    android:layout_marginTop="15dp"
+                    android:layout_marginTop="0dp"
                     android:background="#00000000"
-                    android:fontFamily="@font/poppins_medium"
+                    android:fontFamily="@font/poppins_semibold"
                     android:text="Rate Us"
+                    android:textAllCaps="false"
                     android:textAlignment="textStart"
                     android:textColor="#FFFFFF"
                     android:textSize="17sp" />
@@ -332,7 +330,7 @@
                     android:layout_alignTop="@+id/Menu_Tell_A_Friend"
                     android:layout_alignEnd="@+id/settingsmenuimg"
                     android:layout_alignBottom="@+id/Menu_Tell_A_Friend"
-                    android:layout_marginTop="0dp"
+                    android:layout_marginTop="-5dp"
                     android:layout_marginEnd="0dp"
                     android:layout_marginBottom="0dp"
                     android:layout_toStartOf="@+id/Menu_Tell_A_Friend"
@@ -341,41 +339,44 @@
                 <Button
                     android:id="@+id/Menu_Tell_A_Friend"
                     android:layout_width="wrap_content"
-                    android:layout_height="35dp"
+                    android:layout_height="wrap_content"
                     android:layout_below="@+id/Menu_RateUs"
                     android:layout_alignStart="@+id/Menu_RateUs"
                     android:layout_marginStart="0dp"
-                    android:layout_marginTop="15dp"
+                    android:layout_marginTop="0dp"
+                    android:textAllCaps="false"
                     android:background="#00FFFFFF"
-                    android:fontFamily="@font/poppins_medium"
+                    android:fontFamily="@font/poppins_semibold"
                     android:text="Tell a Friend"
                     android:textColor="#FFFFFF"
                     android:textSize="17sp" />
 
                 <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
                     android:layout_alignTop="@+id/Menu_Logout"
+                    android:layout_alignEnd="@id/settingsmenuimg"
                     android:layout_alignBottom="@+id/Menu_Logout"
-                    android:layout_alignStart="@+id/Menu_Logout"
                     android:layout_marginStart="0dp"
-                    android:layout_marginTop="0dp"
+                    android:layout_marginTop="-5dp"
                     android:layout_marginBottom="0dp"
                     android:src="@drawable/logoutmenu" />
 
                 <Button
                     android:id="@+id/Menu_Logout"
-                    android:layout_width="191dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
                     android:layout_below="@+id/Menu_Tell_A_Friend"
-                    android:layout_marginTop="10dp"
+                    android:layout_alignStart="@id/Menu_Tell_A_Friend"
+                    android:layout_marginTop="0dp"
+                    android:layout_marginStart="-10dp"
+                    android:textAllCaps="false"
                     android:background="#00FFFFFF"
-                    android:fontFamily="@font/poppins_medium"
+                    android:fontFamily="@font/poppins_semibold"
                     android:text="Logout"
                     android:textColor="#FFF"
-                    android:textSize="21sp"
-                    android:elevation="10dp"/>
+                    android:textSize="17sp"
+                    />
 
 
             </RelativeLayout>
@@ -500,7 +501,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/printTV"
-                        android:layout_alignStart="@id/helloTV"
                         android:layout_marginTop="10dp"
                         android:layout_marginBottom="10dp"
                         android:paddingVertical="10dp"
@@ -520,6 +520,7 @@
                                 android:layout_gravity="center"
                                 android:layout_marginTop="10dp"
                                 android:layout_marginBottom="10dp"
+                                android:layout_marginLeft="30dp"
                                 android:background="@drawable/scroll_homepage"
                                 android:elevation="5dp"
                                 android:paddingHorizontal="15dp"
@@ -679,6 +680,7 @@
                                     android:layout_below="@id/text5"
                                     android:fontFamily="@font/poppins_semibold"
                                     android:gravity="center"
+                                    android:layout_marginLeft="15dp"
                                     android:text="Send multiple files in a \nsingle order of different formats"
                                     android:textColor="#000000"
                                     android:textSize="10sp" />
@@ -737,7 +739,7 @@
                 <RelativeLayout
                     android:id="@+id/LiveOrderTopRL"
                     android:layout_width="match_parent"
-                    android:layout_height="100dp"
+                    android:layout_height="90dp"
                     android:layout_alignParentTop="true"
                     android:layout_marginTop="0dp"
                     android:background="@drawable/roundedview"
@@ -766,7 +768,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerInParent="true"
                         android:fontFamily="@font/poppins_semibold"
-                        android:text="Live Orders"
+                        android:text="Active Orders"
                         android:textAlignment="center"
                         android:textColor="#100101"
                         android:textSize="26sp"
@@ -787,24 +789,52 @@
 
 
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#227093"
+                    android:textSize="9sp"
+                    android:text="Home"
+                    android:id="@+id/homeTv"
+                    android:fontFamily="@font/poppins_medium"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginLeft="30dp"
+                    android:layout_alignParentStart="true"
+                    android:elevation="6dp"/>
+
                 <ImageButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/home"
                     android:layout_alignParentBottom="true"
                     android:background="@android:color/transparent"
-                    android:layout_marginBottom="20dp"
                     android:layout_alignParentStart="true"
                     android:layout_marginLeft="30dp"
                     android:elevation="6dp"
+                    android:layout_above="@id/home"
+                    android:layout_marginBottom="30dp"
                     android:src="@drawable/home_blue"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#707070"
+                    android:textSize="9sp"
+                    android:text="My Orders"
+                    android:id="@+id/myOrdersTv"
+                    android:fontFamily="@font/poppins_medium"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_alignParentEnd="true"
+                    android:elevation="6dp"/>
                 <ImageButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/cart"
                     android:layout_alignParentBottom="true"
                     android:background="@android:color/transparent"
-                    android:layout_marginBottom="20dp"
+                    android:layout_marginBottom="30dp"
                     android:layout_alignParentEnd="true"
                     android:layout_marginRight="30dp"
                     android:elevation="6dp"
@@ -889,13 +919,37 @@
 
                 <ImageButton
                     android:id="@+id/AddFilesButton"
-                    android:layout_width="100dp"
-                    android:layout_height="100dp"
-                    android:layout_above="@+id/graybottomview"
-                    android:layout_marginBottom="-50dp"
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginBottom="34dp"
+                    android:elevation="8dp"
                     android:layout_centerHorizontal="true"
                     android:background="#00FFFFFF"
-                    android:src="@drawable/addfileplus" />
+                    android:src="@drawable/add_file_icon" />
+                <ImageView
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginBottom="34dp"
+                    android:id="@+id/grey_blue_border"
+                    android:alpha="0.56"
+                    android:elevation="6dp"
+                    android:background="@android:color/transparent"
+                    android:layout_centerHorizontal="true"
+                    android:src="@drawable/grey_blue_border" />
+                <ImageView
+                    android:layout_width="78dp"
+                    android:layout_height="78dp"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginBottom="30dp"
+                    android:alpha="0.56"
+                    android:elevation="6dp"
+                    android:visibility="gone"
+                    android:id="@+id/grey_blue_border_thick"
+                    android:background="@android:color/transparent"
+                    android:layout_centerHorizontal="true"
+                    android:src="@drawable/grey_blue_border_thick" />
 
                 <TextView
                     android:id="@+id/add_files_text"
@@ -926,7 +980,7 @@
                 <RelativeLayout
                     android:id="@+id/AddfileTVRL"
                     android:layout_width="match_parent"
-                    android:layout_height="170dp"
+                    android:layout_height="180dp"
                     android:layout_alignParentTop="true"
                     android:layout_marginTop="0dp"
                     android:background="@drawable/roundedview"
@@ -951,7 +1005,7 @@
                         android:layout_height="65dp"
                         android:layout_below="@+id/textView34"
                         android:layout_alignParentStart="true"
-                        android:layout_marginStart="20dp"
+                        android:layout_marginStart="45dp"
                         android:layout_marginTop="20dp"
                         android:background="@drawable/addfileseebtnback"
                         app:srcCompat="@drawable/addfileimage" />
@@ -976,7 +1030,7 @@
                         android:layout_alignBottom="@+id/pgsettingSeeBtn"
                         android:layout_alignParentEnd="true"
                         android:layout_marginTop="0dp"
-                        android:layout_marginEnd="20dp"
+                        android:layout_marginEnd="45dp"
                         android:layout_marginBottom="0dp"
                         android:background="@drawable/checkoutandpgsettseebtnshadow"
                         app:srcCompat="@drawable/checkoutbtn" />

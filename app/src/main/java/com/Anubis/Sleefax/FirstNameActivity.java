@@ -354,8 +354,8 @@ public class FirstNameActivity extends AppCompatActivity {
                 if(!isEmailValid(EmailText))
                     validTv.setVisibility(View.VISIBLE);
                 else
-                {validTv.setVisibility(View.INVISIBLE);}
-                attemptRegistration();
+                {validTv.setVisibility(View.INVISIBLE);
+                attemptRegistration();}
             }
         });
 

@@ -229,10 +229,10 @@ public class PdfInfo extends AppCompatActivity {
 
 
         final String[] sizes = new String[]{"A4", "A3", "A2"};
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, sizes);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.spinner_text, sizes);
 
         final String[] orientations = new String[]{"Portrait", "Landscape"};
-        ArrayAdapter<String> orientationsAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, orientations);
+        ArrayAdapter<String> orientationsAdapter = new ArrayAdapter<>(this, R.layout.spinner_text, orientations);
 
         pageSizeSpinner.setAdapter(adapter);
         orientSpinner.setAdapter(orientationsAdapter);
@@ -616,6 +616,9 @@ public class PdfInfo extends AppCompatActivity {
                     final String[] sizes = new String[]{"A4", "A3", "A2"};
                     pagesize = sizes[pageSizeSpinner.getSelectedItemPosition()];
                     pageSize.add(pdfCnt,pagesize);
+
+
+
 
                     final String[] ots = new String[]{"Portrait", "Landscape"};
                     orientation = ots[orientSpinner.getSelectedItemPosition()];

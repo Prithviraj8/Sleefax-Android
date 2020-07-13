@@ -9,8 +9,12 @@
         android:height="50dp"
         android:width="50dp"
         android:gravity="center_vertical"
-        android:left="235dp"
-        />
+        android:left="235dp"/>
+        <item android:drawable="@drawable/back_white"
+            android:width="10dp"
+            android:left="258dp"
+            android:top="20dp"
+            android:height="19dp"/>
    <item android:drawable="@drawable/slide_to_pay"
        android:width="100dp"
        android:height="25dp"

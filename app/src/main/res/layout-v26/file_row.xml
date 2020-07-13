@@ -52,13 +52,14 @@
             android:layout_height="wrap_content"
             android:layout_alignTop="@+id/customise"
             android:layout_alignBottom="@+id/customise"
-            android:layout_marginStart="0dp"
+            android:layout_marginStart="5dp"
             android:layout_marginTop="0dp"
+            android:layout_marginLeft="0dp"
             android:layout_marginBottom="0dp"
             android:layout_toEndOf="@+id/customise"
             android:layout_toRightOf="@id/customise"
             android:src="@drawable/arrow_down"
-            android:visibility="invisible" />
+            android:visibility="visible" />
 
         <TextView
             android:layout_width="wrap_content"

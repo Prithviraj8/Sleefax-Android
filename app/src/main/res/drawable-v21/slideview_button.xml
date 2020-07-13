@@ -2,10 +2,6 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:drawable="@drawable/alideview_circle_white" />
-    <item
-        android:drawable="@drawable/icon_slide"
-        android:width="8dp"
-        android:height="16dp"
-        android:gravity="center"/>
+
 
 </layer-list>

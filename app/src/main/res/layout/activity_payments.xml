@@ -14,53 +14,62 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+
         <RelativeLayout
-            android:id="@+id/view"
             android:layout_width="match_parent"
-            android:layout_height="172dp"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/view"
             android:elevation="5dp"
-            android:background="@drawable/payments_upper_blue_layout">
-
-            <ImageView
-                android:id="@+id/imageView8"
-                android:layout_width="142dp"
-                android:layout_height="28dp"
-                android:layout_marginTop="58dp"
-                android:layout_marginLeft="75dp"
-                app:srcCompat="@drawable/totalamount_text" />
-
-            <TextView
-                android:id="@+id/amount"
-                android:layout_width="64dp"
-                android:layout_height="35dp"
-                android:text=""
-                android:fontFamily="@font/poppins_semibold"
-                android:textStyle="bold"
-                android:textSize="25dp"
-                android:layout_marginTop="106dp"
-                android:textColor="#FFFFFF"
-                android:layout_marginLeft="104dp" />
-
-            <ImageView
-                android:id="@+id/rupee_symbol"
-                android:layout_width="21dp"
-                android:layout_height="20dp"
-                android:layout_marginTop="114dp"
-                android:layout_marginLeft="75dp"
-                android:src="@drawable/rupee_symbol" />
+            android:paddingBottom="30dp"
+            android:background="@drawable/pagesettingupper">
 
             <ImageButton
-                android:id="@+id/paymentBackBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="61dp"
-                android:layout_marginLeft="23dp"
-                android:background="@android:color/transparent"
-                android:src="@drawable/icon_arrow_left"/>
+                android:id="@+id/paymentBackBtn"
+                android:background="@drawable/arrow_left_black"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="39dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins_semibold"
+                android:text="Review Your Order"
+                android:textColor="#000000"
+                android:textSize="24dp"
+                android:layout_marginTop="30dp"
+                android:id="@+id/review_your_order_text"
+                android:layout_centerHorizontal="true"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/review_shop_icon"
+                android:layout_centerHorizontal="true"
+                android:id="@+id/imageview1"
+                android:layout_below="@+id/review_your_order_text"
+                android:layout_marginTop="10dp"/>
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/review_website_icon"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/review_your_order_text"
+                android:layout_toLeftOf="@id/imageview1"
+                android:layout_marginTop="10dp"/>
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/payment_blue"
+                android:layout_alignParentEnd="true"
+                android:layout_below="@+id/review_your_order_text"
+                android:layout_toRightOf="@id/imageview1"
+                android:layout_marginTop="10dp"/>
+
+
         </RelativeLayout>
+
 
         <ScrollView
             android:layout_width="match_parent"
@@ -73,6 +82,43 @@
                 android:gravity="center"
                 android:layout_marginTop="-10dp"
                 android:orientation="vertical">
+
+
+                <RelativeLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="30dp">
+
+                    <TextView
+                        android:id="@+id/totalText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Total Amount : "
+                        android:textSize="22sp"
+                        android:fontFamily="@font/poppins_semibold"
+                        android:textColor="#000000"/>
+                    <ImageView
+                        android:layout_width="21dp"
+                        android:layout_height="20dp"
+                        android:layout_alignTop="@id/totalText"
+                        android:layout_toRightOf="@id/totalText"
+                        android:id="@+id/rupee_symbol"
+                        android:layout_marginTop="-5dp"
+                        android:layout_alignBottom="@id/totalText"
+                        android:src="@drawable/rupeegreen"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0.00"
+                        android:layout_marginLeft="2dp"
+                        android:id="@+id/amount"
+                        android:layout_toRightOf="@id/rupee_symbol"
+                        android:textSize="22sp"
+                        android:fontFamily="@font/poppins_semibold"
+                        android:textColor="#25A13E"/>
+
+                </RelativeLayout>
+
 
                 <RelativeLayout
 
@@ -230,10 +276,14 @@
 
         </ScrollView>
         <RelativeLayout
-            android:layout_width="290dp"
+            android:layout_width="305dp"
             android:layout_height="60dp"
             android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginLeft="60dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="40dp"
             android:visibility="gone"
             android:id="@+id/slideviewlayout"
             android:background="@drawable/slideview_layout"
@@ -241,10 +291,11 @@
 
             <ng.max.slideview.SlideView
                 android:id="@+id/slideView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="320dp"
+                android:layout_height="60dp"
                 app:sv_animateSlideText="true"
                 app:sv_reverseSlide="false"
+                android:layout_marginLeft="-15dp"
                 app:sv_buttonBackgroundColor="@android:color/transparent"
                 app:sv_buttonImage="@drawable/slideview_button"
                 app:sv_slideBackgroundColor="@android:color/transparent"

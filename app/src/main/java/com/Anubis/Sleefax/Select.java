@@ -61,10 +61,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -157,11 +160,17 @@ public class Select extends AppCompatActivity {
     Toolbar toolbar;
     NavigationView navigationView;
 
+
+    ///variables for add plus button glow/////
+    ImageView borderThick, borderThin;
+
 //////////////////////////////home page UI elements///////////////////////////////////
     RelativeLayout liveorders,homepage;
     boolean scrollingLeft = false;
 
     HorizontalScrollView horizontalScrollView;
+
+    TextView hometv, ordersTv;
 
     ImageButton home,cart;
     TextView hellonameTv;//this variable to be changed for the name on home page
@@ -198,6 +207,10 @@ public class Select extends AppCompatActivity {
 //////////////////////////////shifting between home page and live orders/////////////////////////////////////////////
         home = findViewById(R.id.home);
         cart = findViewById(R.id.cart);
+        hometv = findViewById(R.id.homeTv);
+        ordersTv = findViewById(R.id.myOrdersTv);
+        final Integer blue = Color.parseColor("#227093");
+        final Integer grey = Color.parseColor("#858585");
         home.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -207,6 +220,9 @@ public class Select extends AppCompatActivity {
                 cart.setImageResource(R.drawable.shopping_grey);
                 homepage.setVisibility(View.VISIBLE);
                 liveorders.setVisibility(View.GONE);
+
+                hometv.setTextColor(blue);
+                ordersTv.setTextColor(grey);
 
 
 
@@ -218,9 +234,12 @@ public class Select extends AppCompatActivity {
                 vibrator.vibrate(20);//80 represents the milliseconds (the duration of the vibration)
 
                 home.setImageResource(R.drawable.home_grey);
-                cart.setImageResource(R.drawable.supermarket);
+                cart.setImageResource(R.drawable.paper);
                 liveorders.setVisibility(View.VISIBLE);
                 homepage.setVisibility(View.GONE);
+
+                hometv.setTextColor(grey);
+                ordersTv.setTextColor(blue);
             }
         });
 
@@ -238,26 +257,43 @@ public class Select extends AppCompatActivity {
                         if (scrollingLeft) {
 
                             if (horizontalScrollView.getScrollX() == 0) {
-                                horizontalScrollView.smoothScrollBy(10, 0);
+                                horizontalScrollView.smoothScrollBy(2, 0);
                                 scrollingLeft = false;
                             } else {
-                                horizontalScrollView.smoothScrollBy(-10, 0);
+                                horizontalScrollView.smoothScrollBy(-2, 0);
                             }
 
                         } else {
                             if (horizontalScrollView.canScrollHorizontally(View.FOCUS_RIGHT)) {
-                                horizontalScrollView.smoothScrollBy(10, 0);
+                                horizontalScrollView.smoothScrollBy(2, 0);
                             } else {
 
-                                horizontalScrollView.smoothScrollBy(-10, 0);
+                                horizontalScrollView.smoothScrollBy(-2, 0);
                                 scrollingLeft = true;
                             }
                         }
                     }
                 });
             }
-        }, 0, 50);
+        }, 0, 10);
         //////////////////////////////home page UI elements///////////////////////////////////
+
+
+        ////plus button animation code////////////
+        borderThick = findViewById(R.id.grey_blue_border_thick);
+        borderThin = findViewById(R.id.grey_blue_border);
+
+        AlphaAnimation alphaAnimation1 = new AlphaAnimation(0.0f, 1.0f);
+        alphaAnimation1.setRepeatCount(Animation.INFINITE);
+        alphaAnimation1.setDuration(1000);
+        borderThin.startAnimation(alphaAnimation1);
+
+
+        AlphaAnimation alphaAnimation = new AlphaAnimation(1.0f, 0.0f);
+        alphaAnimation.setRepeatCount(Animation.INFINITE);
+        alphaAnimation.setDuration(1000);
+        borderThick.setVisibility(View.VISIBLE);
+        borderThick.startAnimation(alphaAnimation);
 
 
         Random random = new Random();
@@ -878,6 +914,9 @@ public class Select extends AppCompatActivity {
         final DuoDrawerToggle drawerToggle = new DuoDrawerToggle(Select.this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
 
         drawerToggle.setDrawerIndicatorEnabled(false);
+        
+        Drawable drawable = getDrawable(R.drawable.menu_background);
+        drawerLayout.setBackground(drawable);
 
         drawerToggle.setHomeAsUpIndicator(R.drawable.more_2);
         drawerToggle.setToolbarNavigationClickListener(new View.OnClickListener() {
@@ -1266,7 +1305,11 @@ public class Select extends AppCompatActivity {
 
 
                         home.setImageResource(R.drawable.home_grey);
-                        cart.setImageResource(R.drawable.supermarket);
+                        cart.setImageResource(R.drawable.paper);
+                        final Integer blue = Color.parseColor("#227093");
+                        final Integer grey = Color.parseColor("#858585");
+                        hometv.setTextColor(grey);
+                        ordersTv.setTextColor(blue);
                         liveorders.setVisibility(View.VISIBLE);
                         homepage.setVisibility(View.GONE);
                         currentOrderLV();
