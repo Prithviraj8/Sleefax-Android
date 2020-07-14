@@ -12,7 +12,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="250dp"
         android:background="@drawable/pagesettingupper"
         android:elevation="5dp"
         android:id="@+id/pdfsettingsRL2">
@@ -38,7 +38,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="90dp"
-            android:layout_marginLeft="50dp"
+            android:layout_alignStart="@id/applytv"
             android:elevation="10dp">
             <ImageView
                 android:layout_width="63dp"
@@ -107,6 +107,7 @@
             android:textColor="#000000"
             android:fontFamily="@font/poppins_medium"
             android:textSize="13sp"
+            android:gravity="left"
             android:id="@+id/applytv"
             android:text="Apply these settings for all documents"
             />
@@ -223,13 +224,15 @@
 
                 <EditText
                     android:id="@+id/PDF_copies"
-                    android:layout_width="73dp"
-                    android:layout_height="30dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:layout_marginRight="50dp"
                     android:background="@drawable/blue_background_texts"
                     android:elevation="10dp"
+                    android:paddingHorizontal="35dp"
+                    android:paddingTop="2dp"
                     android:focusable="auto"
                     android:focusedByDefault="false"
                     android:fontFamily="@font/poppins_medium"
@@ -261,23 +264,36 @@
                     android:layout_alignParentLeft="true"
                     android:layout_marginLeft="55dp"/>
                 <RelativeLayout
-                    android:layout_width="100dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="37dp"
                     android:layout_centerVertical="true"
                     android:layout_alignParentRight="true"
                     android:layout_marginRight="40dp"
                     android:elevation="10dp"
+                    android:gravity="center"
                     android:background="@drawable/blue_background_texts">
                     <Spinner
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:background="@android:color/transparent"
                         android:id="@+id/sizeSpinner"
                         android:gravity="center"
+                        android:layout_alignStart="@id/text"
+                        android:layout_alignEnd="@id/text"
                         android:popupBackground="@drawable/blue_background_texts"
                         android:spinnerMode="dropdown"
                         android:textAlignment="center"
                         />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="Landscape"
+                        android:paddingHorizontal="10dp"
+                        android:textSize="13sp"
+                        android:id="@+id/text"
+                        android:visibility="invisible"
+                        android:fontFamily="@font/poppins_medium"
+                        android:gravity="center"/>
                 </RelativeLayout>
             </RelativeLayout>
 
@@ -300,23 +316,36 @@
                     android:fontFamily="@font/poppins_medium"
                     android:textColor="#000000"/>
                 <RelativeLayout
-                    android:layout_width="100dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="37dp"
                     android:layout_centerVertical="true"
                     android:layout_alignParentRight="true"
                     android:layout_marginRight="40dp"
                     android:elevation="10dp"
+                    android:gravity="center"
                     android:background="@drawable/blue_background_texts">
 
                     <Spinner
                         android:id="@+id/orientationSpinner"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:gravity="center"
+                        android:layout_alignEnd="@id/text1"
+                        android:layout_alignStart="@id/text1"
                         android:background="@android:color/transparent"
                         android:popupBackground="@drawable/blue_background_texts"
                         android:spinnerMode="dropdown"
                         android:textAlignment="center"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:text="Landscape"
+                        android:paddingHorizontal="10dp"
+                        android:textSize="13sp"
+                        android:id="@+id/text1"
+                        android:visibility="invisible"
+                        android:fontFamily="@font/poppins_medium"
+                        android:gravity="center"/>
                 </RelativeLayout>
             </RelativeLayout>
 
@@ -498,8 +527,6 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="10dp"
-        android:paddingBottom="10dp"
         android:background="#FFFFFF"
         android:id="@+id/bottom_view"
         android:layout_alignParentBottom="true"
@@ -519,6 +546,9 @@
                 android:id="@+id/name_price"
                 android:layout_alignParentStart="true"
                 android:paddingRight="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_alignLeft="@id/previous"
+                android:layout_marginRight="20dp"
                 android:background="@android:color/transparent"
                 >
 
@@ -542,6 +572,7 @@
                     android:layout_height="16dp"
                     android:src="@drawable/line"
                     android:id="@+id/line"
+                    android:visibility="gone"
                     android:layout_centerVertical="true"
                     android:layout_toRightOf="@id/fileNameTV"
                     android:layout_marginLeft="8dp"/>
@@ -551,6 +582,7 @@
                     android:src="@drawable/rupee_symbol"
                     android:layout_centerVertical="true"
                     android:id="@+id/rupee_symbol"
+                    android:visibility="gone"
                     android:layout_toRightOf="@id/line"
                     android:layout_marginLeft="5dp"/>
                 <TextView
@@ -564,6 +596,7 @@
                     android:fontFamily="@font/poppins_semibold"
                     android:layout_centerVertical="true"
                     android:layout_toRightOf="@id/rupee_symbol"
+                    android:visibility="gone"
                     android:layout_marginLeft="5dp"/>
 
             </RelativeLayout>
@@ -593,8 +626,10 @@
                     android:layout_height="match_parent"
                     android:layout_centerVertical="true"
                     android:background="#00FFFFFF"
-                    android:fontFamily="@font/poppins_semibold"
+                    android:fontFamily="@font/poppins"
                     android:text="Previous"
+                    android:textAllCaps="false"
+                    android:paddingLeft="12dp"
                     android:textColor="#005A82"
                     android:textSize="13dp" />
 
@@ -642,19 +677,22 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="20dp"
                 android:visibility="visible"
+                android:layout_marginBottom="25dp"
                 android:elevation="5dp"
                 android:layout_alignParentEnd="true">
 
 
                 <Button
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="#00FFFFFF"
                     android:id="@+id/pdfDone"
-                    android:textColor="#FFF"
+                    android:layout_width="98dp"
+                    android:layout_height="match_parent"
+                    android:layout_centerInParent="true"
+                    android:background="#00FFFFFF"
+                    android:fontFamily="@font/poppins"
                     android:text="Done"
                     android:textAlignment="center"
-                    android:layout_centerInParent="true"/>
+                    android:textAllCaps="false"
+                    android:textColor="#FFF" />
 
                 <ImageView
                     android:layout_width="18dp"

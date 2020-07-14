@@ -55,12 +55,16 @@ public class FirstNameActivity extends AppCompatActivity {
     RelativeLayout rootlayout;//the outer relative layout
     RelativeLayout nameRL;// the relative layout of name edit text
     RelativeLayout emailRL;// the relative layout of email edit text
-    Button nameBtn,emailBtn;// on clicking on the nameBtn nad emailBtn the animation is triggered and the outline of relative layout is changed to blue
+    Button nameBtn,emailBtn,numBtn;// on clicking on the nameBtn nad emailBtn the animation is triggered and the outline of relative layout is changed to blue
     TextView nameTV,mailTv;//the text Name and email that comes to top of edit text after user starts typing
     RelativeLayout detailsRL;// the relative layout containing edit text name and email
     ImageView nameIV,mailIV; // two side icons of name and email edit text
     int top,left;//used for animation
     TextView nTv,eTv;// the enter your name and eter email textviews
+
+    TextView phoneNum,mobileTv, ccTv,mtv;
+    RelativeLayout  phoneRL;
+    ImageView phoneIv;
 
     String EmailText;// get the text of Email entered by user
 
@@ -148,28 +152,10 @@ public class FirstNameActivity extends AppCompatActivity {
         numberTV = findViewById(R.id.numberTV);
         Email = findViewById(R.id.Email);
 
-        // Start animation Automatically if the 3 conditions below are true and compile executes code inside the if
-        if(FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber() != null) {
-            Log.d("YOUR_NUM",String.valueOf(FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber()));
-            numberTV.setText(FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber());
-        }else{
-            Log.d("YOUR_NUM",String.valueOf(number));
-            numberTV.setText(number);
-        }
-        if(FirebaseAuth.getInstance().getCurrentUser().getEmail() != null){
-            Email.setText(FirebaseAuth.getInstance().getCurrentUser().getEmail());
-        }
-        if(name != null){
-            firstNameTV.setText(name);
-        }
-
-
-        final Button continueButton = findViewById(R.id.FirstNameButton);
-        ImageButton back = findViewById(R.id.back);
 
         /////////////////////////////////////////////////////new UI///////////////////////////////////////////////
 
-       //these all are just used for either animation or changing backgrounds
+        //these all are just used for either animation or changing backgrounds
         rootlayout= findViewById(R.id.rootlayout);
         nameTV = findViewById(R.id.usernameTV);
         nameRL = findViewById(R.id.nameRL);
@@ -183,6 +169,152 @@ public class FirstNameActivity extends AppCompatActivity {
         mailTv = findViewById(R.id.EmailTv);
         eTv = findViewById(R.id.entermail_tv);
         validTv = findViewById(R.id.valid_mail_text);
+
+
+
+
+
+        mobileTv = findViewById(R.id.mobilenumTV);
+        ccTv = findViewById(R.id.country_codeTV);
+        phoneIv = findViewById(R.id.phoneIV);
+        mtv = findViewById(R.id.phoneNumber);
+        numBtn = findViewById(R.id.login_with_phoneBtn);
+        phoneNum = findViewById(R.id.phoneNumber);
+
+
+        Resources r = getResources();
+        top = (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                25,
+                r.getDisplayMetrics());
+        left = (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                120,
+                r.getDisplayMetrics());
+
+        // Start animation Automatically if the 3 conditions below are true and compile executes code inside the if
+        if(FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber() != null) {
+            Log.d("YOUR_NUM",String.valueOf(FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber()));
+            numberTV.setText(FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber());
+
+            ccTv.setVisibility(View.VISIBLE);
+            numberTV.setVisibility(View.VISIBLE);
+            mobileTv.setVisibility(View.VISIBLE);
+
+            Animation animation1 = new AlphaAnimation(1.0f,0.0f);
+            animation1.setDuration(500);
+
+
+            phoneIv.startAnimation(animation1);
+            phoneNum.startAnimation(animation1);
+
+
+            Animation animation2 = new AlphaAnimation(0.1f,1.0f);
+            animation2.setDuration(500);
+
+
+            mobileTv.startAnimation(animation2);
+            ccTv.startAnimation(animation2);
+            numberTV.startAnimation(animation2);
+
+
+
+
+            Animation animation = new TranslateAnimation(0,-left,0,-top);
+            animation.setDuration(500);
+            animation.setFillEnabled(true);
+            animation.setFillAfter(true);
+
+            mobileTv.startAnimation(animation);
+
+            numBtn.setVisibility(View.INVISIBLE);
+
+
+
+        }else{
+            Log.d("YOUR_NUM",String.valueOf(number));
+            numberTV.setText(number);
+        }
+        if(FirebaseAuth.getInstance().getCurrentUser().getEmail() != null){
+            Email.setText(FirebaseAuth.getInstance().getCurrentUser().getEmail());
+
+
+            //animation for email
+            Email.requestFocus();
+
+            Email.setVisibility(View.VISIBLE);
+            mailTv.setVisibility(View.VISIBLE);
+
+            Animation animation1 = new AlphaAnimation(1.0f,0.0f);
+            animation1.setDuration(500);
+
+
+            mailIV.startAnimation(animation1);
+            eTv.startAnimation(animation1);
+
+
+            Animation animation2 = new AlphaAnimation(0.1f,1.0f);
+            animation2.setDuration(500);
+
+
+            mailTv.startAnimation(animation2);
+            Email.startAnimation(animation2);
+
+
+            Animation animation = new TranslateAnimation(0,-left,0,-top);
+            animation.setDuration(500);
+            animation.setFillEnabled(true);
+            animation.setFillAfter(true);
+
+            mailTv.startAnimation(animation);
+
+            emailBtn.setVisibility(View.INVISIBLE);
+
+        }
+        if(name != null){
+            firstNameTV.setText(name);
+
+
+            // animation for name
+
+
+            firstNameTV.setVisibility(View.VISIBLE);
+            nameTV.setVisibility(View.VISIBLE);
+
+            Animation animation1 = new AlphaAnimation(1.0f,0.0f);
+            animation1.setDuration(500);
+
+
+            nameIV.startAnimation(animation1);
+            nTv.startAnimation(animation1);
+
+
+            Animation animation2 = new AlphaAnimation(0.1f,1.0f);
+            animation2.setDuration(500);
+
+
+            nameTV.startAnimation(animation2);
+            firstNameTV.startAnimation(animation2);
+
+
+
+
+            Animation animation = new TranslateAnimation(0,-left,0,-top);
+            animation.setDuration(500);
+            animation.setFillEnabled(true);
+            animation.setFillAfter(true);
+
+            nameTV.startAnimation(animation);
+
+            nameBtn.setVisibility(View.INVISIBLE);
+
+        }
+
+
+        final Button continueButton = findViewById(R.id.FirstNameButton);
+        ImageButton back = findViewById(R.id.back);
+
+
 
 
        // find whether keyboard is visible or not
@@ -237,15 +369,7 @@ public class FirstNameActivity extends AppCompatActivity {
         });
 
 
-        Resources r = getResources();
-        top = (int) TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                25,
-                r.getDisplayMetrics());
-        left = (int) TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                120,
-                r.getDisplayMetrics());
+
 
         nameBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -344,6 +468,48 @@ public class FirstNameActivity extends AppCompatActivity {
         });
 
         EmailText = Email.getText().toString();
+
+        numBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ccTv.setVisibility(View.VISIBLE);
+                numberTV.setVisibility(View.VISIBLE);
+                mobileTv.setVisibility(View.VISIBLE);
+
+                Animation animation1 = new AlphaAnimation(1.0f,0.0f);
+                animation1.setDuration(500);
+
+
+                phoneIv.startAnimation(animation1);
+                phoneNum.startAnimation(animation1);
+
+
+                Animation animation2 = new AlphaAnimation(0.1f,1.0f);
+                animation2.setDuration(500);
+
+
+                mobileTv.startAnimation(animation2);
+                ccTv.startAnimation(animation2);
+                numberTV.startAnimation(animation2);
+
+
+
+
+                Animation animation = new TranslateAnimation(0,-left,0,-top);
+                animation.setDuration(500);
+                animation.setFillEnabled(true);
+                animation.setFillAfter(true);
+
+                mobileTv.startAnimation(animation);
+
+                numBtn.setVisibility(View.INVISIBLE);
+
+
+
+            }
+        });
+
+
         /////////////////////////////////////////////////////new UI///////////////////////////////////////////////
 
 

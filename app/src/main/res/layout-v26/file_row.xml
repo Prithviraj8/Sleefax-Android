@@ -20,8 +20,7 @@
             android:layout_height="25dp"
             android:layout_alignTop="@+id/size"
             android:layout_alignParentStart="true"
-            android:layout_marginStart="5dp"
-            android:layout_marginLeft="40dp"
+            android:layout_marginStart="40dp"
             android:layout_marginTop="0dp"
             android:layout_marginEnd="50dp"
             android:layout_toStartOf="@+id/size"
@@ -44,6 +43,7 @@
             android:background="#00FFFFFF"
             android:fontFamily="@font/poppins"
             android:text="@string/customize"
+            android:textAllCaps="false"
             android:textColor="#227093"
             android:textSize="15dp" />
 
@@ -72,16 +72,29 @@
             android:layout_marginRight="60dp"
             android:fontFamily="@font/poppins"/>
 
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/rupee_symbol"
+           android:layout_below="@id/size"
+            android:src="@drawable/rupee_black"
+            android:layout_alignTop="@id/price"
+            android:layout_marginRight="5dp"
+            android:layout_marginLeft="-10dp"
+            android:layout_alignStart="@id/size"
+            android:layout_marginTop="-5dp"
+            android:layout_alignBottom="@id/price"/>
+
         <TextView
             android:id="@+id/price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/size"
-            android:layout_alignStart="@+id/size"
             android:layout_marginStart="0dp"
             android:layout_marginTop="10dp"
             android:fontFamily="@font/poppins"
-            android:text="₹: 23"
+            android:text="23"
+            android:layout_toRightOf="@id/rupee_symbol"
             android:textColor="#000000"
             android:textSize="15dp" />
 

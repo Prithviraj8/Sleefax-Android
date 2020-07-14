@@ -27,14 +27,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/paymentBackBtn"
-                android:background="@drawable/arrow_left_black"
-                android:layout_marginLeft="20dp"
-                android:layout_marginTop="39dp"/>
+                android:src="@drawable/arrow_left_black"
+                android:background="@android:color/transparent"
+                android:layout_alignTop="@id/review_your_order_text"
+                android:layout_alignBottom="@id/review_your_order_text"
+                android:layout_marginLeft="20dp" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/poppins_semibold"
-                android:text="Review Your Order"
+                android:text="Checkout"
                 android:textColor="#000000"
                 android:textSize="24dp"
                 android:layout_marginTop="30dp"
@@ -80,6 +82,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
+                android:paddingHorizontal="10dp"
                 android:layout_marginTop="-10dp"
                 android:orientation="vertical">
 
@@ -98,8 +101,8 @@
                         android:fontFamily="@font/poppins_semibold"
                         android:textColor="#000000"/>
                     <ImageView
-                        android:layout_width="21dp"
-                        android:layout_height="20dp"
+                        android:layout_width="25dp"
+                        android:layout_height="25dp"
                         android:layout_alignTop="@id/totalText"
                         android:layout_toRightOf="@id/totalText"
                         android:id="@+id/rupee_symbol"
@@ -122,9 +125,10 @@
 
                 <RelativeLayout
 
-                    android:layout_width="350dp"
+                    android:layout_width="match_parent"
                     android:layout_height="87dp"
                     android:elevation="5dp"
+                    android:layout_marginHorizontal="10dp"
                     android:id="@+id/pickup"
                     android:layout_marginTop="30dp"
                     android:background="@drawable/white_bg_layout">
@@ -150,17 +154,19 @@
                         android:layout_width="10dp"
                         android:layout_height="22dp"
                         android:layout_centerVertical="true"
-                        android:layout_marginLeft="277dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginRight="30dp"
                         android:background="@drawable/icon_arrow_right"
                         />
                 </RelativeLayout>
 
                 <RelativeLayout
                     android:id="@+id/phonepay_upi"
-                    android:layout_width="350dp"
+                    android:layout_width="match_parent"
                     android:layout_height="87dp"
                     android:layout_marginTop="20dp"
                     android:elevation="5dp"
+                    android:layout_marginHorizontal="10dp"
                     android:background="@drawable/white_bg_layout">
 
                     <ImageView
@@ -183,14 +189,16 @@
                         android:layout_width="10dp"
                         android:layout_height="22dp"
                         android:layout_centerVertical="true"
-                        android:layout_marginLeft="280dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginRight="30dp"
                         android:background="@drawable/icon_arrow_right"
                         />
                 </RelativeLayout>
 
                 <RelativeLayout
                     android:id="@+id/paytm"
-                    android:layout_width="350dp"
+                    android:layout_width="match_parent"
+                    android:layout_marginHorizontal="10dp"
                     android:layout_height="87dp"
                     android:layout_marginTop="20dp"
                     android:elevation="5dp"
@@ -216,14 +224,16 @@
                         android:layout_width="10dp"
                         android:layout_height="22dp"
                         android:layout_centerVertical="true"
-                        android:layout_marginLeft="280dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginRight="30dp"
                         android:background="@drawable/icon_arrow_right"
                         />
                 </RelativeLayout>
 
                 <RelativeLayout
                     android:id="@+id/gpay"
-                    android:layout_width="350dp"
+                    android:layout_width="match_parent"
+                    android:layout_marginHorizontal="10dp"
                     android:layout_height="87dp"
                     android:layout_marginTop="20dp"
                     android:layout_marginBottom="100dp"
@@ -266,7 +276,8 @@
                         android:layout_width="10dp"
                         android:layout_height="22dp"
                         android:layout_centerVertical="true"
-                        android:layout_marginLeft="280dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginRight="30dp"
                         android:background="@drawable/icon_arrow_right"
                         />
 
@@ -276,14 +287,13 @@
 
         </ScrollView>
         <RelativeLayout
-            android:layout_width="305dp"
+            android:layout_width="wrap_content"
             android:layout_height="60dp"
             android:layout_alignParentBottom="true"
             android:layout_alignParentStart="true"
-            android:layout_marginLeft="60dp"
-            android:layout_alignParentLeft="true"
+            android:layout_marginStart="60dp"
+            android:layout_marginEnd="60dp"
             android:layout_alignParentEnd="true"
-            android:layout_marginRight="40dp"
             android:visibility="gone"
             android:id="@+id/slideviewlayout"
             android:background="@drawable/slideview_layout"
@@ -291,11 +301,12 @@
 
             <ng.max.slideview.SlideView
                 android:id="@+id/slideView"
-                android:layout_width="320dp"
+                android:layout_width="match_parent"
                 android:layout_height="60dp"
                 app:sv_animateSlideText="true"
                 app:sv_reverseSlide="false"
-                android:layout_marginLeft="-15dp"
+                android:gravity="center"
+                android:layout_marginStart="-15dp"
                 app:sv_buttonBackgroundColor="@android:color/transparent"
                 app:sv_buttonImage="@drawable/slideview_button"
                 app:sv_slideBackgroundColor="@android:color/transparent"

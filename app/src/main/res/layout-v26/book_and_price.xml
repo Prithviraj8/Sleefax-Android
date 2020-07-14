@@ -28,7 +28,6 @@
         android:text="23"
         android:id="@+id/price"
         android:fontFamily="@font/poppins"
-        android:layout_marginRight="10dp"
         android:layout_alignParentEnd="true"
         android:textColor="#229440"
         android:layout_marginTop="10dp"

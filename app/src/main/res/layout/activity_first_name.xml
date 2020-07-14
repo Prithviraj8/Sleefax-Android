@@ -248,31 +248,128 @@
 
         </RelativeLayout>
 
-        <EditText
-            android:id="@+id/numberTV"
-            android:layout_width="wrap_content"
-            android:layout_height="42dp"
-            android:layout_below="@id/detailsLayout"
-            android:layout_centerHorizontal="true"
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:paddingVertical="11dp"
+            android:id="@+id/phoneRL"
+            android:layout_marginStart="30dp"
             android:layout_marginTop="30dp"
-            android:autofillHints=""
-            android:layout_alignParentStart="true"
-            android:layout_marginLeft="30dp"
-            android:layout_alignParentEnd="true"
-            android:layout_marginRight="30dp"
-            android:gravity="center"
+            android:layout_marginEnd="30dp"
+            android:layout_centerHorizontal="true"
             android:background="@drawable/login_page_phone_text"
-            android:ems="10"
-            android:hint="@string/your_number"
-            android:inputType="number"
-            android:paddingLeft="10dp"
-            android:textColorHint="#808080" />
+            android:layout_below="@id/detailsLayout">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/phoneblue"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="20dp"
+                android:id="@+id/phoneIV"/>
+
+            <TextView
+                android:id="@+id/phoneNumber"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@id/phoneIV"
+                android:layout_alignBottom="@id/phoneIV"
+                android:layout_toRightOf="@id/phoneIV"
+                android:fontFamily="@font/poppins"
+                android:gravity="center"
+                android:hint="Mobile Number"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="20dp"
+                android:textColor="#818181"
+                android:textSize="18sp"
+                />
+
+        </RelativeLayout>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:paddingVertical="10dp"
+            android:layout_alignStart="@id/phoneRL"
+            android:layout_alignEnd="@id/phoneRL"
+            android:layout_alignTop="@id/phoneRL"
+            android:layout_alignBottom="@id/phoneRL"
+            android:id="@+id/login_with_phoneBtn"
+            android:background="#00FFFFFF" />
+
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:textColor="#000000"
+            android:text="+91"
+            android:gravity="center"
+            android:background="@drawable/login_page_edit_text"
+            android:paddingHorizontal="15dp"
+            android:layout_alignStart="@id/phoneRL"
+            android:layout_alignTop="@id/phoneRL"
+            android:layout_alignBottom="@id/phoneRL"
+            android:textSize="18sp"
+            android:visibility="gone"
+            android:id="@+id/country_codeTV"
+            android:fontFamily="@font/poppins"/>
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:textColor="#000000"
+            android:textColorHint="#000000"
+            android:background="@drawable/phone_et"
+            android:paddingHorizontal="15dp"
+            android:visibility="gone"
+            android:inputType="phone"
+            android:gravity="center_vertical"
+            android:id="@+id/numberTV"
+            android:layout_toRightOf="@id/country_codeTV"
+            android:layout_alignBottom="@id/country_codeTV"
+            android:layout_marginLeft="-2dp"
+            android:layout_alignEnd="@id/phoneRL"
+            android:layout_alignTop="@id/country_codeTV"
+            android:textSize="18sp"
+            android:fontFamily="@font/poppins"/>
+
+        <!--    <TextView-->
+        <!--        android:layout_width="wrap_content"-->
+        <!--        android:layout_height="wrap_content"-->
+        <!--        android:text="Please Enter a valid Mobile Number"-->
+        <!--        android:layout_below="@id/phoneRL"-->
+        <!--        android:layout_centerHorizontal="true"-->
+        <!--        android:visibility="gone"-->
+        <!--        android:gravity="center_vertical"-->
+        <!--        android:textColor="#C44848"-->
+        <!--        android:textSize="11sp"-->
+        <!--        android:id="@+id/valid_text"-->
+        <!--        android:fontFamily="@font/poppins" />-->
+
+        <TextView
+            android:id="@+id/mobilenumTV"
+            android:layout_width="wrap_content"
+            android:layout_height="17dp"
+            android:layout_alignStart="@id/phoneRL"
+            android:layout_alignTop="@id/phoneRL"
+            android:layout_marginLeft="150dp"
+            android:background="#FFFFFF"
+            android:fontFamily="@font/poppins"
+            android:gravity="center_vertical"
+            android:text="Mobile Number"
+            android:textColor="#227093"
+            android:textSize="12sp"
+            android:layout_marginTop="15dp"
+            android:visibility="gone"/>
+
 
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/detailsLayout"
+            android:layout_below="@id/numberTV"
             android:background="@drawable/edit_profile_buttons"
             android:layout_alignStart="@id/detailsLayout"
             android:id="@+id/FirstNameButton"
