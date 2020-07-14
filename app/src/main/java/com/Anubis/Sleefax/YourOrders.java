@@ -6,11 +6,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -20,7 +16,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -33,10 +28,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Map;
 
 public class YourOrders extends AppCompatActivity {
@@ -263,7 +255,7 @@ public class YourOrders extends AppCompatActivity {
                 final TextView ShopsName = convertView.findViewById(R.id.ShopsName);
                 final TextView Location = convertView.findViewById(R.id.Location);
                 final TextView Files = convertView.findViewById(R.id.Files);
-                final TextView Price = convertView.findViewById(R.id.Price);
+                final TextView Price = convertView.findViewById(R.id.OrderPrice);
                 final TextView orderDateAndTime = convertView.findViewById(R.id.orderDate);
                 final TextView paymentModeTV = convertView.findViewById(R.id.paymentModeTV);
 

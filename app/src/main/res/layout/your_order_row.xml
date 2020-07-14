@@ -104,7 +104,7 @@
             android:textColor="#000000"
             android:textSize="10sp" />
         <TextView
-            android:id="@+id/Price"
+            android:id="@+id/OrderPrice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/textview2"
@@ -168,7 +168,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/textview1"
             android:layout_alignParentEnd="true"
-            android:layout_alignTop="@id/Price"
+            android:layout_alignTop="@id/OrderPrice"
             android:layout_marginTop="-5dp"
             android:layout_marginRight="20dp"
             android:visibility="invisible"

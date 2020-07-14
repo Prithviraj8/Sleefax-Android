@@ -86,6 +86,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.kaopiz.kprogresshud.KProgressHUD;
 import com.paytm.pgsdk.PaytmPGService;
 //import com.spire.presentation.Presentation;
 //import com.spire.presentation.FileFormat;
@@ -180,6 +181,60 @@ public class Select extends AppCompatActivity {
     //////// Live orders Listview /////////
     ListView listView;
     currentOrderAdapter adapter;
+
+
+    /////////////////// Selecting File page UI elements and variables
+
+//    static {
+//        System.setProperty(
+//                "org.apache.poi.javax.xml.stream.XMLInputFactory",
+//                "com.fasterxml.aalto.stax.InputFactoryImpl"
+//        );
+//        System.setProperty(
+//                "org.apache.poi.javax.xml.stream.XMLOutputFactory",
+//                "com.fasterxml.aalto.stax.OutputFactoryImpl"
+//        );
+//        System.setProperty(
+//                "org.apache.poi.javax.xml.stream.XMLEventFactory",
+//                "com.fasterxml.aalto.stax.EventFactoryImpl"
+//        );
+//    }
+//
+//
+//    private static final String GOOGLE_PHOTOS_PACKAGE_NAME = "com.google.android.apps.photos";
+//    int shortAnimationDuration,cnt = 0,shopCnt;
+//    //    double[] numberOfPages;
+//    String mimeType,fileName,fileSize;
+//    ArrayList<String> mimeTypes = new ArrayList<>();
+//
+//    ArrayList<String> urls = new ArrayList<>();
+//    ArrayList<String> colors = new ArrayList<>();
+//    ArrayList<Integer> copies = new ArrayList<>();
+//    ArrayList<String> pageSize = new ArrayList<>();
+//    ArrayList<String> orientations = new ArrayList<>();
+//    boolean bothSides[];
+//    ArrayList<String> customPages = new ArrayList<>();
+//    ArrayList<String> customValues = new ArrayList<>();
+//    ArrayList<Integer> numberOfPages = new ArrayList<>();
+//    ArrayList<String> fileNames = new ArrayList<>();
+//    ArrayList<String> fileSizes = new ArrayList<>();
+//    ArrayList<Integer> customPage1 = new ArrayList<>();
+//    ArrayList<Integer> customPage2 = new ArrayList<>();
+//    ArrayList<Uri> fileLocations = new ArrayList<>();
+//    double pricePerFile[];
+//    double totalPrice;
+//
+//    boolean addingMoreFiles,selectingFile;
+//
+//
+//    String fileType;
+//    KProgressHUD hud;
+
+
+
+    /////////////////// XXXXXXXXXXXXXXXXXXXXXXX /////////////////////////
+
+
 
     //    @SuppressLint("ClickableViewAccessibility")
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -1127,10 +1182,10 @@ public class Select extends AppCompatActivity {
                 startActivity(signOutIntent);
                 Toast.makeText(Select.this,"Successfully signed out", Toast.LENGTH_SHORT).show();
 
-                SharedPreferences sharedPreferences = getSharedPreferences(SharedPrefs,0);
-                sharedPreferences.edit().putString("UserID",null).apply();
-                sharedPreferences.edit().putString("DisplayName",null).apply();
-                sharedPreferences.edit().putLong("UserNumber",0).apply();
+//                SharedPreferences sharedPreferences = getSharedPreferences(SharedPrefs,0);
+//                sharedPreferences.edit().putString("UserID",null).apply();
+//                sharedPreferences.edit().putString("DisplayName",null).apply();
+//                sharedPreferences.edit().putLong("UserNumber",0).apply();
 
                 finish();
             }

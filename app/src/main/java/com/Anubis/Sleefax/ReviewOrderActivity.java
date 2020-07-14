@@ -3,6 +3,8 @@ package com.Anubis.Sleefax;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.stream.IntStream;
 
 class fileInfo {
 
@@ -85,7 +88,9 @@ public class ReviewOrderActivity extends AppCompatActivity {
     ImageButton backBtn;
     TextView priceTotal;
 
-
+    pdfViewAdapter pdfViewAdapter;
+    billingViewAdapter billingViewAdapter;
+    ArrayList<fileInfo> arrayList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,23 +104,38 @@ public class ReviewOrderActivity extends AppCompatActivity {
 
         getOrderInfo();
 
-        pdfViewAdapter pdfViewAdapter;
-        billingViewAdapter billingViewAdapter;
-        ArrayList<fileInfo> arrayList = new ArrayList<>();
+        setFileListView();
 
         Log.d("FILESIZE",String.valueOf(fileSizes.size()));
         Log.d("FILENAME",String.valueOf(fileNames.size()));
         Log.d("PRICEPERFILE",String.valueOf(pricePerFile.length));
 
+
+
+
+        // Attaching btn listeners.
+        selectShopBtn.setOnClickListener(Listener);
+        backBtn.setOnClickListener(Listener);
+        addMoreFilesBtn.setOnClickListener(Listener);
+
+
+
+    }
+
+
+    public void setFileListView(){
+        arrayList.clear();
         for(int i = 0;i< fileNames.size();i++) {
 //            arrayList.add(new fileInfo(fileNames.get(i),pricePerFile.get(i),fileSizes.get(i)));
             arrayList.add(new fileInfo(fileNames.get(i),"₹ "+String.valueOf(pricePerFile[i]),fileSizes.get(i)));
-            Log.d("IMGNAME ",String.valueOf(fileNames.get(i)));
-            totalPrice = pricePerFile[i] + totalPrice;
+//            totalPrice = pricePerFile[i] + totalPrice;
 
             if(i == fileNames.size()-1){
-               pdfViewAdapter = new pdfViewAdapter(arrayList);
-               billingViewAdapter = new billingViewAdapter(arrayList);
+                Log.d("ARRAYSIZE",String.valueOf(arrayList.size()));
+
+
+                pdfViewAdapter = new pdfViewAdapter(arrayList);
+                billingViewAdapter = new billingViewAdapter(arrayList);
 
 
                 pdfView = findViewById(R.id.pdfListView);
@@ -126,19 +146,10 @@ public class ReviewOrderActivity extends AppCompatActivity {
                 billingView.setAdapter(billingViewAdapter);
                 setDynamicHeight(billingView);
 
-                //setting total Price
-                priceTotal.setText(String.valueOf(totalPrice));
+                calculateTotalPrice(pricePerFile);
+
             }
         }
-
-
-        // Attaching btn listeners.
-        selectShopBtn.setOnClickListener(Listener);
-        backBtn.setOnClickListener(Listener);
-        addMoreFilesBtn.setOnClickListener(Listener);
-
-
-
     }
 
 
@@ -182,7 +193,8 @@ public class ReviewOrderActivity extends AppCompatActivity {
         }
 
     }
-    //        if(addingMoreFiles){
+
+//        if(addingMoreFiles){
 //            ArrayList<File_Settings> data = new ArrayList<>();
 //            Log.d("GETTING DATA ",String.valueOf(data));
 //        }
@@ -268,6 +280,69 @@ public class ReviewOrderActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void removeFileInfoFromOrder(int index){
+        urls.remove(index);
+        if(!fileTypes.get(0).equals("IMAGE")) {
+            numberOfPages.remove(index);
+            customPages.remove(index);
+            customPage1.remove(index);
+            customPage2.remove(index);
+        }
+        copies.remove(index);
+        colors.remove(index);
+        fileNames.remove(index);
+        fileTypes.remove(index);
+        fileSizes.remove(index);
+        pageSize.remove(index);
+        orientations.remove(index);
+
+        pricePerFile = removePriceOfDeletedFile(pricePerFile,index);
+
+        calculateTotalPrice(pricePerFile);
+        setFileListView();
+    }
+
+    // Function to remove the element
+    public double[] removePriceOfDeletedFile(double[] arr,
+                                         int index)
+    {
+
+        // If the array is empty
+        // or the index is not in array range
+        // return the original array
+        if (arr == null
+                || index < 0
+                || index >= arr.length) {
+
+            return arr;
+        }
+
+
+
+        // return the resultant array
+        return IntStream.range(0, arr.length)
+                .filter(i -> i != index)
+                .mapToDouble(i -> arr[i])
+                .toArray();
+
+    }
+
+
+    public void calculateTotalPrice(double[] pricePerFile){
+        totalPrice = 0.0;
+        for(int i = 0;i < pricePerFile.length;i++){
+            totalPrice = pricePerFile[i] + totalPrice;
+            Log.d("FILE_PER_PRICE ",String.valueOf(pricePerFile[(i)]));
+
+
+            if(i == pricePerFile.length - 1){
+                Log.d("TOTAL_PRICE",String.valueOf(totalPrice));
+                //setting total Price
+                priceTotal.setText(String.valueOf(totalPrice));
+            }
+        }
+    }
+
 
     public class pdfViewAdapter extends BaseAdapter {
 
@@ -299,15 +374,27 @@ public class ReviewOrderActivity extends AppCompatActivity {
 
             if(convertView != null) {
                 TextView Name, Size, Price;
+                Button removeFileBtn;
+
                 Name = convertView.findViewById(R.id.pdfName);
                 Size = convertView.findViewById(R.id.size);
                 Price = convertView.findViewById(R.id.price);
                 Button customize = convertView.findViewById(R.id.customise);
-
+                removeFileBtn = convertView.findViewById(R.id.RemoveFileBtn);
 
                 Name.setText(Data.get(position).getName());
                 Price.setText(Data.get(position).getPrice());
 
+                removeFileBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if(arrayList.size()>1) {
+                            removeFileInfoFromOrder(position);
+                        }else {
+                            alertMessage();
+                        }
+                    }
+                });
                 customize.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -316,7 +403,8 @@ public class ReviewOrderActivity extends AppCompatActivity {
 //                        Intent intent = new Intent(ReviewOrderActivity.this,PdfInfo.class);
 //                        Bundle extras = new Bundle();
 //                        extras.putInt("PdfCnt",position);
-                        sendOrderInfo(true,position);
+
+                        sendOrderInfo(true, position);
 
                     }
                 });
@@ -390,5 +478,23 @@ public class ReviewOrderActivity extends AppCompatActivity {
         listView.requestLayout();
     }
 
+    protected void alertMessage() {
 
+        Log.d("ONLY_1_FILE","OH OH");
+        new AlertDialog.Builder(ReviewOrderActivity.this)
+        .setMessage("This is the only file left in your cart.\n Are you sure you want to remove it ?")
+                .setCancelable(true)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, final int id) {
+                        Intent intent = new Intent(ReviewOrderActivity.this,Select.class);
+                        startActivity(intent);
+                        finish();
+                    }
+                }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                    // User cancelled the dialog
+                }
+                }).create().show();
+
+    }
 }

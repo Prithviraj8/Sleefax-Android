@@ -7,110 +7,119 @@
     android:background="#00FFFFFF"
     tools:context=".Pop">
 
-    <com.github.barteksc.pdfviewer.PDFView
-        android:id="@+id/viewPDF"
-        android:layout_width="match_parent"
-        android:layout_height="651dp"
-        android:layout_marginTop="0dp"
-        android:visibility="invisible">
+<!--    <RelativeLayout-->
+<!--        android:layout_width="410dp"-->
+<!--        android:layout_height="733dp"-->
+<!--        android:background="#00FFFFFF"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent">-->
 
-    </com.github.barteksc.pdfviewer.PDFView>
+<!--        <TextView-->
+<!--            android:id="@+id/textView4"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_alignParentStart="true"-->
+<!--            android:layout_alignParentTop="true"-->
+<!--            android:layout_marginStart="0dp"-->
+<!--            android:layout_marginTop="215dp"-->
+<!--            android:layout_marginBottom="8dp"-->
+<!--            android:text="Select document type"-->
+<!--            android:textAlignment="center"-->
+<!--            android:textColor="#000"-->
+<!--            android:textSize="29sp"-->
+<!--            android:textStyle="bold"-->
+<!--            android:visibility="gone" />-->
+
+
+<!--        <Button-->
+<!--            android:id="@+id/selectattachment"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_alignParentStart="true"-->
+<!--            android:layout_alignParentTop="true"-->
+<!--            android:layout_marginStart="75dp"-->
+<!--            android:layout_marginTop="303dp"-->
+<!--            android:background="@drawable/ellipse25"-->
+<!--            android:drawableStart="@drawable/attach"-->
+<!--            android:paddingLeft="20dp"-->
+<!--            android:textSize="15sp"-->
+<!--            android:visibility="gone" />-->
+
+<!--        <Button-->
+<!--            android:id="@+id/selectphotos"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_alignParentTop="true"-->
+<!--            android:layout_alignParentEnd="true"-->
+<!--            android:layout_marginTop="301dp"-->
+<!--            android:layout_marginEnd="78dp"-->
+<!--            android:layout_marginBottom="56dp"-->
+<!--            android:background="@drawable/ellipse25"-->
+<!--            android:drawableStart="@drawable/photo_camera"-->
+<!--            android:paddingLeft="18dp"-->
+<!--            android:textSize="15sp"-->
+<!--            android:visibility="gone" />-->
+
+<!--        <RelativeLayout-->
+<!--            android:id="@+id/PdfViewRL"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:layout_alignParentTop="true"-->
+<!--            android:layout_marginTop="0dp"-->
+<!--            android:visibility="gone">-->
+
+<!--            <Button-->
+<!--                android:id="@+id/nextActivity"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_alignTop="@+id/bottomNavView"-->
+<!--                android:layout_alignParentEnd="true"-->
+<!--                android:layout_marginTop="0dp"-->
+<!--                android:layout_marginEnd="30dp"-->
+<!--                android:text="Next"-->
+<!--                android:visibility="invisible" />-->
+
+<!--            <View-->
+<!--                android:id="@+id/bottomNavView"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="83dp"-->
+<!--                android:layout_below="@id/dismissBtn"-->
+<!--                android:layout_marginTop="0dp"-->
+<!--                android:layout_marginBottom="0dp"-->
+<!--                android:visibility="gone" />-->
+
+<!--            <Button-->
+<!--                android:id="@+id/dismissBtn"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginStart="30dp"-->
+<!--                android:layout_marginTop="0dp"-->
+<!--                android:text="Dismiss"-->
+<!--                android:visibility="visible" />-->
+
+<!--        </RelativeLayout>-->
+
+
+<!--    </RelativeLayout>-->
+
+
 
     <RelativeLayout
-        android:layout_width="410dp"
-        android:layout_height="733dp"
-        android:background="#00FFFFFF"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        android:id="@+id/GifRL"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#227093"
+        android:visibility="gone">
 
-        <TextView
-            android:id="@+id/textView4"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="215dp"
-            android:layout_marginBottom="8dp"
-            android:text="Select document type"
-            android:textAlignment="center"
-            android:textColor="#000"
-            android:textSize="29sp"
-            android:textStyle="bold"
-            android:visibility="gone" />
-
-
-        <Button
-            android:id="@+id/selectattachment"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginStart="75dp"
-            android:layout_marginTop="303dp"
-            android:background="@drawable/ellipse25"
-            android:drawableStart="@drawable/attach"
-            android:paddingLeft="20dp"
-            android:textSize="15sp"
-            android:visibility="gone" />
-
-        <Button
-            android:id="@+id/selectphotos"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"
-            android:layout_marginTop="301dp"
-            android:layout_marginEnd="78dp"
-            android:layout_marginBottom="56dp"
-            android:background="@drawable/ellipse25"
-            android:drawableStart="@drawable/photo_camera"
-            android:paddingLeft="18dp"
-            android:textSize="15sp"
-            android:visibility="gone" />
-
-        <RelativeLayout
-            android:id="@+id/PdfViewRL"
+        <com.Anubis.Sleefax.Animations.GifImageView
+            android:id="@+id/GIF"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_alignParentTop="true"
-            android:layout_marginTop="0dp"
-            android:visibility="gone">
-
-            <Button
-                android:id="@+id/nextActivity"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignTop="@+id/bottomNavView"
-                android:layout_alignParentEnd="true"
-                android:layout_marginTop="0dp"
-                android:layout_marginEnd="30dp"
-                android:text="Next"
-                android:visibility="invisible" />
-
-            <View
-                android:id="@+id/bottomNavView"
-                android:layout_width="match_parent"
-                android:layout_height="83dp"
-                android:layout_below="@id/dismissBtn"
-                android:layout_marginTop="0dp"
-                android:layout_marginBottom="0dp"
-                android:visibility="gone" />
-
-            <Button
-                android:id="@+id/dismissBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="30dp"
-                android:layout_marginTop="0dp"
-                android:text="Dismiss"
-                android:visibility="visible" />
-
-        </RelativeLayout>
-
-
+            android:layout_centerInParent="true"
+            android:visibility="visible"
+            />
     </RelativeLayout>
 
 </RelativeLayout>

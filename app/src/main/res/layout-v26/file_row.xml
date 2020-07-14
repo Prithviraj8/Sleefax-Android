@@ -98,7 +98,17 @@
             android:textColor="#000000"
             android:textSize="15dp" />
 
-<!--        <ImageView-->
+        <Button
+            android:id="@+id/RemoveFileBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/customise"
+            android:layout_alignStart="@+id/customise"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="10dp"
+            android:text="Remove File" />
+
+        <!--        <ImageView-->
 <!--            android:layout_width="11dp"-->
 <!--            android:layout_height="11dp"-->
 <!--            android:id="@+id/RupeeImg"-->

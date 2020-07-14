@@ -11,21 +11,15 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Looper;
-import android.os.Message;
 import android.provider.OpenableColumns;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
-import com.github.barteksc.pdfviewer.PDFView;
-import com.github.barteksc.pdfviewer.listener.OnLoadCompleteListener;
-import com.github.barteksc.pdfviewer.listener.OnPageErrorListener;
-import com.github.barteksc.pdfviewer.scroll.DefaultScrollHandle;
+import com.Anubis.Sleefax.Animations.GifImageView;
+import com.android.volley.toolbox.Volley;
 import com.kaopiz.kprogresshud.KProgressHUD;
 
 import org.apache.poi.hslf.HSLFSlideShow;
@@ -65,7 +59,6 @@ public class Pop extends AppCompatActivity {
     ArrayList<String> mimeTypes = new ArrayList<>();
 
     ArrayList<String> urls = new ArrayList<>();
-    ArrayList<String> fileTypes = new ArrayList<>();
     ArrayList<String> colors = new ArrayList<>();
     ArrayList<Integer> copies = new ArrayList<>();
     ArrayList<String> pageSize = new ArrayList<>();
@@ -84,13 +77,12 @@ public class Pop extends AppCompatActivity {
 
     boolean newUser,isTester,addingMoreFiles,selectingFile;
 
+    //// GIF layouts and elements
+    RelativeLayout gifRL;
+    GifImageView gifImageView;
+    ///////////////////////////
 
     String fileType;
-
-    PDFView pdfView;
-    Button nextActivity,dismissViewPDF,selectPhotos,selectAttachment;
-    View bottomNavView;
-    RelativeLayout pdfViewRL;
     KProgressHUD hud;
 
     @Override
@@ -100,17 +92,16 @@ public class Pop extends AppCompatActivity {
         DisplayMetrics dm = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
 
-        cnt = 0;
-
-        pdfViewRL = findViewById(R.id.PdfViewRL);
-        pdfView = findViewById(R.id.viewPDF);
-        bottomNavView = findViewById(R.id.bottomNavView);
+        gifRL = findViewById(R.id.GifRL);
+        gifImageView = (GifImageView) findViewById(R.id.GIF);
+        gifImageView.setGifImageResource(R.raw.animation_640_kchmf79t);
 
         int width = dm.widthPixels;
         int height = dm.heightPixels;
 
         getWindow().setLayout((int)(width),(int) (height));
 
+        cnt = 0;
 
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
@@ -124,20 +115,7 @@ public class Pop extends AppCompatActivity {
         }
 
 
-        if(selectingFile){
-            Intent fileIntent = new Intent();
-            fileIntent.setType("application/*");
-            fileIntent.setAction(Intent.ACTION_OPEN_DOCUMENT);
-            fileIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-            startActivityForResult(Intent.createChooser(fileIntent, "Select files"), 1);
-        }else{
-            Intent imageIntent = new Intent();
-            imageIntent.setType("image/*");
-            imageIntent.setAction(Intent.ACTION_GET_CONTENT);
-            imageIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-            startActivityForResult(Intent.createChooser(imageIntent, "Select Images"), 1);
-
-        }
+        openFile_ImageSelectionMenu();
 
 
 
@@ -155,12 +133,39 @@ public class Pop extends AppCompatActivity {
 //        super.onBackPressed();
 //        Intent intent = new Intent(Pop.this,Select.class);
 //        startActivity(intent);
-        if(hud.isShowing()){
-            hud.dismiss();
-        }
+//        if(hud.isShowing()){
+//            hud.dismiss();
+//        }
+            runOnUiThread(new Runnable() {
+
+                @Override
+                public void run() {
+                    // Stuff that updates the UI
+                    if (gifRL.isShown()) {
+                        // Stuff that updates the UI
+                        gifRL.setVisibility(View.GONE);
+                    }
+                }
+            });
         finish();
     }
 
+    public void openFile_ImageSelectionMenu(){
+        if(selectingFile){
+            Intent fileIntent = new Intent();
+            fileIntent.setType("application/*");
+            fileIntent.setAction(Intent.ACTION_OPEN_DOCUMENT);
+            fileIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+            startActivityForResult(Intent.createChooser(fileIntent, "Select files"), 1);
+        }else{
+            Intent imageIntent = new Intent();
+            imageIntent.setType("image/*");
+            imageIntent.setAction(Intent.ACTION_GET_CONTENT);
+            imageIntent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+            startActivityForResult(Intent.createChooser(imageIntent, "Select Images"), 1);
+
+        }
+    }
     public void getOrderInfo(){
 
 
@@ -203,39 +208,219 @@ public class Pop extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         //when the user choses the file
 
-        hud.show();
+
+        gifRL.setVisibility(View.VISIBLE);
+
         if (requestCode == 1 && resultCode == RESULT_OK) {
             //if a file is selected
-            renderFiles(data);
+//            renderFiles(data);
+            new renderFiles().execute(data);
         }
     }
 
 
+//    @RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
+    public class renderFiles extends AsyncTask<Intent,Void,Void> {
 
 
-    public void renderFiles(final Intent data){
+        @Override
+        protected Void doInBackground(Intent... intents) {
 
+            if (Looper.myLooper() == null)
+            {
+                Looper.prepare();
+            }
+            Intent data = intents[0];
+            final ArrayList<String> pdfs = new ArrayList<>();
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
 
-        if(!hud.isShowing()) {
-            hud.show();
-        }
+//                Looper.prepare();
+            if (data.getData() != null) {
+                //uploading the file
 
-        final ArrayList<String> pdfs = new ArrayList<>();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
+                Uri returnUri = data.getData();
+                fileLocations.add(returnUri);
 
-                if (data.getData() != null) {
-                    //uploading the file
+                Log.d("FILELOC",returnUri.toString());
+                mimeType = getContentResolver().getType(returnUri);
 
-                    Uri returnUri = data.getData();
-                    fileLocations.add(returnUri);
-
-                    Log.d("FILELOC",returnUri.toString());
-                    mimeType = getContentResolver().getType(returnUri);
-
-                    if (mimeType.contains("application")) {
+                if (mimeType.contains("application")) {
 //                    mimeTypes.add(mimeType);
+
+                    Cursor returnCursor = getContentResolver().query(returnUri, null, null, null, null);
+                    int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                    int sizeIndex = returnCursor.getColumnIndex(OpenableColumns.SIZE);
+                    returnCursor.moveToFirst();
+
+                    fileName = (returnCursor.getString(nameIndex));
+                    fileNames.add(fileName);
+
+
+                    if (Long.toString(returnCursor.getLong(sizeIndex)).length() >= 7) {
+                        fileSize = (Long.toString((long) ((returnCursor.getLong(sizeIndex)) * 0.000001)) + " MB");
+                        fileSizes.add(fileSize);
+
+                    } else {
+                        fileSize = (Long.toString((long) ((returnCursor.getLong(sizeIndex)) * 00.001)) + " kB");
+                        fileSizes.add(fileSize);
+                    }
+                    urls.add(String.valueOf(returnUri));
+//                    numberOfPages = new double[uri.size()];
+                    if (mimeType.equals("application/pdf")) {
+                        mimeTypes.add("PDF");
+//                            ViewPDF(returnUri.toString());
+//                            hud.dismiss();
+                        runOnUiThread(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                // Stuff that updates the UI
+                                gifRL.setVisibility(View.GONE);
+                            }
+                        });
+                        uploadFile(urls);
+
+                        pdfs.add(returnUri.toString());
+//                            ViewPDF(pdfs);
+
+                    } else {
+//                        uri.add(returnUri);
+                        try {
+                            FileInputStream inputStream = (FileInputStream) getContentResolver().openInputStream(data.getData());
+
+                            if (mimeType.equals("application/vnd.openxmlformats-officedocument.wordprocessingml.document")) {
+                                mimeTypes.add(cnt,"Docx");
+
+                                XWPFDocument document = null;
+                                if (inputStream != null) {
+                                    document = new XWPFDocument(inputStream);
+                                }else{
+
+                                }
+                                XWPFWordExtractor extractor = new XWPFWordExtractor(document);
+                                int pages = document.getProperties().getExtendedProperties().getUnderlyingProperties().getPages();
+                                numberOfPages.add(pages);
+                                Log.d("NOPOFDOCX", String.valueOf(pages));
+
+                            } else if (mimeType.equals("application/msword")) {
+
+                                try {
+                                    HWPFDocument document = new HWPFDocument(inputStream);
+                                    int pages = document.getSummaryInformation().getPageCount();
+                                    numberOfPages.add(pages);
+                                    mimeTypes.add(cnt,"Word");
+
+                                } catch (Exception e) {
+                                    FileInputStream docxIS = (FileInputStream) getContentResolver().openInputStream(data.getData());
+                                    XWPFDocument document;
+                                    document = new XWPFDocument(docxIS);
+                                    XWPFWordExtractor extractor = new XWPFWordExtractor(document);
+                                    int pages = document.getProperties().getExtendedProperties().getUnderlyingProperties().getPages();
+                                    numberOfPages.add(pages);
+                                    // Adding mimeType as PPTX even though PPT is selected because the page count algo for PPT is crashing and for PPTX is working for this selected file
+                                    mimeTypes.add(cnt,"Docx");
+
+                                }
+
+//                                Toast.makeText(this, "NOPOF DOC " + pages, Toast.LENGTH_SHORT).show();
+                            } else if (mimeType.equals("application/vnd.ms-powerpoint")) {
+//                                XMLSlideShow slideShow = new XMLSlideShow(inputStream);
+//                                int slides = slideShow.getSlides().length;
+//                                numberOfPages.add(slides);
+
+                                try {
+                                    HSLFSlideShow show = new HSLFSlideShow(inputStream);
+                                    SlideShow ss = new SlideShow(show);
+                                    Slide[] slides = ss.getSlides();
+//
+                                    int slide_count = ss.getSlides().length;
+                                    numberOfPages.add(slide_count);
+                                    mimeTypes.add(cnt,"PPT");
+
+                                    Log.d("NOPOF PPT ", String.valueOf(slide_count));
+
+                                } catch (Exception e) {
+                                    XMLSlideShow slideShow = new XMLSlideShow(inputStream);
+                                    int slides = slideShow.getSlides().length;
+                                    numberOfPages.add(slides);
+                                    mimeTypes.add(cnt,"PPTX");
+
+                                    Log.d("NOPOF PPTX ", String.valueOf(slides));
+                                }
+
+
+                            } else if (mimeType.equals("application/vnd.openxmlformats-officedocument.presentationml.presentation")) {
+                                mimeTypes.add(cnt,"PPTX");
+
+                                XMLSlideShow slideShow = new XMLSlideShow(inputStream);
+                                int slides = slideShow.getSlides().length;
+                                numberOfPages.add(slides);
+                                Log.d("NOPOF PPTX ", String.valueOf(slides));
+
+                            }
+//                                cnt = cnt + 1;
+
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+
+//                        ViewDoc();
+//                            hud.dismiss();
+                        runOnUiThread(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                // Stuff that updates the UI
+                                gifRL.setVisibility(View.GONE);
+                            }
+                        });
+                        uploadFile(urls);
+                    }
+                } else {
+
+
+                    if (data.getClipData() != null) {
+                        for (int i = 0; i < data.getClipData().getItemCount(); i++) {
+//                            mimeTypes.add("Image");
+                            if (data.getClipData().getItemAt(i).getUri() != null) {
+                                urls.add(String.valueOf(data.getClipData().getItemAt(i).getUri()));
+                                mimeTypes.add("IMAGE");
+
+                                Log.d("IMGSELE",String.valueOf(data.getClipData().getItemAt(i).getUri()));
+                                Cursor returnCursor = getContentResolver().query(data.getClipData().getItemAt(i).getUri(), null, null, null, null);
+                                int sizeIndex = returnCursor.getColumnIndex(OpenableColumns.SIZE);
+                                int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                                returnCursor.moveToFirst();
+
+                                if (Long.toString(returnCursor.getLong(sizeIndex)).length() >= 7) {
+                                    fileSizes.add(Long.toString((long) ((returnCursor.getLong(sizeIndex)) * 0.000001)) + " MB");
+                                } else {
+                                    fileSizes.add(Long.toString((long) ((returnCursor.getLong(sizeIndex)) * 00.001)) + " kB");
+                                }
+                                fileNames.add(returnCursor.getString(nameIndex));
+
+
+                                if (i == data.getClipData().getItemCount() - 1) {
+//                                        hud.dismiss();
+                                    runOnUiThread(new Runnable() {
+
+                                        @Override
+                                        public void run() {
+                                            // Stuff that updates the UI
+                                            gifRL.setVisibility(View.GONE);
+                                        }
+                                    });
+                                    uploadImg(urls);
+                                }
+                            }
+                        }
+//                        uri.add(returnUri);
+//                        uploadImg(requestCode, resultCode, data, uri);
+                    } else {
+                        mimeTypes.add("IMAGE");
 
                         Cursor returnCursor = getContentResolver().query(returnUri, null, null, null, null);
                         int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
@@ -255,168 +440,30 @@ public class Pop extends AppCompatActivity {
                             fileSizes.add(fileSize);
                         }
                         urls.add(String.valueOf(returnUri));
-//                    numberOfPages = new double[uri.size()];
-                        if (mimeType.equals("application/pdf")) {
-                            mimeTypes.add("PDF");
-//                            ViewPDF(returnUri.toString());
-                            hud.dismiss();
-                            uploadFile(urls);
+//                            hud.dismiss();
+                        runOnUiThread(new Runnable() {
 
-                            pdfs.add(returnUri.toString());
-//                            ViewPDF(pdfs);
-
-                        } else {
-//                        uri.add(returnUri);
-                            try {
-                                FileInputStream inputStream = (FileInputStream) getContentResolver().openInputStream(data.getData());
-
-                                if (mimeType.equals("application/vnd.openxmlformats-officedocument.wordprocessingml.document")) {
-                                    mimeTypes.add(cnt,"Docx");
-
-                                    XWPFDocument document = null;
-                                    if (inputStream != null) {
-                                        document = new XWPFDocument(inputStream);
-                                    }else{
-
-                                    }
-                                    XWPFWordExtractor extractor = new XWPFWordExtractor(document);
-                                    int pages = document.getProperties().getExtendedProperties().getUnderlyingProperties().getPages();
-                                    numberOfPages.add(pages);
-                                    Log.d("NOPOFDOCX", String.valueOf(pages));
-
-                                } else if (mimeType.equals("application/msword")) {
-
-                                    try {
-                                        HWPFDocument document = new HWPFDocument(inputStream);
-                                        int pages = document.getSummaryInformation().getPageCount();
-                                        numberOfPages.add(pages);
-                                        mimeTypes.add(cnt,"Word");
-
-                                    } catch (Exception e) {
-                                        FileInputStream docxIS = (FileInputStream) getContentResolver().openInputStream(data.getData());
-                                        XWPFDocument document;
-                                        document = new XWPFDocument(docxIS);
-                                        XWPFWordExtractor extractor = new XWPFWordExtractor(document);
-                                        int pages = document.getProperties().getExtendedProperties().getUnderlyingProperties().getPages();
-                                        numberOfPages.add(pages);
-                                        // Adding mimeType as PPTX even though PPT is selected because the page count algo for PPT is crashing and for PPTX is working for this selected file
-                                        mimeTypes.add(cnt,"Docx");
-
-                                    }
-
-//                                Toast.makeText(this, "NOPOF DOC " + pages, Toast.LENGTH_SHORT).show();
-                                } else if (mimeType.equals("application/vnd.ms-powerpoint")) {
-//                                XMLSlideShow slideShow = new XMLSlideShow(inputStream);
-//                                int slides = slideShow.getSlides().length;
-//                                numberOfPages.add(slides);
-
-                                    try {
-                                        HSLFSlideShow show = new HSLFSlideShow(inputStream);
-                                        SlideShow ss = new SlideShow(show);
-                                        Slide[] slides = ss.getSlides();
-//
-                                        int slide_count = ss.getSlides().length;
-                                        numberOfPages.add(slide_count);
-                                        mimeTypes.add(cnt,"PPT");
-
-                                        Log.d("NOPOF PPT ", String.valueOf(slide_count));
-
-                                    } catch (Exception e) {
-                                        XMLSlideShow slideShow = new XMLSlideShow(inputStream);
-                                        int slides = slideShow.getSlides().length;
-                                        numberOfPages.add(slides);
-                                        mimeTypes.add(cnt,"PPTX");
-
-                                        Log.d("NOPOF PPTX ", String.valueOf(slides));
-                                    }
-
-
-                                } else if (mimeType.equals("application/vnd.openxmlformats-officedocument.presentationml.presentation")) {
-                                    mimeTypes.add(cnt,"PPTX");
-
-                                    XMLSlideShow slideShow = new XMLSlideShow(inputStream);
-                                    int slides = slideShow.getSlides().length;
-                                    numberOfPages.add(slides);
-                                    Log.d("NOPOF PPTX ", String.valueOf(slides));
-
-                                }
-//                                cnt = cnt + 1;
-
-                            } catch (IOException e) {
-                                e.printStackTrace();
+                            @Override
+                            public void run() {
+                                // Stuff that updates the UI
+                                gifRL.setVisibility(View.GONE);
                             }
-
-
-//                        ViewDoc();
-                            hud.dismiss();
-                            uploadFile(urls);
-                        }
-                    } else {
-
-
-                        if (data.getClipData() != null) {
-                            for (int i = 0; i < data.getClipData().getItemCount(); i++) {
-//                            mimeTypes.add("Image");
-                                if (data.getClipData().getItemAt(i).getUri() != null) {
-                                    urls.add(String.valueOf(data.getClipData().getItemAt(i).getUri()));
-                                    mimeTypes.add("IMAGE");
-
-                                    Log.d("IMGSELE",String.valueOf(data.getClipData().getItemAt(i).getUri()));
-                                    Cursor returnCursor = getContentResolver().query(data.getClipData().getItemAt(i).getUri(), null, null, null, null);
-                                    int sizeIndex = returnCursor.getColumnIndex(OpenableColumns.SIZE);
-                                    int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
-                                    returnCursor.moveToFirst();
-
-                                    if (Long.toString(returnCursor.getLong(sizeIndex)).length() >= 7) {
-                                        fileSizes.add(Long.toString((long) ((returnCursor.getLong(sizeIndex)) * 0.000001)) + " MB");
-                                    } else {
-                                        fileSizes.add(Long.toString((long) ((returnCursor.getLong(sizeIndex)) * 00.001)) + " kB");
-                                    }
-                                    fileNames.add(returnCursor.getString(nameIndex));
-
-
-                                    if (i == data.getClipData().getItemCount() - 1) {
-                                        hud.dismiss();
-                                        uploadImg(urls);
-                                    }
-                                }
-                            }
-//                        uri.add(returnUri);
-//                        uploadImg(requestCode, resultCode, data, uri);
-                        } else {
-                            mimeTypes.add("IMAGE");
-
-                            Cursor returnCursor = getContentResolver().query(returnUri, null, null, null, null);
-                            int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
-                            int sizeIndex = returnCursor.getColumnIndex(OpenableColumns.SIZE);
-                            returnCursor.moveToFirst();
-
-                            fileName = (returnCursor.getString(nameIndex));
-                            fileNames.add(fileName);
-
-
-                            if (Long.toString(returnCursor.getLong(sizeIndex)).length() >= 7) {
-                                fileSize = (Long.toString((long) ((returnCursor.getLong(sizeIndex)) * 0.000001)) + " MB");
-                                fileSizes.add(fileSize);
-
-                            } else {
-                                fileSize = (Long.toString((long) ((returnCursor.getLong(sizeIndex)) * 00.001)) + " kB");
-                                fileSizes.add(fileSize);
-                            }
-                            urls.add(String.valueOf(returnUri));
-                            hud.dismiss();
-                            uploadImg(urls);
-                        }
+                        });
+                        uploadImg(urls);
                     }
+                }
 
-                    if(hud.isShowing()) {
-                        hud.dismiss();
-                    }
-                } else {
+//                    if(gifRL.isShown()){
+//                        gifRL.setVisibility(View.GONE);
+//                    }
 
-                    if (data.getClipData() != null) {
+            } else {
 
-                        if (data.getClipData().toString().contains("application")) {
+                if (data.getClipData() != null) {
+
+
+                    if (data.getClipData().toString().contains("application")) {
+                        if(data.getClipData().getItemCount() <= 5) {
                             for (int i = 0; i < data.getClipData().getItemCount(); i++) {
                                 fileLocations.add(data.getClipData().getItemAt(i).getUri());
 
@@ -462,7 +509,7 @@ public class Pop extends AppCompatActivity {
                                                 mimeTypes.add(i, "Word");
 
                                                 Log.d("DOCPAGES", String.valueOf(pages));
-                                            }catch (Exception e){
+                                            } catch (Exception e) {
                                                 FileInputStream docxIS = (FileInputStream) getContentResolver().openInputStream(data.getClipData().getItemAt(i).getUri());
                                                 XWPFDocument document;
                                                 document = new XWPFDocument(docxIS);
@@ -515,57 +562,95 @@ public class Pop extends AppCompatActivity {
                                         } else if (getContentResolver().getType(data.getClipData().getItemAt(i).getUri()).equals("application/pdf")) {
                                             mimeTypes.add(i, "PDF");
                                             pdfs.add(String.valueOf(data.getClipData().getItemAt(i).getUri()));
-                                            Log.d("ONLYPDF","YES");
+                                            Log.d("ONLYPDF", "YES");
 //                                            ViewPDF(String.valueOf(data.getClipData().getItemAt(i).getUri()));
 //                                            ViewPDF(pdfs);
                                         }
 
                                         if (i == data.getClipData().getItemCount() - 1) {
-                                            hud.dismiss();
+//                                                hud.dismiss();
+                                            runOnUiThread(new Runnable() {
+
+                                                @Override
+                                                public void run() {
+                                                    // Stuff that updates the UI
+                                                    gifRL.setVisibility(View.GONE);
+                                                }
+                                            });
                                             uploadFile(urls);
                                         }
                                     } catch (IOException e) {
                                         e.printStackTrace();
                                     }
-
-
                                 }
                             }
-                        } else {
 
-                            for (int i = 0; i < data.getClipData().getItemCount(); i++) {
-                                mimeTypes.add("IMAGE");
+                        }else {
+                            Log.d("FILE_CNT","EXCEEDED");
+                            alertMessage();
+                        }
 
-                                if (data.getClipData().getItemAt(i).getUri() != null) {
-                                    urls.add(String.valueOf(data.getClipData().getItemAt(i).getUri()));
-                                    Cursor returnCursor = getContentResolver().query(data.getClipData().getItemAt(i).getUri(), null, null, null, null);
-                                    int sizeIndex = returnCursor.getColumnIndex(OpenableColumns.SIZE);
-                                    int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
-                                    returnCursor.moveToFirst();
+                    } else {
 
-                                    if (Long.toString(returnCursor.getLong(sizeIndex)).length() >= 7) {
-                                        fileSizes.add(Long.toString((long) ((returnCursor.getLong(sizeIndex)) * 0.000001)) + " MB");
-                                    } else {
-                                        fileSizes.add(Long.toString((long) ((returnCursor.getLong(sizeIndex)) * 00.001)) + " kB");
-                                    }
-                                    fileNames.add(returnCursor.getString(nameIndex));
+                        for (int i = 0; i < data.getClipData().getItemCount(); i++) {
+                            mimeTypes.add("IMAGE");
+
+                            if (data.getClipData().getItemAt(i).getUri() != null) {
+                                urls.add(String.valueOf(data.getClipData().getItemAt(i).getUri()));
+                                Cursor returnCursor = getContentResolver().query(data.getClipData().getItemAt(i).getUri(), null, null, null, null);
+                                int sizeIndex = returnCursor.getColumnIndex(OpenableColumns.SIZE);
+                                int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                                returnCursor.moveToFirst();
+
+                                if (Long.toString(returnCursor.getLong(sizeIndex)).length() >= 7) {
+                                    fileSizes.add(Long.toString((long) ((returnCursor.getLong(sizeIndex)) * 0.000001)) + " MB");
+                                } else {
+                                    fileSizes.add(Long.toString((long) ((returnCursor.getLong(sizeIndex)) * 00.001)) + " kB");
+                                }
+                                fileNames.add(returnCursor.getString(nameIndex));
 
 
-                                    if (i == data.getClipData().getItemCount() - 1) {
-                                        hud.dismiss();
-                                        uploadImg(urls);
-                                    }
+                                if (i == data.getClipData().getItemCount() - 1) {
+//                                        hud.dismiss();
+                                    runOnUiThread(new Runnable() {
+
+                                        @Override
+                                        public void run() {
+                                            // Stuff that updates the UI
+                                            gifRL.setVisibility(View.GONE);
+                                        }
+                                    });
+                                    uploadImg(urls);
                                 }
                             }
                         }
                     }
-                    if(hud.isShowing()) {
-                        hud.dismiss();
-                    }
                 }
-
+//                    if(gifRL.isShown()) {
+//                        gifRL.setVisibility(View.GONE);
+//                    }
             }
-        }).start();
+            return null;
+        }
+
+//        @Override
+//        protected void onPostExecute(ArrayList<String> strings) {
+//            super.onPostExecute(strings);
+//            Log.d("FILE_CNTTT",String.valueOf(strings.size()));
+//            if(strings.size() > 5){
+////                alertMessage();
+//            }
+//        }
+    }
+
+
+        public void renderFiles(final Intent data){
+
+
+
+//            }
+//        }).start();
+
     }
 
 
@@ -573,42 +658,68 @@ public class Pop extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     public void uploadFile(ArrayList uri){
 
-        if(addingMoreFiles){
-            sendOrderInfo();
-        }else {
-            Intent goToPdfInfo = new Intent(Pop.this, PdfInfo.class);
-            Bundle extras = new Bundle();
 
-            Log.d("Number of pages ",String.valueOf(numberOfPages.size()));
 
-            extras.putIntegerArrayList("Pages", numberOfPages);
-            extras.putStringArrayList("FileNames", fileNames);
-            extras.putStringArrayList("FileSizes", fileSizes);
-            extras.putStringArrayList("URLS", urls);
-            extras.putStringArrayList("FileType", mimeTypes);
-            extras.putBoolean("IsTester", isTester);
-            extras.putBoolean("NewUser", newUser);
+        if(urls.size() <= 5) {
+            if (addingMoreFiles) {
+                sendOrderInfo();
+            } else {
+                Intent goToPdfInfo = new Intent(Pop.this, PdfInfo.class);
+                Bundle extras = new Bundle();
+
+                Log.d("Number of pages ", String.valueOf(numberOfPages.size()));
+
+                extras.putIntegerArrayList("Pages", numberOfPages);
+                extras.putStringArrayList("FileNames", fileNames);
+                extras.putStringArrayList("FileSizes", fileSizes);
+                extras.putStringArrayList("URLS", urls);
+                extras.putStringArrayList("FileType", mimeTypes);
+                extras.putBoolean("IsTester", isTester);
+                extras.putBoolean("NewUser", newUser);
 
 //            extras.putInt("FileCount", urls.size());
 //            extras.putBoolean("AddingMoreFiles", addingMoreFiles);
 
-            goToPdfInfo.putExtras(extras);
+                goToPdfInfo.putExtras(extras);
 
-            if(hud.isShowing()){
-                hud.dismiss();
+                    runOnUiThread(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            if (gifRL.isShown()) {
+                                // Stuff that updates the UI
+                                gifRL.setVisibility(View.GONE);
+                            }
+
+                        }
+                    });
+                startActivity(goToPdfInfo);
+                finish();
+
             }
-            startActivity(goToPdfInfo);
-            finish();
-
+        }else{
+//            finish();
+            Log.d("FILE_SIZE_EXCEEDED",String.valueOf(urls.size()));
+//            Toast.makeText(this, "Number of files exceeded", Toast.LENGTH_SHORT).show();
+            alertMessage();
         }
-
 
     }
 
 
     public void uploadImg(ArrayList<String> uri){
 
-        hud.show();
+        runOnUiThread(new Runnable() {
+
+            @Override
+            public void run() {
+                // Stuff that updates the UI
+                if (gifRL.isShown()) {
+                    // Stuff that updates the UI
+                    gifRL.setVisibility(View.VISIBLE);
+                }
+            }
+        });
         Intent goToPageInfo = new Intent(Pop.this, PdfInfo.class);
         Bundle extras = new Bundle();
 
@@ -627,11 +738,28 @@ public class Pop extends AppCompatActivity {
                     extras.putStringArrayList("FileNames", fileNames);
                     extras.putStringArrayList("FileSizes", fileSizes);
 
-                    hud.dismiss();
                     goToPageInfo.putExtras(extras);
                     startActivity(goToPageInfo);
+                    runOnUiThread(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            // Stuff that updates the UI
+                            if (gifRL.isShown()) {
+                                // Stuff that updates the UI
+                                gifRL.setVisibility(View.GONE);
+                            }
+                        }
+                    });
                 }else{
-                    hud.dismiss();
+                    runOnUiThread(new Runnable() {
+
+                        @Override
+                        public void run() {
+                            // Stuff that updates the UI
+                            gifRL.setVisibility(View.GONE);
+                        }
+                    });
                     sendOrderInfo();
                 }
 //        }
@@ -671,41 +799,51 @@ public class Pop extends AppCompatActivity {
     }
 
 
+    protected void alertMessage() {
 
-
-
-    protected void alertMessage(String message, final boolean isImage) {
-
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(message)
-                .setCancelable(false)
-                .setPositiveButton("Got it", new DialogInterface.OnClickListener() {
+        new AlertDialog.Builder(Pop.this)
+        .setMessage("You can only select 5 files at a time for an order")
+                .setCancelable(true)
+                .setNegativeButton("Got it", new DialogInterface.OnClickListener() {
                     public void onClick(final DialogInterface dialog, final int id) {
-
-                        if(isImage) {
-                            Intent intent = new Intent();
-                            intent.setType("image/*");
-                            intent.setAction(Intent.ACTION_GET_CONTENT);
-                            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-                            startActivityForResult(Intent.createChooser(intent, "Select Images"), 1);
-                            dialog.dismiss();
-                        }else{
-                            Intent intent = new Intent();
-                            intent.setType("application/*");
-                            intent.setAction(Intent.ACTION_OPEN_DOCUMENT);
-                            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
-
-
-
-                            startActivityForResult(Intent.createChooser(intent, "Select files"), 1);
-                        }
-
+                        openFile_ImageSelectionMenu();
                     }
-                });
+                }).create().show();
 
-        final AlertDialog alert = builder.create();
-        alert.show();
     }
+
+//    protected void alertMessage(String message, final boolean isImage) {
+//
+//        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//        builder.setMessage(message)
+//                .setCancelable(false)
+//                .setPositiveButton("Got it", new DialogInterface.OnClickListener() {
+//                    public void onClick(final DialogInterface dialog, final int id) {
+//
+//                        if(isImage) {
+//                            Intent intent = new Intent();
+//                            intent.setType("image/*");
+//                            intent.setAction(Intent.ACTION_GET_CONTENT);
+//                            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+//                            startActivityForResult(Intent.createChooser(intent, "Select Images"), 1);
+//                            dialog.dismiss();
+//                        }else{
+//                            Intent intent = new Intent();
+//                            intent.setType("application/*");
+//                            intent.setAction(Intent.ACTION_OPEN_DOCUMENT);
+//                            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+//
+//
+//
+//                            startActivityForResult(Intent.createChooser(intent, "Select files"), 1);
+//                        }
+//
+//                    }
+//                });
+//
+//        final AlertDialog alert = builder.create();
+//        alert.show();
+//    }
 
 
 

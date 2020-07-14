@@ -12,10 +12,10 @@
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/FileName"
         android:layout_alignBottom="@+id/FileName"
-        android:layout_marginStart="30dp"
+        android:layout_alignParentEnd="true"
         android:layout_marginTop="0dp"
+        android:layout_marginEnd="50dp"
         android:layout_marginBottom="0dp"
-        android:layout_toEndOf="@+id/FileName"
         app:srcCompat="@drawable/red_cros" />
 
     <ImageView
@@ -31,15 +31,17 @@
     <TextView
         android:id="@+id/FileName"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="30dp"
         android:layout_alignTop="@+id/tickIMG"
+        android:layout_alignParentEnd="true"
         android:layout_marginStart="20dp"
         android:layout_marginTop="-5dp"
-        android:fontFamily="@font/poppins_semibold"
-        android:textColor="#227093"
-        android:textSize="15sp"
+        android:layout_marginEnd="100dp"
         android:layout_toEndOf="@+id/tickIMG"
-        android:text="TextView" />
+        android:fontFamily="@font/poppins_semibold"
+        android:text="TextView"
+        android:textColor="#227093"
+        android:textSize="15sp" />
 
 
 </RelativeLayout>

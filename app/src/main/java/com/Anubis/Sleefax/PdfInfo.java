@@ -754,21 +754,16 @@ public class PdfInfo extends AppCompatActivity {
 
                 }
                 else if(fileTypes.get(pdfCnt).equals("PPT") || fileTypes.get(pdfCnt).equals("PPTX")){
-                    Toast.makeText(PdfInfo.this, "YUP "+fileTypes.get(pdfCnt), Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(PdfInfo.this, "YUP "+fileTypes.get(pdfCnt), Toast.LENGTH_SHORT).show();
+                    dismissViews();
                     ViewFileFromAnotherApp(pdfURL.get(pdfCnt),fileTypes.get(pdfCnt));
                 }else {
-                    Toast.makeText(PdfInfo.this, "YUP "+fileTypes.get(pdfCnt), Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(PdfInfo.this, "YUP "+fileTypes.get(pdfCnt), Toast.LENGTH_SHORT).show();
+                    dismissViews();
                     ViewFileFromAnotherApp(pdfURL.get(pdfCnt),fileTypes.get(pdfCnt));
                 }
             }else if(v == findViewById(R.id.DismissViewer)){
-
-                pdfView.setVisibility(View.GONE);
-                viewFileScrollView.setVisibility(View.INVISIBLE);
-                viewFileRL.setVisibility(View.VISIBLE);
-                dismissViewer.setVisibility(View.GONE);
-                upperLayout.setVisibility(View.VISIBLE);
-                imgView.setVisibility(View.GONE);
-                upperLayout.setVisibility(View.VISIBLE);
+                dismissViews();
 
             }
             else if(v == findViewById(R.id.PreviousBtn)){
@@ -813,6 +808,15 @@ public class PdfInfo extends AppCompatActivity {
 
     }
 
+    public void dismissViews(){
+        dismissViewer.setVisibility(View.GONE);
+        pdfView.setVisibility(View.GONE);
+        viewFileScrollView.setVisibility(View.INVISIBLE);
+        viewFileRL.setVisibility(View.VISIBLE);
+        upperLayout.setVisibility(View.VISIBLE);
+        imgView.setVisibility(View.GONE);
+        upperLayout.setVisibility(View.VISIBLE);
+    }
 
     protected void alertBoxForViewer(final String whatFile) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -827,9 +831,7 @@ public class PdfInfo extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
-                dismissViewer.setVisibility(View.GONE);
-                viewFileRL.setVisibility(View.VISIBLE);
-
+                dismissViews();
                 ViewFileFromAnotherApp(pdfURL.get(pdfCnt),fileTypes.get(pdfCnt));
             }
         });
@@ -839,6 +841,19 @@ public class PdfInfo extends AppCompatActivity {
     }
 
     public void ViewFileFromAnotherApp(String word, String mimeType) {
+
+        if(mimeType.equals("Docx")){
+            mimeType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+        }else if(mimeType.equals("Word")){
+            mimeType = "application/msword";
+        }else if(mimeType.equals("PPT")){
+            mimeType = "application/vnd.ms-powerpoint";
+        }else if(mimeType.equals("PPTX")){
+            mimeType = "application/vnd.openxmlformats-officedocument.presentationml.presentation";
+        }
+
+        Log.d("OPEN_IN_ANOTHER_APP",word);
+
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_VIEW);
         intent.setDataAndType(Uri.parse(word),mimeType);
@@ -849,8 +864,9 @@ public class PdfInfo extends AppCompatActivity {
         else {
             Toast.makeText(this, "No app found for opening this document", Toast.LENGTH_SHORT).show();
         }
-
     }
+
+
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
 

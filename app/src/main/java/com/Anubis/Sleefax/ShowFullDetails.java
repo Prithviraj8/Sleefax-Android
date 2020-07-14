@@ -57,6 +57,7 @@ import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -106,7 +107,7 @@ public class ShowFullDetails extends AppCompatActivity {
 
 
 
-    TextView orderIDTV,filesTV,priceTotalTV,paymentModeTV;
+    TextView orderIDTV,filesTV,priceTotalTV,paymentModeTV,OrderPrice;
     ListView billingView;
     ListView orderView;
     LinearLayout mainUI;
@@ -167,6 +168,7 @@ public class ShowFullDetails extends AppCompatActivity {
         pdfView = findViewById(R.id.viewPDF);
         ViewerScollView = findViewById(R.id.ViewerScollView);
         dismissViewer = findViewById(R.id.DismissViewer);
+        OrderPrice = findViewById(R.id.OrderPrice);
 
         dismissViewer.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -192,7 +194,6 @@ public class ShowFullDetails extends AppCompatActivity {
         orderID = extras.getString("OrderID");
         files = extras.getInt("Files");
         orderStatus = extras.getString("OrderStatus");
-        price = extras.getDouble("Price");
 //        userLat = extras.getDouble("User Lat");
 //        userLong = extras.getDouble("User Long");
 //        FromYourOrders = extras.getBoolean("FromYourOrders");
@@ -227,7 +228,7 @@ public class ShowFullDetails extends AppCompatActivity {
         orderIDTV.setText("Order #"+orderID);
         filesTV.setText(files+" Files");
         paymentModeTV.setText(paymentMode);
-
+        OrderPrice.setText(String.valueOf(price));
 
         ArrayList<pdfInfo> arrayList = new ArrayList<>();
 
@@ -289,13 +290,14 @@ public class ShowFullDetails extends AppCompatActivity {
         public View getView(int position, View convertView, ViewGroup parent) {
 
             convertView =  getLayoutInflater().inflate(R.layout.book_size_price,null);
-            TextView Name,Price;
+            TextView Name,Price,FileSize;
             Name = convertView.findViewById(R.id.pdfName);
             Price = convertView.findViewById(R.id.price);
+            FileSize = convertView.findViewById(R.id.FileSize);
 
             Name.setText(Data.get(position).getName());
             Price.setText(Data.get(position).getPrice());
-
+            FileSize.setText(Data.get(position).getSize());
 
             return convertView;
         }
@@ -343,6 +345,7 @@ public class ShowFullDetails extends AppCompatActivity {
             orientation.setText(Data.get(position).getOrientation());
             pageSize.setText(Data.get(position).getPageSize());
             fileType.setText(Data.get(position).getFileType());
+
 
 
             viewFile.setOnClickListener(new View.OnClickListener() {
@@ -451,10 +454,20 @@ public class ShowFullDetails extends AppCompatActivity {
     }
 
     public void ViewFileFromAnotherApp(String word, String mimeType) {
-//        Intent intent = new Intent();
-        Log.d("OPENING",word);
-        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
 
+        if(mimeType.equals("Docx")){
+            mimeType = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+        }else if(mimeType.equals("Word")){
+            mimeType = "application/msword";
+        }else if(mimeType.equals("PPT")){
+            mimeType = "application/vnd.ms-powerpoint";
+        }else if(mimeType.equals("PPTX")){
+            mimeType = "application/vnd.openxmlformats-officedocument.presentationml.presentation";
+        }
+
+        Log.d("OPEN_IN_ANOTHER_APP",word);
+
+        Intent intent = new Intent();
         intent.setAction(Intent.ACTION_VIEW);
         intent.setDataAndType(Uri.parse(word),mimeType);
         intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
@@ -464,7 +477,6 @@ public class ShowFullDetails extends AppCompatActivity {
         else {
             Toast.makeText(this, "No app found for opening this document", Toast.LENGTH_SHORT).show();
         }
-
     }
 
     public class OpenDocFile{

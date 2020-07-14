@@ -961,7 +961,7 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
             Name = convertView.findViewById(R.id.FileName);
             tick = convertView.findViewById(R.id.tickIMG);
 
-            Name.setText(fileBeingUploaded);
+            Name.setText(fileNames.get(position));
 
             // SETTING PROGRESS VALUE OF THE FILE CURRENTLY BEING UPLOADED TO FIREBASE
 

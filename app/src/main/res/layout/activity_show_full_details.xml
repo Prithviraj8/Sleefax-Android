@@ -82,7 +82,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/Price"
+        android:id="@+id/OrderPrice"
         android:text="126"
         android:gravity="center"
         android:textSize="12sp"

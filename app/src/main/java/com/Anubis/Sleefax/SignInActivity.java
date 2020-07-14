@@ -84,7 +84,7 @@ public class SignInActivity extends AppCompatActivity {
     DatabaseReference ref = database.getReference();
     KProgressHUD hud;
 
-    RelativeLayout signinRL,rootLayout, phoneRL, loginRL, gifRL;
+    RelativeLayout signinRL,rootLayout, phoneRL, loginRL;
     Button forgotPassword,back,Login, SignInButton;
     ImageButton showPass;
 
@@ -95,7 +95,12 @@ public class SignInActivity extends AppCompatActivity {
     TextView signUp_InTV,phoneNum,Terms,loginTV,mobileTv, ccTv,mtv, validTv;
     EditText Phone;
     ImageView phoneIv;
+
+    //// GIF layouts and elements
+    RelativeLayout gifRL;
     GifImageView gifImageView;
+    ///////////////////////////
+
 
     String loc,orderStatus,shopKey,fileType,pagesize,orientation,email,shopName;
     double shopLat;
@@ -408,6 +413,7 @@ public class SignInActivity extends AppCompatActivity {
 //                    attemptRegistration();
                 }else{
                     SignInButton.setVisibility(View.GONE);
+                    Log.d("PHN_NUM",Phone.getText().toString());
                     attemptPhoneAuth("+1"+Phone.getText().toString().trim());
 
                 }
@@ -530,6 +536,7 @@ public class SignInActivity extends AppCompatActivity {
 
             // Show a message and update the UI
             messageBox("Phone number entered seems of the wrong format 🤨");
+            gifRL.setVisibility(View.GONE);
             // ...
         }
 
