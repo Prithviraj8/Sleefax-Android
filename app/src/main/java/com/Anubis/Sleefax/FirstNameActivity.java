@@ -750,6 +750,8 @@ public class FirstNameActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences(SharedPrefs,0);
         sharedPreferences.edit().putString("DisplayName",name).apply();
         sharedPreferences.edit().putLong("UserNumber",num).apply();
+        sharedPreferences.edit().putString("UserID", FirebaseAuth.getInstance().getCurrentUser().getUid()).apply();
+
         if(FirebaseAuth.getInstance().getCurrentUser()!=null) {
             sharedPreferences.edit().putString("UserID", FirebaseAuth.getInstance().getCurrentUser().getUid()).apply();
         }

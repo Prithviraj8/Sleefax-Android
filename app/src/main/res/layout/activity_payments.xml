@@ -312,13 +312,10 @@
             android:layout_height="60dp"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:visibility="visible"
+            android:visibility="gone"
             android:id="@+id/slideviewlayout"
             android:background="@drawable/slideview_layout"
             android:layout_marginBottom="20dp"/>
-
-
-
 
 
 

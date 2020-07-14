@@ -83,7 +83,7 @@ public class SplashActivity extends AppCompatActivity {
             Log.d("CURRUSID",userid);
             Log.d("INSTANCEID",FirebaseAuth.getInstance().getCurrentUser().getUid());
 
-            if(userid !=null && userid.equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+            if(userid !=null ) {
 
                 if (name != null && number > 0) {
                     Log.d("NAMEOFUSER",name);

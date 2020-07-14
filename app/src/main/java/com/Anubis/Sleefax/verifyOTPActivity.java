@@ -94,6 +94,7 @@ public class verifyOTPActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_verify_o_t_p);
 
+
         // Progress HUD
         hud = KProgressHUD.create(this)
                 .setStyle(KProgressHUD.Style.SPIN_INDETERMINATE)
@@ -181,6 +182,8 @@ public class verifyOTPActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
+                            SharedPreferences sharedPreferences = getSharedPreferences(SharedPrefs,0);
+                            sharedPreferences.edit().putString("UserID", FirebaseAuth.getInstance().getCurrentUser().getUid()).apply();
 
                             Log.d("SIGNIN", "signInWithCredential:success");
                             final FirebaseUser user = task.getResult().getUser();

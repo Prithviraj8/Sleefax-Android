@@ -19,7 +19,6 @@ import android.view.View;
 import android.widget.RelativeLayout;
 
 import com.Anubis.Sleefax.Animations.GifImageView;
-import com.android.volley.toolbox.Volley;
 import com.kaopiz.kprogresshud.KProgressHUD;
 
 import org.apache.poi.hslf.HSLFSlideShow;
@@ -220,11 +219,11 @@ public class Pop extends AppCompatActivity {
 
 
 //    @RequiresApi(api = Build.VERSION_CODES.CUPCAKE)
-    public class renderFiles extends AsyncTask<Intent,Void,Void> {
+    public class renderFiles extends AsyncTask<Intent,Void,ArrayList<String >> {
 
 
         @Override
-        protected Void doInBackground(Intent... intents) {
+        protected ArrayList<String> doInBackground(Intent... intents) {
 
             if (Looper.myLooper() == null)
             {
@@ -277,7 +276,7 @@ public class Pop extends AppCompatActivity {
                             @Override
                             public void run() {
                                 // Stuff that updates the UI
-                                gifRL.setVisibility(View.GONE);
+//                                gifRL.setVisibility(View.GONE);
                             }
                         });
                         uploadFile(urls);
@@ -374,7 +373,7 @@ public class Pop extends AppCompatActivity {
                             @Override
                             public void run() {
                                 // Stuff that updates the UI
-                                gifRL.setVisibility(View.GONE);
+//                                gifRL.setVisibility(View.GONE);
                             }
                         });
                         uploadFile(urls);
@@ -463,7 +462,7 @@ public class Pop extends AppCompatActivity {
 
 
                     if (data.getClipData().toString().contains("application")) {
-                        if(data.getClipData().getItemCount() <= 5) {
+//                        if(data.getClipData().getItemCount() <= 5) {
                             for (int i = 0; i < data.getClipData().getItemCount(); i++) {
                                 fileLocations.add(data.getClipData().getItemAt(i).getUri());
 
@@ -574,7 +573,7 @@ public class Pop extends AppCompatActivity {
                                                 @Override
                                                 public void run() {
                                                     // Stuff that updates the UI
-                                                    gifRL.setVisibility(View.GONE);
+//                                                    gifRL.setVisibility(View.GONE);
                                                 }
                                             });
                                             uploadFile(urls);
@@ -585,10 +584,10 @@ public class Pop extends AppCompatActivity {
                                 }
                             }
 
-                        }else {
-                            Log.d("FILE_CNT","EXCEEDED");
-                            alertMessage();
-                        }
+//                        }else {
+//                            Log.d("FILE_CNT","EXCEEDED");
+//                            alertMessage();
+//                        }
 
                     } else {
 
@@ -630,23 +629,21 @@ public class Pop extends AppCompatActivity {
 //                        gifRL.setVisibility(View.GONE);
 //                    }
             }
-            return null;
+            return urls;
         }
 
-//        @Override
-//        protected void onPostExecute(ArrayList<String> strings) {
-//            super.onPostExecute(strings);
-//            Log.d("FILE_CNTTT",String.valueOf(strings.size()));
+        @Override
+        protected void onPostExecute(ArrayList<String> strings) {
+            super.onPostExecute(strings);
+            Log.d("FILE_CNTTT",String.valueOf(strings.size()));
 //            if(strings.size() > 5){
-////                alertMessage();
+//                alertMessage();
 //            }
-//        }
+        }
     }
 
 
-        public void renderFiles(final Intent data){
-
-
+    public void renderFiles(final Intent data){
 
 //            }
 //        }).start();
@@ -659,8 +656,17 @@ public class Pop extends AppCompatActivity {
     public void uploadFile(ArrayList uri){
 
 
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (!gifRL.isShown()) {
+                    // Stuff that updates the UI
+                   gifRL.setVisibility(View.VISIBLE);
+                }
+            }
+        });
 
-        if(urls.size() <= 5) {
+//        if(urls.size() <= 5) {
             if (addingMoreFiles) {
                 sendOrderInfo();
             } else {
@@ -681,28 +687,16 @@ public class Pop extends AppCompatActivity {
 //            extras.putBoolean("AddingMoreFiles", addingMoreFiles);
 
                 goToPdfInfo.putExtras(extras);
-
-                    runOnUiThread(new Runnable() {
-
-                        @Override
-                        public void run() {
-                            if (gifRL.isShown()) {
-                                // Stuff that updates the UI
-                                gifRL.setVisibility(View.GONE);
-                            }
-
-                        }
-                    });
                 startActivity(goToPdfInfo);
                 finish();
 
             }
-        }else{
+//        }else{
 //            finish();
-            Log.d("FILE_SIZE_EXCEEDED",String.valueOf(urls.size()));
+//            Log.d("FILE_SIZE_EXCEEDED",String.valueOf(urls.size()));
 //            Toast.makeText(this, "Number of files exceeded", Toast.LENGTH_SHORT).show();
-            alertMessage();
-        }
+//            alertMessage();
+//        }
 
     }
 
@@ -710,11 +704,10 @@ public class Pop extends AppCompatActivity {
     public void uploadImg(ArrayList<String> uri){
 
         runOnUiThread(new Runnable() {
-
             @Override
             public void run() {
                 // Stuff that updates the UI
-                if (gifRL.isShown()) {
+                if (!gifRL.isShown()) {
                     // Stuff that updates the UI
                     gifRL.setVisibility(View.VISIBLE);
                 }
@@ -723,7 +716,6 @@ public class Pop extends AppCompatActivity {
         Intent goToPageInfo = new Intent(Pop.this, PdfInfo.class);
         Bundle extras = new Bundle();
 
-        ArrayList<String> images = new ArrayList<>();
         int i;
 //        for(i=0;i<urls.size();i++){
 //            images.add(urls.get(i));
@@ -740,26 +732,9 @@ public class Pop extends AppCompatActivity {
 
                     goToPageInfo.putExtras(extras);
                     startActivity(goToPageInfo);
-                    runOnUiThread(new Runnable() {
 
-                        @Override
-                        public void run() {
-                            // Stuff that updates the UI
-                            if (gifRL.isShown()) {
-                                // Stuff that updates the UI
-                                gifRL.setVisibility(View.GONE);
-                            }
-                        }
-                    });
                 }else{
-                    runOnUiThread(new Runnable() {
 
-                        @Override
-                        public void run() {
-                            // Stuff that updates the UI
-                            gifRL.setVisibility(View.GONE);
-                        }
-                    });
                     sendOrderInfo();
                 }
 //        }

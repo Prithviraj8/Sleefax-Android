@@ -441,13 +441,16 @@
                     app:srcCompat="@drawable/moreoptions" />
 
 
+<!--             Home Page Layout-->
+
                 <RelativeLayout
                     android:id="@+id/HomePageLayout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentTop="true"
                     android:layout_marginTop="0dp"
-                    android:background="#FFFFFF">
+                    android:background="#FFFFFF"
+                    android:visibility="visible">
 
 
                     <ImageButton
@@ -700,83 +703,89 @@
 
 
 
-
-
-                <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                android:layout_above="@+id/coordinator_layout"
-                android:id="@+id/LiveOrdersRL">
-
-                <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-                    android:id="@+id/RefreshLayout"
-                    android:layout_width="match_parent"
-                    android:layout_height="483dp"
-                    android:layout_below="@+id/LiveOrderTopRL"
-                    android:layout_marginStart="0dp"
-                    android:layout_marginTop="-20dp"
-                    android:layout_marginEnd="0dp"
-                    android:layout_marginBottom="-20dp"
-                    android:orientation="vertical"
-                    >
-
-
-                    <ListView
-                        android:id="@+id/currentOrderLV"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_above="@+id/YourOrders"
-                        android:layout_below="@+id/textView30"
-                        android:layout_marginTop="0dp"
-                        android:layout_marginBottom="10dp"
-                        android:divider="@null"
-                        android:dividerHeight="0dp"
-                        android:visibility="visible" />
-
-                </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+<!--        Live order relative layout-->
 
                 <RelativeLayout
-                    android:id="@+id/LiveOrderTopRL"
-                    android:layout_width="match_parent"
-                    android:layout_height="90dp"
+                    android:id="@+id/LiveOrdersRL"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_above="@+id/coordinator_layout"
                     android:layout_alignParentTop="true"
                     android:layout_marginTop="0dp"
-                    android:background="@drawable/roundedview"
-                    android:elevation="10dp"
-                    android:visibility="visible">
+                    android:visibility="gone">
 
-                    <!--            <View-->
-                    <!--                android:id="@+id/liveordersTopView"-->
-                    <!--                android:layout_width="match_parent"-->
-                    <!--                android:layout_height="136dp"-->
-                    <!--                android:layout_centerInParent="false"-->
-                    <!--                android:background="@drawable/roundedview" />-->
+                    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                        android:id="@+id/RefreshLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="483dp"
+                        android:layout_below="@+id/LiveOrderTopRL"
+                        android:layout_marginStart="0dp"
+                        android:layout_marginTop="-20dp"
+                        android:layout_marginEnd="0dp"
+                        android:layout_marginBottom="-20dp"
+                        android:orientation="vertical">
 
-<!--                    <include-->
-<!--                        android:id="@+id/navaction"-->
-<!--                        layout="@layout/nav_action"-->
-<!--                        android:layout_width="match_parent"-->
-<!--                        android:layout_height="wrap_content"-->
-<!--                        android:layout_alignParentTop="true"-->
-<!--                        android:layout_marginTop="20dp"-->
-<!--                        android:background="#FFF" />-->
 
-                    <TextView
-                        android:id="@+id/textView30"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentTop="true"
-                        android:layout_marginTop="40dp"
-                        android:layout_centerHorizontal="true"
-                        android:fontFamily="@font/poppins_semibold"
-                        android:text="Active Orders"
-                        android:textAlignment="center"
-                        android:textColor="#100101"
-                        android:textSize="26sp"
-                        android:textStyle="bold" />
+                        <ListView
+                            android:id="@+id/currentOrderLV"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:layout_above="@+id/YourOrders"
+                            android:layout_below="@+id/textView30"
+                            android:layout_marginTop="0dp"
+                            android:layout_marginBottom="10dp"
+                            android:divider="@null"
+                            android:dividerHeight="0dp"
+                            android:visibility="visible" />
+
+                    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+
+                    <RelativeLayout
+                        android:id="@+id/LiveOrderTopRL"
+                        android:layout_width="match_parent"
+                        android:layout_height="138dp"
+                        android:background="@drawable/roundedview"
+                        android:elevation="10dp"
+                        android:visibility="visible">
+
+                        <androidx.appcompat.widget.Toolbar
+                            android:id="@+id/toolbar"
+                            android:layout_width="match_parent"
+                            android:layout_height="?attr/actionBarSize"
+                            android:layout_centerInParent="true"
+                            android:background="#00FFFFFF"
+                            android:theme="@style/ThemeOverlay.AppCompat.DayNight.ActionBar"
+                            app:popupTheme="@style/ThemeOverlay.AppCompat.Dark" />
+                        <!--            <View-->
+                        <!--                android:id="@+id/liveordersTopView"-->
+                        <!--                android:layout_width="match_parent"-->
+                        <!--                android:layout_height="136dp"-->
+                        <!--                android:layout_centerInParent="false"-->
+                        <!--                android:background="@drawable/roundedview" />-->
+
+                        <!--                    <include-->
+                        <!--                        android:id="@+id/navaction"-->
+                        <!--                        layout="@layout/nav_action"-->
+                        <!--                        android:layout_width="match_parent"-->
+                        <!--                        android:layout_height="wrap_content"-->
+                        <!--                        android:layout_alignParentTop="true"-->
+                        <!--                        android:layout_marginTop="20dp"-->
+                        <!--                        android:background="#FFF" />-->
+
+                        <TextView
+                            android:id="@+id/textView30"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:fontFamily="@font/poppins_semibold"
+                            android:text="Active Orders"
+                            android:textAlignment="center"
+                            android:textColor="#100101"
+                            android:textSize="26sp"
+                            android:textStyle="bold" />
+                    </RelativeLayout>
                 </RelativeLayout>
-            </RelativeLayout>
 
 
                 <com.github.mmin18.widget.RealtimeBlurView
@@ -1169,14 +1178,7 @@
 
             </RelativeLayout>
 
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:background="#00FFFFFF"
-                android:theme="@style/ThemeOverlay.AppCompat.DayNight.ActionBar"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Dark"
-                android:layout_marginTop="35dp"/>
+
 
         </FrameLayout>
     </LinearLayout>

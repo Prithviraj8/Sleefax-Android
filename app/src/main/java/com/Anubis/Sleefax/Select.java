@@ -968,12 +968,12 @@ public class Select extends AppCompatActivity {
         final DuoDrawerLayout drawerLayout = (DuoDrawerLayout) findViewById(R.id.drawerLayout);
         final DuoDrawerToggle drawerToggle = new DuoDrawerToggle(Select.this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
 
-        drawerToggle.setDrawerIndicatorEnabled(false);
+//        drawerToggle.setDrawerIndicatorEnabled(false);
         
         Drawable drawable = getDrawable(R.drawable.menu_background);
         drawerLayout.setBackground(drawable);
 
-        drawerToggle.setHomeAsUpIndicator(R.drawable.more_2);
+//        drawerToggle.setHomeAsUpIndicator(R.drawable.more_2);
         drawerToggle.setToolbarNavigationClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

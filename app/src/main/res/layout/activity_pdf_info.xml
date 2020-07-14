@@ -12,7 +12,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="250dp"
         android:background="@drawable/pagesettingupper"
         android:elevation="5dp"
         android:id="@+id/pdfsettingsRL2">
@@ -100,6 +100,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toLeftOf="@id/apply_to_all"
+            android:layout_marginRight="11dp"
             android:layout_alignParentStart="true"
             android:layout_marginLeft="50dp"
             android:layout_marginTop="183dp"
@@ -223,15 +224,13 @@
 
                 <EditText
                     android:id="@+id/PDF_copies"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="73dp"
+                    android:layout_height="30dp"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:layout_marginRight="50dp"
                     android:background="@drawable/blue_background_texts"
                     android:elevation="10dp"
-                    android:paddingHorizontal="35dp"
-                    android:paddingTop="2dp"
                     android:focusable="auto"
                     android:focusedByDefault="false"
                     android:fontFamily="@font/poppins_medium"
@@ -526,6 +525,8 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
         android:background="#FFFFFF"
         android:id="@+id/bottom_view"
         android:layout_alignParentBottom="true"
@@ -537,16 +538,16 @@
             android:layout_height="wrap_content">
 
             <RelativeLayout
-                android:layout_width="120dp"
+                android:layout_width="wrap_content"
                 android:layout_height="34dp"
                 android:layout_centerVertical="true"
-                android:layout_marginStart="10dp"
+                android:layout_marginLeft="10dp"
+                android:paddingLeft="10dp"
                 android:id="@+id/name_price"
-                android:elevation="5dp"
-                android:layout_alignStart="@id/previous"
                 android:layout_alignParentStart="true"
-                android:layout_marginBottom="10dp"
-                android:layout_marginEnd="20dp"
+                android:paddingRight="10dp"
+                android:layout_alignLeft="@id/previous"
+                android:layout_marginRight="20dp"
                 android:background="@android:color/transparent"
                 >
 
@@ -556,12 +557,14 @@
                     android:layout_centerVertical="true"
                     android:text="Book.pdf"
                     android:id="@+id/fileNameTV"
-                    android:textSize="13sp"
+                    android:textSize="13dp"
+                    android:layout_marginRight="20dp"
                     android:fontFamily="@font/poppins_semibold"
                     android:textStyle="bold"
-                    android:layout_marginEnd="20dp"
                     android:textColor="#005A82"
+                    android:autoSizeTextType="uniform"
                     android:textAlignment="center"
+                    android:padding="5dp"
                     />
 
                 <ImageView
@@ -605,7 +608,6 @@
                 android:layout_centerVertical="true"
                 android:layout_toLeftOf="@id/DoneBtnRL"
                 android:elevation="5dp"
-                android:layout_marginLeft="20dp"
                 android:background="@drawable/previous_pdf_info"
                 >
 
@@ -675,22 +677,21 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="20dp"
                 android:visibility="visible"
-                android:layout_marginBottom="25dp"
                 android:elevation="5dp"
                 android:layout_alignParentEnd="true">
 
 
                 <Button
-                    android:id="@+id/pdfDone"
-                    android:layout_width="98dp"
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_centerInParent="true"
                     android:background="#00FFFFFF"
-                    android:fontFamily="@font/poppins"
+                    android:id="@+id/pdfDone"
+                    android:textColor="#FFF"
                     android:text="Done"
-                    android:textAlignment="center"
+                    android:fontFamily="@font/poppins"
                     android:textAllCaps="false"
-                    android:textColor="#FFF" />
+                    android:textAlignment="center"
+                    android:layout_centerInParent="true"/>
 
                 <ImageView
                     android:layout_width="18dp"
