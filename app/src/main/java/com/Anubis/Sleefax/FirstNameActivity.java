@@ -148,7 +148,7 @@ public class FirstNameActivity extends AppCompatActivity {
         numberTV = findViewById(R.id.numberTV);
         Email = findViewById(R.id.Email);
 
-        // Start Automatic
+        // Start animation Automatically if the 3 conditions below are true and compile executes code inside the if
         if(FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber() != null) {
             Log.d("YOUR_NUM",String.valueOf(FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber()));
             numberTV.setText(FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber());
@@ -159,7 +159,6 @@ public class FirstNameActivity extends AppCompatActivity {
         if(FirebaseAuth.getInstance().getCurrentUser().getEmail() != null){
             Email.setText(FirebaseAuth.getInstance().getCurrentUser().getEmail());
         }
-
         if(name != null){
             firstNameTV.setText(name);
         }
