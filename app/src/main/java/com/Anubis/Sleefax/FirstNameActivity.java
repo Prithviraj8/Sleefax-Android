@@ -81,7 +81,7 @@ public class FirstNameActivity extends AppCompatActivity {
     final FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference ref = database.getReference();
     String userId,number;
-    String name = " ",isUser,email,num;
+    String name,isUser,email,num;
 
     String loc,orderStatus,shopKey,fileType,pagesize,orientation,shopName;
     double shopLat;
@@ -130,7 +130,7 @@ public class FirstNameActivity extends AppCompatActivity {
         Bundle extras = intent.getExtras();
         newUser = extras.getBoolean("NewUser");
         number = extras.getString("Number");
-
+        name = extras.getString("Name");
 
         if(newUser){
             getNewUserOrderDetails();
@@ -146,11 +146,26 @@ public class FirstNameActivity extends AppCompatActivity {
 
         firstNameTV = findViewById(R.id.FirstNameTV);
         numberTV = findViewById(R.id.numberTV);
-        numberTV.setText(number);
         Email = findViewById(R.id.Email);
 
-        final Button continueButton = findViewById(R.id.FirstNameButton);
+        // Start Automatic
+        if(FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber() != null) {
+            Log.d("YOUR_NUM",String.valueOf(FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber()));
+            numberTV.setText(FirebaseAuth.getInstance().getCurrentUser().getPhoneNumber());
+        }else{
+            Log.d("YOUR_NUM",String.valueOf(number));
+            numberTV.setText(number);
+        }
+        if(FirebaseAuth.getInstance().getCurrentUser().getEmail() != null){
+            Email.setText(FirebaseAuth.getInstance().getCurrentUser().getEmail());
+        }
 
+        if(name != null){
+            firstNameTV.setText(name);
+        }
+
+
+        final Button continueButton = findViewById(R.id.FirstNameButton);
         ImageButton back = findViewById(R.id.back);
 
         /////////////////////////////////////////////////////new UI///////////////////////////////////////////////

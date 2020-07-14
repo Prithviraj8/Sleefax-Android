@@ -967,7 +967,7 @@ public class Payments extends AppCompatActivity implements PaymentResultListener
 
             // RED TICK - for files currently being uploaded or are yet to be uploaded
             //GREEN TICK - for files that are uploaded on firebase
-            if(progressValue == 100){
+            if(progressValue == 100.0){
                 tick.setImageResource(R.drawable.green_tick);
             }
 

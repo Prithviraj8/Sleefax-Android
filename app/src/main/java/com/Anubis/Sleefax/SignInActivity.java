@@ -666,11 +666,13 @@ public class SignInActivity extends AppCompatActivity {
                                 Bundle extras = new Bundle();
                                 extras.putString("Email", currentUser.getEmail());
                                 extras.putString("Name", currentUser.getDisplayName());
+                                extras.putString("Number", currentUser.getPhoneNumber());
+                                Log.d("CurrentUSERNUMB",currentUser.getDisplayName());
                                 intent.putExtras(extras);
 //                                hud.dismiss();
+                                startActivity(intent);
                                 gifRL.setVisibility(View.GONE);
 
-                                startActivity(intent);
                             }
 //                            finish();
                         }else{
@@ -915,6 +917,7 @@ public class SignInActivity extends AppCompatActivity {
         }
         Bundle extras = new Bundle();
 
+
         extras.putBoolean("SignUp",true);
         extras.putBoolean("NewUser",true);
 
@@ -925,6 +928,7 @@ public class SignInActivity extends AppCompatActivity {
         if(currentUser!=null) {
             extras.putString("Email", currentUser.getEmail());
             extras.putString("Name", currentUser.getDisplayName());
+            extras.putString("Number", currentUser.getPhoneNumber());
         }
         extras.putString("ShopName", shopName);
         extras.putString("Location", loc);

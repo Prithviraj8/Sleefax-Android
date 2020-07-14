@@ -1126,6 +1126,12 @@ public class Select extends AppCompatActivity {
                 signOutIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);//makesure user cant go back
                 startActivity(signOutIntent);
                 Toast.makeText(Select.this,"Successfully signed out", Toast.LENGTH_SHORT).show();
+
+                SharedPreferences sharedPreferences = getSharedPreferences(SharedPrefs,0);
+                sharedPreferences.edit().putString("UserID",null).apply();
+                sharedPreferences.edit().putString("DisplayName",null).apply();
+                sharedPreferences.edit().putLong("UserNumber",0).apply();
+
                 finish();
             }
         }

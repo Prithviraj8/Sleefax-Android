@@ -111,10 +111,6 @@ public class Pop extends AppCompatActivity {
 
         getWindow().setLayout((int)(width),(int) (height));
 
-        selectPhotos = findViewById(R.id.selectphotos);
-        selectAttachment = findViewById(R.id.selectattachment);
-        nextActivity = findViewById(R.id.nextActivity);
-        dismissViewPDF = findViewById(R.id.dismissBtn);
 
         Intent intent = getIntent();
         Bundle bundle = intent.getExtras();
@@ -143,24 +139,7 @@ public class Pop extends AppCompatActivity {
 
         }
 
-        selectPhotos.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                alertMessage("Press and hold an image to select multiple images",true);
-            }
-        });
 
-
-        selectAttachment.setOnClickListener(new View.OnClickListener() {
-            @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP_MR1)
-            @Override
-            public void onClick(View v) {
-                alertMessage("Press and hold a file to select multiple files",false);
-            }
-        });
-
-        nextActivity.setOnClickListener(Listener);
-        dismissViewPDF.setOnClickListener(Listener);
 
         shortAnimationDuration = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
@@ -215,39 +194,6 @@ public class Pop extends AppCompatActivity {
 
     }
 
-
-
-    //     Create an anonymous implementation of OnClickListener
-    private View.OnClickListener Listener = new View.OnClickListener() {
-        @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-        public void onClick(View v) {
-            // do something when the button is clicked
-            Log.d("GETTING", "ORDERS");
-
-
-            if(v == findViewById(R.id.nextActivity)){
-//                cnt += 1;
-                if(cnt == urls.size()) {
-                    uploadFile(urls);
-                }else{
-//                    ViewPDF(urls);
-                }
-            }
-            if(v == findViewById(R.id.dismissBtn)){
-                pdfView.setVisibility(View.GONE);
-                bottomNavView.setVisibility(View.GONE);
-                nextActivity.setVisibility(View.GONE);
-                dismissViewPDF.setVisibility(View.GONE);
-
-                selectAttachment.setVisibility(View.VISIBLE);
-                selectPhotos.setVisibility(View.VISIBLE);
-            }
-        }
-    };
-
-
-
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
@@ -257,6 +203,7 @@ public class Pop extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         //when the user choses the file
 
+        hud.show();
         if (requestCode == 1 && resultCode == RESULT_OK) {
             //if a file is selected
             renderFiles(data);
@@ -269,14 +216,9 @@ public class Pop extends AppCompatActivity {
     public void renderFiles(final Intent data){
 
 
-        hud.show();
-//        new Handler(Looper.getMainLooper()) {
-//            @Override
-//            public void handleMessage(Message message) {
-//
-//
-//            }
-//        };
+        if(!hud.isShowing()) {
+            hud.show();
+        }
 
         final ArrayList<String> pdfs = new ArrayList<>();
         new Thread(new Runnable() {
