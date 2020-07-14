@@ -12,7 +12,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="250dp"
+        android:layout_height="0dp"
         android:background="@drawable/pagesettingupper"
         android:elevation="5dp"
         android:id="@+id/pdfsettingsRL2">
@@ -100,7 +100,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_toLeftOf="@id/apply_to_all"
-            android:layout_marginRight="11dp"
             android:layout_alignParentStart="true"
             android:layout_marginLeft="50dp"
             android:layout_marginTop="183dp"
@@ -538,17 +537,16 @@
             android:layout_height="wrap_content">
 
             <RelativeLayout
-                android:layout_width="wrap_content"
+                android:layout_width="120dp"
                 android:layout_height="34dp"
                 android:layout_centerVertical="true"
-                android:layout_marginLeft="10dp"
-                android:paddingLeft="10dp"
+                android:layout_marginStart="10dp"
                 android:id="@+id/name_price"
+                android:elevation="5dp"
+                android:layout_alignStart="@id/previous"
                 android:layout_alignParentStart="true"
-                android:paddingRight="10dp"
                 android:layout_marginBottom="10dp"
-                android:layout_alignLeft="@id/previous"
-                android:layout_marginRight="20dp"
+                android:layout_marginEnd="20dp"
                 android:background="@android:color/transparent"
                 >
 
@@ -558,13 +556,12 @@
                     android:layout_centerVertical="true"
                     android:text="Book.pdf"
                     android:id="@+id/fileNameTV"
-                    android:textSize="13dp"
+                    android:textSize="13sp"
                     android:fontFamily="@font/poppins_semibold"
                     android:textStyle="bold"
+                    android:layout_marginEnd="20dp"
                     android:textColor="#005A82"
-                    android:autoSizeTextType="uniform"
                     android:textAlignment="center"
-                    android:padding="5dp"
                     />
 
                 <ImageView
@@ -608,6 +605,7 @@
                 android:layout_centerVertical="true"
                 android:layout_toLeftOf="@id/DoneBtnRL"
                 android:elevation="5dp"
+                android:layout_marginLeft="20dp"
                 android:background="@drawable/previous_pdf_info"
                 >
 

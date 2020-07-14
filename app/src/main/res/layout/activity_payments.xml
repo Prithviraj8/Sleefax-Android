@@ -286,34 +286,36 @@
             </LinearLayout>
 
         </ScrollView>
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="60dp"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentStart="true"
-            android:layout_marginStart="60dp"
-            android:layout_marginEnd="60dp"
-            android:layout_alignParentEnd="true"
-            android:visibility="gone"
-            android:id="@+id/slideviewlayout"
-            android:background="@drawable/slideview_layout"
-            android:layout_marginBottom="20dp">
+
 
             <ng.max.slideview.SlideView
                 android:id="@+id/slideView"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="60dp"
                 app:sv_animateSlideText="true"
                 app:sv_reverseSlide="false"
+                android:layout_marginLeft="-15dp"
                 android:gravity="center"
-                android:layout_marginStart="-15dp"
+                android:layout_alignStart="@id/slideviewlayout"
+                android:layout_alignEnd="@id/slideviewlayout"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="20dp"
                 app:sv_buttonBackgroundColor="@android:color/transparent"
                 app:sv_buttonImage="@drawable/slideview_button"
                 app:sv_slideBackgroundColor="@android:color/transparent"
                 app:sv_slideTextColor="#FFF"
                 android:elevation="10dp"
                 />
-        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="290dp"
+            android:layout_height="60dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:visibility="visible"
+            android:id="@+id/slideviewlayout"
+            android:background="@drawable/slideview_layout"
+            android:layout_marginBottom="20dp"/>
 
 
 
